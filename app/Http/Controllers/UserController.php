@@ -15,7 +15,7 @@ class UserController extends Controller
    {
       try {
          //code...
-         
+         Auth::logout();
          return view('layouts.login');
       } catch (Exception $err) {
          
@@ -61,6 +61,13 @@ class UserController extends Controller
          
          return dd($err);
       }
+   }
+
+
+   public function logout()
+   {
+      Auth::logout();
+      return redirect('/');
    }
 
 }

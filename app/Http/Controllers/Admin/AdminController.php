@@ -14,6 +14,7 @@ class AdminController extends Controller
       try {
          //code...
          session()->flash('role', 'Admin');
+         session()->flash('page', 'dashboard');
          return view('components.dashboard');
       } catch (Exception $err) {
          

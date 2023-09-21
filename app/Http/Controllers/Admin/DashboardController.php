@@ -13,7 +13,7 @@ class DashboardController extends Controller
    {
       try {
          //code...
-
+         session()->flash('page', 'dashboard');
          return view('components.dashboard');
       } catch (Exception $err) {
          

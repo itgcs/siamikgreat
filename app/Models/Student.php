@@ -13,7 +13,7 @@ class Student extends Model
     protected $fillable = [
       'id',
       'name',
-      'grade',
+      'grade_id',
       'gender',
       'religion',
       'place_birth',
@@ -28,10 +28,16 @@ class Student extends Model
 
     public function relationship()
     {
-       return $this->belongsToMany(Relationship::class, 'student_relations');
+       return $this->belongsToMany(Relationship::class, 'student_relations', 'student_id', 'relation_id');
     }
+
+    public function grade()
+    {
+      return $this->belongsTo(Grade::class,'grade_id');
+    }
+
     public function brotherOrSister()
     {
-       return $this->belongsToMany(Brothers_or_sister::class, 'student_relations');
+       return $this->hasMany(Brothers_or_sister::class, 'student_id');
     }
 }

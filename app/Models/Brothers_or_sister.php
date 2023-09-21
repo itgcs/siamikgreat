@@ -12,18 +12,15 @@ class Brothers_or_sister extends Model
     protected $fillable = [
       'id',
       'name',
-      'age',
+      'date_birth',
       'grade',
+      'student_id',
       'created_at',
       'updated_at',
     ];
 
     public function student()
     {
-       return $this->belongsToMany(Student::class, 'student_relations');
-    }
-    public function relationship()
-    {
-       return $this->belongsToMany(Relationship::class, 'student_relations');
+       return $this->hasOne(Student::class, 'id');
     }
 }

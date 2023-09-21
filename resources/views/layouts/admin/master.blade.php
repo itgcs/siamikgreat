@@ -8,10 +8,17 @@
 
   <!-- Preloader -->
   <div class="preloader flex-column justify-content-center align-items-center">
-    <img class="animation__shake" src="{{asset('template')}}/dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
+    <img class="animation__shake" src="{{asset('images')}}/logo-school.png" alt="SchoolLogo" height="120" width="290">
   </div>
 
   @include('layouts.admin.navbar')
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+   <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+   </symbol>
+</svg>
+
+
 
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -29,11 +36,14 @@
           <img src="{{asset('template')}}/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Admin</a>
+          <a href="#" class="d-block">Super Admin</a>
         </div>
       </div>
 
       @include('layouts.admin.sidebar')
+   </div>
+   <!-- /.sidebar -->
+ </aside>
       <div class="content-wrapper">
          <!-- Content Header (Page header) -->
          <div class="content-header">
@@ -57,11 +67,13 @@
          <section class="content">
             @yield('content')
          </section>
-         </div>
-            
-            @include('layouts.footer')
-            
-      <!-- /.content -->\
-   <!-- /.content-wrapper -->
+      </div>
+      
+      @include('layouts.footer')
+      
+      <!-- /.content -->
+   </div>
+      <!-- /.content-wrapper -->
+
 </body>
 </html>

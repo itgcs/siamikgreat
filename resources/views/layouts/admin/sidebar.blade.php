@@ -6,7 +6,9 @@
      <li class="nav-item menu-open">
        <a href="#" class="nav-link active">
          {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
-         <i class="nav-icon fa-solid fa-house"></i>
+         {{-- <i class="nav-icon fa-solid fa-house"></i>
+          --}}
+          <i class=" nav-icon fas fa-solid fa-users"></i>
          <p>
            Students
            <i class="right fas fa-angle-left"></i>
@@ -14,41 +16,32 @@
        </a>
        <ul class="nav nav-treeview">
          <li class="nav-item">
-           <a href="/admin/dashboard" class="nav-link active">
+           <a href="/admin/dashboard" class="nav-link {{session('page') == 'dashboard' ? 'active' : ''}}">
              <i class="far fa-circle nav-icon"></i>
              <p>Dashboard</p>
            </a>
          </li>
          <li class="nav-item">
-           <a href="/admin/register" class="nav-link">
+           <a href="/admin/register" class="nav-link {{session('page') == 'register' ? 'active' : ''}}">
              <i class="far fa-circle nav-icon"></i>
              <p>Register</p>
            </a>
          </li>
          <li class="nav-item">
-           <a href="./index3.html" class="nav-link">
+           <a href="/admin/list" class="nav-link {{session('page') == 'data' ? 'active' : ''}}">
              <i class="far fa-circle nav-icon"></i>
-             <p>Dashboard v3</p>
+             <p>Data</p>
            </a>
          </li>
        </ul>
      </li>
      <li class="nav-item">
-       <a href="pages/widgets.html" class="nav-link">
-         <i class="nav-icon fas fa-th"></i>
-         <p>
-           Widgets
-           <span class="right badge badge-danger">New</span>
-         </p>
-       </a>
-     </li>
-     <li class="nav-item">
        <a href="#" class="nav-link">
-         <i class="nav-icon fas fa-copy"></i>
+         <i class="nav-icon fa-solid fa-person-chalkboard" style="color: #f2f2f2;"></i>
+         {{-- <i class="nav-icon fa-solid fa-chalkboard-user"></i> --}}
          <p>
-           Layout Options
+           Teachers
            <i class="fas fa-angle-left right"></i>
-           <span class="badge badge-info right">6</span>
          </p>
        </a>
        <ul class="nav nav-treeview">
@@ -616,28 +609,14 @@
          <p>Level 1</p>
        </a>
      </li>
-     <li class="nav-header">LABELS</li>
+     <li class="nav-header">EXIT</li>
      <li class="nav-item">
-       <a href="#" class="nav-link">
-         <i class="nav-icon far fa-circle text-danger"></i>
-         <p class="text">Important</p>
-       </a>
-     </li>
-     <li class="nav-item">
-       <a href="#" class="nav-link">
-         <i class="nav-icon far fa-circle text-warning"></i>
-         <p>Warning</p>
-       </a>
-     </li>
-     <li class="nav-item">
-       <a href="#" class="nav-link">
-         <i class="nav-icon far fa-circle text-info"></i>
-         <p>Informational</p>
-       </a>
+         <a href="/" class="nav-link">
+            {{-- <i class="nav-icon far fa-circle text-warning"></i> --}}
+            <i class="nav-icon fa-solid fa-right-from-bracket text-danger"></i>
+            <p>Logout</p>
+         </a>
      </li>
    </ul>
  </nav>
  <!-- /.sidebar-menu -->
-</div>
-<!-- /.sidebar -->
-</aside>

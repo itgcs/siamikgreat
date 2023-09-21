@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('brothers_or_sisters', function (Blueprint $table) {
+         Schema::create('brothers_or_sisters', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->date('date_birth');
             $table->string('grade')->nullable();
+            $table->unsignedBigInteger('student_id');
+            $table->foreign('student_id')->references('id')->on('students');
             $table->timestamps();
-        });
+         });
     }
 
     /**

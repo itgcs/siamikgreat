@@ -12,7 +12,9 @@ class Relationship extends Model
     protected $fillable = [
       'id',
       'name',
+      'relation',
       'place_birth',
+      'religion',
       'date_birth',
       'occupation',
       'company_name',
@@ -32,10 +34,6 @@ class Relationship extends Model
 
    public function student()
       {
-         return $this->belongsToMany(Student::class, 'student_relations');
-      }
-   public function brotherOrSister()
-      {
-         return $this->belongsToMany(Brothers_or_sister::class, 'student_relations');
+         return $this->belongsToMany(Student::class, 'student_relations', 'relation_id', 'student_id');
       }
 }

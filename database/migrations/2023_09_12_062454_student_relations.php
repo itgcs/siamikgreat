@@ -13,13 +13,11 @@ return new class extends Migration
     {
       Schema::create('student_relations', function (Blueprint $table) {
          $table->id();
-         
          $table->unsignedBigInteger('student_id');
          $table->unsignedBigInteger('relation_id');
-         $table->unsignedBigInteger('brother_or_sister_id');
          $table->foreign('student_id')->references('id')->on('students');
          $table->foreign('relation_id')->references('id')->on('relationships');
-         $table->foreign('brother_or_sister_id')->references('id')->on('brothers_or_sisters');
+         $table->timestamps();
      });
     }
 

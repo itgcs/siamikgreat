@@ -18,7 +18,7 @@ class checkAdmin
     {
          
          if(!Auth::check()){
-            session()->flash('error', 'please login first !!!');
+            session()->flash('errors', 'Invalid Credentials');
             return redirect('/');
          } else {
             $user = Auth::user();

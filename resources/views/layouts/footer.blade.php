@@ -6,6 +6,7 @@
    </div>
  </footer>
 
+
  <!-- Control Sidebar -->
  <aside class="control-sidebar control-sidebar-dark">
    <!-- Control sidebar content goes here -->
@@ -69,7 +70,6 @@
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('template')}}/dist/js/demo.js"></script>
 
-
 <script>
    $(function () {
      //Initialize Select2 Elements
@@ -97,7 +97,31 @@
      $('#reservationFatherBirthDate').datetimepicker({
          format: 'DD/MM/YYYY'
      });
- 
+     $('#reservationMotherBirthDate').datetimepicker({
+         format: 'DD/MM/YYYY'
+     });
+     $('#reservationMotherBirthDate').datetimepicker({
+         format: 'DD/MM/YYYY'
+     });
+     $('#reservationMotherBirthDate').datetimepicker({
+         format: 'DD/MM/YYYY'
+     });
+     $('#reservationBrotherOrSisterBirthDate1').datetimepicker({
+         format: 'DD/MM/YYYY'
+     });
+     $('#reservationBrotherOrSisterBirthDate2').datetimepicker({
+         format: 'DD/MM/YYYY'
+     });
+     $('#reservationBrotherOrSisterBirthDate3').datetimepicker({
+         format: 'DD/MM/YYYY'
+     });
+     $('#reservationBrotherOrSisterBirthDate4').datetimepicker({
+         format: 'DD/MM/YYYY'
+     });
+     $('#reservationBrotherOrSisterBirthDate5').datetimepicker({
+         format: 'DD/MM/YYYY'
+     });
+     
      //Date and time picker
      $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
  
@@ -209,4 +233,5 @@
      myDropzone.removeAllFiles(true)
    }
    // DropzoneJS Demo Code End
+
  </script>
