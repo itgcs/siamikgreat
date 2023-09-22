@@ -7,10 +7,13 @@
 <div class="wrapper">
 
   <!-- Preloader -->
-  <div class="preloader flex-column justify-content-center align-items-center">
-    <img class="animation__shake" src="{{asset('images')}}/logo-school.png" alt="SchoolLogo" height="120" width="290">
-  </div>
-
+  @if (session('preloader'))
+      
+   <div class="preloader flex-column justify-content-center align-items-center">
+      <img class="animation__shake" src="{{asset('images')}}/logo-school.png" alt="SchoolLogo" height="120" width="290">
+   </div>
+   @endif
+   
   @include('layouts.admin.navbar')
   <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
    <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
@@ -25,7 +28,7 @@
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link">
       <img src="{{asset('template')}}/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">AdminLTE 3</span>
+      <span class="brand-text font-weight-light">Admin</span>
     </a>
 
     <!-- Sidebar -->

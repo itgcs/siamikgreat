@@ -7,7 +7,8 @@ use App\Http\Controllers\Admin\{
     StudentController,
 };
 use App\Http\Controllers\SuperAdmin\{
-   SuperAdminController
+   SuperAdminController,
+   StudentController as SuperStudentController
 };
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -31,7 +32,7 @@ Route::get('/counter', Counter::class);
 Route::middleware(['admin'])->prefix('/admin')->group(function () {
    
    Route::prefix('/dashboard')->group(function () {
-      Route::get('/', [AdminController::class, 'index']);
+      Route::get('/', [DashboardController::class, 'index']);
    });
 
    Route::prefix('/register')->group(function () {
@@ -54,12 +55,10 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
 });
 
 Route::middleware(['check.superadmin'])->prefix('superadmin')->group(function () {
-   Route::prefix('/dashboard')->group(function () {
-      Route::get('/', [AdminController::class, 'index']);
-   });
-
-   Route::prefix('/register')->group(function () {
-      Route::get('/', [RegisterController::class, 'index']);
+   
+   
+   Route::prefix('/student')->group(function () {
+      Route::delete('/{id}', [SuperStudentController::class, 'destroy']);
    });
 
    

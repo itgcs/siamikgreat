@@ -70,6 +70,10 @@
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('template')}}/dist/js/demo.js"></script>
 
+{{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
+
+
+
 <script>
    $(function () {
      //Initialize Select2 Elements
@@ -234,4 +238,12 @@
    }
    // DropzoneJS Demo Code End
 
+   $(document).ready(function(){
+   $("#").click(function(){
+      alert("The paragraph was clicked.");
+   });
+   });
  </script>
+
+
+

@@ -7,7 +7,7 @@
             <div class="col-md-12">
                 <!-- general form elements -->
                 <div>
-                    <form method="POST" action={{ route('actionRegister') }}>
+                    <form method="POST" action={{route('actionRegister')}}>
                         @csrf
                         <div class="card card-dark">
                             <div class="card-header">
@@ -79,27 +79,41 @@
                                        <div class="form-group">
                                            <label>Grade<span style="color: red">*</span></label>
                                            <select name="gradeId" class="form-control" required>
+
+                                             @php
+                                                $selectedName = '';
+                                                   if(old('grade_id'))
+                                                   {
+                                                      foreach($grade as $el)
+                                                      {
+                                                         if($el->id == old('grade_id'))
+                                                         {
+                                                            $selectedName = $el->name;
+                                                         }
+                                                      }
+                                                   }
+                                             @endphp
                                                
-                                               <option selected {{ old('grade_id')? '' : 'disabled'}}> {{ old('grade_id')? old('grade_id') : '--- Please Select One ---'}}</option>
+                                               <option selected {{ old('grade_id')? '' : 'disabled'}} value="{{old('grade_id')? old('grade_id') : ''}}"> {{ old('grade_id')? $selectedName : '--- Please Select One ---'}}</option>
                                                
                                                @if (old('grade_id'))
                                                
-                                                     @foreach($grade as $value)
+                                                   @foreach($grade as $value)
                                                      
-                                                        @if (old('grade_id') !== $value->id)
+                                                        @if (old('grade_id') != $value->id)
                                                            <option value="{{$value->id}}">{{$value->name}}</option>
                                                         @endif
                                                
                                                      @endforeach
-                                                        @else
-                                                        @foreach($grade as $value)
-                                                     
-                                                           <option value="{{$value->id}}">{{$value->name}}</option>
-                                                        @endforeach
+                                                @else
+                                                @foreach($grade as $value)
+                                             
+                                                   <option value="{{$value->id}}">{{$value->name}}</option>
+                                                @endforeach
                                                @endif
                                            </select>
                                            @if($errors->any())
-                                           <p style="color: red">{{$errors->first('gender')}}</p>
+                                           <p style="color: red">{{$errors->first('grade_id')}}</p>
                                           @endif
                                        </div>
                                    </div>

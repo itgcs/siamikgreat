@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brothers_or_sister;
+use App\Models\Grade;
 use App\Models\Relationship;
 use App\Models\Student;
 use App\Models\Student_relation;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -19,7 +21,8 @@ class StudentController extends Controller
       try {
          //code...
          session()->flash('page', 'data');
-         $data = Student::orderBy('created_at', 'desc')->get();
+         session()->flash('preloader', false);
+         $data = Student::with('grade')->orderBy('created_at', 'desc')->get();
          return view('components.student.tableStudent')->with('data', $data);
       } catch (Exception $err) {
          //throw $th;
@@ -30,14 +33,15 @@ class StudentController extends Controller
 
    public function detail($id){
       try {
+         session()->flash('preloader', true);
+         session()->flash('page', 'data');
          //code...
          $student = Student::with(['relationship', 'grade'])->where('id', $id)->first();
          $brotherOrSister = Student::find($id);
-
-         session()->flash('success_create', 'Test 1230');
          $data = (object) [
             'student' => $student,
             'brother_or_sisters' => $brotherOrSister->brotherOrSister()->get(),
+            'after_create' => false,
          ];
 
          // return $data;
@@ -55,16 +59,19 @@ class StudentController extends Controller
    public function edit($id)
    {
       try {
-         $student = Student::with('relationship')->where('id', $id)->first();
+         session()->flash('preloader', true);
+         session()->flash('page', 'data');
+         $student = Student::with(['relationship', 'grade'])->where('id', $id)->first();
          $brotherOrSister = Student::find($id);
-
-
+         $allGrade = Grade::orderBy('id', 'desc')->get();
+         
          $data = (object) [
             'student' => $student,
             'brother_or_sisters' => $brotherOrSister->brotherOrSister()->get(),
+            'allGrade' => $allGrade,
          ];
-         // return $data->brother_or_sisters[0]->date_birth;
 
+         // return $data;  
          return view('components.student.editStudent')->with('data', $data);
       } catch (Exception $err) {
          //throw $th;
@@ -83,7 +90,7 @@ class StudentController extends Controller
          //code...
          $credentials = [
             'name' => $request->studentName,
-            'grade' => 'SMA',
+            'grade_id' => $request->gradeId,
             'gender' => $request->studentGender,
             'religion' => $request->studentReligion,
             'place_birth' => $request->studentPlace_birth,
@@ -97,7 +104,7 @@ class StudentController extends Controller
          
          $rules = [
             'name' => $request->studentName,
-            'grade' => 'SMA',
+            'grade_id' => $request->gradeId,
             'gender' => $request->studentGender,
             'religion' => $request->studentReligion,
             'place_birth' => $request->studentPlace_birth,
@@ -182,7 +189,7 @@ class StudentController extends Controller
          
          $validator = Validator::make($rules, [
             'name' => 'string|required|min:3',
-            'grade' => 'string|required',
+            'grade_id' => 'integer|required',
             'gender' => 'string|required',
             'religion' => 'string|required',
             'place_birth' => 'string|required',
@@ -237,6 +244,7 @@ class StudentController extends Controller
          ]);
 
          $dataId = Student::where('id_or_passport', $rules['id_or_passport'])->first();
+         $user = Auth::user();
          if($dataId)
          {
             
@@ -272,6 +280,7 @@ class StudentController extends Controller
          $data = (object) [
             'student' => $student,
             'brother_or_sisters' => $brotherOrSister->brotherOrSister()->get(),
+            'after_create' => true,
          ];
 
          // return $data;

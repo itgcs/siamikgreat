@@ -309,6 +309,28 @@
         </div>
       </div>
     </section>
-     
-      
+    @if($data->after_create) 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+   <script>
+
+   var Toast = Swal.mixin({
+         toast: true,
+         position: 'top-end',
+         showConfirmButton: false,
+         timer: 3000
+   });
+
+   setTimeout(() => {
+      Toast.fire({
+         icon: 'success',
+         title: 'Data has been saved !!!',
+   });
+   }, 1500);
+
+
+   </script>
+        
+    @endif
+
 @endsection

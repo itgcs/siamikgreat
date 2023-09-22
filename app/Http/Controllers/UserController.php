@@ -15,6 +15,7 @@ class UserController extends Controller
    {
       try {
          //code...
+         session()->flash('preloader', true);
          Auth::logout();
          return view('layouts.login');
       } catch (Exception $err) {
@@ -28,6 +29,7 @@ class UserController extends Controller
    {
       try {
          //code...
+         session()->flash('preloader', true);
 
          $credentials = $request->only('username', 'password');
 
@@ -36,8 +38,8 @@ class UserController extends Controller
             'password' => 'required',
          ],
          [
-            'username.required' => 'please input username!!!',
-            'password.required' => 'please input password!!!'
+            'username.required' => 'input username !!!',
+            'password.required' => 'input password !!!'
          ]);
 
          if($validator->fails())
@@ -45,7 +47,7 @@ class UserController extends Controller
             return response()->json(['error' => $validator->errors()]);
          }
 
-         $check = Auth::attempt($credentials);
+         $check = Auth::attempt($credentials);  
 
          if(!$check)
          {
@@ -53,9 +55,7 @@ class UserController extends Controller
          }
          
 
-         $user = Auth::user();
-
-         return redirect($user->role . '/dashboard/');
+         return redirect('admin/dashboard/');
 
       } catch (Exception $err) {
          

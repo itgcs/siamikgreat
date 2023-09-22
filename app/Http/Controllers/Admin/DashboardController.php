@@ -14,6 +14,7 @@ class DashboardController extends Controller
       try {
          //code...
          session()->flash('page', 'dashboard');
+         session()->flash('preloader', false);
          return view('components.dashboard');
       } catch (Exception $err) {
          

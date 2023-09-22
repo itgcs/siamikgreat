@@ -24,10 +24,12 @@ class checkSuperAdmin
          
          if($user->role === 'admin')
          {
-            return redirect('/dashboard/admin');
+            session()->flash('role', 'admin');
+            return redirect('/admin/dashboard');
          } 
       }
-
+      
+      session()->flash('role', 'superadmin');
       return $next($request);
     }
 }

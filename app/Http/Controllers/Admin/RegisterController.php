@@ -20,6 +20,7 @@ class RegisterController extends Controller
       try {
          //code...
          $grade = Grade::orderBy('id', 'desc')->get();
+         session()->flash('preloader', false);
          session()->flash('page', 'register');
          return view('components.register', ['grade'=> $grade]);
       } catch (Exception $err) {
@@ -36,7 +37,7 @@ class RegisterController extends Controller
 
       try {
          //code...
-
+         session()->flash('preloader', true);
          $credentials = [
             'name' => $request->studentName,
             'grade_id' => (int)$request->gradeId,
@@ -194,10 +195,10 @@ class RegisterController extends Controller
             $data = (object) [
                'student' => $student,
                'brother_or_sisters' => $brotherOrSister->brotherOrSister()->get(),
+               'after_create' => 'Success register student with name ' . $student->name,
             ];
          
             // return $data;
-            session()->flash('success', 'Success register student with name'.  $student->name);
             return view('components.student.detailStudent')->with('data', $data);
             
          } else if(!$relationship->success){

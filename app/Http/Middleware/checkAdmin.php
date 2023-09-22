@@ -22,13 +22,13 @@ class checkAdmin
             return redirect('/');
          } else {
             $user = Auth::user();
-            
             if($user->role === 'superadmin')
             {
-               return redirect('/dashboard/superadmin');
+               session()->flash('role', 'superadmin');
+               return $next($request);
             } 
          }
-
+         session()->flash('role', 'admin');
          return $next($request);
     }
 }

@@ -12,8 +12,9 @@ class SuperAdminController extends Controller
    {
       try {
          //code...
-
-         return 'Ini adalah halaman super admin';
+         session()->flash('preloader', false);
+         session()->flash('page', 'dashboard');
+         return view('components.dashboard');
       } catch (Exception $err) {
          
          return dd($err);

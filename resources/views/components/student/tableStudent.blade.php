@@ -1,5 +1,6 @@
 @extends('layouts.admin.master')
 @section('content')
+
    <!-- Content Wrapper. Contains page content -->
        <div class="container-fluid">
            <h2 class="text-center display-4">Student Search</h2>
@@ -123,7 +124,7 @@
                            </td>
                            <td>
                               <a>
-                              Junior High School
+                                 {{$el->grade->name}}
                            </a>
                         </td>
                         <td>
@@ -133,21 +134,23 @@
                            <h1 class="badge badge-success">Active</h1>
                         </td>
                           <td class="project-actions text-right toastsDefaultSuccess">
-                             <a class="btn btn-primary" href={{url('/admin/detail') . '/' . $el->id}}>
+                             <a class="btn btn-primary {{session('role') == 'admin'? 'btn' : 'btn-sm'}}" href="detail/{{$el->id}}">
                                 <i class="fas fa-folder">
                               </i>
                               View
                            </a>
-                           <a class="btn btn-info btn" href={{url('/admin/update') . '/' . $el->id}}>
+                           <a class="btn btn-info {{session('role') == 'admin'? 'btn' : 'btn-sm'}}" href="update/{{$el->id}}">
                               <i class="fas fa-pencil-alt">
                               </i>
                               Edit
                            </a>
-                           {{-- <a class="btn btn-danger btn-sm" href="#">
-                              <i class="fas fa-trash">
-                              </i>
-                              Delete
-                           </a> --}}
+                           @if(session('role') == 'superadmin')
+                              <a href="javascript:void(0)" id="delete-student" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-danger {{session('role') == 'admin'? 'btn' : 'btn-sm'}}">
+                                 <i class="fas fa-trash">
+                                 </i>
+                                 Delete
+                              </a>
+                           @endif
                         </td>
                      </tr>
                      
@@ -157,5 +160,7 @@
             </div>
             <!-- /.card-body -->
           </div>
-       </div>
+         </div>
+         
+         @include('components.super.delete-student')
 @endsection
