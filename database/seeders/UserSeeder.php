@@ -28,6 +28,12 @@ class UserSeeder extends Seeder
             'role' => 'admin',
             
          ],
+         [
+            'username' => 'Human_resource',
+            'password' => Hash::make('admin'),
+            'role' => 'HR',
+            
+         ],
       ];
 
       DB::table('users')->insert($data);

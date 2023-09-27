@@ -20,7 +20,7 @@ class Grade extends Model
 
     public function teacher()
     {
-      $this->belongsTo(Teacher::class, 'teacher_id');
+      $this->hasOne(Teacher::class, 'teacher_id');
     }
 
     public function student()

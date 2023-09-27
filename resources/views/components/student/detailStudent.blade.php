@@ -94,6 +94,19 @@
                 <hr>
                 <div class="row">
                   <div class="col-sm-4">
+                    <p class="mb-0">Status</p>
+                  </div>
+                  <div class="col-sm-8">
+                     @if($data->student->is_active)
+                           <h1 class="badge badge-success">Active</h1>
+                     @else
+                           <h1 class="badge badge-danger">Inactive</h1>
+                     @endif
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
                     <p class="mb-0">Grade</p>
                   </div>
                   <div class="col-sm-8">

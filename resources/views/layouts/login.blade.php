@@ -105,8 +105,33 @@
         <!-- Right -->
       </div>
     </section>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+   
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+   @if(session('success.update.password'))
+
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+   <script>
+
+   var Toast = Swal.mixin({
+         toast: true,
+         position: 'top-end',
+         showConfirmButton: false,
+         timer: 8000
+   });
+
+   setTimeout(() => {
+      Toast.fire({
+         icon: 'success',
+         title: 'Success update password, please login again !!!',
+   });
+   }, 1500);
+
+
+  </script>
+
+   @endif
 </body>
 
 </html>

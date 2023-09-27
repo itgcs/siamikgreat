@@ -11,15 +11,15 @@ use Exception;
 
 class StudentController extends Controller
 {
-   public function destroy($id)
+   public function inactiveStudent($id)
    {
       try {
          //code...
       
-      session()->flash('preloader', true);
-      Brothers_or_sister::where('student_id', $id)->delete();
-      Student_relation::where('student_id', $id)->delete();
-      Student::where('id', $id)->delete();
+      // session()->flash('preloader', true);
+      Student::where('id', $id)->update([
+         'is_active' => 0,
+      ]);
 
       
       return response()->json([

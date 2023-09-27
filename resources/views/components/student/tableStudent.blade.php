@@ -4,46 +4,82 @@
    <!-- Content Wrapper. Contains page content -->
        <div class="container-fluid">
            <h2 class="text-center display-4">Student Search</h2>
-           <form class="mt-5" action="enhanced-results.html">
+           <form class="mt-5" action="/admin/list">
                <div class="row">
                    <div class="col-md-10 offset-md-1">
                        <div class="row">
                            <div class="col-6">
                                <div class="form-group">
                                    <label>Result Type:</label>
-                                    <select name="studentGender" class="form-control" required>
-                                        <option selected disabled value="">--- Please Select One ---</option>
-                                        <option>Female</option>
-                                        <option>Male</option>
+                                   @php
+                                       
+                                       $selected = $form? $form->sort : 'name';
+
+                                    @endphp
+                                    <select name="type" class="form-control" required>
+                                        <option {{$selected === 'name' ? 'selected' : ''}} value="name">Name</option>
+                                        <option {{$selected === 'place_birth' ? 'selected' : ''}} value="place_birth">Place Birth</option>
                                     </select>
                                   
                                </div>
                            </div>
-                           <div class="col-3">
+                           <div class="col-2">
                                <div class="form-group">
-                                   <label>Sort Order:</label>
-                                    <select name="studentGender" class="form-control" required>
-                                          <option selected disabled value="">--- Please Select One ---</option>
-                                          <option>Female</option>
-                                          <option>Male</option>
+
+                                    @php
+                                       
+                                       $selected = $form->sort ? $form->sort : 'desc';
+
+                                    @endphp
+
+                                 <label>Sort: <span style="color: red"></span></label>
+                                 <select name="sort" class="form-control">
+                                     <option value="desc" {{$selected === 'desc' ? 'selected' : ''}}>Descending</option>
+                                     <option value="asc" {{$selected === 'asc' ? 'selected' : ''}}>Ascending</option>
+                                 </select>                              
+                               </div>
+                           </div>
+                           <div class="col-2">
+                               <div class="form-group">
+
+                                 @php
+
+                                    $selected = $form->order? $form->order : 'created_at';
+
+                                 @endphp
+
+                                   <label>Sort By:</label>
+                                    <select name="order" class="form-control">
+                                          <option {{$selected === 'created_at'? 'selected' : ''}} value="created_at">Register</option>
+                                          <option {{$selected === 'name'? 'selected' : ''}} value="name">Name</option>
+                                          <option {{$selected === 'grade_id'? 'selected' : ''}} value="grade_id">Grade</option>
+                                          <option {{$selected === 'place_birth'? 'selected' : ''}} value="place_birth">Place Birth</option>
+                                          <option {{$selected === 'status'? 'selected' : ''}} value="status">Status</option>
                                     </select>
                                   
                                </div>
                            </div>
-                           <div class="col-3">
+                           <div class="col-2">
                                <div class="form-group">
-                                 <label>Gender<span style="color: red">*</span></label>
-                                 <select name="studentGender" class="form-control">
-                                     <option selected disabled value="">--- Please Select One ---</option>
-                                     <option>Female</option>
-                                     <option>Male</option>
+                                 <label>Sort: <span style="color: red"></span></label>
+
+                                 @php
+                                    
+                                    $selected = $form->status ? $form->status : 'true';
+                                    $option = $selected === 'false' ? 'true' : 'false';
+
+                                 @endphp
+
+                                 <select name="status" class="form-control">
+                                     <option  selected value="{{$selected}}">{{$selected === 'true' ? 'Active' : 'Inactive'}}</option>
+                                     <option  value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
                                  </select>                              
                                </div>
                            </div>
                        </div>
                        <div class="form-group">
                            <div class="input-group input-group-lg">
-                               <input type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
+                               <input name="search" value="{{$form->search}}" type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
                                <div class="input-group-append">
                                    <button type="submit" class="btn btn-lg btn-default">
                                        <i class="fa fa-search"></i>
@@ -68,7 +104,7 @@
             <div class="card-body p-0">
               <table class="table table-striped projects">
                   <thead>
-                      <tr>
+                     <tr>
                           <th style="width: 1%">
                               #
                           </th>
@@ -96,7 +132,7 @@
                   </thead>
                   <tbody>
                      @foreach ($data as $el)
-                     <tr>
+                     <tr id={{'index_student_' . $el->id}}>
                         <td>
                            {{ $loop->index + 1 }}
                           </td>
@@ -131,24 +167,28 @@
                            3
                         </td>
                         <td class="project-state">
+                           @if($el->is_active)
                            <h1 class="badge badge-success">Active</h1>
+                           @else
+                           <h1 class="badge badge-danger">Inactive</h1>
+                           @endif
                         </td>
                           <td class="project-actions text-right toastsDefaultSuccess">
-                             <a class="btn btn-primary {{session('role') == 'admin'? 'btn' : 'btn-sm'}}" href="detail/{{$el->id}}">
+                             <a class="btn btn-primary {{session('role') == 'admin'? 'btn' : 'btn-sm'}}" href="detail/{{$el->unique_id}}">
                                 <i class="fas fa-folder">
                               </i>
                               View
                            </a>
-                           <a class="btn btn-info {{session('role') == 'admin'? 'btn' : 'btn-sm'}}" href="update/{{$el->id}}">
+                           <a class="btn btn-info {{session('role') == 'admin'? 'btn' : 'btn-sm'}}" href="update/{{$el->unique_id}}">
                               <i class="fas fa-pencil-alt">
                               </i>
                               Edit
                            </a>
                            @if(session('role') == 'superadmin')
-                              <a href="javascript:void(0)" id="delete-student" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-danger {{session('role') == 'admin'? 'btn' : 'btn-sm'}}">
-                                 <i class="fas fa-trash">
+                              <a href="javascript:void(0)" id="delete-student" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-danger btn-sm">
+                                 <i class="fas fa fa-ban">
                                  </i>
-                                 Delete
+                                 Deactive
                               </a>
                            @endif
                         </td>

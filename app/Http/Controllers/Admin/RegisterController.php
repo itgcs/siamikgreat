@@ -38,7 +38,23 @@ class RegisterController extends Controller
       try {
          //code...
          session()->flash('preloader', true);
+
+         $var = DB::table('students')->latest()->first();
+         $unique_id = '';
+         
+         if(date('Ym') == substr($var->unique_id, 0, 6))
+         {
+            $unique_id = (string)date('Ym') . str_pad(ltrim(substr($var->unique_id, 7) + 1, '0'), 4, '0', STR_PAD_LEFT);
+         } else {
+            $unique_id = (string)date('Ym') . str_pad('1', 4, '0', STR_PAD_LEFT);
+         } 
+
+
+         // return $unique_id;
+
          $credentials = [
+            'is_active' => 1,
+            'unique_id' => $unique_id,
             'name' => $request->studentName,
             'grade_id' => (int)$request->gradeId,
             'gender' => $request->studentGender,

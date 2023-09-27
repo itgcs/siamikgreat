@@ -29,7 +29,8 @@
          </li>
          <li class="nav-item">
            <a href="/admin/list" class="nav-link {{session('page') == 'data' ? 'active' : ''}}">
-             <i class="far fa-circle nav-icon"></i>
+             <i class="far fa-circle nav-icon"></i>  
+             {{-- <i class="fa-regular fa-database"></i> --}}
              <p>Data</p>
            </a>
          </li>
@@ -46,9 +47,9 @@
        </a>
        <ul class="nav nav-treeview">
          <li class="nav-item">
-           <a href="pages/layout/top-nav.html" class="nav-link">
+           <a href="/admin/teachers" class="nav-link">
              <i class="far fa-circle nav-icon"></i>
-             <p>Top Navigation</p>
+             <p>Data</p>
            </a>
          </li>
          <li class="nav-item">
@@ -544,71 +545,20 @@
          <p>Documentation</p>
        </a>
      </li>
-     <li class="nav-header">MULTI LEVEL EXAMPLE</li>
+     <li class="nav-header">SUPER ADMIN ACCESS</li>
      <li class="nav-item">
-       <a href="#" class="nav-link">
-         <i class="fas fa-circle nav-icon"></i>
-         <p>Level 1</p>
+       <a href="{{url('/admin/user')}}" class="nav-link">
+         <i class="fa-solid fa-user-secret nav-icon"></i>
+         <p>User</p>
        </a>
      </li>
      <li class="nav-item">
-       <a href="#" class="nav-link">
-         <i class="nav-icon fas fa-circle"></i>
-         <p>
-           Level 1
-           <i class="right fas fa-angle-left"></i>
-         </p>
-       </a>
-       <ul class="nav nav-treeview">
-         <li class="nav-item">
-           <a href="#" class="nav-link">
-             <i class="far fa-circle nav-icon"></i>
-             <p>Level 2</p>
-           </a>
-         </li>
-         <li class="nav-item">
-           <a href="#" class="nav-link">
-             <i class="far fa-circle nav-icon"></i>
-             <p>
-               Level 2
-               <i class="right fas fa-angle-left"></i>
-             </p>
-           </a>
-           <ul class="nav nav-treeview">
-             <li class="nav-item">
-               <a href="#" class="nav-link">
-                 <i class="far fa-dot-circle nav-icon"></i>
-                 <p>Level 3</p>
-               </a>
-             </li>
-             <li class="nav-item">
-               <a href="#" class="nav-link">
-                 <i class="far fa-dot-circle nav-icon"></i>
-                 <p>Level 3</p>
-               </a>
-             </li>
-             <li class="nav-item">
-               <a href="#" class="nav-link">
-                 <i class="far fa-dot-circle nav-icon"></i>
-                 <p>Level 3</p>
-               </a>
-             </li>
-           </ul>
-         </li>
-         <li class="nav-item">
-           <a href="#" class="nav-link">
-             <i class="far fa-circle nav-icon"></i>
-             <p>Level 2</p>
-           </a>
-         </li>
-       </ul>
-     </li>
-     <li class="nav-item">
-       <a href="#" class="nav-link">
-         <i class="fas fa-circle nav-icon"></i>
-         <p>Level 1</p>
+       <a href="{{url('/admin/user/change-password')}}" class="nav-link">
+         <i class="nav-icon fas fa-solid fa-lock"></i>
+         <p>Change my password</p>
        </a>
      </li>
+     
      <li class="nav-header">EXIT</li>
      <li class="nav-item">
          <a href="/" class="nav-link">

@@ -4,12 +4,15 @@ use App\Http\Controllers\Admin\{
    AdminController,
    DashboardController,
    RegisterController,
-    StudentController,
+   StudentController,
+   TeacherController,
 };
+
 use App\Http\Controllers\SuperAdmin\{
    SuperAdminController,
    StudentController as SuperStudentController
 };
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Livewire\Counter;
@@ -52,14 +55,39 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::put('/{id}', [StudentController::class, 'actionEdit'])->name('student.update');
       Route::get('/{id}', [StudentController::class, 'edit']);
    });
+
+   Route::prefix('/user')->group(function () {
+
+      Route::get('/change-password', [AdminController::class, 'changeMyPassword']);
+      Route::put('/change-password', [AdminController::class, 'actionChangeMyPassword']);
+   });
 });
 
-Route::middleware(['check.superadmin'])->prefix('superadmin')->group(function () {
+Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
    
    
    Route::prefix('/student')->group(function () {
-      Route::delete('/{id}', [SuperStudentController::class, 'destroy']);
+      Route::patch('/{id}', [SuperStudentController::class, 'inactiveStudent']);
+   });
+   
+   Route::prefix('/user')->group(function () {
+      Route::get('/', [SuperAdminController::class, 'getUser']);
+      Route::get('/register-user', [SuperAdminController::class, 'registerUser']);
+      Route::get('/{id}', [SuperAdminController::class, 'getById']);
+      Route::post('/register-action', [SuperAdminController::class, 'registerUserAction']);
+      Route::put('/change-password/commit/{id}',[SuperAdminController::class, 'changePassword'])->name('user.editPassword');
+      Route::delete('{id}', [SuperAdminController::class, 'deleteUser']);
    });
 
-   
+   Route::prefix('/teachers')->group(function () {
+
+      Route::get('/', [TeacherController::class, 'index']);
+      Route::post('/', [TeacherController::class, 'actionPost'])->name('actionRegisterTeacher');
+      Route::put('/{id}', [TeacherController::class, 'actionEdit'])->name('actionUpdateTeacher');
+      Route::get('/register', [TeacherController::class, 'pagePost']);
+      Route::get('/{id}', [TeacherController::class, 'editPage']);
+      Route::get('/detail/{id}', [TeacherController::class, 'getById']);
+      Route::delete('/{id}', [TeacherController::class, 'destroy']);
+   });
+
 });

@@ -10,9 +10,11 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('students', function (Blueprint $table) {
+   {
+      Schema::create('students', function (Blueprint $table) {
             $table->id();
+            $table->boolean('is_active');
+            $table->string('unique_id');  
             $table->string('name');
             $table->unsignedBigInteger('grade_id');
             $table->foreign('grade_id')->references('id')->on('grades');
@@ -25,13 +27,13 @@ return new class extends Migration
             $table->string('place_of_issue')->nullable();
             $table->date('date_exp')->nullable();
             $table->timestamps();
-        });
-    }
+      });
+   }
 
-    /**
+   /**
      * Reverse the migrations.
      */
-    public function down(): void
+   public function down(): void
     {
         Schema::drop('students');
     }

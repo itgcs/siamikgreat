@@ -12,6 +12,8 @@ class Teacher extends Model
 
     protected $fillable = [
       'id',
+      'is_active',
+      'unique_id',
       'name',
       'place_birth',
       'religion',
@@ -20,12 +22,17 @@ class Teacher extends Model
       'nationality',
       'nuptk',
       'gender',
+      'email',
+      'handphone',
+      'temporary_address',
+      'last_education',
+      'major',
       'created_at',
       'updated_at',
    ];
 
    public function grade()
    {
-      return $this->hasOne(Grade::class, 'teacher_id');
+      return $this->belongsTo(Grade::class, 'teacher_id');
    }
 }
