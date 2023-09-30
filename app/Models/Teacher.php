@@ -20,7 +20,7 @@ class Teacher extends Model
       'date_birth',
       'home_address',
       'nationality',
-      'nuptk',
+      'nik',
       'gender',
       'email',
       'handphone',
@@ -33,6 +33,6 @@ class Teacher extends Model
 
    public function grade()
    {
-      return $this->belongsTo(Grade::class, 'teacher_id');
+      return $this->hasMany(Grade::class);
    }
 }

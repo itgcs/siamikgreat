@@ -19,9 +19,10 @@ class RegisterController extends Controller
    {
       try {
          //code...
-         $grade = Grade::orderBy('id', 'desc')->get();
+         $grade = Grade::orderBy('id', 'asc')->get();
          session()->flash('preloader', false);
          session()->flash('page', 'register');
+         // return $grade;
          return view('components.register', ['grade'=> $grade]);
       } catch (Exception $err) {
          
@@ -42,7 +43,7 @@ class RegisterController extends Controller
          $var = DB::table('students')->latest()->first();
          $unique_id = '';
          
-         if(date('Ym') == substr($var->unique_id, 0, 6))
+         if( $var && date('Ym') == substr($var->unique_id, 0, 6))
          {
             $unique_id = (string)date('Ym') . str_pad(ltrim(substr($var->unique_id, 7) + 1, '0'), 4, '0', STR_PAD_LEFT);
          } else {
@@ -50,7 +51,6 @@ class RegisterController extends Controller
          } 
 
 
-         // return $unique_id;
 
          $credentials = [
             'is_active' => 1,
@@ -138,7 +138,7 @@ class RegisterController extends Controller
             'religion' => 'string|required',
             'place_birth' => 'string|required',
             'date_birth' => 'date|required',
-            'id_or_passport' => 'string|required|min:15|max:16|unique:students',
+            'id_or_passport' => 'string|required|min:9|max:16|unique:students',
             'nationality' => 'string|required|min:3',
             'place_of_issue' => 'nullable|string',
             'date_exp' => 'nullable|date',

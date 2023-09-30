@@ -147,8 +147,8 @@ $(document).ready(function () {
                   accepts: {
                       mycustomtype: 'application/x-some-custom-type'
                   },
-                  url: `/admin/teachers/${value}`,
-                  type: "delete",
+                  url: `/admin/teachers/deactivated/${value}`,
+                  type: "put",
                   cache: false,
                   data: {
                       "id": value,

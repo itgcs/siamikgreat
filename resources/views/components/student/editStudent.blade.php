@@ -95,7 +95,7 @@
                                                 # code...
                                                 if( (int)$selectedId === (int)$value->id)
                                                 {
-                                                   $selectedName = $value->name;
+                                                   $selectedName = $value->name .' - '. $value->class;
                                                 }
 
                                                 else {
@@ -112,7 +112,7 @@
 
                                                 @foreach($option as $value)
 
-                                                   <option value="{{$value->id}}">{{$value->name}}</option>
+                                                   <option value="{{$value->id}}">{{$value->name. ' - ' .$value->class}}</option>
 
                                                 @endforeach
                                                 

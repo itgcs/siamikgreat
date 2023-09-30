@@ -15,17 +15,20 @@ class GradeSeeder extends Seeder
    {
       DB::table('grades')->insert([
          [
-            'name' => 'Junior High School - A',
+            'name' => 'Junior High School',
+            'class' => 'A',
             'teacher_id' => 1,
             'created_at' => date("Y-m-d"),
          ],
          [
-            'name' => 'Junior High School - B',
+            'name' => 'Junior High School',
+            'class' => 'B',
             'teacher_id' => 2,
             'created_at' => date("Y-m-d"),
          ],
          [
-            'name' => 'Junior High School - C',
+            'name' => 'Junior High School',
+            'class' => 'C',
             'teacher_id' => 3,
             'created_at' => date("Y-m-d"),
          ],

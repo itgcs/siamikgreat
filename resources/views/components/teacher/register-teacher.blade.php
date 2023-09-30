@@ -11,7 +11,7 @@
                         @csrf
                         <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Student</h3>
+                                <h3 class="card-title">Teacher</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
@@ -26,11 +26,11 @@
                                         @endif
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="nuptk">NUPTK<span style="color: red">*</span></label>
-                                        <input name="nuptk" type="text" class="form-control" id="nuptk"
-                                            placeholder="Enter name" value="{{old('nuptk')}}" required>
+                                        <label for="nik">NIK/Passport<span style="color: red">*</span></label>
+                                        <input name="nik" type="text" class="form-control" id="nik"
+                                            placeholder="Enter nik/passport" value="{{old('nik')}}" required>
                                         @if($errors->any())
-                                        <p style="color: red">{{$errors->first('nuptk')}}</p>
+                                        <p style="color: red">{{$errors->first('nik')}}</p>
                                         @endif
                                     </div>
                                 </div>
@@ -98,60 +98,144 @@
                                     </div>
                                 </div>
                                 <br>
-
                                 <div class="form-group row">
-                                    <div class="col-md-4">
-                                        <label for="nationality">Nationality<span style="color: red">*</span></label>
-                                        <input name="nationality" type="text" class="form-control" id="nationality"
-                                            placeholder="Enter city" value="{{old('nationality')}}" required>
+                                 <div class="col-md-6">
+                                     <label for="nationality">Nationality<span style="color: red">*</span></label>
+                                     <input name="nationality" type="text" class="form-control" id="nationality"
+                                         placeholder="Enter country" value="{{old('nationality')}}" required>
+                                     @if($errors->any())
+                                     <p style="color: red">{{$errors->first('nationality')}}</p>
+                                     @endif
+                                 </div>
+                                <div class="col-md-6">
+                                   <div class="form-group">
+                                      <label>Religion<span style="color: red">*</span></label>
+                                      <select name="religion" class="form-control" required>
+
+                                            @php
+                                            $arrReligion = array('Islam', 'Protestant Christianity', 'Catholic
+                                            Christianity', 'Hinduism', 'Buddhism', 'Confucianism', 'Others');
+                                            @endphp
+
+                                            <option selected {{ old('religion')? '' : 'disabled'}}>
+                                                  {{ old('religion')? old('religion') : '--- Please Select One ---'}}
+                                            </option>
+
+                                            @if (old('religion'))
+
+                                            @foreach($arrReligion as $religion)
+
+                                            @if (old('religion') !== $religion)
+                                            <option>{{$religion}}</option>
+                                            @endif
+
+                                            @endforeach
+                                            @else
+                                            @foreach($arrReligion as $religion)
+                                            <option>{{$religion}}</option>
+                                            @endforeach
+                                            @endif
+                                        </select>
                                         @if($errors->any())
-                                        <p style="color: red">{{$errors->first('nationality')}}</p>
+                                        <p style="color: red">{{$errors->first('religion')}}</p>
                                         @endif
                                     </div>
-                                    <div class="col-md-4">
-                                       <label for="home_address">Home Address<span style="color: red">*</span></label>
-                                       <input name="home_address" type="text" class="form-control" id="home_address"
-                                           placeholder="Enter ID/Passport" value="{{old('home_address')}}" required>
-                                       @if($errors->any())
-                                       <p style="color: red">{{$errors->first('home_address')}}</p>
-                                       @endif
-                                   </div>
-                                   <div class="col-md-4">
-                                      <div class="form-group">
-                                         <label>Religion<span style="color: red">*</span></label>
-                                         <select name="religion" class="form-control" required>
+                                 </div>
+                              </div>
+
+                                <div class="form-group row">
+                                    
+                                   <div class="col-md-6">
+                                         <label>Last Education<span style="color: red">*</span></label>
+                                         <select name="last_education" class="form-control" required>
 
                                                @php
-                                               $arrReligion = array('Islam', 'Protestant Christianity', 'Catholic
-                                               Christianity', 'Hinduism', 'Buddhism', 'Confucianism', 'Others');
+                                               $arrLast_education = array('Senior High School', 'Vocational School', 'Bachelor`s Degree', 'Master Degree', 'Doctoral Degree ', 'Others');
                                                @endphp
 
-                                               <option selected {{ old('religion')? '' : 'disabled'}}>
-                                                     {{ old('religion')? old('religion') : '--- Please Select One ---'}}
+                                               <option selected {{ old('last_education')? '' : 'disabled'}}>
+                                                     {{ old('last_education')? old('last_education') : '--- Please Select One ---'}}
                                                </option>
 
-                                               @if (old('religion'))
+                                               @if (old('last_education'))
 
-                                               @foreach($arrReligion as $religion)
+                                               @foreach($arrLast_education as $last_education)
 
-                                               @if (old('religion') !== $religion)
-                                               <option>{{$religion}}</option>
+                                               @if (old('last_education') !== $last_education)
+                                               <option>{{$last_education}}</option>
                                                @endif
 
                                                @endforeach
                                                @else
-                                               @foreach($arrReligion as $religion)
-                                               <option>{{$religion}}</option>
+                                               @foreach($arrLast_education as $last_education)
+                                               <option>{{$last_education}}</option>
                                                @endforeach
                                                @endif
                                            </select>
                                            @if($errors->any())
-                                           <p style="color: red">{{$errors->first('religion')}}</p>
+                                           <p style="color: red">{{$errors->first('last_education')}}</p>
                                            @endif
-                                       </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                       <label for="major">Major<span style="color: red">*</span></label>
+                                       <input name="major" type="text" class="form-control" id="major"
+                                           placeholder="Enter teacher major" value="{{old('major')}}" required>
+                                       @if($errors->any())
+                                       <p style="color: red">{{$errors->first('major')}}</p>
+                                       @endif
+                                   </div>
+                                 </div>
+
+                              <div class="form-group row">
+                                    
+                                    <div class="col-md-6">
+                                     <label for="handphone">Mobilephone<span style="color: red">*</span></label>
+                                     <input name="handphone" type="text" class="form-control"
+                                     id="handphone" placeholder="Enter mobilephone" required value="{{old('handphone')}}">
+ 
+                                     @if($errors->any())
+                                                 <p style="color: red">{{$errors->first('handphone')}}</p>
+                                     @endif
+                                  </div>
+                                  
+                                  <div class="col-md-6">
+                                       <label for="email">Email<span style="color: red">*</span></label>
+                                     <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        </div>
+                                        <input name="email" type="email" class="form-control" placeholder="Enter father's email" value="{{old('email')}}" required>
+ 
+                                        @if($errors->any())
+                                                 <p style="color: red">{{$errors->first('email')}}</p>
+                                        @endif
+                                      </div>
+                                    </div>
+                                </div>
+
+                                 
+
+                                 <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label for="home_address">Home Address<span style="color: red">*</span></label>
+
+                                            <textarea required name="home_address" class="form-control" id="" cols="10" rows="3">{{old('home_address')}}</textarea>
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('home_address')}}</p>
+                                        @endif
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="temporary_address">Temporary Address<span style="color: red">*</span></label>
+
+                                            <textarea required name="temporary_address" class="form-control" id="" cols="10" rows="3">{{old('temporary_address')}}</textarea>
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('temporary_address')}}</p>
+                                        @endif
                                     </div>
                                  </div>
                               </div>
+                              
                         </div>
                         <!-- /.card-body students -->
 

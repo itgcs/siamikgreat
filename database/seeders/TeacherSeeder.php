@@ -67,7 +67,7 @@ class TeacherSeeder extends Seeder
             'created_at' => date("Y-m-d"),
          ],
          [
-            'is_active' => 0,
+            'is_active' => 1,
             'unique_id' => date('Ym') . '0003',
             'name' => 'Kurniawan',
             'nik' => '1234567890123454',

@@ -20,7 +20,7 @@ class StudentController extends Controller
 
       try {
          //code...
-         session()->flash('page', 'data');
+         session()->flash('page', 'database student');
          session()->flash('preloader', false);
 
          $form = (object) [
@@ -61,7 +61,7 @@ class StudentController extends Controller
    public function detail($id){
       try {
          session()->flash('preloader', true);
-         session()->flash('page', 'data');
+         session()->flash('page', 'Database student');
          //code...
          $student = Student::with(['relationship', 'grade'])->where('unique_id', $id)->first();
          
@@ -93,11 +93,11 @@ class StudentController extends Controller
    {
       try {
          session()->flash('preloader', true);
-         session()->flash('page', 'data');
+         session()->flash('page', 'Database student');
          
          $student = Student::with(['relationship', 'grade'])->where('unique_id', $id)->first();
          $brotherOrSister = Student::find($student->id);
-         $allGrade = Grade::orderBy('id', 'desc')->get();
+         $allGrade = Grade::orderBy('id', 'asc')->get();
          
          $data = (object) [
             'student' => $student,
@@ -120,7 +120,9 @@ class StudentController extends Controller
 
       DB::beginTransaction();
       try {
+
          $date_format = new RegisterController();   
+         $student_unique_id = Student::where('id', $id)->first()->unique_id;
          //code...
          $credentials = [
             'name' => $request->studentName,
@@ -278,14 +280,13 @@ class StudentController extends Controller
          ]);
 
          $dataId = Student::where('id_or_passport', $rules['id_or_passport'])->first();
-         $user = Auth::user();
          if($dataId)
          {
             
             if((int)$dataId->id !== (int)$id) 
             {
                DB::rollBack();
-               return redirect('/admin/update/' . $id)->withErrors(['id_or_passport' => 'Id or passport has been registered'])->withInput($rules);
+               return redirect('/admin/update/' . $student_unique_id)->withErrors(['id_or_passport' => 'Id or passport has been registered'])->withInput($rules);
             }
          }
 
@@ -293,7 +294,7 @@ class StudentController extends Controller
          {
             DB::rollBack();
             // return $validator->messages();
-            return redirect('/admin/update/' . $id)->withErrors($validator->messages())->withInput($rules);
+            return redirect('/admin/update/' . $student_unique_id)->withErrors($validator->messages())->withInput($rules);
          }
 
 
@@ -323,7 +324,7 @@ class StudentController extends Controller
          
       } catch (Exception $err) {
          DB::rollBack();
-         return dd($err);
+         return abort(500, 'Internal server error !!!');
       }
    }
 

@@ -3,7 +3,8 @@
 use App\Http\Controllers\Admin\{
    AdminController,
    DashboardController,
-   RegisterController,
+    GradeController,
+    RegisterController,
    StudentController,
    TeacherController,
 };
@@ -61,6 +62,26 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::get('/change-password', [AdminController::class, 'changeMyPassword']);
       Route::put('/change-password', [AdminController::class, 'actionChangeMyPassword']);
    });
+
+
+   Route::prefix('/teachers')->group(function () {
+
+      Route::get('/', [TeacherController::class, 'index']);
+      Route::post('/', [TeacherController::class, 'actionPost'])->name('actionRegisterTeacher');
+      Route::put('/{id}', [TeacherController::class, 'actionEdit'])->name('actionUpdateTeacher');
+      Route::get('/register', [TeacherController::class, 'pagePost']);
+      Route::get('/{id}', [TeacherController::class, 'editPage']);
+      Route::get('/detail/{id}', [TeacherController::class, 'getById']);
+   });
+
+   Route::prefix('/grades')->group(function () {
+      Route::get('/', [GradeController::class, 'index']);
+      Route::get('/create', [GradeController::class, 'pageCreate']);
+      Route::get('/{id}', [GradeController::class, 'detailGrade']);
+      Route::get('/edit/{id}', [GradeController::class, 'pageEdit']);
+      Route::post('/', [GradeController::class, 'actionPost'])->name('actionCreateGrade');
+      Route::put('/{id}', [GradeController::class, 'actionPut'])->name('actionUpdateGrade');
+   });
 });
 
 Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
@@ -79,15 +100,14 @@ Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
       Route::delete('{id}', [SuperAdminController::class, 'deleteUser']);
    });
 
+   Route::prefix('/grades')->group(function () {
+      Route::get('/promotions/{id}', [GradeController::class, 'pagePromotion']);
+      Route::put('/promotions/post/action', [GradeController::class, 'actionPromotion'])->name('actionPromotion');
+   });
+
    Route::prefix('/teachers')->group(function () {
 
-      Route::get('/', [TeacherController::class, 'index']);
-      Route::post('/', [TeacherController::class, 'actionPost'])->name('actionRegisterTeacher');
-      Route::put('/{id}', [TeacherController::class, 'actionEdit'])->name('actionUpdateTeacher');
-      Route::get('/register', [TeacherController::class, 'pagePost']);
-      Route::get('/{id}', [TeacherController::class, 'editPage']);
-      Route::get('/detail/{id}', [TeacherController::class, 'getById']);
-      Route::delete('/{id}', [TeacherController::class, 'destroy']);
+      Route::put('/deactivated/{id}', [TeacherController::class, 'deactivated']);
    });
 
 });

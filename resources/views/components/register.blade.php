@@ -88,7 +88,7 @@
                                                       {
                                                          if($el->id == old('grade_id'))
                                                          {
-                                                            $selectedName = $el->name;
+                                                            $selectedName = $el->name . ' - ' . $el->class;
                                                          }
                                                       }
                                                    }
@@ -101,14 +101,14 @@
                                                    @foreach($grade as $value)
                                                      
                                                         @if (old('grade_id') != $value->id)
-                                                           <option value="{{$value->id}}">{{$value->name}}</option>
+                                                           <option value="{{$value->id}}">{{$value->name . ' - ' . $value->class}}</option>
                                                         @endif
                                                
                                                      @endforeach
                                                 @else
                                                 @foreach($grade as $value)
                                              
-                                                   <option value="{{$value->id}}">{{$value->name}}</option>
+                                                   <option value="{{$value->id}}">{{$value->name . ' - ' . $value->class}}</option>
                                                 @endforeach
                                                @endif
                                            </select>

@@ -28,7 +28,7 @@
            </a>
          </li>
          <li class="nav-item">
-           <a href="/admin/list" class="nav-link {{session('page') == 'data' ? 'active' : ''}}">
+           <a href="/admin/list" class="nav-link {{session('page') == 'database student' ? 'active' : ''}}">
              <i class="far fa-circle nav-icon"></i>  
              {{-- <i class="fa-regular fa-database"></i> --}}
              <p>Data</p>
@@ -42,7 +42,7 @@
          {{-- <i class="nav-icon fa-solid fa-chalkboard-user"></i> --}}
          <p>
            Teachers
-           <i class="fas fa-angle-left right"></i>
+           <i class="fas fa-angle-left right" {{session('page') == 'database teacher' ? 'active' : ''}}></i>
          </p>
        </a>
        <ul class="nav nav-treeview">
@@ -98,17 +98,17 @@
      </li>
      <li class="nav-item">
        <a href="#" class="nav-link">
-         <i class="nav-icon fas fa-chart-pie"></i>
+         <i class="nav-icon fa-solid fa-house-flag"></i>
          <p>
-           Charts
+           Grades
            <i class="right fas fa-angle-left"></i>
          </p>
        </a>
        <ul class="nav nav-treeview">
          <li class="nav-item">
-           <a href="pages/charts/chartjs.html" class="nav-link">
+           <a href="/admin/grades" class="nav-link">
              <i class="far fa-circle nav-icon"></i>
-             <p>ChartJS</p>
+             <p>Data</p>
            </a>
          </li>
          <li class="nav-item">
@@ -558,6 +558,7 @@
          <p>Change my password</p>
        </a>
      </li>
+     
      
      <li class="nav-header">EXIT</li>
      <li class="nav-item">

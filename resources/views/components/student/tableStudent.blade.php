@@ -32,7 +32,7 @@
 
                                     @endphp
 
-                                 <label>Sort: <span style="color: red"></span></label>
+                                 <label>Sort order: <span style="color: red"></span></label>
                                  <select name="sort" class="form-control">
                                      <option value="desc" {{$selected === 'desc' ? 'selected' : ''}}>Descending</option>
                                      <option value="asc" {{$selected === 'asc' ? 'selected' : ''}}>Ascending</option>
@@ -48,11 +48,12 @@
 
                                  @endphp
 
-                                   <label>Sort By:</label>
+                                   <label>Sort by:</label>
                                     <select name="order" class="form-control">
                                           <option {{$selected === 'created_at'? 'selected' : ''}} value="created_at">Register</option>
                                           <option {{$selected === 'name'? 'selected' : ''}} value="name">Name</option>
                                           <option {{$selected === 'grade_id'? 'selected' : ''}} value="grade_id">Grade</option>
+                                          <option {{$selected === 'gender'? 'selected' : ''}} value="gender">Gender</option>
                                           <option {{$selected === 'place_birth'? 'selected' : ''}} value="place_birth">Place Birth</option>
                                           <option {{$selected === 'status'? 'selected' : ''}} value="status">Status</option>
                                     </select>
@@ -61,7 +62,7 @@
                            </div>
                            <div class="col-2">
                                <div class="form-group">
-                                 <label>Sort: <span style="color: red"></span></label>
+                                 <label>Status: <span style="color: red"></span></label>
 
                                  @php
                                     
@@ -91,7 +92,7 @@
                </div>
            </form >
 
-           <div class="card mt-5">
+            <div class="card mt-5">
             <div class="card-header">
               <h3 class="card-title">Student</h3>
     
@@ -164,7 +165,7 @@
                            </a>
                         </td>
                         <td>
-                           3
+                           {{$el->grade->class}}
                         </td>
                         <td class="project-state">
                            @if($el->is_active)
@@ -199,7 +200,7 @@
               </table>
             </div>
             <!-- /.card-body -->
-          </div>
+            </div>
          </div>
          
          @include('components.super.delete-student')

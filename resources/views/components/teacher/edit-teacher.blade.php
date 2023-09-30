@@ -27,11 +27,11 @@
                                         @endif
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="nuptk">NUPTK<span style="color: red">*</span></label>
-                                        <input name="nuptk" type="text" class="form-control" id="nuptk"
-                                            placeholder="Enter name" value="{{old('nuptk')? old('nuptk') : $data->nuptk}}" required>
+                                        <label for="nik">NIK/Passport<span style="color: red">*</span></label>
+                                        <input name="nik" type="text" class="form-control" id="nik"
+                                            placeholder="Enter NIK/Passport" value="{{old('nik')? old('nik') : $data->nik}}" required>
                                         @if($errors->any())
-                                        <p style="color: red">{{$errors->first('nuptk')}}</p>
+                                        <p style="color: red">{{$errors->first('nik')}}</p>
                                         @endif
                                     </div>
                                 </div>
@@ -46,7 +46,7 @@
                                                 @endphp
 
                                                 <option selected>
-                                                    {{ $gender }}
+                                                   {{ $gender }}
                                                 </option>
 
                                                 @if ($gender)
@@ -102,23 +102,15 @@
                                 <br>
 
                                 <div class="form-group row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <label for="nationality">Nationality<span style="color: red">*</span></label>
                                         <input name="nationality" type="text" class="form-control" id="nationality"
-                                            placeholder="Enter city" value="{{old('nationality') ? old('nationality') : $data->nationality}}" required>
+                                            placeholder="Enter nationality" value="{{old('nationality') ? old('nationality') : $data->nationality}}" required>
                                         @if($errors->any())
                                         <p style="color: red">{{$errors->first('nationality')}}</p>
                                         @endif
                                     </div>
-                                    <div class="col-md-4">
-                                       <label for="home_address">Home Address<span style="color: red">*</span></label>
-                                       <input name="home_address" type="text" class="form-control" id="home_address"
-                                           placeholder="Home Address" value="{{old('home_address') ? old('home_address') : $data->home_address}}" required>
-                                       @if($errors->any())
-                                       <p style="color: red">{{$errors->first('home_address')}}</p>
-                                       @endif
-                                   </div>
-                                   <div class="col-md-4">
+                                   <div class="col-md-6">
                                       <div class="form-group">
                                          <label>Religion<span style="color: red">*</span></label>
                                          <select name="religion" class="form-control" required>
@@ -155,6 +147,96 @@
                                        </div>
                                     </div>
                                  </div>
+
+                                 <div class="form-group row">
+                                    
+                                    <div class="col-md-6">
+                                       <label>Last Education<span style="color: red">*</span></label>
+                                       <select name="last_education" class="form-control" required>
+
+                                             @php
+                                                $last_education = old('last_education')? old('last_education') : $data->last_education;
+                                                $arrLast_education = array('Senior High School', 'Vocational School', 'Bachelor`s Degree', 'Master Degree', 'Doctoral Degree ', 'Others');
+                                             @endphp
+
+                                             <option selected>
+                                                   {{$last_education}}
+                                             </option>
+
+                              
+
+                                             @foreach($arrLast_education as $value)
+
+                                             @if ($last_education !== $value)
+                                             <option>{{$value}}</option>
+                                             @endif
+
+                                             @endforeach
+                                          </select>
+                                             @if($errors->any())
+                                             <p style="color: red">{{$errors->first('last_education')}}</p>
+                                             @endif
+                                       </div>
+                                  
+                                       <div class="col-md-6">
+                                          <label for="major">Major<span style="color: red">*</span></label>
+                                          <input name="major" type="text" class="form-control" id="major"
+                                              placeholder="Enter teacher major" value="{{old('major')? old('major') : $data->major}}" required>
+                                          @if($errors->any())
+                                          <p style="color: red">{{$errors->first('major')}}</p>
+                                          @endif
+                                      </div>
+                                </div>
+
+                                 
+
+                                 <div class="form-group row">
+                                    
+                                    <div class="col-md-6">
+                                     <label for="handphone">Mobilephone<span style="color: red">*</span></label>
+                                     <input name="handphone" type="text" class="form-control"
+                                     id="handphone" placeholder="Enter mobilephone" required value="{{old('handphone')? old('handphone') : $data->handphone}}">
+ 
+                                     @if($errors->any())
+                                                 <p style="color: red">{{$errors->first('handphone')}}</p>
+                                     @endif
+                                  </div>
+                                  
+                                  <div class="col-md-6">
+                                       <label for="email">Email<span style="color: red">*</span></label>
+                                     <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        </div>
+                                        <input name="email" type="email" class="form-control" placeholder="Enter father's email" value="{{old('email')? old('email') : $data->email}}" required>
+ 
+                                        @if($errors->any())
+                                                 <p style="color: red">{{$errors->first('email')}}</p>
+                                        @endif
+                                      </div>
+                                    </div>
+                                </div>
+
+
+                                 <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label for="home_address">Home Address<span style="color: red">*</span></label>
+
+                                            <textarea required name="home_address" class="form-control" id="" cols="10" rows="3">{{old('home_address') ? old('home_address') : $data->home_address}}</textarea>
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('home_address')}}</p>
+                                        @endif
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="temporary_address">Temporary Address<span style="color: red">*</span></label>
+
+                                            <textarea required name="temporary_address" class="form-control" id="" cols="10" rows="3">{{old('temporary_address') ? old('temporary_address') : $data->temporary_address}}</textarea>
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('temporary_address')}}</p>
+                                        @endif
+                                    </div>
+                                 </div>
+                              </div>
                               </div>
                         </div>
                         <!-- /.card-body students -->

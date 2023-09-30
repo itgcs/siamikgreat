@@ -20,11 +20,11 @@ class Grade extends Model
 
     public function teacher()
     {
-      $this->hasOne(Teacher::class, 'teacher_id');
+      return $this->belongsTo(Teacher::class, 'teacher_id');
     }
 
     public function student()
     {
-      $this->hasMany(Student::class, 'grade_id');
+      return $this->hasMany(Student::class);
     }
 }

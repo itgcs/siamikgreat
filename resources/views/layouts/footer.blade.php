@@ -1,5 +1,5 @@
 <footer class="main-footer">
-   <strong>Copyright &copy; 2023 <a href="https://adminlte.io">Great Crystal School</a>.</strong>
+   <strong>Copyright &copy; 2023 <a href="https://great.sch.id/">Great Crystal School</a>.</strong>
    All rights reserved.
    <div class="float-right d-none d-sm-inline-block">
      <b>Version</b> 3.2.0
@@ -77,12 +77,12 @@
 <script>
    $(function () {
      //Initialize Select2 Elements
-     $('.select2').select2()
+   //   $('.select2').select2()
  
-     //Initialize Select2 Elements
-     $('.select2bs4').select2({
-       theme: 'bootstrap4'
-     })
+   //   //Initialize Select2 Elements
+   //   $('.select2bs4').select2({
+   //     theme: 'bootstrap4'
+   //   })
  
      //Datemask dd/mm/yyyy
      $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })

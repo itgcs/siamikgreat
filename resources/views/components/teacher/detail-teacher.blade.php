@@ -57,10 +57,34 @@
                 <hr>
                 <div class="row">
                   <div class="col-sm-4">
-                    <p class="mb-0">Id or Passport</p>
+                    <p class="mb-0">Unique ID</p>
                   </div>
                   <div class="col-sm-8">
-                    <p class="text-muted mb-0">{{$data->nuptk}}</p>
+                    <p class="text-muted mb-0">{{$data->unique_id}}</p>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <p class="mb-0">NIK or Passport</p>
+                  </div>
+                  <div class="col-sm-8">
+                    <p class="text-muted mb-0">{{$data->nik}}</p>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <p class="mb-0">Status</p>
+                  </div>
+                  <div class="col-sm-8">
+                     <p class="text-muted mb-0">
+                        @if($data->is_active)
+                           <h1 class="badge badge-success">Active</h1>
+                        @else
+                           <h1 class="badge badge-danger">Inactive</h1>
+                        @endif
+                     </p>
                   </div>
                 </div>
                 <hr>
@@ -109,6 +133,50 @@
                   </div>
                 </div>
                 <hr>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <p class="mb-0">Last Education</p>
+                  </div>
+                  <div class="col-sm-8">
+                    <p class="text-muted mb-0">{{$data->last_education}}</p>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <p class="mb-0">Major</p>
+                  </div>
+                  <div class="col-sm-8">
+                    <p class="text-muted mb-0">{{$data->major}}</p>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <p class="mb-0">Email</p>
+                  </div>
+                  <div class="col-sm-8">
+                    <p class="text-muted mb-0">{{$data->email}}</p>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <p class="mb-0">Mobilephone</p>
+                  </div>
+                  <div class="col-sm-8">
+                    <p class="text-muted mb-0">{{$data->handphone}}</p>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <p class="mb-0">Temporary Address</p>
+                  </div>
+                  <div class="col-sm-8">
+                    <p class="text-muted mb-0">{{$data->temporary_address}}</p>
+                  </div>
+                </div>
               </div>
             </div>
 
