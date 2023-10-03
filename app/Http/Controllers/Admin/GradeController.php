@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Grade;
 use App\Models\Student;
 use App\Models\Teacher;
+use Barryvdh\DomPDF\PDF;
+use Illuminate\Support\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -261,6 +263,27 @@ class GradeController extends Controller
 
       } catch (Exception $err) {
          DB::rollBack();
+         return dd($err);
+      }
+   }
+
+
+   public function pagePDF($id){
+      try {
+
+         
+         $data = Grade::with(['student' => function ($query) {
+               $query->where('is_active', true)->orderBy('name', 'asc');
+         }])->find($id);
+
+         $nameFormatPdf = Carbon::now()->format('YmdHis') . mt_rand(1000, 9999).'_'.date('d-m-Y').'_'.$data->name.'_'.$data->class.'.pdf';
+
+	      $pdf = app('dompdf.wrapper');
+         $pdf->loadView('components.grade.pdf.dom-pdf', ['data' => $data])->setPaper('a4', 'portrait');
+         return $pdf->stream($nameFormatPdf);
+
+      } catch (Exception $err) {
+         
          return dd($err);
       }
    }

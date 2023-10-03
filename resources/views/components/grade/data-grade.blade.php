@@ -37,7 +37,7 @@
                         <th style="width: 20%">
                            Total students
                         </th>
-                        <th style="width: 20%">
+                        <th style="width: 25%">
                         </th>
                     </tr>
                 </thead>
@@ -67,18 +67,25 @@
                         </td>
                         
                         <td class="project-actions text-right toastsDefaultSuccess">
-                           <a class="btn btn-primary btn"
+                           <a class="btn btn-primary btn-sm"
                               href="{{url('/admin/grades') . '/' . $el->id}}">
                               <i class="fas fa-folder">
                               </i>
                               View
                            </a>
-                           <a class="btn btn-info btn"
+                           <a class="btn btn-info btn-sm"
                               href="{{url('/admin/grades') . '/edit/' . $el->id}}">
                               {{-- <i class="fa-solid fa-user-graduate"></i> --}}
                               <i class="fas fa-pencil-alt">
                               </i>
                               Edit
+                           </a>
+                           <a class="btn btn-warning btn-sm"
+                              href="{{url('/admin/grades/payment-grades') . '/' . $el->id}}">
+                              {{-- <i class="fa-solid fa-user-graduate"></i> --}}
+                              <i class="fas fa-pencil-alt">
+                              </i>
+                              Payment
                            </a>
                         </td>
                     </tr>

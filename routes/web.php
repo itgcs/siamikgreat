@@ -3,8 +3,9 @@
 use App\Http\Controllers\Admin\{
    AdminController,
    DashboardController,
-    GradeController,
-    RegisterController,
+   GradeController,
+   PaymentPerGradeController,
+   RegisterController,
    StudentController,
    TeacherController,
 };
@@ -79,9 +80,21 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::get('/create', [GradeController::class, 'pageCreate']);
       Route::get('/{id}', [GradeController::class, 'detailGrade']);
       Route::get('/edit/{id}', [GradeController::class, 'pageEdit']);
+      Route::get('/pdf/{id}', [GradeController::class, 'pagePDF']);
       Route::post('/', [GradeController::class, 'actionPost'])->name('actionCreateGrade');
       Route::put('/{id}', [GradeController::class, 'actionPut'])->name('actionUpdateGrade');
+      
+      Route::prefix('/payment-grades')->group(function() {
+         Route::get('/{id}', [PaymentPerGradeController::class, 'index']);
+         Route::get('/{id}/create', [PaymentPerGradeController::class, 'pageCreate']);
+         Route::get('/{id}/edit', [PaymentPerGradeController::class, 'pageEdit']);
+         Route::post('/{id}/create', [PaymentPerGradeController::class, 'actionCreate'])->name('create.paymentGrade');
+         Route::put('/{id}/edit', [PaymentPerGradeController::class, 'actionEdit'])->name('edit.paymentGrade');
+         Route::delete('/{id}', [PaymentPerGradeController::class, 'deletePayment']);
+      });
    });
+
+
 });
 
 Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {

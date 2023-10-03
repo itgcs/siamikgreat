@@ -33,7 +33,7 @@
                   <i class="fa-solid fa-graduation-cap fa-beat-fade" style="color: #ffffff;"></i>
                   Promotion
                </a>
-                <a href="{{url('/admin/grades/promotions') . '/' . $data->gradeTeacher->id}}" role="button" class="w-100 btn btn-warning col-5">
+                <a target="_blank" href="{{url('/admin/grades/pdf') . '/' . $data->gradeTeacher->id}}" role="button" class="w-100 btn btn-warning col-5">
                   <i class="fa-solid fa-file-pdf fa-bounce" style="color: #000000;"></i>
                   PDF
                </a>

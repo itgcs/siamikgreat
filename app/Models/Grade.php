@@ -27,4 +27,9 @@ class Grade extends Model
     {
       return $this->hasMany(Student::class);
     }
+
+    public function paymentPerSemester()
+    {
+      return $this->hasMany(Payment_semester::class);
+    }
 }
