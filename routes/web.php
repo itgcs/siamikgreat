@@ -2,14 +2,15 @@
 
 use App\Http\Controllers\Admin\{
    AdminController,
-   DashboardController,
+    BillController,
+    DashboardController,
    GradeController,
    PaymentPerGradeController,
    RegisterController,
    StudentController,
    TeacherController,
 };
-
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\SuperAdmin\{
    SuperAdminController,
    StudentController as SuperStudentController
@@ -33,6 +34,8 @@ use App\Livewire\Counter;
 Route::get('/', [UserController::class, 'login']);
 Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin');
 Route::get('/counter', Counter::class);
+
+Route::get('send-mail', [MailController::class, 'index']);
 
 Route::middleware(['admin'])->prefix('/admin')->group(function () {
    
@@ -95,6 +98,10 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
    });
 
 
+   Route::prefix('/bills')->group(function() {
+      Route::get('/', [BillController::class, 'index']);
+      Route::get('/create', [BillController::class, 'chooseStudent']);
+   });
 });
 
 Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {

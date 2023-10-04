@@ -22,8 +22,7 @@
                                     <div class="col-md-6">
 
                                        @php
-                                          $gradeExplode = explode('-', $data->name);
-                                          $selected = old('name') ? old('name') : trim($gradeExplode[0], ' ');
+                                          $selected = old('name') ? old('name') : $data->name;
                                        @endphp
 
                                         <label for="name">Grade<span style="color: red">*</span></label>
@@ -40,7 +39,7 @@
                                     <div class="col-md-6">
                                         <label for="class">Class<span style="color: red">*</span></label>
                                         <input name="class" type="text" class="form-control" id="class"
-                                            placeholder="Enter class" value="{{old('class')? old('class') : trim($gradeExplode[1], ' ')}}" required>
+                                            placeholder="Enter class" value="{{old('class')? old('class') : $data->class}}" required>
                                         @if($errors->any())
                                         <p style="color: red">{{$errors->first('class')}}</p>
                                         @endif

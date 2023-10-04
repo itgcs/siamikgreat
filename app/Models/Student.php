@@ -42,4 +42,9 @@ class Student extends Model
     {
        return $this->hasMany(Brothers_or_sister::class, 'student_id');
     }
+
+    public function bill()
+    {
+       return $this->hasMany(Bill::class, 'student_id');
+    }
 }
