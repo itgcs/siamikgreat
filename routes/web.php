@@ -101,6 +101,9 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
    Route::prefix('/bills')->group(function() {
       Route::get('/', [BillController::class, 'index']);
       Route::get('/create', [BillController::class, 'chooseStudent']);
+      Route::get('/create-spp/{id}', [BillController::class, 'pageSPP']);
+      Route::post('/post-spp/{id}', [BillController::class, 'actionSPP'])->name('create.spp');
+      Route::get('/create-payment/{id}', [BillController::class, 'pagePayment']);
    });
 });
 

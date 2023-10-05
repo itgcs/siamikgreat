@@ -32,4 +32,9 @@ class Grade extends Model
     {
       return $this->hasMany(Payment_semester::class);
     }
+
+    public function spp()
+    {
+      return $this->hasOne(Payment_semester::class);
+    }
 }

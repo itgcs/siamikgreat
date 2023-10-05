@@ -165,12 +165,12 @@
                            <b>{{$el->total_bill}}</b>
                         </td>
                           <td class="project-actions text-right toastsDefaultSuccess">
-                           <a class="btn btn-warning" href="#">
+                           <a class="btn btn-warning" href="/admin/bills/create-spp/{{$el->unique_id}}">
                                 <i class="fa-solid fa-calendar-plus"></i>
                               </i>
                               SPP 
                            </a>
-                           <a class="btn btn-primary" href="#">
+                           <a class="btn btn-primary" href="/admin/bills/create-payment/{{$el->unique_id}}">
                                 <i class="fa-regular fa-credit-card"></i>
                               </i>
                               Payment

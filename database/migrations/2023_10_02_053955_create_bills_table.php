@@ -15,9 +15,13 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('student_id');
             $table->foreign('student_id')->references('id')->on('students');
-            $table->string('subject');
-            $table->string('description');
+            $table->string('subject')->nullable();
+            $table->string('description')->nullable();
             $table->bigInteger('amount');
+            $table->boolean('paidOf')->default(false);
+            $table->integer('discount')->nullable()->default(0);
+            $table->date('deadline_invoice')->default(date('Y-m-t'));
+            $table->integer('installment')->nullable();
             $table->timestamps();
         });
     }

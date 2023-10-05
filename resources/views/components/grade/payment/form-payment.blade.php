@@ -65,27 +65,6 @@
     </div>
 </section>
 
-<script>
-    // Mendapatkan elemen input
-    const input = document.getElementById("amount");
 
-    // Menambahkan event listener pada input saat pengguna mengetik
-    input.addEventListener("input", function () {
-        // Mengambil nilai input tanpa tanda titik dan karakter non-angka
-        const rawValue = input.value.replace(/[^0-9]/g, '');
-
-        // Mengubah nilai input dengan menambahkan tanda titik setiap 3 digit
-        const formattedValue = addThousandSeparator(rawValue);
-
-        // Memasukkan nilai yang telah diformat kembali ke dalam input
-        input.value = formattedValue;
-    });
-
-    // Fungsi untuk menambahkan tanda titik sebagai pemisah ribuan
-    function addThousandSeparator(value) {
-        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
-
-</script>
 
 @endsection

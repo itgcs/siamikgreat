@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bill;
+use App\Models\Payment_semester;
 use App\Models\Student;
 use Exception;
 use Illuminate\Http\Request;
@@ -60,6 +61,50 @@ class BillController extends Controller
       } catch (Exception $err) {
          //throw $th;
          return abort(500, 'Internal server error');
+      }
+   }
+
+
+   public function pageSPP($id)
+   {
+      try {
+         //code...
+         $data = Student::with(['grade' => function ($query) {
+            $query->with(['spp' => function ($query2) {
+               $query2->where('type', 'SPP')->first();
+            }])->first();
+         }])->where('unique_id', $id)->first();
+
+         // return $data;
+
+         return view('components.bill.create-spp')->with('data', $data);
+      } catch (Exception $err) {
+         return dd($err);
+      }
+   }
+
+   public function pagePayment($id)
+   {
+      try {
+         
+         return 'Ketrigger';
+
+      } catch (Exception $err) {
+         return dd($err);
+      }
+   }
+
+
+   public function actionSPP(Request $request)
+   {
+      try {
+         //code...
+         return $request->all();
+
+      } catch (Exception $err) {
+         //throw $th;
+         return dd($err);
+         return abort(500);
       }
    }
 }
