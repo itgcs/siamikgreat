@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\Admin\{
    AdminController,
-    BillController,
-    DashboardController,
+   BillController,
+   DashboardController,
    GradeController,
-   PaymentPerGradeController,
+   PaymentGradeController,
    RegisterController,
    StudentController,
    TeacherController,
@@ -88,12 +88,12 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::put('/{id}', [GradeController::class, 'actionPut'])->name('actionUpdateGrade');
       
       Route::prefix('/payment-grades')->group(function() {
-         Route::get('/{id}', [PaymentPerGradeController::class, 'index']);
-         Route::get('/{id}/create', [PaymentPerGradeController::class, 'pageCreate']);
-         Route::get('/{id}/edit', [PaymentPerGradeController::class, 'pageEdit']);
-         Route::post('/{id}/create', [PaymentPerGradeController::class, 'actionCreate'])->name('create.paymentGrade');
-         Route::put('/{id}/edit', [PaymentPerGradeController::class, 'actionEdit'])->name('edit.paymentGrade');
-         Route::delete('/{id}', [PaymentPerGradeController::class, 'deletePayment']);
+         Route::get('/{id}', [PaymentGradeController::class, 'index']);
+         Route::get('/{id}/create', [PaymentGradeController::class, 'pageCreate']);
+         Route::get('/{id}/edit', [PaymentGradeController::class, 'pageEdit']);
+         Route::post('/{id}/create', [PaymentGradeController::class, 'actionCreate'])->name('create.paymentGrade');
+         Route::put('/{id}/edit', [PaymentGradeController::class, 'actionEdit'])->name('edit.paymentGrade');
+         Route::delete('/{id}', [PaymentGradeController::class, 'deletePayment']);
       });
    });
 
@@ -102,6 +102,7 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::get('/', [BillController::class, 'index']);
       Route::get('/create', [BillController::class, 'chooseStudent']);
       Route::get('/create-spp/{id}', [BillController::class, 'pageSPP']);
+      Route::get('/detail-payment/{id}', [BillController::class, 'detailPayment']);
       Route::post('/post-spp/{id}', [BillController::class, 'actionSPP'])->name('create.spp');
       Route::get('/create-payment/{id}', [BillController::class, 'pagePayment']);
    });

@@ -28,13 +28,17 @@ class Grade extends Model
       return $this->hasMany(Student::class);
     }
 
-    public function paymentPerSemester()
+    public function payment_grade()
     {
-      return $this->hasMany(Payment_semester::class);
+      return $this->hasMany(Payment_grade::class);
     }
 
     public function spp()
     {
-      return $this->hasOne(Payment_semester::class);
+      return $this->hasOne(Payment_grade::class);
+    }
+    public function type()
+    {
+      return $this->hasOne(Payment_grade::class);
     }
 }

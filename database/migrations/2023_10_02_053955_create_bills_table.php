@@ -7,16 +7,20 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Run the migrations.\
+     * 
+     * 
      */
     public function up(): void
     {
+         
+        date_default_timezone_set('Asia/Jakarta');
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('student_id');
-            $table->foreign('student_id')->references('id')->on('students');
+            $table->foreign('student_id')->references('id')->on('students')->cascadeOnDelete();
+            $table->string('type');
             $table->string('subject')->nullable();
-            $table->string('description')->nullable();
             $table->bigInteger('amount');
             $table->boolean('paidOf')->default(false);
             $table->integer('discount')->nullable()->default(0);

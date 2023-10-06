@@ -3,22 +3,35 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SppMail;
 use App\Models\Bill;
 use App\Models\Payment_semester;
 use App\Models\Student;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class BillController extends Controller
 {
 
-   public function index()
+   public function index(Request $request)
    {
       try {
          
-         $data = Bill::with('student')->get();
+         $data = Bill::with(['student' => function ($query) {
+               $query->with('grade')->get();
+         }])->orderBy('id', 'desc')->get();
+          
 
-         return view('components.bill.data-bill')->with('data', $data);
+         $form = (object) [
+            'sort' => $request->sort? $request->sort : null,
+            'order' => $request->order? $request->order : null,
+            'status' => $request->status? $request->status : null,
+            'search' => $request->search? $request->search : null,
+         ];
+
+         return view('components.bill.data-bill')->with('data', $data)->with('form', $form);
 
       } catch (Exception $err) {
          //throw $th;
@@ -77,7 +90,7 @@ class BillController extends Controller
 
          // return $data;
 
-         return view('components.bill.create-spp')->with('data', $data);
+         return view('components.bill.spp.create-spp')->with('data', $data);
       } catch (Exception $err) {
          return dd($err);
       }
@@ -95,15 +108,81 @@ class BillController extends Controller
    }
 
 
-   public function actionSPP(Request $request)
+   public function actionSPP(Request $request, $id)
    {
       try {
          //code...
-         return $request->all();
+         $student = Student::with('relationship')->where('id', $id)->first();
+         date_default_timezone_set('Asia/Jakarta');
+         $rules = [
+            'student_id' => $id,
+            'subject' => $request->subject,
+            'description' => $request->description,
+            'amount' => $request->amount ? (int)str_replace(".", "", $request->amount) : null,
+            'discount' => $request->discount ?  (int)$request->discount : null,
+            
+         ];
+
+         $validator = Validator::make($rules, [
+            'subject' => 'nullable|string|min:3',
+            'description' => 'nullable|string|min: 10',
+            'amount' => 'required|integer|min:10000',
+            'discount' => 'nullable|integer|max:99',
+         ]);
+
+         if($validator->fails())
+         {
+            return redirect('/admin/bills/create-spp/'. $student->unique_id)->withErrors($validator->errors())->withInput($rules);
+         }
+
+         Bill::create([
+            'type' => 'SPP',
+            'student_id' => $id,
+            'subject' => $request->subject,
+            'description' => $request->description,
+            'amount' => (int)$request->amount ? (int)str_replace(".", "", $request->amount) : null,
+            'discount' => (int)$request->discount > 0 ?  (int)$request->discount : null,
+            'deadline_invoice' => date('Y-m-d'),
+         ]);   
+
+         $bill = Bill::where('student_id', $student->id)->where('paidOf', false)->get();
+
+         $mailData = [
+            'name' => $student->name,
+            'student' => $student,
+            'bill' => $bill,
+        ];
+         
+         foreach($student->relationship as $el)
+         {
+            Mail::to($el->email)->send(new SppMail($mailData));
+         }
+
+         return redirect('/admin/bills');
 
       } catch (Exception $err) {
          //throw $th;
          return dd($err);
+         return abort(500);
+      }
+   }
+
+
+   public function detailPayment($id)
+   {
+      try {
+         //code...
+
+         $data = Bill::with(['student' => function($query) {
+
+               $query->with('grade')->get();
+
+         }])->where('id', $id)->first();
+
+
+         return view('components.bill.spp.detail-spp')->with('data', $data);
+         
+      } catch (Exception $err) {
          return abort(500);
       }
    }

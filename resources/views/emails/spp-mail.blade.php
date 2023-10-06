@@ -196,16 +196,17 @@
                                                             </tr>
                                                             <tr>
                                                                 @php
-                                                                  date_default_timezone_set('Asia/Jakarta');
-                                                                  $dateString = date('d M Y, H:i:s');
-                                                                  $date = date('d/m/Y');
+                                                                date_default_timezone_set('Asia/Jakarta');
+                                                                $dateString = date('d M Y, H:i:s');
+                                                                $date = date('d/m/Y');
                                                                 @endphp
 
                                                                 <td align="left"
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                                     <div
                                                                         style="font-family:Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
-                                                                        <p style="margin: 0;">Hai, tagihan Anda di GREAT CRYSTAL SCHOOL AND CENTER pada
+                                                                        <p style="margin: 0;">Hai, tagihan untuk
+                                                                            {{$mailData['student']->name}} pada
                                                                             {{$dateString}} telah
                                                                             berhasil dibuat. Mohon selesaikan pembayaran
                                                                             untuk tagihan Anda. </p>
@@ -257,15 +258,33 @@
                                                                                                 </th>
                                                                                                 <th align="right"
                                                                                                     style="padding-bottom: 10px; color: #7e7e7e; font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase;">
-                                                                                                    Receipt #: 234234234
+                                                                                                    Biaya
                                                                                                 </th>
+
+
                                                                                             </tr>
+                                                                                            @php
+
+                                                                                            $total = 0;
+
+                                                                                            @endphp
+
+
+                                                                                            @foreach ($mailData['bill']
+                                                                                            as $item)
+
                                                                                             <tr>
                                                                                                 <td colspan="2"
                                                                                                     style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
+                                                                                                    @php
+                                                                                                    $amount = $item->discount ? $item->amount - $item->amount * $item->discount/100 : $item->amount;
+                                                                                                    $total += $amount;
+                                                                                                    @endphp
                                                                                                     <p
                                                                                                         style="margin: 0;">
-                                                                                                        SPP - Maret 2023 
+                                                                                                        {{$item->type}}
+                                                                                                        -
+                                                                                                        {{date('M Y', strtotime($item->created_at))}}
                                                                                                         {{-- <span
                                                                                                             style="color: #a7a7a7;font-size: 14px;line-height: 14px;">
                                                                                                             × 1 </span> --}}
@@ -274,40 +293,12 @@
                                                                                                 <td align="right"
                                                                                                     valign="top"
                                                                                                     style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
-                                                                                                    IDR. 1.000.000</td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <td colspan="2"
-                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
-                                                                                                    <p
-                                                                                                        style="margin: 0;">
-                                                                                                        SPP - April 2023
-                                                                                                        {{-- <span
-                                                                                                            style="color: #a7a7a7;font-size: 14px;line-height: 14px;">
-                                                                                                            × 3 </span> --}}
-                                                                                                    </p>
+                                                                                                    IDR.
+                                                                                                    {{number_format($amount, 0, ',', '.')}}
                                                                                                 </td>
-                                                                                                <td align="right"
-                                                                                                    valign="top"
-                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
-                                                                                                    IDR. 1.000.000 </td>
                                                                                             </tr>
-                                                                                            <tr>
-                                                                                                <td colspan="2"
-                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
-                                                                                                    <p
-                                                                                                        style="margin: 0;">
-                                                                                                        SPP - May 2023 
-                                                                                                        {{-- <span
-                                                                                                            style="color: #a7a7a7;font-size: 14px;line-height: 14px;">
-                                                                                                            × 1 </span> --}}
-                                                                                                    </p>
-                                                                                                </td>
-                                                                                                <td align="right"
-                                                                                                    valign="top"
-                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
-                                                                                                    IDR. 1.000.000 </td>
-                                                                                            </tr>
+                                                                                            @endforeach
+
                                                                                             <tr>
                                                                                                 <td style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal; border-bottom-width: 1px; border-bottom-color: #EAEEEB; border-bottom-style: solid; padding: 5px 0;"
                                                                                                     colspan="3"></td>
@@ -315,10 +306,12 @@
                                                                                             <tr>
                                                                                                 <td colspan="2"
                                                                                                     style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal; font-weight: bold; padding: 20px 0 0;">
-                                                                                                    Total Pembayaran </td>
+                                                                                                    Total Pembayaran
+                                                                                                </td>
                                                                                                 <td align="right"
                                                                                                     style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal; font-weight: bold; padding: 20px 0 0;">
-                                                                                                    IDR. 3.000.000 </td>
+                                                                                                    IDR. {{number_format($total, 0, ',', '.')}}
+                                                                                                </td>
                                                                                             </tr>
                                                                                         </tbody>
                                                                                     </table>
@@ -376,8 +369,15 @@
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                                     <div
                                                                         style="font-family:Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
-                                                                        <p style="margin: 0;"> Jika Anda memiliki pertanyaan atau memerlukan informasi lebih lanjut tentang pembayaran, Anda bisa email <span style="color: #AC7B4C; text-decoration: none;">ADMIN@GREAT.SCH.ID</span> atau whatsapp <a href="https://wa.me/+6281388284488"
-                                                                                style="color: #AC7B4C; text-decoration: none;">+6281388284488</a> </p>
+                                                                        <p style="margin: 0;"> Jika Anda memiliki
+                                                                            pertanyaan atau memerlukan informasi lebih
+                                                                            lanjut tentang pembayaran, Anda bisa email
+                                                                            <span
+                                                                                style="color: #AC7B4C; text-decoration: none;">ADMIN@GREAT.SCH.ID</span>
+                                                                            atau whatsapp <a
+                                                                                href="https://wa.me/+6281388284488"
+                                                                                style="color: #AC7B4C; text-decoration: none;">+6281388284488</a>
+                                                                        </p>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -405,7 +405,8 @@
                                                         role="presentation" style="vertical-align:top;" width="100%">
                                                         <tbody>
                                                             <tr>
-                                                               <p style="margin: 0; color:red;"> Jatuh Tempo pada {{$date}} </p>
+                                                                <p style="margin: 0; color:red;"> Jatuh Tempo pada
+                                                                    {{$date}} </p>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -439,7 +440,8 @@
                                                 style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                 <div
                                                     style="font-family:Muli, Arial, sans-serif;font-size:14px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
-                                                    © {{date('Y');}} [Great Crystal], JL. RAYA DARMO PERMAI III, PUNCAK PERMAI SQUARE SURABAYA, INDONESIA</div>
+                                                    © {{date('Y');}} [Great Crystal], JL. RAYA DARMO PERMAI III, PUNCAK
+                                                    PERMAI SQUARE SURABAYA, INDONESIA</div>
                                             </td>
                                         </tr>
                                         <tr>

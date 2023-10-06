@@ -34,7 +34,7 @@
                                         <textarea required name="description" class="form-control" id="" cols="10"
                                             rows="3" placeholder="(optional)">{{old('description')}}</textarea>
                                         @if($errors->any())
-                                        <p style="color: red">{{$errors->first('name')}}</p>
+                                        <p style="color: red">{{$errors->first('description')}}</p>
                                         @endif
                                     </div>
                                 </div>

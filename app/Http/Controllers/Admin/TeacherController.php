@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Unique;
 
 class TeacherController extends Controller
 {

@@ -34,7 +34,7 @@
                   Promotion
                </a>
                 <a target="_blank" href="{{url('/admin/grades/pdf') . '/' . $data->gradeTeacher->id}}" role="button" class="w-100 btn btn-warning col-5">
-                  <i class="fa-solid fa-file-pdf fa-bounce" style="color: #000000;"></i>
+                  <i class="fa-solid fa-file-pdf fa-bounce" style="color: #000000;"></i><br>
                   PDF
                </a>
             </div>

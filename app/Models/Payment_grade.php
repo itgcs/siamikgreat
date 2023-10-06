@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Payment_semester extends Model
+class Payment_grade extends Model
 {
    use HasFactory;
 
    protected $fillable =[
       'id',
-      'grade_id',
+      'student_id',
       'type',
       'amount',
       'created_at',	

@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Grade;
-use App\Models\Payment_semester;
+use App\Models\Payment_grade;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class PaymentPerGradeController extends Controller
+class PaymentGradeController extends Controller
 {
    
 
@@ -20,11 +20,11 @@ class PaymentPerGradeController extends Controller
          //code...
          session()->flash('page', 'payment');
 
-         $data = Grade::with(['paymentPerSemester' => function($query) {
+         $data = Grade::with(['payment_grade' => function($query) {
             $query->orderBy('type', 'asc');
          }])->where('id', $id)->first();
 
-         // return $data->payment_per_semester;
+         return $data;
 
          return view('components.grade.payment.data-payment')->with('data', $data);
 
@@ -80,8 +80,8 @@ class PaymentPerGradeController extends Controller
             return redirect('/admin/grades/payment-grades'.'/' . $id . '/'.'create')->withErrors($validator->messages())->withInput($rules);
          }
          
-         Payment_semester::where('type', $rules['type'])->delete();
-         Payment_semester::create($rules);
+         Payment_grade::where('type', $rules['type'])->delete();
+         Payment_grade::create($rules);
 
 
 
@@ -100,7 +100,7 @@ class PaymentPerGradeController extends Controller
       try {
          //code...
 
-         $data = Payment_semester::with('grade')->where('id', $id)->first();
+         $data = Payment_grade::with('grade')->where('id', $id)->first();
 
          return view('components.grade.payment.edit-payment')->with('data', $data);
          
@@ -129,11 +129,11 @@ class PaymentPerGradeController extends Controller
             return redirect('/admin/grades/payment-grades/'. $id .'/edit')->withErrors($validator->messages())->withInput($rules);
          }
          
-         Payment_semester::where('id', $id)->update([
+         Payment_grade::where('id', $id)->update([
             'amount' => $rules['amount']
          ]);
 
-         $data = Payment_semester::where('id', $id)->first();
+         $data = Payment_grade::where('id', $id)->first();
 
          return redirect('/admin/grades/payment-grades' . '/' . $data->grade_id);
 
@@ -147,7 +147,7 @@ class PaymentPerGradeController extends Controller
    {
       try {
          
-         Payment_semester::where('id', $id)->delete();
+         Payment_grade::where('id', $id)->delete();
 
          return response()->json([
             'success' => true,
