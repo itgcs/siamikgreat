@@ -24,7 +24,7 @@ class PaymentGradeController extends Controller
             $query->orderBy('type', 'asc');
          }])->where('id', $id)->first();
 
-         return $data;
+         // return $data;  
 
          return view('components.grade.payment.data-payment')->with('data', $data);
 
@@ -79,9 +79,17 @@ class PaymentGradeController extends Controller
             $rules['amount'] = $backupError;
             return redirect('/admin/grades/payment-grades'.'/' . $id . '/'.'create')->withErrors($validator->messages())->withInput($rules);
          }
+
+         $checkUnique = Payment_grade::where('type', $rules['type'])->where('grade_id', $id)->first();
+
+
+         $checkUnique ? Payment_grade::where('type', $rules['type'])->where('grade_id', $id)->delete() : '';
          
-         Payment_grade::where('type', $rules['type'])->delete();
-         Payment_grade::create($rules);
+         Payment_grade::create([
+            'type' => $request->type,
+            'amount' => (int)str_replace(".", "", $rules['amount']),
+            'grade_id' => $id,
+         ]);
 
 
 

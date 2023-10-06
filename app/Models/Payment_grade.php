@@ -11,7 +11,7 @@ class Payment_grade extends Model
 
    protected $fillable =[
       'id',
-      'student_id',
+      'grade_id',
       'type',
       'amount',
       'created_at',	

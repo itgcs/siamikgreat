@@ -4,7 +4,7 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
-    @if (sizeof($data->paymentPerSemester)<=0) <div class="container h-100">
+    @if (sizeof($data->payment_grade)<=0) <div class="container h-100">
         <div class="row h-100">
             <div class="col-sm-12 my-auto text-center">
                 <h6>Payment data per grade has never been created for <b>{{$data->name}} {{$data->class}}</b>. Click the
@@ -51,7 +51,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data->paymentPerSemester as $el)
+                        @foreach ($data->payment_grade as $el)
                         <tr id={{'index_payment_' . $el->id}}>
                             <td>
                                 {{ $loop->index + 1 }}
