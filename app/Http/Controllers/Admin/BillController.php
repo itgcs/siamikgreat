@@ -240,4 +240,21 @@ class BillController extends Controller
          return dd($err);
       }
    }
+
+   public function cobaCron()
+   {
+      try {
+
+         $data = Bill::with(['student' => function($query) {
+            $query->with('relationship');
+         }])->whereHas('student', function($query){
+            $query->where('is_active', true);
+         })->whereDate('deadline_invoice', '<', date('Y-m-d'))->orderBy('id', 'asc')->get();
+             
+
+         return $data;
+     } catch (Exception $err) {
+         return dd($err);
+     }
+   }
 }

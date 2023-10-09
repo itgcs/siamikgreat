@@ -38,7 +38,7 @@ Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin
 Route::get('/counter', Counter::class);
 
 // Route::get('send-mail', [MailController::class, 'index']);
-Route::get('create-cron', [BillController::class, 'cronCreateSpp']);
+Route::get('create-cron', [BillController::class, 'cobaCron']);
 
 Route::middleware(['admin'])->prefix('/admin')->group(function () {
    

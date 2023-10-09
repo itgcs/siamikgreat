@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreign('student_id')->references('id')->on('students');
             $table->string('type');
             $table->bigInteger('amount');
-            $table->integer('discount');
+            $table->integer('discount')->nullable()->default(0);
+            $table->integer('installment')->nullable();
             $table->timestamps();
         });
     }
