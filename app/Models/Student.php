@@ -47,4 +47,15 @@ class Student extends Model
     {
        return $this->hasMany(Bill::class, 'student_id');
     }
+
+    public function payment_student()
+    {
+       return $this->hasMany(Payment_student::class, 'student_id');
+    }
+
+
+    public function spp_student()
+    {
+       return $this->hasOne(Payment_student::class, 'student_id');
+    }
 }

@@ -81,9 +81,9 @@
        </a>
        <ul class="nav nav-treeview">
          <li class="nav-item">
-           <a href="/admin/bills" class="nav-link">
+           <a href="/admin/payment-students" class="nav-link">
              <i class="far fa-circle nav-icon"></i>
-             <p>Data</p>
+             <p>Students</p>
            </a>
          </li>
        </ul>

@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\SppMail;
 use App\Models\Bill;
-use App\Models\Payment_semester;
 use App\Models\Student;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -184,6 +184,60 @@ class BillController extends Controller
          
       } catch (Exception $err) {
          return abort(500);
+      }
+   }
+
+   public function cronCreateSpp()
+   {
+      DB::beginTransaction();
+
+      try {
+         //code...
+         date_default_timezone_set('Asia/Jakarta');
+         
+         $data = Student::with(['relationship', 'spp_student' => function($query) {
+            $query->where('type', 'SPP')->get();
+         }, 
+         'grade' => function($query) {
+            $query->with(['spp' => function($query) {
+               $query->where('type', 'SPP')->get();
+            }]);
+         }])->where('is_active', true)->orderBy('id', 'asc')->get();
+         
+         foreach($data as $student)
+         {
+            $createBill = Bill::create([
+               'student_id' => $student->id,
+               'type' => 'SPP',
+               'subject' => 'SPP - ' . date('M Y'),
+               'amount' => $student->spp_student? $student->spp_student->amount : $student->grade->spp->amount,
+               'paidOf' => false,
+               'discount' => $student->spp_student ? ($student->spp_student->discount? $student->spp_student->discount : null) : null,
+               'deadline_invoice' => date("Y-m-t", strtotime(now())),
+               'installment' => 0,
+            ]);
+
+            $mailData = [
+               'student' => $student,
+               'bill' => [$createBill],
+            ];
+
+            
+            
+            foreach($student->relationship as $el)
+            {
+               Mail::to($el->email)->send(new SppMail($mailData));
+               
+            }
+
+         }
+         info("Cron Job create spp success at ". date('d-m-Y'), []);
+         DB::commit();
+      } catch (Exception $err) {
+         //throw $th;
+         DB::rollBack();
+         info("Cron Job create spp error: ". $err, []);
+         return dd($err);
       }
    }
 }

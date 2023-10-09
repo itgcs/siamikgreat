@@ -126,34 +126,6 @@
                 </tbody>
             </table>
         </div>
-        <div style="margin:0 auto;max-width:600px;">
-            <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-                <tbody>
-                    <tr style="vertical-align:top;">
-                        <td background="https://leavingtraceshome.files.wordpress.com/2019/02/img_2890.jpg"
-                            style="background:#2a3448 url(https://leavingtraceshome.files.wordpress.com/2019/02/img_2890.jpg) no-repeat center center / cover;background-position:center center;background-repeat:no-repeat;padding:0px;vertical-align:top;"
-                            height="300">
-
-                            <div class="mj-hero-content" style="margin:0px auto;">
-                                <table border="0" cellpadding="0" cellspacing="0" role="presentation"
-                                    style="width:100%;margin:0px;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="">
-                                                <table border="0" cellpadding="0" cellspacing="0" role="presentation"
-                                                    style="width:100%;margin:0px;">
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
 
         <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
             <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
@@ -199,6 +171,7 @@
                                                                 date_default_timezone_set('Asia/Jakarta');
                                                                 $dateString = date('d M Y, H:i:s');
                                                                 $date = date('d/m/Y');
+                                                                $dateInvoice = date('t/m/Y');
                                                                 @endphp
 
                                                                 <td align="left"
@@ -282,12 +255,14 @@
                                                                                                     @endphp
                                                                                                     <p
                                                                                                         style="margin: 0;">
-                                                                                                        {{$item->type}}
+                                                                                                        {{-- {{$item->type}}
                                                                                                         -
-                                                                                                        {{date('M Y', strtotime($item->created_at))}}
+                                                                                                        {{date('M Y', strtotime($item->created_at))}} --}}
                                                                                                         {{-- <span
                                                                                                             style="color: #a7a7a7;font-size: 14px;line-height: 14px;">
                                                                                                             × 1 </span> --}}
+
+                                                                                                         {{$item->subject}}
                                                                                                     </p>
                                                                                                 </td>
                                                                                                 <td align="right"
@@ -331,92 +306,6 @@
                                 </table>
                             </div>
 
-                            <div style="margin:0px auto;max-width:600px;">
-                                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
-                                    style="width:100%;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="direction:ltr;font-size:0px;padding:0;text-align:center;">
-
-                                                <div class="mj-column-per-100 mj-outlook-group-fix"
-                                                    style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                                                    <table border="0" cellpadding="0" cellspacing="0"
-                                                        role="presentation" style="vertical-align:top;" width="100%">
-                                                        <tbody>
-                                                            <tr>
-                                                                <td align="right" vertical-align="middle"
-                                                                    style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                                                    <table border="0" cellpadding="0" cellspacing="0"
-                                                                        role="presentation"
-                                                                        style="border-collapse:separate;line-height:100%;">
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td align="center" bgcolor="#e6b07e"
-                                                                                    role="presentation"
-                                                                                    style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:10px 25px;background:#e6b07e;"
-                                                                                    valign="middle">
-                                                                                    <a href="[LINK]"
-                                                                                        style="display: inline-block; background: #e6b07e; color: white; font-family: Muli, Arial, sans-serif; font-size: 13px; font-weight: 700; line-height: 30px; margin: 0; text-decoration: none; text-transform: none; padding: 10px 25px; mso-padding-alt: 0px; border-radius: 3px;"
-                                                                                        target="_blank"> Pembayaran </a>
-                                                                                </td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td align="left"
-                                                                    style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                                                    <div
-                                                                        style="font-family:Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
-                                                                        <p style="margin: 0;"> Jika Anda memiliki
-                                                                            pertanyaan atau memerlukan informasi lebih
-                                                                            lanjut tentang pembayaran, Anda bisa email
-                                                                            <span
-                                                                                style="color: #AC7B4C; text-decoration: none;">ADMIN@GREAT.SCH.ID</span>
-                                                                            atau whatsapp <a
-                                                                                href="https://wa.me/+6281388284488"
-                                                                                style="color: #AC7B4C; text-decoration: none;">+6281388284488</a>
-                                                                        </p>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div style="margin:0px auto;max-width:600px;">
-                                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
-                                    style="width:100%;">
-                                    <tbody>
-                                        <tr>
-                                            <td
-                                                style="direction:ltr;font-size:0px;padding:20px 0;padding-bottom:0px;padding-top:0px;text-align:center;">
-
-                                                <div class="mj-column-per-100 mj-outlook-group-fix"
-                                                    style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                                                    <table border="0" cellpadding="0" cellspacing="0"
-                                                        role="presentation" style="vertical-align:top;" width="100%">
-                                                        <tbody>
-                                                            <tr>
-                                                                <p style="margin: 0; color:red;"> Jatuh Tempo pada
-                                                                    {{$date}} </p>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
 
                         </td>
                     </tr>
@@ -439,24 +328,30 @@
                                             <td align="center"
                                                 style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                 <div
+                                                   style="font-family:Muli, Arial, sans-serif;font-size:14px;font-weight:400;line-height:20px;text-align:center;color:red;">
+                                                    <b>Invoice deadline pembayaran {{date('d/m/Y', strtotime($mailData['bill'][0]->deadline_invoice))}}</b></div> <br><br>
+                                                
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center"
+                                                style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                <div
+                                                   style="font-family:Muli, Arial, sans-serif;font-size:14px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
+                                                   Untuk melakukan pembayaran silahkan ke rekening <span id="copy-text" style="color:#f08922;">12312312312</span> dengan nama rekening 
+                                                   <span id="copy-text" style="color:#f08922;">Great Crystal School</span> dengan nominal yang sesuai lalu kirim bukti pembayaran ke 
+                                                   <a href="wa.me/+6281388284488">082141311213</a></div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center"
+                                                style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                <div         
                                                     style="font-family:Muli, Arial, sans-serif;font-size:14px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
                                                     © {{date('Y');}} [Great Crystal], JL. RAYA DARMO PERMAI III, PUNCAK
                                                     PERMAI SQUARE SURABAYA, INDONESIA</div>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td align="center"
-                                                style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                                <div
-                                                    style="font-family:Muli, Arial, sans-serif;font-size:14px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
-                                                    Update your <a href="https://google.com"
-                                                        style="color: #AC7B4C; text-decoration: none;">email
-                                                        preferences</a> to choose the types of emails you receive, or
-                                                    you can <a href="https://google.com"
-                                                        style="color: #AC7B4C; text-decoration: none;"> unsubscribe
-                                                    </a>from all future emails.</div>
-                                            </td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -465,37 +360,7 @@
                     </tr>
                 </tbody>
             </table>
-        </div>
-
-        <div style="margin:0px auto;max-width:600px;">
-            <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-                <tbody>
-                    <tr>
-                        <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
-
-                            <div class="mj-column-per-100 mj-outlook-group-fix"
-                                style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                                <table border="0" cellpadding="0" cellspacing="0" role="presentation"
-                                    style="vertical-align:top;" width="100%">
-                                    <tbody>
-                                        <tr>
-                                            <td style="font-size:0px;word-break:break-word;">
-
-                                                <div style="height:1px;">   </div>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
+        </div>\
 
 </body>
 

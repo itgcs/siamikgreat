@@ -6,7 +6,8 @@ use App\Http\Controllers\Admin\{
    DashboardController,
    GradeController,
    PaymentGradeController,
-   RegisterController,
+    PaymentStudentController,
+    RegisterController,
    StudentController,
    TeacherController,
 };
@@ -19,6 +20,7 @@ use App\Http\Controllers\SuperAdmin\{
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Livewire\Counter;
+use Faker\Provider\ar_EG\Payment;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +37,8 @@ Route::get('/', [UserController::class, 'login']);
 Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin');
 Route::get('/counter', Counter::class);
 
-Route::get('send-mail', [MailController::class, 'index']);
+// Route::get('send-mail', [MailController::class, 'index']);
+Route::get('create-cron', [BillController::class, 'cronCreateSpp']);
 
 Route::middleware(['admin'])->prefix('/admin')->group(function () {
    
@@ -95,6 +98,15 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
          Route::put('/{id}/edit', [PaymentGradeController::class, 'actionEdit'])->name('edit.paymentGrade');
          Route::delete('/{id}', [PaymentGradeController::class, 'deletePayment']);
       });
+
+
+   });
+   
+   Route::prefix('/payment-students')->group(function() {
+      Route::get('/', [PaymentStudentController::class, 'index']);
+      Route::get('/create/{id}', [PaymentStudentController::class, 'choosePayment']);
+      Route::get('/create/{id}/{type}', [PaymentStudentController::class, 'createPage']);
+      Route::post('/create/{id}/{type}', [PaymentStudentController::class, 'actionCreatePayment'])->name('create.static.student');
    });
 
 

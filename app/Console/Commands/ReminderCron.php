@@ -23,11 +23,8 @@ class ReminderCron extends Command
     /**
      * Execute the console command.
      */
-    public function handle() : void
+    public function handle()
     {
-         date_default_timezone_set('Asia/Jakarta');
-         info("Cron Job running at ". now());
-
-         
+        info("Reminder Job running at ". now());
     }
 }
