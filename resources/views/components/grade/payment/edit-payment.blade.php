@@ -10,7 +10,7 @@
                 <div>
                     <form method="POST" action={{route('edit.paymentGrade', $data->id)}}>
                         @csrf
-                        @method('PUT');
+                        @method('PUT')
                         <div class="card card-dark">
                             <div class="card-header">
                                 <h3 class="card-title">Edit {{$data->type}} static for {{$data->grade->name}}

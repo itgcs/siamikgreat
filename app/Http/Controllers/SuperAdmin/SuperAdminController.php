@@ -10,14 +10,22 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
+
+
+
 class SuperAdminController extends Controller
 {
    public function index()
    {
+
+      session()->flash('preloader', false);
+         session()->flash('page',  $page = (object)[
+            'page' => 'user',
+            'child' => 'database user',
+         ]);
       try {
          //code...
          session()->flash('preloader', false);
-         session()->flash('page', 'dashboard');
          return view('components.dashboard');
       } catch (Exception $err) {
          
@@ -28,11 +36,18 @@ class SuperAdminController extends Controller
    public function getUser()
    {
       try {
+         session()->flash('preloader', false);
+         session()->flash('page',  $page = (object)[
+            'page' => 'user',
+            'child' => 'database user',
+         ]);
          //code...
          $user = Auth::user();
 
          $data = User::where('id', '!=', '1')->where('id', '!=', $user->id)->get();
          return view('components.super.data-user')->with('data', $data);
+
+         
 
       } catch (Exception $err) {
          
@@ -44,6 +59,11 @@ class SuperAdminController extends Controller
    public function getById($id)
    {
       try {
+         session()->flash('preloader', false);
+         session()->flash('page',  $page = (object)[
+            'page' => 'user',
+            'child' => 'database user',
+         ]);
          //code...
          $user = User::where('id', $id)->first();
          
@@ -59,7 +79,11 @@ class SuperAdminController extends Controller
    {
       try {
          //code...
-         
+         session()->flash('preloader', false);
+         session()->flash('page',  $page = (object)[
+            'page' => 'user',
+            'child' => 'database user',
+         ]);
          $rules = $request->only('password', 'reinputPassword');
          
          $validator = Validator::make($rules, [
@@ -105,7 +129,11 @@ class SuperAdminController extends Controller
    {
       try {
          //code...
-         session()->flash('preloader');
+         session()->flash('preloader', false);
+         session()->flash('page',  $page = (object)[
+            'page' => 'user',
+            'child' => 'database user',
+         ]);
          
          return view('components.super.register-user');
       } catch (Exception $err) {
@@ -118,6 +146,10 @@ class SuperAdminController extends Controller
       try {
          //code...
          session()->flash('preloader');
+         session()->flash('page',  $page = (object)[
+            'page' => 'user',
+            'child' => 'database user',
+         ]);
          $credentials = $request->only(['username', 'password', 'role']);
 
 
@@ -157,6 +189,11 @@ class SuperAdminController extends Controller
    {
       try {
          //code...
+         session()->flash('preloader', false);
+         session()->flash('page',  $page = (object)[
+            'page' => 'user',
+            'child' => 'database user',
+         ]);
 
          if(!User::where('id', $id)->first())
          {

@@ -15,7 +15,10 @@ class StudentController extends Controller
    {
       try {
          //code...
-      
+         session()->flash('page',  $page = (object)[
+            'page' => 'students',
+            'child' => 'database students',
+         ]);
       // session()->flash('preloader', true);
       Student::where('id', $id)->update([
          'is_active' => 0,

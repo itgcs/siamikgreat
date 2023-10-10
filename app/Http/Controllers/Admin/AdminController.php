@@ -16,7 +16,10 @@ class AdminController extends Controller
    {
       try {
          //code...
-         session()->flash('page', 'dashboard');
+         session()->flash('page',  $page = (object)[
+            'page' => 'students',
+            'child' => 'dashboard',
+         ]);
          session()->flash('preloader', true);
          return view('components.dashboard');
       } catch (Exception $err) {
@@ -29,6 +32,10 @@ class AdminController extends Controller
    {
       try {
          //code...
+         session()->flash('page',  $page = (object)[
+            'page' => 'admin',
+            'child' => 'change-password',
+         ]);
          return view('components.change-password');
          
       } catch (Exception $err) {
@@ -42,6 +49,11 @@ class AdminController extends Controller
    {
       try {
          //code...
+
+         session()->flash('page',  $page = (object)[
+            'page' => 'admin',
+            'child' => 'change-password',
+         ]);
          $user = Auth::user();
 
          if(!$user)

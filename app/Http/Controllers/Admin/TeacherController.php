@@ -14,7 +14,10 @@ class TeacherController extends Controller
    public function index(Request $request)
    {
       try {
-         session()->flash('page', 'database teacher');
+         session()->flash('page',  $page = (object)[
+            'page' => 'teachers',
+            'child' => 'database teachers',
+         ]);
          session()->flash('preloader', false);
 
          $form = (object) [
@@ -50,7 +53,10 @@ class TeacherController extends Controller
    public function getById($id)
    {
       try {
-         session()->flash('page', 'database teacher');
+         session()->flash('page',  $page = (object)[
+            'page' => 'teachers',
+            'child' => 'database teachers',
+         ]);
          $data = Teacher::where('unique_id', $id)->first();
          // return view('components.teacher.data-teacher')->with('data', $data);
          return view('components.teacher.detail-teacher')->with('data', $data);
@@ -63,7 +69,10 @@ class TeacherController extends Controller
    {
       try {
 
-         session()->flash('page', 'Register teacher');
+         session()->flash('page',  $page = (object)[
+            'page' => 'teachers',
+            'child' => 'database teachers',
+         ]);
          $data = Teacher::orderBy('id', 'desc')->get();
          return view('components.teacher.register-teacher')->with('data', $data);
 
@@ -144,7 +153,10 @@ class TeacherController extends Controller
    public function editPage($id)
    {
       try {
-         session()->flash('page', 'Edit teacher');
+         session()->flash('page',  $page = (object)[
+            'page' => 'teachers',
+            'child' => 'database teachers',
+         ]);
          $data = Teacher::where('unique_id', $id)->first();
          // return view('components.teacher.data-teacher')->with('data', $data);
          return view('components.teacher.edit-teacher')->with('data', $data);

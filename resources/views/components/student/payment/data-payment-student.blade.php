@@ -16,7 +16,7 @@
 </div>
 
 @else --}}
-<h2 class="text-center display-4">Student Search</h2>
+<h2 class="text-center display-4">SPP Student</h2>
 <form class="mt-5" action="/admin/list">
     <div class="row">
         <div class="col-md-10 offset-md-1">
@@ -136,7 +136,7 @@
                     <th style="width: 8%">
                         Class
                     </th>
-                    <th style="width: 10%">
+                    <th style="width: 15%">
                         Spp
                     </th>
                     <th>
@@ -164,7 +164,11 @@
                      <td>
                            <a>
                                @if($el->spp_student)
-                               <h1 class="badge badge-success">already set</h1>
+                               {{-- <h1 class="badge badge-success">already set</h1> --}}
+                               IDR {{number_format($el->spp_student->amount - $el->spp_student->amount*$el->spp_student->discount/100, 0, ',', '.')}} <br>
+                               @if ($el->spp_student->discount && $el->spp_student->discount>0)
+                                    <small>Discount: {{$el->spp_student->discount}}%</small>
+                               @endif
                                @else
                                <h1 class="badge badge-danger">not set yet</h1>
                                @endif
@@ -174,18 +178,23 @@
                            {{sizeof($el->payment_student)}}
                         </td>
                         <td class="project-actions text-right toastsDefaultSuccess">
+
+                            @if ($el->spp_student)
+                                
+                            <a class="btn btn-primary "
+                                href="/admin/payment-students/detail/{{$el->unique_id}}/SPP">
+                                <i class="fas fa-folder">
+                                </i>
+                                View
+                            </a>
+
+                            @endif
                            <a class="btn btn-success "
                                href="/admin/payment-students/create/{{$el->unique_id}}">
                                <i class="fa-solid fa-plus"></i>
                                </i>
                                  Create
                            </a>
-                            <a class="btn btn-primary "
-                                href="#">
-                                <i class="fas fa-folder">
-                                </i>
-                                 View
-                            </a>
                         </td>
                 </tr>
 

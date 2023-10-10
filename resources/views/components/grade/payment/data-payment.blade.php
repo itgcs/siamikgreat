@@ -9,7 +9,7 @@
             <div class="col-sm-12 my-auto text-center">
                 <h6>Payment data per grade has never been created for <b>{{$data->name}} {{$data->class}}</b>. Click the
                     button below to get started !!!</h6>
-                <a role="button" href="/admin/grades/payment-grades/{{$data->id}}/create" class="btn btn-success mt-4">
+                <a role="button" href="/admin/payment-grades/{{$data->id}}/choose-type" class="btn btn-success mt-4">
                     <i class="fa-solid fa-plus"></i>
                     Create payment
                 </a>
@@ -19,7 +19,7 @@
 
 
         @else
-        <a role="button" href="/admin/grades/payment-grades/{{$data->id}}/create" class="btn btn-success mt-4">
+        <a role="button" href="/admin/payment-grades/{{$data->id}}/choose-type" class="btn btn-success mt-4">
             <i class="fa-solid fa-plus"></i>
             Create payment
         </a>

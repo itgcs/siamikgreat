@@ -14,12 +14,15 @@ class SppMail extends Mailable
     use Queueable, SerializesModels;
 
     public $mailData;
+    public $subject;
+    
     /**
      * Create a new message instance.
      */
-    public function __construct($mailData)
+    public function __construct($mailData, $subject)
     {
         $this->mailData = $mailData;
+        $this->subject = $subject;
     }
 
     /**

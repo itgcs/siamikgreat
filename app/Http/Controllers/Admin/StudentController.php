@@ -20,7 +20,10 @@ class StudentController extends Controller
 
       try {
          //code...
-         session()->flash('page', 'database student');
+         session()->flash('page',  $page = (object)[
+            'page' => 'students',
+            'child' => 'database students',
+         ]);
          session()->flash('preloader', false);
 
          $form = (object) [
@@ -61,7 +64,10 @@ class StudentController extends Controller
    public function detail($id){
       try {
          session()->flash('preloader', true);
-         session()->flash('page', 'Database student');
+         session()->flash('page',  $page = (object)[
+            'page' => 'students',
+            'child' => 'database students',
+         ]);
          //code...
          $student = Student::with(['relationship', 'grade'])->where('unique_id', $id)->first();
          
@@ -93,7 +99,10 @@ class StudentController extends Controller
    {
       try {
          session()->flash('preloader', true);
-         session()->flash('page', 'Database student');
+         session()->flash('page',  $page = (object)[
+            'page' => 'students',
+            'child' => 'database students',
+         ]);
          
          $student = Student::with(['relationship', 'grade'])->where('unique_id', $id)->first();
          $brotherOrSister = Student::find($student->id);

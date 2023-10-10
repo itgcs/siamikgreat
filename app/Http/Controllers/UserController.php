@@ -30,7 +30,10 @@ class UserController extends Controller
       try {
          //code...
          session()->flash('preloader', true);
-
+         session()->flash('page',  $page = (object)[
+            'page' => 'students',
+            'child' => 'dashboard',
+         ]);
          $credentials = $request->only('username', 'password');
 
          $validator = Validator::make($credentials, [

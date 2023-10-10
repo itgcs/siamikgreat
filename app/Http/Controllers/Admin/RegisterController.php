@@ -21,7 +21,10 @@ class RegisterController extends Controller
          //code...
          $grade = Grade::orderBy('id', 'asc')->get();
          session()->flash('preloader', false);
-         session()->flash('page', 'register');
+         session()->flash('page',  $page = (object)[
+            'page' => 'students',
+            'child' => 'register students',
+         ]);
          // return $grade;
          return view('components.register', ['grade'=> $grade]);
       } catch (Exception $err) {
@@ -39,6 +42,10 @@ class RegisterController extends Controller
       try {
          //code...
          session()->flash('preloader', true);
+         session()->flash('page',  $page = (object)[
+            'page' => 'students',
+            'child' => 'register students',
+         ]);
 
          $var = DB::table('students')->latest()->first();
          $unique_id = '';

@@ -153,10 +153,10 @@ class BillController extends Controller
             'bill' => $bill,
         ];
          
-         foreach($student->relationship as $el)
-         {
-            Mail::to($el->email)->send(new SppMail($mailData));
-         }
+         // foreach($student->relationship as $el)
+         // {
+         //    Mail::to($el->email)->send(new SppMail($mailData));
+         // }
 
          return redirect('/admin/bills');
 
@@ -216,20 +216,21 @@ class BillController extends Controller
                'deadline_invoice' => date("Y-m-t", strtotime(now())),
                'installment' => 0,
             ]);
-
+            
             $mailData = [
                'student' => $student,
                'bill' => [$createBill],
+               'past_due' => false,
             ];
-
+            
             
             
             foreach($student->relationship as $el)
             {
-               Mail::to($el->email)->send(new SppMail($mailData));
+               Mail::to($el->email)->send(new SppMail($mailData, "Tagihan SPP " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat"));
                
             }
-
+            
          }
          info("Cron Job create spp success at ". date('d-m-Y'), []);
          DB::commit();
@@ -240,21 +241,38 @@ class BillController extends Controller
          return dd($err);
       }
    }
-
-   public function cobaCron()
+   
+   public function cronReminderPastDue($type)
    {
       try {
-
-         $data = Bill::with(['student' => function($query) {
-            $query->with('relationship');
-         }])->whereHas('student', function($query){
-            $query->where('is_active', true);
-         })->whereDate('deadline_invoice', '<', date('Y-m-d'))->orderBy('id', 'asc')->get();
+         date_default_timezone_set('Asia/Jakarta');
+         
+         $data = Student::with(['bill' => function($query) use ($type){
+            $query->where('type', $type)->get();
+         }, 'relationship'])->whereHas('bill', function($query) {
+            $query->where('paidOf', false)->where('deadline_invoice', '<', date('Y-m-d'));
+         })->where('is_active', true)->get();
              
 
-         return $data;
+         foreach ($data as $value) {
+
+            
+            foreach ($value->relationship as $value2) {
+
+               $mailData = [
+                  'student' => $value,
+                  'bill' => $value->bill,
+                  'past_due' => true,
+               ];
+               
+               Mail::to($value2->email)->send(new SppMail($mailData, "Berikut adalah total tagihan anda yang sudah jatuh tempo"));
+            }
+            
+         }
+         info("Cron Job reminder success at ". date('d-m-Y'));
+         
      } catch (Exception $err) {
-         return dd($err);
+         info("Cron Job reminder Error at: " . $err);
      }
    }
 }

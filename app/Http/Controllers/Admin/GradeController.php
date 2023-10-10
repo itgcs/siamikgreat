@@ -19,7 +19,10 @@ class GradeController extends Controller
    {
       try {
          //code...
-         session()->flash('page', 'Database grade');
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
 
          $data = Grade::with(['teacher'])->withCount(['student as active_student_count' => function ($query) {
             $query->where('is_active', true);
@@ -38,7 +41,10 @@ class GradeController extends Controller
    {
       try {
          //code...
-         session()->flash('page', 'Create grade');
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
          $data = Teacher::orderBy('id', 'ASC')->get();
 
          return view('components.grade.create-grade')->with('data', $data);
@@ -116,7 +122,10 @@ class GradeController extends Controller
          
          // return $data;
 
-         session()->flash('page', 'View ' . $data->gradeTeacher->name . ' - ' . $data->gradeTeacher->class);
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
 
          return view('components.grade.detail-grade')->with('data', $data);
       } catch (Exception $err) {
@@ -131,7 +140,10 @@ class GradeController extends Controller
    {
       try {
          //code...
-         session()->flash('page', 'Create grade');
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
          $teacher = Teacher::orderBy('id', 'asc')->get();
          $data = Grade::where('id', $id)->first();
 
@@ -148,6 +160,11 @@ class GradeController extends Controller
 
       DB::beginTransaction();
       try {
+
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
          
          $gradeName = $request->name ? $request->name . ' - ' . $request->class : null;
 
@@ -191,6 +208,8 @@ class GradeController extends Controller
             'teacher_id' => $request->teacher_id,
          ];
 
+         
+
 
          Grade::where('id', $id)->update($post);
          
@@ -212,6 +231,10 @@ class GradeController extends Controller
          $data = Student::with('grade')->where('grade_id', $id)->orderBy('name', 'asc')->get();
          $grade = Grade::where('id', $id)->first();
          
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
 
          return view('components.grade.promotion.page')->with('data', $data)->with('grade', $grade);
          
@@ -226,6 +249,10 @@ class GradeController extends Controller
       DB::beginTransaction();
       try {
          //code...
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
          
          $promoteId = $request->except(['_token', '_method']);
 
@@ -271,6 +298,10 @@ class GradeController extends Controller
    public function pagePDF($id){
       try {
 
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
          
          $data = Grade::with(['student' => function ($query) {
                $query->where('is_active', true)->orderBy('name', 'asc');

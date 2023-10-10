@@ -14,11 +14,39 @@ class PaymentGradeController extends Controller
 {
    
 
-   public function index($id)
+   public function index()
    {
       try {
          //code...
-         session()->flash('page', 'payment');
+
+         $data = Grade::with(
+            ['spp' => function($query) {
+            $query->where('type', 'SPP')->get();
+         }, 'uniform' => function($query) {
+            $query->where('type', 'Uniform')->get();
+         },'book' => function($query) {
+            $query->where('type', 'Book')->get();
+         },'bundle' => function($query) {
+            $query->where('type', 'Bundle')->get();
+         },])->get();
+
+
+         return view('components.grade.payment.data-grade-payment')->with('data', $data);
+
+      } catch (Exception $err) {
+         return dd($err);
+      }
+   }
+
+
+   public function pageById($id)
+   {
+      try {
+         //code...
+         session()->flash('page',  $page = (object)[
+            'page' => 'payments',
+            'child' => 'database grades',
+         ]);
 
          $data = Grade::with(['payment_grade' => function($query) {
             $query->orderBy('type', 'asc');
@@ -27,23 +55,47 @@ class PaymentGradeController extends Controller
          // return $data;  
 
          return view('components.grade.payment.data-payment')->with('data', $data);
-
+         
          
       } catch (Exception $err) {
          //throw $th;
          return dd($err);
       }
    }
+   
+   public function chooseSection($id)
+   {
+      try {
+         //code...
+         
+         session()->flash('page',  $page = (object)[
+            'page' => 'payments',
+            'child' => 'database grades',
+         ]);
+         
+         $data = Grade::where('id', $id)->first();
+         
+         return view('components.grade.payment.choose-payment')->with('data', $data);
+
+      } catch (Exception $err) {
+         return dd($err);
+      }
+   }
 
 
-   public function pageCreate($id) 
+   public function pageCreate($id, $type) 
    {
       try {
          //code...
 
          $data = Grade::where('id', $id)->first();
 
-         return view('components.grade.payment.form-payment')->with('data', $data);
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
+
+         return view('components.grade.payment.form-payment')->with('data', $data)->with('type', $type);
       } catch (Exception $err) {
          
          return dd($err);
@@ -51,15 +103,20 @@ class PaymentGradeController extends Controller
    }
 
 
-   public function actionCreate(Request $request, $id)
+   public function actionCreate(Request $request, $id, $type)
    {
 
       DB::beginTransaction();
 
       try {
          //code...
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
+
          $rules  = [
-            'type' => $request->type,
+            'type' => $type,
             'amount' => $request->amount,
             'grade_id' => $id,
          ];
@@ -86,7 +143,7 @@ class PaymentGradeController extends Controller
          $checkUnique ? Payment_grade::where('type', $rules['type'])->where('grade_id', $id)->delete() : '';
          
          Payment_grade::create([
-            'type' => $request->type,
+            'type' => $type,
             'amount' => (int)str_replace(".", "", $rules['amount']),
             'grade_id' => $id,
          ]);
@@ -108,6 +165,11 @@ class PaymentGradeController extends Controller
       try {
          //code...
 
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
+
          $data = Payment_grade::with('grade')->where('id', $id)->first();
 
          return view('components.grade.payment.edit-payment')->with('data', $data);
@@ -123,6 +185,11 @@ class PaymentGradeController extends Controller
    public function actionEdit(Request $request, $id){
       try {
          //code...
+
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
 
          $rules = $request->only('amount');
 
@@ -155,6 +222,11 @@ class PaymentGradeController extends Controller
    {
       try {
          
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
+
          Payment_grade::where('id', $id)->delete();
 
          return response()->json([
