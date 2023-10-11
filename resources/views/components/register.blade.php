@@ -9,7 +9,7 @@
                 <div>
                     <form method="POST" action={{route('actionRegister')}}>
                         @csrf
-                        <div class="card card-dark">
+                        <div class="card card-secondary">
                             <div class="card-header">
                                 <h3 class="card-title">Student</h3>
                             </div>
@@ -218,7 +218,7 @@
                         </div>
                         <!-- /.card-body students -->
 
-                        <div class="card card-dark">
+                        <div class="card card-warning">
                            <div class="card-header">
                                <h3 class="card-title">Father's</h3>
                            </div>
@@ -415,7 +415,7 @@
                        <!-- /.card-body father -->
 
 
-                       <div class="card card-dark">
+                       <div class="card card-primary">
                         <div class="card-header">
                             <h3 class="card-title">Mother's</h3>
                         </div>
@@ -606,7 +606,7 @@
                     </div>
                     <!-- /.card-body Mother -->
 
-                    <div class="card card-dark">
+                    <div class="card card-info">
                      <div class="card-header">
                          <h3 class="card-title">Brother's or sister's
                          </h3>
@@ -620,9 +620,9 @@
                               <label for="brotherOrSisterName1">Name</label>
                               <input name="brotherOrSisterName1" type="text" class="form-control"
                               id="brotherOrSisterName1" placeholder="Enter brother's or sister's name" value="{{old('brotherOrSisterName1')}}" >
-                              @if($errors->any())
+                              {{-- @if($errors->any())
                                        <p style="color: red">{{$errors->first('mother_email')}}</p>
-                              @endif
+                              @endif --}}
                            </div>
 
                            <div class="col-md-4">
@@ -765,6 +765,46 @@
                                        id="brotherOrSisterGrade5" placeholder="Enter grade brother's or sister's" value="{{old('brotherOrSisterGrade5')}}" >
                                     </div>
                                  </div>
+                        </div>
+                     </div>
+
+                    <div class="card card-dark">
+                     <div class="card-header">
+                         <h3 class="card-title">Fee register (uang gedung)
+                         </h3>
+                     </div>
+                     <!-- /.card-header -->
+                     <!-- form start -->
+                     <div class="card-body">
+                         <div class="form-group row">
+
+                           <div class="col-md-8">
+                              <label for="amount">Amount <span style="color: red;">*</span></label>
+                              <input name="amount" type="text" class="form-control"
+                              id="amount" placeholder="Enter brother's or sister's name" value="{{old('amount')}}" required>
+                              @if($errors->any())
+                                       <p style="color: red">{{$errors->first('amount')}}</p>
+                              @endif
+                           </div>
+                            <div class="col-md-4">
+                               <label for="installment">Installment</label>
+                               <input name="installment" type="number" class="form-control"
+                               id="installment" placeholder="(Cicilan)" value="{{old('installment')}}" >
+                            </div>
+                           </div>
+
+
+                           <div class="row">
+                            <div class="col-12 ml-2">
+                              <div class="icheck-primary">
+                                <input type="checkbox" id="sendEmail" name="sendEmail" value="{{true}}">
+                                <label for="sendEmail">
+                                   Send email notifications fee.
+                                </label>
+                              </div>
+                            </div>
+                            <!-- /.col -->
+                          </div>
                         </div>
                      </div>
                  </div>

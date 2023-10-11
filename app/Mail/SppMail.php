@@ -41,7 +41,7 @@ class SppMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.spp-mail',
+            view: 'emails.demo-mail',
         );
     }
 

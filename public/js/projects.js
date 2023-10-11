@@ -206,7 +206,7 @@ $(document).ready(function () {
                     accepts: {
                         mycustomtype: "application/x-some-custom-type",
                     },
-                    url: `/admin/grades/payment-grades/${value}`,
+                    url: `/admin/payment-grades/${value}`,
                     type: "delete",
                     cache: false,
                     data: {

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\DemoMail;
+use App\Mail\SppMail;
+use App\Models\Bill;
 use App\Models\Brothers_or_sister;
 use App\Models\Grade;
 use App\Models\Relationship;
@@ -12,6 +15,7 @@ use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
@@ -134,6 +138,14 @@ class RegisterController extends Controller
             'brotherOrSisterName5' => $request->brotherOrSisterName5, 
             'brotherOrSisterBirth_date5' => $request->brotherOrSisterBirth_date5? $this->changeDateFormat($request->brotherOrSisterBirth_date5) : null,
             'brotherOrSisterGrade5' => $request->brotherOrSisterGrade5,
+
+
+            //fee register
+
+            'type' => 'Uang Gedung',
+            'amount' => $request->amount? (int)str_replace(".", "", $request->amount) : null,
+            'installment' => $request->installment && $request->installment > 0 ? $request->installment : null,
+            'sendEmail' => $request->sendEmail? true : false,
          ];     
          
          // return $credentials;
@@ -193,8 +205,15 @@ class RegisterController extends Controller
             'brotherOrSisterName5' =>  'nullable|string',
             'brotherOrSisterBirth_date5'=>'nullable|string',
             'brotherOrSisterGrade5' => 'nullable|string',
+
+            //fee register
+
+            'amount' => 'required|integer',
+            'installment' => 'nullable|integer',
+            'sendEmail' => 'required|boolean',
          ]);
 
+         
          if($validator->fails())
          {
             DB::rollBack();
@@ -211,8 +230,14 @@ class RegisterController extends Controller
             DB::commit();
             session()->flash('success', 'Student with name' . $student->name . 'has  been registered');
             // return 'post';
+            
             $student = Student::with('relationship')->where('id', $student->id)->first();
             $brotherOrSister = Student::find($student->id);
+            $feeRegister = $this->handleFeeRegister($request->amount, $request->installment, $request->sendEmail, $request->father_email, $request->mother_email, $student->id);
+            
+            if(!$feeRegister->success){
+               return $feeRegister->error;
+            }
             
             
             $data = (object) [
@@ -351,7 +376,7 @@ class RegisterController extends Controller
                   
          return "$date[2]-$date[1]-$date[0]";
       } catch (Exception) {
-         
+         DB::rollBack();
          return null;
       }
    }
@@ -366,8 +391,54 @@ class RegisterController extends Controller
          return Relationship::where('id', $id)->first();
 
       } catch (Exception $err) {
-         
+         DB::rollBack();
          return dd($err);
+      }
+   }
+
+   private function handleFeeRegister($amount, $installment=1, $sendEmail, $email_f, $email_m, $student_id)
+   {
+      try {
+
+
+      $installment  = $installment && $installment > 1 ? $installment : 1;
+
+      $billPerMonth = ceil($amount / $installment);
+
+      if ($billPerMonth % 10000 == 0) {
+          $billPerMonth = $amount / $installment;
+         } else {
+            
+            $billPerMonth += (10000 - ($billPerMonth % 10000));
+         }
+         
+      for($i=1; $i<=$installment; $i++){
+         $currentDate = date('Y-m-d');
+         $newDate = date('Y-m-d', strtotime('+'.$i.' month', strtotime($currentDate)));
+         
+            Bill::create([
+               'student_id' => (int)$student_id,
+               'type' => 'Uang Gedung',
+               'amount' => $billPerMonth,
+               'installment' => $installment,
+               'paidOf' => false,
+               'deadline_invoice' =>$newDate,
+            ]);   
+
+            $mailData = (object) [
+               "student" => 'coba',
+            ];
+
+            if($sendEmail && $i == 1){
+               Mail::to('kirimkesofyanaja@gmail.com')->send(new SppMail($mailData, "Berikut adalah total tagihan anda yang sudah jatuh tempo"));
+               Mail::to('ktriaputri@gmail.com')->send(new SppMail($mailData, "Berikut adalah total tagihan anda yang sudah jatuh tempo"));
+            }
+         }
+
+         return (object)['success' => true];
+      } catch (Exception $err) {
+         DB::rollBack();
+         return (object)['success' => false, 'error' => dd($err)];
       }
    }
 

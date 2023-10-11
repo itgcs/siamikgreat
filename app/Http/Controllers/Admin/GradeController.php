@@ -60,11 +60,9 @@ class GradeController extends Controller
       DB::beginTransaction();
 
       try {
-         //code...
-         $gradeName = $request->name ? $request->name . ' - ' . $request->class : null;
 
          $rules = [
-            'name' => $gradeName,
+            'name' => $request->name,
             'teacher_id' => $request->teacher_id,
             'class' => $request->class,
          ];
@@ -92,11 +90,13 @@ class GradeController extends Controller
             ]);
          }
 
+
+
          $post = [
-            'name' => $gradeName,
+            'name' => $request->name,
             'teacher_id' => $request->teacher_id,
+            'class' => $request->class,
          ];
-         
          Grade::create($post);
 
          DB::commit();

@@ -81,7 +81,7 @@
        </a>
        <ul class="nav nav-treeview">
          <li class="nav-item">
-           <a href="/admin/payment-students" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'payment-students' ? 'active' : '') : ''}}">
+           <a href="/admin/spp-students" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'spp-students' ? 'active' : '') : ''}}">
              <i class="far fa-circle nav-icon"></i>
              <p>Students</p>
            </a>

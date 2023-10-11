@@ -8,7 +8,7 @@
             <div class="col-md-6">
                 <!-- general form elements -->
                 <div>
-                    <form method="POST" action={{route('create.paymentGrade', $data->id)}}>
+                    <form method="POST" action={{route('create.payment-grades', [ 'id' => $data->id, "type" => $type])}}>
                         @csrf
                         <div class="card card-dark">
                             <div class="card-header">
@@ -17,7 +17,7 @@
                             <!-- /.card-header -->
                             <!-- form start -->
                             <div class="card-body">
-                                <div class="form-group row">
+                                {{-- <div class="form-group row">
                                     <div class="col-md-12">
                                         <label for="type">Type<span style="color: red">*</span></label>
                                         <select required name="type" class="form-control" id="type">
@@ -32,7 +32,7 @@
                                         <p style="color: red">{{$errors->first('type')}}</p>
                                         @endif
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="form-group row">
                                     <div class="col-md-12">
                                        

@@ -28,14 +28,14 @@
            <!-- small box -->
            <div class="small-box bg-secondary">
              <div class="inner">
-               <h3>Bundle<sup style="font-size: 20px"></sup></h3>
+               <h3>Paket<sup style="font-size: 20px"></sup></h3>
 
-               <p>Bundle cost of uniform and book</p>
+               <p>Paket cost of uniform and book</p>
              </div>
              <div class="icon">
                 <i class="fa-solid fa-tag"></i>
              </div>
-             <a href="/admin/payment-grades/{{$data->id}}/create/bundle" class="small-box-footer">Create bundle cost <i class="fas fa-arrow-circle-right"></i></a>
+             <a href="/admin/payment-grades/{{$data->id}}/create/paket" class="small-box-footer">Create Paket cost <i class="fas fa-arrow-circle-right"></i></a>
            </div>
          </div>
          <!-- ./col -->

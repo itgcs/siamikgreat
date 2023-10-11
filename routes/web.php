@@ -38,7 +38,7 @@ Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin
 Route::get('/counter', Counter::class);
 
 // Route::get('send-mail', [MailController::class, 'index']);
-Route::get('create-cron/{type}', [BillController::class, 'cronReminderPastDue']);
+Route::get('/coba', [RegisterController::class, 'handleFeeRegister']);
 
 Route::middleware(['admin'])->prefix('/admin')->group(function () {
    
@@ -90,14 +90,6 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::post('/', [GradeController::class, 'actionPost'])->name('actionCreateGrade');
       Route::put('/{id}', [GradeController::class, 'actionPut'])->name('actionUpdateGrade');
       
-   // Route::prefix('/payment-grades')->group(function() {
-   //    Route::get('/{id}', [PaymentGradeController::class, 'index']);
-   //    Route::get('/{id}/create', [PaymentGradeController::class, 'pageCreate']);
-   //    Route::get('/{id}/edit', [PaymentGradeController::class, 'pageEdit']);
-   //    Route::post('/{id}/create', [PaymentGradeController::class, 'actionCreate'])->name('create.paymentGrade');
-   //    Route::put('/{id}/edit', [PaymentGradeController::class, 'actionEdit'])->name('edit.paymentGrade');
-   //    Route::delete('/{id}', [PaymentGradeController::class, 'deletePayment']);
-   // });
    
 });
    Route::prefix('/payment-grades')->group(function() {
@@ -106,19 +98,18 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::get('/{id}/choose-type', [PaymentGradeController::class, 'chooseSection']);
       Route::get('{id}/create/{type}', [PaymentGradeController::class, 'pageCreate']);
       Route::get('/{id}/edit', [PaymentGradeController::class, 'pageEdit']);
-      Route::post('/{id}/create', [PaymentGradeController::class, 'actionCreate'])->name('create.paymentGrade');
-      Route::put('/{id}/edit', [PaymentGradeController::class, 'actionEdit'])->name('edit.paymentGrade');
+      Route::post('action-create/payment-grade/{id}/{type}', [PaymentGradeController::class, 'actionCreate'])->name('create.payment-grades');
+      Route::put('/{id}/edit', [PaymentGradeController::class, 'actionEdit'])->name('edit.payment-grades');
       Route::delete('/{id}', [PaymentGradeController::class, 'deletePayment']);
    });
    
-   Route::prefix('/payment-students')->group(function() {
+   Route::prefix('/spp-students')->group(function() {
       Route::get('/', [PaymentStudentController::class, 'index']);
-      Route::get('/create/{id}', [PaymentStudentController::class, 'choosePayment']);
-      Route::get('/create/{id}/{type}', [PaymentStudentController::class, 'createPage']);
-      Route::get('/detail/{id}/{type}', [PaymentStudentController::class, 'pageDetailSpp']);
-      Route::get('/edit/{id}/{type}', [PaymentStudentController::class, 'pageEditSpp']);
-      Route::put('/actionEdit/{id}/{id_student_payment}/{type}', [PaymentStudentController::class, 'actionEditStaticPayment'])->name('update.payment.student-static');
-      Route::post('/create/{id}/{type}', [PaymentStudentController::class, 'actionCreatePayment'])->name('create.static.student');
+      Route::get('/create/{id}', [PaymentStudentController::class, 'createPage']);
+      Route::get('/detail/{id}', [PaymentStudentController::class, 'pageDetailSpp']);
+      Route::get('/edit/{id}/', [PaymentStudentController::class, 'pageEditSpp']);
+      Route::post('/create/{id}', [PaymentStudentController::class, 'actionCreatePayment'])->name('create.static.student');
+      Route::put('/actionEdit/{id}/{id_student_payment}', [PaymentStudentController::class, 'actionEditStaticPayment'])->name('update.payment.student-static');
    });
 
 

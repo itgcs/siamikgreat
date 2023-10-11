@@ -14,10 +14,22 @@ class PaymentGradeController extends Controller
 {
    
 
-   public function index()
+   public function index(Request $request)
    {
       try {
          //code...
+
+         session()->flash('page',  (object)[
+            'page' => 'payments',
+            'child' => 'payment-grades',
+         ]);
+
+         $grades = Grade::groupBy('name')->orderBy('id', 'asc')->get('name');
+
+         $form = (object) [
+            'grade' => $request->grade? $request->grade : '',
+            'class' => $request->class? $request->class : '',
+         ];
 
          $data = Grade::with(
             ['spp' => function($query) {
@@ -27,11 +39,12 @@ class PaymentGradeController extends Controller
          },'book' => function($query) {
             $query->where('type', 'Book')->get();
          },'bundle' => function($query) {
-            $query->where('type', 'Bundle')->get();
-         },])->get();
+            $query->where('type', 'Paket')->get();
+         },])->where('name','LIKE', '%'. $form->grade .'%')->where('class', 'LIKE', '%'. $form->class .'%')->get();
 
 
-         return view('components.grade.payment.data-grade-payment')->with('data', $data);
+
+         return view('components.grade.payment.data-grade-payment')->with('data', $data)->with('grades', $grades)->with('form', $form);
 
       } catch (Exception $err) {
          return dd($err);
@@ -43,9 +56,9 @@ class PaymentGradeController extends Controller
    {
       try {
          //code...
-         session()->flash('page',  $page = (object)[
+         session()->flash('page',  (object)[
             'page' => 'payments',
-            'child' => 'database grades',
+            'child' => 'payment-grades',
          ]);
 
          $data = Grade::with(['payment_grade' => function($query) {
@@ -68,9 +81,9 @@ class PaymentGradeController extends Controller
       try {
          //code...
          
-         session()->flash('page',  $page = (object)[
+         session()->flash('page',  (object)[
             'page' => 'payments',
-            'child' => 'database grades',
+            'child' => 'payment-grades',
          ]);
          
          $data = Grade::where('id', $id)->first();
@@ -90,9 +103,9 @@ class PaymentGradeController extends Controller
 
          $data = Grade::where('id', $id)->first();
 
-         session()->flash('page',  $page = (object)[
-            'page' => 'grades',
-            'child' => 'database grades',
+         session()->flash('page',  (object)[
+            'page' => 'payments',
+            'child' => 'payment-grades',
          ]);
 
          return view('components.grade.payment.form-payment')->with('data', $data)->with('type', $type);
@@ -103,16 +116,16 @@ class PaymentGradeController extends Controller
    }
 
 
-   public function actionCreate(Request $request, $id, $type)
+   public function actionCreate($id, $type, Request $request)
    {
 
       DB::beginTransaction();
 
       try {
          //code...
-         session()->flash('page',  $page = (object)[
-            'page' => 'grades',
-            'child' => 'database grades',
+         session()->flash('page', (object)[
+            'page' =>'payments',
+            'child' => 'payment-grades',
          ]);
 
          $rules  = [
@@ -134,7 +147,7 @@ class PaymentGradeController extends Controller
          {
             DB::rollBack();
             $rules['amount'] = $backupError;
-            return redirect('/admin/grades/payment-grades'.'/' . $id . '/'.'create')->withErrors($validator->messages())->withInput($rules);
+            return redirect('/admin/payment-grades/'.$id.'/create/'.$type)->withErrors($validator->messages())->withInput($rules);
          }
 
          $checkUnique = Payment_grade::where('type', $rules['type'])->where('grade_id', $id)->first();
@@ -143,7 +156,7 @@ class PaymentGradeController extends Controller
          $checkUnique ? Payment_grade::where('type', $rules['type'])->where('grade_id', $id)->delete() : '';
          
          Payment_grade::create([
-            'type' => $type,
+            'type' => $type == 'SPP' ?  $type : ucwords($type),
             'amount' => (int)str_replace(".", "", $rules['amount']),
             'grade_id' => $id,
          ]);
@@ -152,7 +165,7 @@ class PaymentGradeController extends Controller
 
          DB::commit();
 
-         return redirect('/admin/grades/payment-grades' . '/' . $id);
+         return redirect('/admin/payment-grades' . '/' . $id);
          
       } catch (Exception $err) {
          DB::rollBack();
@@ -165,9 +178,9 @@ class PaymentGradeController extends Controller
       try {
          //code...
 
-         session()->flash('page',  $page = (object)[
-            'page' => 'grades',
-            'child' => 'database grades',
+         session()->flash('page', (object)[
+            'page' =>'payments',
+            'child' => 'payment-grades',
          ]);
 
          $data = Payment_grade::with('grade')->where('id', $id)->first();
@@ -186,9 +199,9 @@ class PaymentGradeController extends Controller
       try {
          //code...
 
-         session()->flash('page',  $page = (object)[
-            'page' => 'grades',
-            'child' => 'database grades',
+         session()->flash('page', (object)[
+            'page' =>'payments',
+            'child' => 'payment-grades',
          ]);
 
          $rules = $request->only('amount');
@@ -201,7 +214,7 @@ class PaymentGradeController extends Controller
 
          if($validator->fails())
          {
-            return redirect('/admin/grades/payment-grades/'. $id .'/edit')->withErrors($validator->messages())->withInput($rules);
+            return redirect('/admin/payment-grades/'. $id .'/edit')->withErrors($validator->messages())->withInput($rules);
          }
          
          Payment_grade::where('id', $id)->update([
@@ -210,7 +223,7 @@ class PaymentGradeController extends Controller
 
          $data = Payment_grade::where('id', $id)->first();
 
-         return redirect('/admin/grades/payment-grades' . '/' . $data->grade_id);
+         return redirect('/admin/payment-grades' . '/' . $data->grade_id);
 
       } catch (Exception $err) {
          return dd($err);
@@ -222,9 +235,9 @@ class PaymentGradeController extends Controller
    {
       try {
          
-         session()->flash('page',  $page = (object)[
-            'page' => 'grades',
-            'child' => 'database grades',
+         session()->flash('page', (object)[
+            'page' =>'payments',
+            'child' => 'payment-grades',
          ]);
 
          Payment_grade::where('id', $id)->delete();

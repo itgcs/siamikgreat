@@ -19,14 +19,11 @@ class PaymentStudentController extends Controller
       try {
          //code...
 
-         session()->flash('page',  $page = (object)[
+         session()->flash('page', (object)[
             'page' => 'payments',
-            'child' => 'payment-students',
+            'child' => 'spp-students',
          ]);
-         $data = Student::with([
-            'payment_student' => function($query) {
-               $query->whereNot('type', 'SPP');            
-            }, 
+         $data = Student::with([ 
             'spp_student' => function($query){
                $query->where('type', 'SPP')->get();
          },
@@ -36,27 +33,7 @@ class PaymentStudentController extends Controller
 
          // return  $data;
 
-         return view('components.student.payment.data-payment-student')->with('data', $data)->with('form', null);
-         
-      } catch (Exception $err) {
-         //throw $th;
-         return dd($err);
-      }
-   }
-
-
-   public function choosePayment(Request $request, $id)
-   {
-      try {
-         //code...
-
-         session()->flash('page',  $page = (object)[
-            'page' => 'payments',
-            'child' => 'payment-students',
-         ]);
-         $data = Student::where('unique_id', $id)->first();
-
-         return view('components.student.payment.data-create-student')->with('data', $data);
+         return view('components.student.spp.data-payment-student')->with('data', $data)->with('form', null);
          
       } catch (Exception $err) {
          //throw $th;
@@ -66,26 +43,26 @@ class PaymentStudentController extends Controller
 
 
 
-   public function createPage($id, $type)
+   public function createPage($id)
    {
       try {
          //code...
 
-         session()->flash('page',  $page = (object)[
+         session()->flash('page', (object)[
             'page' => 'payments',
-            'child' => 'payment-students',
+            'child' => 'spp-students',
          ]);
-         $type = $type;
+
          $data = Student::with([
-         'grade' => function ($query) use ($type) {
-               $query->with(['type' => function ($query) use ($type) {
-               $query->where('type', $type);
+         'grade' => function ($query) {
+               $query->with(['type' => function ($query) {
+               $query->where('type', 'SPP');
             }]);
          },
       ])->where('unique_id', $id)->first();
 
 
-         return view('components.student.payment.create-static-payment')->with('data', $data)->with('type', $type);
+         return view('components.student.spp.create-static-payment')->with('data', $data)->with('type', "SPP");
          
       } catch (Exception $err) {
          //throw $th;
@@ -94,12 +71,12 @@ class PaymentStudentController extends Controller
    }
 
    
-   public function actionCreatePayment(Request $request, $id, $type){
+   public function actionCreatePayment(Request $request, $id, $type = 'SPP'){
       try {
          //code...
-         session()->flash('page',  $page = (object)[
+         session()->flash('page', (object)[
             'page' => 'payments',
-            'child' => 'payment-students',
+            'child' => 'spp-students',
          ]);
          
          $rules = [
@@ -120,7 +97,7 @@ class PaymentStudentController extends Controller
          
          if($validator->fails())
          {
-            return redirect('/admin/payment-students/create/'. $id . '/' .$type)->withErrors($validator->messages())->withInput($rules);
+            return redirect('/admin/spp-students/create/'. $id . '/' .$type)->withErrors($validator->messages())->withInput($rules);
          }
          
          $student = Student::where('unique_id', $id)->first();
@@ -151,7 +128,7 @@ class PaymentStudentController extends Controller
          }
 
          
-         return redirect('/admin/payment-students');
+         return redirect('/admin/spp-students');
          
       } catch (Exception $err) {
          return dd($err);
@@ -159,20 +136,20 @@ class PaymentStudentController extends Controller
    }
    
    
-   public function pageDetailSpp($id, $type)
+   public function pageDetailSpp($id)
    {
       try {
          //code...
-         session()->flash('page',  $page = (object)[
+         session()->flash('page', (object)[
             'page' => 'payments',
-            'child' => 'payment-students',
+            'child' => 'spp-students',
          ]);
 
-         $data = Student::with(['spp_student' => function($query) use ($type){
-            $query->where('type', $type)->get();
+         $data = Student::with(['spp_student' => function($query){
+            $query->where('type', 'SPP')->get();
          }, 'grade'])->where('unique_id', $id)->first();
          
-         return view('components.student.payment.detail-static-payment')->with('data', $data);
+         return view('components.student.spp.detail-static-payment')->with('data', $data);
       } catch (Exception $err) {
          //throw $th;
          return dd($err);
@@ -180,20 +157,20 @@ class PaymentStudentController extends Controller
    }
 
 
-   public function pageEditSpp($id, $type)
+   public function pageEditSpp($id)
    {
       try {
          //code...
-         session()->flash('page',  $page = (object)[
+         session()->flash('page', (object)[
             'page' => 'payments',
-            'child' => 'payment-students',
+            'child' => 'spp-students',
          ]);
          
-         $data = Student::with(['spp_student' => function($query) use ($type){
-            $query->where('type', $type)->get();
+         $data = Student::with(['spp_student' => function($query){
+            $query->where('type', "SPP")->get();
          }])->where('unique_id', $id)->first();
 
-         return view('components.student.payment.edit-static-payment')->with('data', $data);
+         return view('components.student.spp.edit-static-payment')->with('data', $data);
 
       } catch (Exception $err) {
          return dd($err);
@@ -201,12 +178,12 @@ class PaymentStudentController extends Controller
    }
 
 
-   public function actionEditStaticPayment(Request $request, $id, $id_student_payment, $type){
+   public function actionEditStaticPayment(Request $request, $id, $id_student_payment){
       try {
          //code...
-         session()->flash('page',  $page = (object)[
+         session()->flash('page', (object)[
             'page' => 'payments',
-            'child' => 'payment-students',
+            'child' => 'spp-students',
          ]);
          
          $rules = [
@@ -223,7 +200,7 @@ class PaymentStudentController extends Controller
          
          if($validator->fails())
          {
-            return redirect('/admin/payment-students/edit/'. $id . '/' .$type)->withErrors($validator->messages())->withInput($rules);
+            return redirect('/admin/spp-students/edit/'. $id)->withErrors($validator->messages())->withInput($rules);
          }
 
 
@@ -233,7 +210,7 @@ class PaymentStudentController extends Controller
             ]);
 
          
-         return redirect('/admin/payment-students/detail/' . $id .'/' . $type);
+         return redirect('/admin/spp-students/detail/' . $id);
          
       } catch (Exception $err) {
          return dd($err);

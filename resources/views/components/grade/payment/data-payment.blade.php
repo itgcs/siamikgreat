@@ -67,7 +67,7 @@
 
                             <td class="project-actions text-right toastsDefaultSuccess">
                                 <a class="btn btn-info btn"
-                                    href="{{url('/admin/grades/payment-grades/')}}/{{$el->id}}/edit">
+                                    href="{{url('/admin/payment-grades/')}}/{{$el->id}}/edit">
                                     {{-- <i class="fa-solid fa-user-graduate"></i> --}}
                                     <i class="fas fa-pencil-alt">
                                     </i>

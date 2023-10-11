@@ -67,25 +67,18 @@
                         </td>
                         
                         <td class="project-actions text-right toastsDefaultSuccess">
-                           <a class="btn btn-primary btn-sm"
+                           <a class="btn btn-primary btn"
                               href="{{url('/admin/grades') . '/' . $el->id}}">
                               <i class="fas fa-folder">
                               </i>
                               View
                            </a>
-                           <a class="btn btn-info btn-sm"
+                           <a class="btn btn-info btn"
                               href="{{url('/admin/grades') . '/edit/' . $el->id}}">
                               {{-- <i class="fa-solid fa-user-graduate"></i> --}}
                               <i class="fas fa-pencil-alt">
                               </i>
                               Edit
-                           </a>
-                           <a class="btn btn-warning btn-sm"
-                              href="{{url('/admin/grades/payment-grades') . '/' . $el->id}}">
-                              {{-- <i class="fa-solid fa-user-graduate"></i> --}}
-                              <i class="fas fa-pencil-alt">
-                              </i>
-                              Payment
                            </a>
                         </td>
                     </tr>

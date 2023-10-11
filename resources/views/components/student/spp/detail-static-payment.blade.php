@@ -9,7 +9,7 @@
             <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item">Home</li>
-                <li class="breadcrumb-item"><a href="{{url('/admin/payment-students')}}">Payment-students</a></li>
+                <li class="breadcrumb-item"><a href="{{url('/admin/spp-students')}}">spp-students</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Detail Payment {{$data->name}}</li>
               </ol>
             </nav>
@@ -141,7 +141,7 @@
                </table>
             </div>
 
-            <a role="button" href="/admin/payment-students/edit/{{$data->unique_id}}/SPP" class="btn btn-primary w-100">Edit</a>
+            <a role="button" href="/admin/spp-students/edit/{{$data->unique_id}}" class="btn btn-primary w-100">Edit</a>
           </div>
         </div>
       </div>

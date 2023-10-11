@@ -1,0 +1,8 @@
+07.00 - 08.00 = fix create & edit reusable payment for grade.
+08.00 - 09.00 = fix userinterface create & edit reusable payment for grade.
+09.00 - 10.00 = change payment student to spp student, fix user interface for page payment student.
+10.00 - 11.00 = create filter search for payment grade.
+12.00 - 13.00 = add feature filter for spp student.
+13.00 - 14.00 = Ishoma.
+14.00 - 15.00 = create backend for fee register payment (uang gedung) when student register.
+15.00 - 16.00 = error handling when create fee register with installment (cicilan) and send email notification payment for parent.

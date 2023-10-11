@@ -8,7 +8,7 @@
             <div class="col-md-6">
                 <!-- general form elements -->
                 <div>
-                    <form method="POST" action={{route('edit.paymentGrade', $data->id)}}>
+                    <form method="POST" action={{route('edit.payment-grades', $data->id)}}>
                         @csrf
                         @method('PUT')
                         <div class="card card-dark">

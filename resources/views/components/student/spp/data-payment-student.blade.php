@@ -121,29 +121,26 @@
         </div>
     </div>
     <div class="card-body p-0">
-        <table class="table table-striped projects">
+        <table class="table table-striped projects" style="margin-left:auto;margin-right:auto;">
             <thead>
                 <tr>
-                    <th style="width: 1%">
+                    <th style="width: 12%">
                         #
                     </th>
-                    <th style="width: 20%">
+                    <th  style="width: 20%">
                         Student
                     </th>
-                    <th>
+                    <th >
                         Grade
                     </th>
-                    <th style="width: 8%">
+                    <th  style="width: 8%">
                         Class
                     </th>
-                    <th style="width: 15%">
+                    <th  style="width: 15%">
                         Spp
                     </th>
-                    <th>
-                        Total set payment
-                    </th>
                     
-                    <th style="width: 20%">
+                    <th class="text-center" style="width: 30%">
                     </th>
                 </tr>
             </thead>
@@ -153,15 +150,15 @@
                     <td>
                         {{ $loop->index + 1 }}
                     </td>
-                    <td>
+                    <td >
                         {{$el->name}}
                     </td>
-                    <td>
+                    <td >
                        {{$el->grade->name}}
                      </td>
-                     <td>
+                     <td >
                         {{$el->grade->class}}
-                     <td>
+                     <td >
                            <a>
                                @if($el->spp_student)
                                {{-- <h1 class="badge badge-success">already set</h1> --}}
@@ -174,27 +171,24 @@
                                @endif
                            </a>
                         </td>
-                        <td align="left">
-                           {{sizeof($el->payment_student)}}
-                        </td>
-                        <td class="project-actions text-right toastsDefaultSuccess">
+                        <td class="project-actions text-center toastsDefaultSuccess">
 
                             @if ($el->spp_student)
                                 
-                            <a class="btn btn-primary "
-                                href="/admin/payment-students/detail/{{$el->unique_id}}/SPP">
+                            <a class="btn btn-primary btn-lg"
+                                href="/admin/spp-students/detail/{{$el->unique_id}}">
                                 <i class="fas fa-folder">
                                 </i>
                                 View
                             </a>
-
+                            @else
+                            <a class="btn btn-success btn-lg"
+                                href="/admin/spp-students/create/{{$el->unique_id}}">
+                                <i class="fa-solid fa-plus"></i>
+                                </i>
+                                  Create
+                            </a>
                             @endif
-                           <a class="btn btn-success "
-                               href="/admin/payment-students/create/{{$el->unique_id}}">
-                               <i class="fa-solid fa-plus"></i>
-                               </i>
-                                 Create
-                           </a>
                         </td>
                 </tr>
 

@@ -5,6 +5,48 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
 
+    <h2 class="text-center display-4">Grades Search</h2>
+           <form class="mt-5" action="/admin/payment-grades">
+               <div class="row">
+                   <div class="col-md-10 offset-md-2">
+                       <div class="row">
+                           <div class="col-7">
+                               <div class="form-group">
+                                   <label>Grades:</label>
+                                   @php
+                                       
+                                       $selected = $form && $form->grade ? $form->grade : 'all';
+
+                                    @endphp
+                                    <select name="grade" class="form-control form-control-lg ">
+                                        <option {{$selected === 'all' ? 'selected' : ''}} value="">none</option>
+
+                                        @foreach ($grades as $grade)
+                                        <option {{$selected === $grade->name ? 'selected' : ''}}>{{$grade->name}}</option>
+                                        @endforeach
+                                    </select>
+                                  
+                               </div>
+                           </div>
+                        <div class="col-2">
+                            <div class="form-group">
+                                <label>Class:</label>
+                                <div class="input-group input-group-lg">
+                                    <input name="class" value="{{$form && $form->class? $form->class : ""}}" type="search" class="form-control form-control-lg" placeholder="Class">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-lg btn-default">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                           
+                       </div>
+                   </div>
+               </div>
+           </form >
+
     <div class="card mt-5">
         <div class="card-header">
             <h3 class="card-title">Grades</h3>
@@ -22,14 +64,17 @@
                         <th style="width: 10%">
                            #
                         </th>
-                        <th style="width: 25%">
-                           Grades
+                        <th style="width: 20%">
+                            Grades
+                        </th>
+                        <th style="width: 10%">
+                            Class
                         </th>
                         <th>
-                           SPP
+                            SPP
                         </th>
                         <th>
-                            Bundle
+                            Paket
                         </th>
                         <th>
                             Book
@@ -49,8 +94,13 @@
                         </td>
                         <td>
                            <a>
-                                {{$el->name . ' - ' . $el->class}}
+                                {{$el->name}}
                            </a>
+                        </td>
+                        <td>
+                            <a>
+                                {{$el->class}}
+                            </a>
                         </td>
                         <td>
                            <a>
