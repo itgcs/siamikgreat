@@ -227,15 +227,14 @@ class RegisterController extends Controller
          // return $relationship;
          if($student && $relationship->success && $brotherOrSister->success)
          {
-            DB::commit();
-            session()->flash('success', 'Student with name' . $student->name . 'has  been registered');
             // return 'post';
             
             $student = Student::with('relationship')->where('id', $student->id)->first();
             $brotherOrSister = Student::find($student->id);
-            $feeRegister = $this->handleFeeRegister($request->amount, $request->installment, $request->sendEmail, $request->father_email, $request->mother_email, $student->id);
+            $feeRegister = $this->handleFeeRegister($request->amount, $request->installment, $request->sendEmail, $request->father_email, $request->mother_email, $student);
             
             if(!$feeRegister->success){
+               DB::rollBack();
                return $feeRegister->error;
             }
             
@@ -245,15 +244,24 @@ class RegisterController extends Controller
                'brother_or_sisters' => $brotherOrSister->brotherOrSister()->get(),
                'after_create' => 'Success register student with name ' . $student->name,
             ];
-         
+            
             // return $data;
+            session()->flash('success', 'Student with name' . $student->name . 'has  been registered');
+            DB::commit();
+            session()->flash('page',  $page = (object)[
+               'page' => 'students',
+               'child' => 'database students',
+            ]);
             return view('components.student.detailStudent')->with('data', $data);
             
          } else if(!$relationship->success){
+            DB::rollBack();
             return 'Error at relationship';
          } else if (!$brotherOrSister->success){
+            DB::rollBack();
             return 'Error at brother or sister';
          } else {
+            DB::rollBack();
             return 'internal server error!!!';
          }
 
@@ -396,42 +404,47 @@ class RegisterController extends Controller
       }
    }
 
-   private function handleFeeRegister($amount, $installment=1, $sendEmail, $email_f, $email_m, $student_id)
+   private function handleFeeRegister($amount, $installment=1, $sendEmail, $email_f, $email_m, $student)
    {
       try {
 
 
       $installment  = $installment && $installment > 1 ? $installment : 1;
 
-      $billPerMonth = ceil($amount / $installment);
+      
 
-      if ($billPerMonth % 10000 == 0) {
-          $billPerMonth = $amount / $installment;
+         if ($amount % 10000 == 0) {
+            $billPerMonth = (int)$amount / (int)$installment;
          } else {
             
+            $billPerMonth = ceil((int)$amount / (int)$installment);
             $billPerMonth += (10000 - ($billPerMonth % 10000));
          }
          
       for($i=1; $i<=$installment; $i++){
          $currentDate = date('Y-m-d');
          $newDate = date('Y-m-d', strtotime('+'.$i.' month', strtotime($currentDate)));
-         
+         $subject = $installment == 1? 'Uang Gedung' : 'Uang Gedung, cicilan ke ' . $i;
+         $subjectEmail = $installment <= 1? 'Berikut pembayaran Uang Gedung '.$student->name : 'Berikut pembayaran Uang Gedung, cicilan ke ' . $i . ' untuk bulan ini';
             Bill::create([
-               'student_id' => (int)$student_id,
+               'student_id' => $student->id,
                'type' => 'Uang Gedung',
                'amount' => $billPerMonth,
-               'installment' => $installment,
                'paidOf' => false,
+               'discount' => null,
                'deadline_invoice' =>$newDate,
+               'installment' => $installment == 1? null : $installment,
+               'subject' => $subject, 
             ]);   
 
             $mailData = (object) [
                "student" => 'coba',
             ];
 
+
             if($sendEmail && $i == 1){
-               Mail::to('kirimkesofyanaja@gmail.com')->send(new SppMail($mailData, "Berikut adalah total tagihan anda yang sudah jatuh tempo"));
-               Mail::to('ktriaputri@gmail.com')->send(new SppMail($mailData, "Berikut adalah total tagihan anda yang sudah jatuh tempo"));
+               Mail::to('kirimkesofyanaja@gmail.com')->send(new SppMail($mailData, $subjectEmail));
+               Mail::to('ktriaputri@gmail.com')->send(new SppMail($mailData, $subjectEmail));
             }
          }
 

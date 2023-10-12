@@ -20,6 +20,7 @@ class Bill extends Model
       'paidOf',
       'discount',
       'deadline_invoice',
+      'installment',
       'created_at',	
       'updated_at'	
     ]; 

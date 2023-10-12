@@ -70,10 +70,11 @@
                                                 data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
-                                            @if($errors->any())
-                                            <p style="color: red">{{$errors->first('date_birth')}}</p>
-                                           @endif
                                         </div>
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('date_birth')}}</p>
+                                        @endif
+                                        
                                     </div>
                                     <div class="col-md-4">
                                        <div class="form-group">
@@ -114,7 +115,7 @@
                                            </select>
                                            @if($errors->any())
                                            <p style="color: red">{{$errors->first('grade_id')}}</p>
-                                          @endif
+                                           @endif
                                        </div>
                                    </div>
                                 </div>
@@ -313,10 +314,10 @@
                                             data-toggle="datetimepicker">
                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                         </div>
-                                        @if($errors->any())
-                                          <p style="color: red">{{$errors->first('father_date_birth')}}</p>
-                                       @endif
                                     </div>
+                                    @if($errors->any())
+                                      <p style="color: red">{{$errors->first('father_date_birth')}}</p>
+                                   @endif
                                     </div>
 
                                     <div class="col-md-4">
@@ -509,10 +510,10 @@
                                          data-toggle="datetimepicker">
                                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                      </div>
-                                     @if($errors->any())
-                                       <p style="color: red">{{$errors->first('mother_date_birth')}}</p>
-                                    @endif
-                                 </div>
+                                    </div>
+                                    @if($errors->any())
+                                      <p style="color: red">{{$errors->first('mother_date_birth')}}</p>
+                                   @endif
                                  </div>
 
                                  <div class="col-md-4">
@@ -620,18 +621,18 @@
                               <label for="brotherOrSisterName1">Name</label>
                               <input name="brotherOrSisterName1" type="text" class="form-control"
                               id="brotherOrSisterName1" placeholder="Enter brother's or sister's name" value="{{old('brotherOrSisterName1')}}" >
-                              {{-- @if($errors->any())
-                                       <p style="color: red">{{$errors->first('mother_email')}}</p>
-                              @endif --}}
-                           </div>
-
+                                @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterName1')}}</p>
+                                @endif
+                            </div>
+                            
                            <div class="col-md-4">
                               <label>Date of Birth</label>
                               <div class="input-group date" id="reservationBrotherOrSisterBirthDate1"
                                   data-target-input="nearest">
                                   <input name="brotherOrSisterBirth_date1" type="text"
                                   class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
-                                      data-target="#reservationBrotherOrSisterBirthDate1" 
+                                  data-target="#reservationBrotherOrSisterBirthDate1" 
                                       data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                       value="{{old('brotherOrSisterBirth_date1') ? date("d/m/Y", strtotime(old('brotherOrSisterBirth_date1'))) : ''}}"
                                       />
@@ -639,12 +640,18 @@
                                       data-toggle="datetimepicker">
                                       <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                     </div>
-                              </div>
+                                </div>
+                                @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterBirth_date1')}}</p>
+                                @endif
                               </div>
                               <div class="col-md-4">
                                  <label for="brotherOrSisterGrade1">Grade</label>
                                  <input name="brotherOrSisterGrade1" type="text" class="form-control"
                                  id="brotherOrSisterGrade1" placeholder="Enter grade brother's or sister's" value="{{old('brotherOrSisterGrade1')}}" >
+                                @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterGrade1')}}</p>
+                                @endif
                               </div>
                            </div>
 
@@ -654,6 +661,9 @@
                                  <label for="brotherOrSisterName2">Name</label>
                                  <input name="brotherOrSisterName2" type="text" class="form-control"
                                  id="brotherOrSisterName2" placeholder="Enter brother's or sister's name" value="{{old('brotherOrSisterName2')}}">
+                                 @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterName2')}}</p>
+                                @endif
                               </div>
    
                               <div class="col-md-4">
@@ -671,11 +681,17 @@
                                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                        </div>
                                  </div>
+                                    @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterBirth_date2')}}</p>
+                                    @endif
                                  </div>
                                  <div class="col-md-4">
                                     <label for="brotherOrSisterGrade2">Grade</label>
                                     <input name="brotherOrSisterGrade2" type="text" class="form-control"
                                     id="brotherOrSisterGrade2" placeholder="Enter grade brother's or sister's" value="{{old("brotherOrSisterGrade2")}}">
+                                    @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterGrade2')}}</p>
+                                    @endif
                                  </div>
                               </div>
                               <div class="form-group row">
@@ -683,7 +699,10 @@
                                     <label for="brotherOrSisterName3">Name</label>
                                     <input name="brotherOrSisterName3" type="text" class="form-control"
                                     id="brotherOrSisterName3" placeholder="Enter brother's or sister's name" value="{{old('brotherOrSisterName3')}}">
-                                 </div>
+                                    @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterName3')}}</p>
+                                    @endif
+                                </div>
       
                                  <div class="col-md-4">
                                     <label>Date of Birth</label>
@@ -700,11 +719,17 @@
                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                           </div>
                                     </div>
+                                    @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterBirth_date3')}}</p>
+                                    @endif
                                     </div>
                                     <div class="col-md-4">
                                        <label for="brotherOrSisterGrade3">Grade</label>
                                        <input name="brotherOrSisterGrade3" type="text" class="form-control"
                                        id="brotherOrSisterGrade3" placeholder="Enter grade brother's or sister's" value="{{old('brotherOrSisterGrade3')}}">
+                                       @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterGrade3')}}</p>
+                                    @endif
                                     </div>
                                  </div>
                               <div class="form-group row">
@@ -712,6 +737,9 @@
                                     <label for="brotherOrSisterName4">Name</label>
                                     <input name="brotherOrSisterName4" type="text" class="form-control"
                                     id="brotherOrSisterName4" placeholder="Enter brother's or sister's name" value="{{old('brotherOrSisterName4')}}" >
+                                    @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterName4')}}</p>
+                                    @endif
                                  </div>
       
                                  <div class="col-md-4">
@@ -729,11 +757,17 @@
                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                           </div>
                                     </div>
+                                    @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterBirth_date4')}}</p>
+                                    @endif
                                     </div>
                                     <div class="col-md-4">
                                        <label for="brotherOrSisterGrade4">Grade</label>
                                        <input name="brotherOrSisterGrade4" type="text" class="form-control"
                                        id="brotherOrSisterGrade4" placeholder="Enter grade brother's or sister's" value="{{old('brotherOrSisterGrade4')}}">
+                                       @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterGrade4')}}</p>
+                                    @endif
                                     </div>
                                  </div>
                               <div class="form-group row">
@@ -741,6 +775,9 @@
                                     <label for="brotherOrSisterName5">Name</label>
                                     <input name="brotherOrSisterName5" type="text" class="form-control"
                                     id="brotherOrSisterName5" placeholder="Enter brother's or sister's name" value="{{old('brotherOrSisterName5')}}">
+                                    @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterName5')}}</p>
+                                    @endif
                                  </div>
       
                                  <div class="col-md-4">
@@ -758,11 +795,17 @@
                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                           </div>
                                     </div>
+                                    @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterBirth_date5')}}</p>
+                                    @endif
                                     </div>
                                     <div class="col-md-4">
                                        <label for="brotherOrSisterGrade5">Grade</label>
                                        <input name="brotherOrSisterGrade5" type="text" class="form-control"
                                        id="brotherOrSisterGrade5" placeholder="Enter grade brother's or sister's" value="{{old('brotherOrSisterGrade5')}}" >
+                                       @if($errors->any())
+                                       <p style="color: red">{{$errors->first('brotherOrSisterGrade5')}}</p>
+                                        @endif
                                     </div>
                                  </div>
                         </div>
@@ -787,9 +830,9 @@
                               @endif
                            </div>
                             <div class="col-md-4">
-                               <label for="installment">Installment</label>
+                               <label for="installment">Installment / Month</label>
                                <input name="installment" type="number" class="form-control"
-                               id="installment" placeholder="(Cicilan)" value="{{old('installment')}}" >
+                               id="installment" placeholder="(Cicilan)" value="{{old('installment')}}" max="12" min="0">
                             </div>
                            </div>
 
@@ -799,7 +842,7 @@
                               <div class="icheck-primary">
                                 <input type="checkbox" id="sendEmail" name="sendEmail" value="{{true}}">
                                 <label for="sendEmail">
-                                   Send email notifications fee.
+                                   Send email notifications fee for parents.
                                 </label>
                               </div>
                             </div>

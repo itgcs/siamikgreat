@@ -29,6 +29,7 @@ class PaymentStudentController extends Controller
          },
          'grade'
          ])
+         ->orderBy('id', 'desc')
          ->get();
 
          // return  $data;
