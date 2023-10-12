@@ -6,6 +6,10 @@ use App\Http\Controllers\Admin\BillController;
 use App\Http\Controllers\MailController;
 use Illuminate\Console\Command;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 class CreateSppCron extends Command
 {
     /**
@@ -13,6 +17,8 @@ class CreateSppCron extends Command
      *
      * @var string
      */
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     protected $signature = 'spp:cron';
 
     /**

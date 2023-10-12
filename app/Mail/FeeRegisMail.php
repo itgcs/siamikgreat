@@ -9,13 +9,13 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SppMail extends Mailable
+class FeeRegisMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $mailData;
     public $subject;
-    
+
     /**
      * Create a new message instance.
      */
@@ -41,7 +41,7 @@ class SppMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.spp-mail',
+            view: 'emails.fee-regis-mail',
         );
     }
 

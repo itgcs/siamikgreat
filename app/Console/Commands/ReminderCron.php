@@ -6,6 +6,12 @@ use App\Http\Controllers\MailController;
 use Illuminate\Console\Command;
 use Exception;
 
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
 class ReminderCron extends Command
 {
     /**
@@ -13,6 +19,9 @@ class ReminderCron extends Command
      *
      * @var string
      */
+
+     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     protected $signature = 'reminder:cron';
 
     /**

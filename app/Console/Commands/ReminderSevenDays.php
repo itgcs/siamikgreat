@@ -4,6 +4,12 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+
 class ReminderSevenDays extends Command
 {
     /**
@@ -11,6 +17,9 @@ class ReminderSevenDays extends Command
      *
      * @var string
      */
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+     
+
     protected $signature = 'reminderSevenDays:cron';
 
     /**
@@ -25,6 +34,6 @@ class ReminderSevenDays extends Command
      */
     public function handle()
     {
-        //
+        
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DemoMail;
+use App\Mail\FeeRegisMail;
 use App\Mail\SppMail;
 use App\Models\Bill;
 use App\Models\Student;
@@ -22,12 +23,25 @@ class MailController extends Controller
     {
       try {
          //code...
-         $mailData = [
-            'title' => 'Mail from ItSolutionStuff.com',
-            'body' => 'This is for testing email using smtp.'
-        ];
+
+         $student = Student::with(
+            ['bill' => function($query){
+               $query->where('type', 'Uang Gedung')->get();
+            }, 
+             'relationship' => function($query){
+               $query->get(['email']);
+            },])->whereHas('bill', function($query) {
+               $query->where('type', 'Uang Gedung')->where('paidOf', false)->where('deadline_invoice', '>', date('y-m-d'));
+            })->where('id', 10)->first();
          
-        Mail::to('tkeluarga111@gmail.com')->send(new DemoMail($mailData));
+            // return $student;
+         $mailData = [
+            'student' => $student,
+            'bill' => $student->bill,
+            'past_due' => false
+        ];
+
+        Mail::to('tkeluarga111@gmail.com')->send(new FeeRegisMail($mailData, 'Berikut pembayaran Uang Gedung cicilan ke 1 untuk' .$student->name));
            
         return dd("Email is sent successfully.");
       } catch (Exception $err) {
