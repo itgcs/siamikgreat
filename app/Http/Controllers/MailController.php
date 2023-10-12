@@ -11,7 +11,9 @@ use App\Models\Bill;
 use App\Models\Student;
 use Illuminate\Support\Facades\DB;
 use Exception;
-  
+use Illuminate\Console\View\Components\Info;
+use Illuminate\Support\Carbon;
+
 class MailController extends Controller
 {
     /**
@@ -113,7 +115,7 @@ class MailController extends Controller
          date_default_timezone_set('Asia/Jakarta');
          
          $data = Student::with(['bill' => function($query) use ($type){
-            $query->where('type', $type)->get();
+            $query->where('type', $type)->where('deadline_invoice', '<', date('Y-m-d'))->get();
          }, 'relationship'])->whereHas('bill', function($query) {
             $query->where('paidOf', false)->where('deadline_invoice', '<', date('Y-m-d'));
          })->where('is_active', true)->get();
@@ -121,7 +123,6 @@ class MailController extends Controller
 
          foreach ($data as $value) {
 
-            
             foreach ($value->relationship as $value2) {
 
                $mailData = [
@@ -139,5 +140,46 @@ class MailController extends Controller
      } catch (Exception $err) {
          info("Cron Job reminder Error at: " . $err);
      }
+   }
+
+
+   public function cronReminderMinusSevenDay($type = "SPP")
+   {
+      try {
+         //code...
+         $data = Student::with([
+            'bill' => function($query) use ($type) {
+               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->addDays(7)->format('y-m-d'))->get();
+         },
+            'relationship'
+         ])
+         ->whereHas('bill', function($query) use ($type) {
+               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->addDays(7)->format('y-m-d'));
+         })
+         ->where('is_active', true)->get();
+
+      
+         foreach ($data as  $student)
+         {
+            $mailData = [
+               'student' => $student,
+               'bill' => $student->bill,
+               'past_due' => 'H-7',
+            ];
+
+            foreach($student->relationship as $parent)
+            {
+               Mail::to($parent->email)->send(new SppMail($mailData, 'Reminder h-7 pembayaran '. $type .' '. strtolower($student->bill[0]->subject) .' sebelum jatuh tempo'));
+            }
+         }
+
+         Info("Cron Job reminder H-7 success at ". date('d-m-Y'));
+         
+         return 'success';
+      } catch (Exception $err) {
+         Info("Cron Job reminder H-7 error: ". $err);
+         
+         return dd($err);
+      }
    }
 }

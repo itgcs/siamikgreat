@@ -1,0 +1,8 @@
+07:05 - 08:00 = fix bug create fee register where create or regis student,
+08:00 - 09:00 = fix userinterface page student register,
+10:00 - 11:00 = create design detail email payment fee register,
+11:00 - 12:00 = fix create cron bulk reminder when fee register past due ,
+12:00 - 13:00 = create reusable email detail fee register,
+13:00 - 14:00 = Ishoma,
+14:00 - 15:00 = Create cron and design email spp h-7 Reminder,
+15:00 - 16:00 = Create cron and design email spp h-1 Reminder,

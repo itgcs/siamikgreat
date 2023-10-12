@@ -20,7 +20,7 @@ class ReminderCron extends Command
      * @var string
      */
 
-     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $signature = 'reminder:cron';
 
@@ -29,14 +29,14 @@ class ReminderCron extends Command
      *
      * @var string
      */
-    protected $description = 'Check reminder spp payment daily';
+    protected $description = 'Check reminder spp payment past due daily';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        info("Reminder Job running at ". now());
+        info("Reminder past due Job running at ". now());
 
         $bill = new MailController;
         $bill->cronReminderPastDue('SPP');

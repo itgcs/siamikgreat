@@ -176,6 +176,20 @@
 
                                                                 <td align="left"
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">
+
+
+                                                                @if ($mailData['past_due'] === 'H-7')
+                                                                <div
+                                                                style="font-family:Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
+                                                                    <p style="margin: 0;">
+                                                                       {{'Hai, tagihan SPP untuk ' .
+                                                                        $mailData['student']->name . ' pada ' .
+                                                                        $mailData['bill'][0]->subject . ' kurang '. str_replace('H-', '', $mailData['past_due']). ' hari lagi akan jatuh tempo. Mohon selesaikan pembayaran
+                                                                        untuk tagihan Anda.' }}
+                                                                    </p>
+
+                                                                </div>
+                                                                @else
                                                                     <div
                                                                         style="font-family:Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
                                                                         <p style="margin: 0;">
@@ -186,8 +200,12 @@
                                                                             $dateString . ' telah
                                                                             berhasil dibuat. Mohon selesaikan pembayaran
                                                                             untuk tagihan Anda.' }}</p>
-                                                                            
+
                                                                     </div>
+                                                                @endif
+
+
+
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -333,7 +351,7 @@
                                                 style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                 <div
                                                    style="font-family:Muli, Arial, sans-serif;font-size:14px;font-weight:400;line-height:20px;text-align:center;color:red;">
-                                                    <b> {{ $mailData['past_due']? 'invoice pembayaran sudah melewati jatuh tempo, dimohon untuk segera membayar tagihan' : 'Invoice deadline pembayaran ' . date('d/m/Y', strtotime($mailData['bill'][0]->deadline_invoice))}}</b></div> <br><br>
+                                                    <b> {{ $mailData['past_due'] === true? 'invoice pembayaran sudah melewati jatuh tempo, dimohon untuk segera membayar tagihan' : 'Invoice deadline pembayaran ' . date('d/m/Y', strtotime($mailData['bill'][0]->deadline_invoice))}}</b></div> <br><br>
                                                 
                                             </td>
                                         </tr>

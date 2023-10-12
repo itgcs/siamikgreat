@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\MailController;
 use Illuminate\Console\Command;
 
 use Illuminate\Bus\Queueable;
@@ -27,13 +28,15 @@ class ReminderSevenDays extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Reminder h-7 payments';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        
+        info("Reminder h-7 Job running at ". now());
+
+        $bill = new MailController;
     }
 }
