@@ -3,15 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\Admin\BillController;
-use App\Jobs\SendMailReminder;
-use App\Models\Student;
+use App\Http\Controllers\MailController;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\SppMail;
-use App\Models\Bill;
-use Exception;
-use FontLib\Table\Type\name;
-use Illuminate\Support\Facades\DB;
 
 class CreateSppCron extends Command
 {
@@ -37,7 +30,7 @@ class CreateSppCron extends Command
        
       info("Spp Job running at ". now());
 
-      $create_spp = new BillController;
+      $create_spp = new MailController;
       $create_spp->cronCreateSpp();
     }
 }

@@ -443,8 +443,8 @@ class RegisterController extends Controller
 
 
             if($sendEmail && $i == 1){
-               Mail::to('kirimkesofyanaja@gmail.com')->send(new SppMail($mailData, $subjectEmail));
-               Mail::to('ktriaputri@gmail.com')->send(new SppMail($mailData, $subjectEmail));
+               Mail::to($email_f)->send(new SppMail($mailData, $subjectEmail));
+               Mail::to($email_m)->send(new SppMail($mailData, $subjectEmail));
             }
          }
 

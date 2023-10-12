@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Admin\BillController;
+use App\Http\Controllers\MailController;
 use Illuminate\Console\Command;
 use Exception;
 
@@ -29,7 +29,7 @@ class ReminderCron extends Command
     {
         info("Reminder Job running at ". now());
 
-        $bill = new BillController;
+        $bill = new MailController;
         $bill->cronReminderPastDue('SPP');
     }
 }

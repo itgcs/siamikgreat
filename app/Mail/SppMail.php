@@ -31,7 +31,7 @@ class SppMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Segera lakukan pembayaran untuk Anda di Great Crystal School',
+            subject: $this->subject,
         );
     }
 
