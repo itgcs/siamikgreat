@@ -178,13 +178,12 @@
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">
 
 
-                                                                @if ($mailData['past_due'] === 'H-7')
+                                                                @if ($mailData['past_due'] === 'H-7' || $mailData['past_due'] === 'H-1')
                                                                 <div
                                                                 style="font-family:Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
                                                                     <p style="margin: 0;">
-                                                                       {{'Hai, tagihan SPP untuk ' .
-                                                                        $mailData['student']->name . ' pada ' .
-                                                                        $mailData['bill'][0]->subject . ' kurang '. str_replace('H-', '', $mailData['past_due']). ' hari lagi akan jatuh tempo. Mohon selesaikan pembayaran
+                                                                       {{'Hai, tagihan '.$mailData['bill'][0]->subject.' untuk ' .
+                                                                        $mailData['student']->name . ' kurang '. str_replace('H-', '', $mailData['past_due']). ' hari lagi akan jatuh tempo. Mohon selesaikan pembayaran
                                                                         untuk tagihan Anda.' }}
                                                                     </p>
 

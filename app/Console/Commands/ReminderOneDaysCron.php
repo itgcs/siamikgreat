@@ -10,33 +10,36 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-
-class ReminderSevenDays extends Command
+class ReminderOneDaysCron extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-     
 
-    protected $signature = 'reminderSevenDays:cron';
+     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected $signature = 'reminderPastDueMinusOneDays:cron';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Reminder h-7 payments';
+    protected $description = 'Reminder past due h-1 payments';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        info("Reminder h-7 Job running at ". now());
+        info("Reminder h-1 Job running at ". now());
 
         $bill = new MailController;
+        $bill->cronReminderMinusOneDay('SPP');
+        $bill->cronReminderMinusOneDay('Uang Gedung');
+        // $bill->cronReminderMinusOneDay('Book');
+        // $bill->cronReminderMinusOneDay('Uniform');
     }
 }

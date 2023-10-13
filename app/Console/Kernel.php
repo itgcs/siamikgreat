@@ -13,9 +13,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         date_default_timezone_set('Asia/Jakarta');
-        $schedule->command('spp:cron')->monthlyOn(12, '12:56')->timezone('Asia/Jakarta');
-        $schedule->command('reminderSevenDays:cron')->dailyAt('15:00')->timezone('Asia/Jakarta');
-        $schedule->command('reminder:cron')->dailyAt('17:00')->timezone('Asia/Jakarta');
+        $schedule->command('spp:cron')->monthlyOn(5, '8:00')->timezone('Asia/Jakarta');
+        $schedule->command('reminderPastDueMinusOneDays:cron')->dailyAt('15:00')->timezone('Asia/Jakarta');
+        $schedule->command('reminderPastDueMinusSevenDays:cron')->dailyAt('10:40')->timezone('Asia/Jakarta');
+        $schedule->command('reminderPastDue:cron')->dailyAt('17:00')->timezone('Asia/Jakarta');
     }
 
     /**

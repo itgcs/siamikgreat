@@ -178,10 +178,19 @@
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                                     <div
                                                                         style="font-family:Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
+
+                                                                        @if ($mailData['past_due'] === 'H-7' || $mailData['past_due'] === 'H-1')
                                                                         <p style="margin: 0;">
-                                                                            {{ $mailData['past_due'] ? 
-                                                                            'Hai, tagihan '.$mailData['bill'][0]->type.' untuk ' . $mailData['student']->name . ' sudah lewat jatuh tempo, Mohon segera lunasi tagihan Anda.' :
-                                                                            'Hai, tagihan '.$mailData['bill'][0]->type.' untuk ' . $mailData['student']->name . ' pada ' . $dateString . ' telah berhasil dibuat. Mohon selesaikan pembayaran untuk tagihan Anda.' }}</p>
+                                                                            {{'Hai, tagihan '. $mailData['bill'][0]->subject .' untuk ' .
+                                                                             $mailData['student']->name . ' kurang '. str_replace('H-', '', $mailData['past_due']). ' hari lagi akan jatuh tempo. Mohon selesaikan pembayaran
+                                                                             untuk tagihan Anda.' }}
+                                                                         </p>
+                                                                        @else 
+                                                                        <p style="margin: 0;">
+                                                                            {{ $mailData['past_due'] === true? 
+                                                                            'Hai, berikut total tagihan '.$mailData['bill'][0]->type.' untuk ' . $mailData['student']->name . ' yang sudah lewat jatuh tempo, Mohon segera lunasi tagihan Anda!' :
+                                                                            'Hai, tagihan '.$mailData['bill'][0]->subject.' untuk ' . $mailData['student']->name . ' pada ' . $dateString . ' telah berhasil dibuat. Mohon selesaikan pembayaran untuk tagihan Anda.' }}</p>
+                                                                        @endif
                                                                             
                                                                     </div>
                                                                 </td>
@@ -256,13 +265,13 @@
                                                                                                     <p
                                                                                                         style="margin: 0;">
                                                                                                         {{$item->type}}
-                                                                                                    
-                                                                                                    <br>
-                                                                                                    <span
+                                                                                                        
+                                                                                                    </p> 
+                                                                                                    <p
                                                                                                         style="color: #a7a7a7;font-size: 14px;line-height: 14px;">
-                                                                                                        {{ $item->subject == 'Uang Gedung' ? '  ' : str_replace("Uang gedung, ", "", $item->subject)}}
-                                                                                                    </span>
-
+                                                                                                        {{ $item->subject = "Uang Gedung" ? '' : str_replace("Uang gedung, ", "", $item->subject)}}
+                                                                                                    
+                                                                                                    
                                                                                                     </p>
                                                                                                 </td>
                                                                                                 <td align="right"
@@ -329,7 +338,7 @@
                                                 style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                 <div
                                                    style="font-family:Muli, Arial, sans-serif;font-size:14px;font-weight:400;line-height:20px;text-align:center;color:red;">
-                                                    <b> {{ $mailData['past_due']? 'invoice pembayaran sudah melewati jatuh tempo, dimohon untuk segera membayar tagihan' : 'Invoice deadline pembayaran ' . date('d/m/Y', strtotime($mailData['bill'][0]->deadline_invoice))}}</b></div> <br><br>
+                                                    <b> {{ $mailData['past_due'] === true? 'invoice pembayaran sudah melewati jatuh tempo, dimohon untuk segera membayar tagihan' : 'Invoice deadline pembayaran ' . date('d/m/Y', strtotime($mailData['bill'][0]->deadline_invoice))}}</b></div> <br><br>
                                                 
                                             </td>
                                         </tr>
