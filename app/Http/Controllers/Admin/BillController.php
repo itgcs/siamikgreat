@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\SppMail;
 use App\Models\Bill;
+use App\Models\Grade;
 use App\Models\Student;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Psy\CodeCleaner\FunctionContextPass;
 
 class BillController extends Controller
 {
@@ -18,20 +21,93 @@ class BillController extends Controller
    public function index(Request $request)
    {
       try {
-         
-         $data = Bill::with(['student' => function ($query) {
-               $query->with('grade')->get();
-         }])->orderBy('id', 'desc')->get();
-          
 
+         session()->flash('page', (object)[
+            'page' => 'Bills',
+            'child' => 'database bills'
+         ]);
+
+         $bill = Bill::select('type', DB::raw('count(*) as total'))->groupBy('type')->get();
+
+         $grades = Grade::orderBy('id', 'asc')->get();
+ 
          $form = (object) [
-            'sort' => $request->sort? $request->sort : null,
-            'order' => $request->order? $request->order : null,
-            'status' => $request->status? $request->status : null,
+            'grade' => $request->grade && $request->grade !== 'all'? $request->grade : null,
+            'type' => $request->type && $request->type !== 'all'? $request->type : null,
+            'invoice' => $request->invoice && $request->invoice !== 'all'? $request->invoice : null,
+            'status' => $request->status && $request->status !== 'all'? $request->status : null,
             'search' => $request->search? $request->search : null,
          ];
 
-         return view('components.bill.data-bill')->with('data', $data)->with('form', $form);
+
+         if($form->search &&  $request->grade && $request->type && $request->invoice && $request->status 
+         || $request->grade && $request->type && $request->invoice && $request->status)
+         {
+
+            $data = new Bill();
+            $data = $data->with(['student' => function ($query) {
+               $query->with('grade')->get();
+            }]);
+            
+            if($form->grade) {
+               $data = $data->whereHas('student', function($query) use ($form) {
+                  $query
+                  ->where('name','LIKE', '%'.$form->search.'%')
+                  ->where('grade_id', (int)$form->grade);
+               });
+            }
+            
+            if ($form->search) {
+               
+               $data = $data->whereHas('student', function($query) use ($form) {
+                  $query->where('name', 'LIKE' ,'%'.$form->search.'%');
+               });
+            }
+            
+            
+            if($form->type)
+            {
+               $data = $data->where('type', $form->type);
+            }
+            
+            if($form->status)
+            {
+               $statusPaid = $form->status == 'true'? true : false;
+               
+               $data = $data->where('paidOf', $statusPaid);
+            }
+
+            if($form->invoice)
+            {
+               
+               if (is_numeric($form->invoice))
+               {
+                  $data = $data
+                  ->where('deadline_invoice', '<=' ,Carbon::now()->setTimezone('Asia/Jakarta')->addDays((int)$form->invoice)->format('y-m-d'))
+                  ->where('deadline_invoice', '>=' ,Carbon::now()->setTimezone('Asia/Jakarta')->format('y-m-d'));
+               } else {
+                  
+                  $operator = $form->invoice == 'today' ? '=' : '<';
+
+                  $data = $data->where('deadline_invoice', $operator, Carbon::now()->setTimezone('Asia/Jakarta')->format('y-m-d'));
+               }
+            }
+            
+            
+            $data = $data->orderBy('id', 'desc')->get();
+         }
+            else {
+            
+               $data = Bill::with(['student' => function ($query) {
+                  $query->with('grade')->get();
+               }])
+               ->orderBy('updated_at', 'desc')
+               ->get();
+               
+         }
+         
+
+         return view('components.bill.data-bill')->with('data', $data)->with('grade', $grades)->with('form', $form)->with('bill', $bill);
 
       } catch (Exception $err) {
          //throw $th;
@@ -167,11 +243,15 @@ class BillController extends Controller
       }
    }
 
-
    public function detailPayment($id)
    {
       try {
          //code...
+
+         session()->flash('page', (object)[
+            'page' => 'Bills',
+            'child' => 'database bills'
+         ]);
 
          $data = Bill::with(['student' => function($query) {
 
@@ -179,11 +259,43 @@ class BillController extends Controller
 
          }])->where('id', $id)->first();
 
+         $now = Carbon::now()->setTimezone('Asia/Jakarta');
+         $explode = explode('-', $data->deadline_invoice);
+         $targetDate = Carbon::create($explode[0], $explode[1], $explode[2]);
+         $diff = $now->diff($targetDate);
+         $invoice = $diff->days + 1;
 
-         return view('components.bill.spp.detail-spp')->with('data', $data);
+         return view('components.bill.spp.detail-spp')->with('data', $data)->with('invoice', $invoice);
          
       } catch (Exception $err) {
+         // return dd($err);
          return abort(500);
+      }
+   }
+
+
+   public function paidOf($id)
+   {
+      try {
+         //code...
+         
+
+         if(!Bill::where('id', $id)->first())
+         {
+            return redirect('/admin/bills/detail-payment/'.$id)->withErrors([
+               'id' => 'Id not found !!!'
+            ]);
+         }
+
+         Bill::where('id', $id)->update([
+               'paidOf' => true,
+         ]);
+
+         return redirect('/admin/bills');
+
+      } catch (Exception $err) {
+         //throw $th;
+         return dd($err);
       }
    }
 }

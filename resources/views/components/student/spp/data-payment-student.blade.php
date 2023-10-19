@@ -4,7 +4,7 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
 
-    {{-- @if(sizeof($data) <= 0) <div class="row h-100">
+@if(sizeof($data) <= 0) <div class="row h-100">
         <div class="col-sm-12 my-auto text-center">
             <h3>Payment has never been created. Click the
                 button below to get started !!!</h3>
@@ -15,24 +15,27 @@
         </div>
 </div>
 
-@else --}}
+@else
 <h2 class="text-center display-4">SPP Student</h2>
-<form class="mt-5" action="/admin/list">
+<form class="mt-5" action="/admin/spp-students">
     <div class="row">
         <div class="col-md-10 offset-md-1">
             <div class="row">
                 <div class="col-6">
                     <div class="form-group">
-                        <label>Result Type:</label>
+                        <label>Grade:</label>
                         @php
 
-                        $selected = $form? $form->sort : 'name';
+                        $selected = $form && $form->grade? $form->grade : 'all';
 
                         @endphp
-                        <select name="type" class="form-control" required>
-                            <option {{$selected === 'name' ? 'selected' : ''}} value="name">Name</option>
-                            <option {{$selected === 'place_birth' ? 'selected' : ''}} value="place_birth">Place Birth
-                            </option>
+                        <select name="grade" class="form-control text-center" required>
+                            <option {{$selected === 'all' ? 'selected' : ''}} value="all">-- All Grades --</option>
+                            @foreach ($grade as $el)
+                            
+                                <option {{$selected == $el->id ? 'selected' : ''}} value="{{$el->id}}">{{$el->name. ' - ' .$el->class}}</option>
+                                
+                            @endforeach
                         </select>
 
                     </div>
@@ -42,7 +45,7 @@
 
                         @php
 
-                        $selected = $form ? $form->sort : 'desc';
+                        $selected = $form && $form->sort? $form->sort : 'desc';
 
                         @endphp
 
@@ -58,38 +61,39 @@
 
                         @php
 
-                        $selected = $form? $form->order : 'created_at';
+                        $selected = $form && $form->order? $form->order : 'id';
 
                         @endphp
 
                         <label>Sort by:</label>
                         <select name="order" class="form-control">
-                            <option {{$selected === 'created_at'? 'selected' : ''}} value="created_at">Register</option>
+                            <option {{$selected === 'id'? 'selected' : ''}} value="id">Register</option>
                             <option {{$selected === 'name'? 'selected' : ''}} value="name">Name</option>
                             <option {{$selected === 'grade_id'? 'selected' : ''}} value="grade_id">Grade</option>
-                            <option {{$selected === 'gender'? 'selected' : ''}} value="gender">Gender</option>
-                            <option {{$selected === 'place_birth'? 'selected' : ''}} value="place_birth">Place Birth
-                            </option>
-                            <option {{$selected === 'status'? 'selected' : ''}} value="status">Status</option>
                         </select>
 
                     </div>
                 </div>
                 <div class="col-2">
                     <div class="form-group">
-                        <label>Status: <span style="color: red"></span></label>
+                        <label>Set Spp: <span style="color: red"></span></label>
 
                         @php
 
-                        $selected = $form ? $form->status : 'true';
-                        $option = $selected === 'false' ? 'true' : 'false';
+                        $selected = $form && $form->status ? $form->status : 'all';
 
                         @endphp
 
-                        <select name="status" class="form-control">
-                            <option selected value="{{$selected}}">{{$selected === 'true' ? 'Active' : 'Inactive'}}
+                        <select name="status" class="form-control text-center">
+                            <option {{$selected == 'all'? 'selected' : ''}} value="all">
+                                -- All --
                             </option>
-                            <option value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
+                            <option  {{$selected == 'true'? 'selected' : ''}} value="true">
+                                Already
+                            </option>
+                            <option  {{$selected == 'false'? 'selected' : ''}} value="false">
+                                Not yet
+                            </option>
                         </select>
                     </div>
                 </div>
@@ -200,7 +204,7 @@
 </div>
 
 
-{{-- @endif --}}
+@endif
 </div>
 
 @endsection

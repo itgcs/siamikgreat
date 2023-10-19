@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Grade;
 use App\Models\Payment_student;
 use App\Models\Student;
 use Exception;
@@ -14,7 +15,8 @@ use Illuminate\Support\Facades\Validator;
 
 class PaymentStudentController extends Controller
 {
-   public function index()
+
+   public function index(Request $request)
    {
       try {
          //code...
@@ -23,22 +25,57 @@ class PaymentStudentController extends Controller
             'page' => 'payments',
             'child' => 'spp-students',
          ]);
-         $data = Student::with([ 
+
+         $form = (object) [
+            'grade' => $request->grade && $request->grade != 'all' ? $request->grade : null,
+            'sort' => $request->sort && $request->sort != 'all' ? $request->sort : 'desc',
+            'order' => $request->order && $request->order != 'all' ? $request->order : 'id',
+            'status' => $request->status && $request->status != 'all' ? $request->status : null,
+            'search' => $request->search ? $request->search : null,
+         ];
+
+
+         $model = new Student();
+         
+
+         $data = $model->with([ 
             'spp_student' => function($query){
                $query->where('type', 'SPP')->get();
-         },
-         'grade'
-         ])
-         ->orderBy('id', 'desc')
-         ->get();
+         },'grade']);
 
-         // return  $data;
+         if($form->search || $request->grade && $request->status)
+         {
+            if($form->status) {
+               $temp = $form->status == 'true' ? true : false;
+               if($temp){
 
-         return view('components.student.spp.data-payment-student')->with('data', $data)->with('form', null);
+                  $data = $data->whereHas('payment_student');
+               } else {
+                  $data =  $data->whereDoesntHave('payment_student');
+               }
+            }
+
+            if($form->grade)
+            {
+               $data = $data->where('grade_id', (int)$form->grade);
+            }
+
+            if($form->search) 
+            {
+               $data = $data->where('name', 'LIKE', '%'.$form->search.'%');
+            }
+         }
+
+         $data = $data->orderBy($form->order, $form->sort)->get();
+
+         $grade = Grade::orderBy('id', 'asc')->get(['id', 'name', 'class']);
+         
+         return view('components.student.spp.data-payment-student')->with('data', $data)->with('form', $form)->with('grade', $grade);
          
       } catch (Exception $err) {
          //throw $th;
-         return dd($err);
+         // return dd($err);
+         return abort(500);
       }
    }
 

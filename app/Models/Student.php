@@ -58,4 +58,9 @@ class Student extends Model
     {
        return $this->hasOne(Payment_student::class, 'student_id');
     }
+
+    public function book()
+   {
+      return $this->belongsToMany(Book::class, 'book_students', 'student_id', 'book_id')->withPivot('created_at');
+   }
 }

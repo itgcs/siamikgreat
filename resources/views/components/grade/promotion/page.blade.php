@@ -3,6 +3,8 @@
 
 @section('content')
 
+
+
 <div class="container-fluid mt-5">
 
 
@@ -109,7 +111,7 @@
                             @endforeach
                             @else
                             <tr>
-                                <td colspan="8">
+                                <td colspan="8 text-center">
 
                                     <h1>You haven't added student data yet</h1>
                                 </td>
@@ -129,5 +131,9 @@
          </form>
 
 </div>
+
+@if($errors->any())
+                                       <p style="color: red">{{$errors->first('checklist')}}</p>
+@endif
 
 @endsection

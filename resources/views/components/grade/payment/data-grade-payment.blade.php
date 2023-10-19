@@ -77,9 +77,6 @@
                             Paket
                         </th>
                         <th>
-                            Book
-                        </th>
-                        <th>
                             Uniform
                         </th>
                         <th style="width: 25%">
@@ -122,15 +119,6 @@
                         </td>
                         <td>
                            <a>
-                            @if ($el->book)
-                            <i class="fa-solid fa-circle-check fa-2xl" style="color: #32c81e;"></i>
-                            @else
-                            <i class="fa-solid fa-circle-xmark fa-fade fa-2xl" style="color: #bd0000;"></i>
-                            @endif
-                           </a>
-                        </td>
-                        <td>
-                           <a>
                             @if ($el->uniform)
                             <i class="fa-solid fa-circle-check fa-2xl" style="color: #32c81e;"></i>
                             @else
@@ -146,7 +134,6 @@
                               href="{{url('/admin/payment-grades') . '/' . $el->id}}">
                               {{-- <i class="fa-solid fa-user-graduate"></i> --}}
                               <i class="fa-solid fa-file-invoice fa-lg" style="margin-right: 10px;"></i>
-                              </i>
                               Data payment
                            </a>
                         </td>

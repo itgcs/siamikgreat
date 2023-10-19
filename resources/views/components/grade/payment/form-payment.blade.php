@@ -12,7 +12,7 @@
                         @csrf
                         <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Create payment static for {{$data->name}} {{$data->class}}</h3>
+                                <h3 class="card-title">Create {{$type}} payment static for {{$data->name}} {{$data->class}}</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->

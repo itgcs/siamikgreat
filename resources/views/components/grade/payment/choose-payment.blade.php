@@ -22,38 +22,8 @@
              </div>
              <a href="/admin/payment-grades/{{$data->id}}/create/SPP" class="small-box-footer">Create spp <i class="fas fa-arrow-circle-right"></i></a>
            </div>
-         </div>
-         <!-- ./col -->
-         <div class="col-lg-6 col-6">
-           <!-- small box -->
-           <div class="small-box bg-secondary">
-             <div class="inner">
-               <h3>Paket<sup style="font-size: 20px"></sup></h3>
 
-               <p>Paket cost of uniform and book</p>
-             </div>
-             <div class="icon">
-                <i class="fa-solid fa-tag"></i>
-             </div>
-             <a href="/admin/payment-grades/{{$data->id}}/create/paket" class="small-box-footer">Create Paket cost <i class="fas fa-arrow-circle-right"></i></a>
-           </div>
          </div>
-         <!-- ./col -->
-         <div class="col-lg-6 col-6">
-           <!-- small box -->
-           <div class="small-box bg-info">
-             <div class="inner">
-               <h3>Book</h3>
-
-               <p>Book costs</p>
-             </div>
-             <div class="icon">
-               <i class="fa-solid fa-book"></i>
-             </div>
-             <a href="/admin/payment-grades/{{$data->id}}/create/book" class="small-box-footer">Create book cost <i class="fas fa-arrow-circle-right"></i></a>
-           </div>
-         </div>
-         <!-- ./col -->
          <div class="col-lg-6 col-6">
            <!-- small box -->
            <div class="small-box bg-light">
@@ -68,6 +38,22 @@
              <a href="/admin/payment-grades/{{$data->id}}/create/uniform" class="small-box-footer">Create uniform cost <i class="fas fa-arrow-circle-right"></i></a>
            </div>
          </div>
+         <!-- ./col -->
+         <div class="col-lg-12 col-12">
+           <!-- small box -->
+           <div class="small-box bg-secondary">
+             <div class="inner">
+               <h3>Paket<sup style="font-size: 20px"></sup></h3>
+
+               <p>Paket cost of uniform and book</p>
+             </div>
+             <div class="icon">
+                <i class="fa-solid fa-tag"></i>
+             </div>
+             <a href="/admin/payment-grades/{{$data->id}}/create/paket" class="small-box-footer">Create Paket cost <i class="fas fa-arrow-circle-right"></i></a>
+           </div>
+         </div>
+         <!-- ./col -->
          <!-- ./col -->
        </div>
        <!-- /.row -->

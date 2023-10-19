@@ -44,18 +44,19 @@ class Grade extends Model
       return $this->hasOne(Payment_grade::class);
     }
 
-    public function book()
-    {
-      return $this->hasOne(Payment_grade::class);
-    }
-
+    
     public function bundle()
     {
       return $this->hasOne(Payment_grade::class);
     }
-
+    
     public function type()
     {
       return $this->hasOne(Payment_grade::class);
+    }
+
+    public function book()
+    {
+      return $this->hasMany(Book::class);
     }
 }

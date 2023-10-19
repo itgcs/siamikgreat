@@ -71,6 +71,24 @@
          </li>
        </ul>
      </li>
+     <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'books' ? 'menu-open' : '') : ''}}">
+       <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'books' ? 'active' : '') : ''}}">
+         <i class="nav-icon fa-solid fa-house-flag"></i>
+         <p>
+           Book
+           <i class="right fas fa-angle-left"></i>
+         </p>
+       </a>
+       <ul class="nav nav-treeview">
+         <li class="nav-item">
+           <a href="/admin/books" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database book' ? 'active' : '') : ''}}">
+             <i class="far fa-circle nav-icon"></i>
+             <p>Data</p>
+           </a>
+         </li>
+       </ul>
+     </li>
+     
      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'payments' ? 'menu-open' : '') : ''}}">
        <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'payments' ? 'active' : '') : ''}}">
          <i class="nav-icon fa-regular fa-credit-card"></i>
@@ -92,8 +110,33 @@
              <p>Grades</p>
            </a>
          </li>
+         <li class="nav-item">
+           <a href="/admin/payment-books" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'payment-books' ? 'active' : '') : ''}}">
+             <i class="far fa-circle nav-icon"></i>
+             <p>Book</p>
+           </a>
+         </li>
        </ul>
      </li>
+
+     <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'Bills' ? 'menu-open' : '') : ''}}">
+      <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'Bills' ? 'active' : '') : ''}}">
+        <i class="nav-icon fa-solid fa-house-flag"></i>
+        <p>
+          Bill
+          <i class="right fas fa-angle-left"></i>
+        </p>
+      </a>
+      <ul class="nav nav-treeview">
+        <li class="nav-item">
+          <a href="/admin/bills" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database bills' ? 'active' : '') : ''}}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Data</p>
+          </a>
+        </li>
+      </ul>
+    </li>
+
      <li class="nav-header">SUPER ADMIN ACCESS</li>
      <li class="nav-item">
        <a href="{{url('/admin/user')}}" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'user' ? 'active' : '') : ''}}">

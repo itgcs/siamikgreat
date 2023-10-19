@@ -30,7 +30,7 @@
             </div>
             <div class="mt-3 row d-flex justify-content-around">
                 <a href="{{url('/admin/grades/promotions') . '/' . $data->gradeTeacher->id}}" role="button" class="w-100 btn btn-info col-5">
-                  <i class="fa-solid fa-graduation-cap fa-beat-fade" style="color: #ffffff;"></i>
+                  <i class="fa-solid fa-graduation-cap fa-beat-fade" style="color: #ffffff;"></i><br>
                   Promotion
                </a>
                 <a target="_blank" href="{{url('/admin/grades/pdf') . '/' . $data->gradeTeacher->id}}" role="button" class="w-100 btn btn-warning col-5">

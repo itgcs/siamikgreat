@@ -1,13 +1,7 @@
-07.00 - 08.00 = move & settings pc from third floor to ex chinese class.
-08.00 -  08.30 = fix cron reminder past due minus seven days for spp
-08.30 -  09.00 = create cron reminder past due minus seven days for fee register
-09.00 - 10.00 = error tersting cron reminder past due minus seven days for spp & fee register.
-10.00 -  10.30 = create cron reminder past due minus seven days for uniform
-10.30 -  11.00 = create cron reminder past due minus seven days for book
-11.00 -  11.30 = create cron reminder past due minus one days for fee register
-11.30 -  12.00 = create cron reminder past due minus one days for uniform
-12.00 -  13.00 = Ishoma
-13.00 -  13.30 = create cron reminder past due minus one days for book and create form pdf for parents.
-13.30 -  14.00 = create cron reminder past due minus one days for spp.
-14.00 - 15.00 = create schema database also migration database book and book_grade for payments.
-15.00 - 16.00 = create google form fo parents
+07.00 - 10.00 = add filter on landing page bills to search deadline invoice pastdue, in month, h-7 days, h-1 days, 
+today and add filter to search by type bills there are book, fee regis, uniform, spp on landing page bills.
+10.00 - 12.00 = trial and error update status paid on bills.
+12.00 - 13.15 = Fix userinterface for information detail bills.
+13.15 - 14.15 = Ishoma
+14.15 - 15.00 = Fix cron job bills reminder.
+14.00 - 16.00 = Create filter search payments by students.

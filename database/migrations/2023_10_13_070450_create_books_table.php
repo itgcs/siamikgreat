@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('books', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('grade_id');
-            $table->foreign('grade_id')->references('id')->on('grades');
+            $table->foreign('grade_id')->references('id')->on('grades')->cascadeOnDelete();
             $table->string('name');
             $table->bigInteger('amount')->default(0);
             $table->timestamps();

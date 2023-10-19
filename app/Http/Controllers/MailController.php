@@ -1,7 +1,8 @@
 <?php
   
 namespace App\Http\Controllers;
-  
+
+use App\Mail\BookEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DemoMail;
@@ -131,7 +132,7 @@ class MailController extends Controller
                   'past_due' => true,
                ];
                
-               Mail::to($value2->email)->send(new SppMail($mailData, "Berikut adalah total tagihan anda yang sudah jatuh tempo"));
+               Mail::to($value2->email)->send(new SppMail($mailData, "Berikut adalah total " . $type . " tagihan anda yang sudah jatuh tempo"));
             }
             
          }
@@ -149,12 +150,12 @@ class MailController extends Controller
          //code...
          $data = Student::with([
             'bill' => function($query) use ($type) {
-               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->addDays(7)->format('y-m-d'))->get();
+               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(7)->format('y-m-d'))->get();
          },
             'relationship'
          ])
          ->whereHas('bill', function($query) use ($type) {
-               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->addDays(7)->format('y-m-d'));
+               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(7)->format('y-m-d'));
          })
          ->where('is_active', true)->get();
 
@@ -195,12 +196,12 @@ class MailController extends Controller
          //code...
          $data = Student::with([
             'bill' => function($query) use ($type) {
-               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->addDays(1)->format('y-m-d'))->get();
+               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(1)->format('y-m-d'))->get();
          },
             'relationship'
          ])
          ->whereHas('bill', function($query) use ($type) {
-               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->addDays(1)->format('y-m-d'));
+               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(1)->format('y-m-d'));
          })
          ->where('is_active', true)->get();
 
@@ -226,6 +227,31 @@ class MailController extends Controller
          Info("Cron Job reminder H-1 error: ". $err);
          
          return dd($err);
+      }
+   }
+
+
+   public function addBookEmail($mailData)
+   {
+      try {
+
+
+         foreach ($mailData['student']->relationship as $parent)
+         {
+            Mail::to($parent->email)->send(new BookEmail($mailData, "Tagihan Buku yang telah dipesan " . $mailData['student']->name.  " ". date('l, d F Y') ." sudah dibuat."));
+         }
+
+
+         return [
+            'status' => true,
+         ];
+         
+      } catch (Exception $err) {
+         
+
+         return [
+            'status' => false,
+         ];
       }
    }
 }

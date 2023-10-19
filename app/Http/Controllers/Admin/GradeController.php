@@ -259,7 +259,9 @@ class GradeController extends Controller
          if(sizeof($promoteId)<=0)
          {
             DB::rollBack();
-            return redirect()->back()->withErrors('error');
+            return redirect()->back()->withErrors([
+               'checklist' => 'must checklist at least one student!!!',
+            ]);
          }
 
          $grade = Student::with('grade')->where('id', reset($promoteId))->first();

@@ -23,6 +23,31 @@
               <div class="card-body">
                 <div class="row">
                   <div class="col-sm-4">
+                    <p class="mb-0">Unique ID</p>
+                  </div>
+                  <div class="col-sm-8">
+                    <p class="text-muted mb-0">#{{$data->id}}</p>
+                  </div>
+               </div>
+               <hr>
+               <div class="row">
+                  <div class="col-sm-4">
+                    <p class="mb-0">Student Name</p>
+                  </div>
+                  <div class="col-sm-8">
+                     <p class="text-muted mb-0">
+                        {{-- @if($data->is_active)
+                           <h1 class="badge badge-success">Active</h1>
+                        @else
+                           <h1 class="badge badge-danger">Inactive</h1>
+                        @endif --}}
+                        {{$data->student->name}}
+                     </p>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
                     <p class="mb-0">Type</p>
                   </div>
                   <div class="col-sm-8">
@@ -36,31 +61,6 @@
                   </div>
                   <div class="col-sm-8">
                     <p class="text-muted mb-0">{{$data->subject? $data->subject : '-'}}</p>
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-4">
-                    <p class="mb-0">Description</p>
-                  </div>
-                  <div class="col-sm-8">
-                    <p class="text-muted mb-0">{{$data->description? $data->description : '-'}}</p>
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-4">
-                    <p class="mb-0">Student</p>
-                  </div>
-                  <div class="col-sm-8">
-                     <p class="text-muted mb-0">
-                        {{-- @if($data->is_active)
-                           <h1 class="badge badge-success">Active</h1>
-                        @else
-                           <h1 class="badge badge-danger">Inactive</h1>
-                        @endif --}}
-                        {{$data->student->name}}
-                     </p>
                   </div>
                 </div>
                 <hr>
@@ -88,7 +88,31 @@
                 <hr>
                 <div class="row">
                   <div class="col-sm-4">
-                    <p class="mb-0">Class</p>
+                    <p class="mb-0">Invoice</p>
+                  </div>
+                  @php
+                     $currentDate = date('y-m-d');
+                  @endphp  
+                  <div class="col-sm-8">
+                     <div class="mb-0">
+
+                     <p class="text-muted">
+                           {{date('d/m/Y', strtotime($data->deadline_invoice))}}
+                     </p>
+                     @if ($data->paidOf)
+                        <span class="badge badge-pill badge-success"> Paid </span>
+                     @elseif (strtotime($data->deadline_invoice) < strtotime($currentDate))
+                        <span class="badge badge-pill badge-danger"> Past Due </span>
+                     @else
+                        <span class="badge badge-pill badge-warning"> {{$invoice}} Days </span>
+                     @endif
+                  </div>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <p class="mb-0">Created</p>
                   </div>
                   <div class="col-sm-8">
                      <p class="text-muted mb-0">
@@ -116,21 +140,23 @@
                            Amount:
                         </td>
                         <td align="right">
-                           {{number_format($data->amount, 0, ',', '.')}}
+                           IDR. {{number_format($data->amount, 0, ',', '.')}}
                         </td>
                         
                      </tr>
 
-                     
+                     @if ($data->discount)
+                        
                      <tr>
                         <td align="left">
                            Discount:
                         </td>
                         <td align="right">
-                           {{$data->discount}}%
+                           {{$data->discount ? $data->discount : 0}}%
                         </td>
                         
                      </tr>
+                     @endif
                      
                   </tbody>
                </table>
@@ -159,11 +185,14 @@
                </table>
             </div>
 
-            <a role="button" href="#" class="btn btn-success w-100">Paid success</a>
+            <a href="javascript:void(0)" id="update-status" data-id="{{ $data->id }}" data-name="{{ $data->student->name }}" data-subject="{{ $data->subject }}" class="btn btn-success w-100">Paid success</a>
           </div>
         </div>
       </div>
     </section>
+
+    @includeIf('components.super.update-paid')
+
     @if(session('after_create')) 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

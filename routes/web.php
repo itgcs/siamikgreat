@@ -3,9 +3,11 @@
 use App\Http\Controllers\Admin\{
    AdminController,
    BillController,
-   DashboardController,
+    BookController,
+    DashboardController,
    GradeController,
-   PaymentGradeController,
+    PaymentBookController,
+    PaymentGradeController,
     PaymentStudentController,
     RegisterController,
    StudentController,
@@ -120,6 +122,25 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::get('/detail-payment/{id}', [BillController::class, 'detailPayment']);
       Route::post('/post-spp/{id}', [BillController::class, 'actionSPP'])->name('create.spp');
       Route::get('/create-payment/{id}', [BillController::class, 'pagePayment']);
+      Route::put('/update-paid/{id}', [BillController::class, 'paidOf']);
+   });
+
+
+   Route::prefix('/books')->group(function() {
+      Route::get('/', [BookController::class, 'index']);
+      Route::get('/create', [BookController::class, 'pageCreate']);
+      Route::get('/edit/{id}', [BookController::class, 'pageEdit']);
+      Route::get('/detail/{id}', [BookController::class, 'detail']);
+      Route::post('/post', [BookController::class, 'postCreate'])->name('action.create.book');
+      Route::patch('/post/{id}', [BookController::class, 'actionUpdate'])->name('action.update.book');
+      Route::delete('/{id}', [BookController::class, 'destroy']);
+   });
+
+   Route::prefix('payment-books')->group(function(){
+      Route::get('/', [PaymentBookController::class, 'index']);
+      Route::get('/{id}', [PaymentBookController::class, 'studentBook']);
+      Route::get('/{id}/add-books', [PaymentBookController::class, 'pageAddBook']);
+      Route::post('/{id}/add-books-action', [PaymentBookController::class, 'actionAddBook'])->name('action.add.book');
    });
 });
 

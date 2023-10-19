@@ -36,9 +36,7 @@ class PaymentGradeController extends Controller
             $query->where('type', 'SPP')->get();
          }, 'uniform' => function($query) {
             $query->where('type', 'Uniform')->get();
-         },'book' => function($query) {
-            $query->where('type', 'Book')->get();
-         },'bundle' => function($query) {
+         }, 'bundle' => function($query) {
             $query->where('type', 'Paket')->get();
          },])->where('name','LIKE', '%'. $form->grade .'%')->where('class', 'LIKE', '%'. $form->class .'%')->get();
 
