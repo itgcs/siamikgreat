@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MailController;
+use App\Models\Bill;
+use App\Models\Book_student;
 use App\Models\Grade;
+use App\Models\Payment_grade;
 use App\Models\Student;
 use App\Models\Teacher;
 use Barryvdh\DomPDF\PDF;
@@ -68,35 +72,43 @@ class GradeController extends Controller
          ];
 
          $validator = Validator::make($rules, [
-            'name' => 'required|string|unique:grades',
+            'name' => 'required|string',
             'class' => 'required|string|max:15',
             'teacher_id' => 'required|integer',
          ],
-         [
-            'name.unique' => "The grade " . $request->name . " with class " . $request->class ." is already create !!!",
-         ]
       );
 
-         if($validator->fails())
-         {
-            DB::rollBack();
-            return redirect('/admin/grades/create')->withErrors($validator->messages())->withInput($rules);
-         }
+      
+      if($validator->fails())
+      {
+         DB::rollBack();
+         return redirect('/admin/grades/create')->withErrors($validator->messages())->withInput($rules);
+      }
+      
+      if(Grade::where('name', $request->name)->where('class', $request->class)->first())
+      {
+         DB::rollBack();
+         return redirect('/admin/grades/create')->withErrors([
+            'name' => 'Grades ' . $request->name . ' class ' . $request->class . ' is has been created ',
+         ])->withInput($rules);
+      }
 
-         if(Grade::where('teacher_id', $request->teacher_id)->first())
-         {
-            Grade::where('teacher_id', $request->teacher_id)->update([
+      if(Grade::where('teacher_id', $request->teacher_id)->first())
+      {
+         Grade::where('teacher_id', $request->teacher_id)->update([
                'teacher_id' => null,
             ]);
-         }
-
-
-
-         $post = [
+      }
+         
+      $post = [
             'name' => $request->name,
             'teacher_id' => $request->teacher_id,
             'class' => $request->class,
-         ];
+      ];
+
+
+         session()->flash('after_create_grade');
+
          Grade::create($post);
 
          DB::commit();
@@ -165,11 +177,9 @@ class GradeController extends Controller
             'page' => 'grades',
             'child' => 'database grades',
          ]);
-         
-         $gradeName = $request->name ? $request->name . ' - ' . $request->class : null;
 
          $rules = [
-            'name' => $gradeName,
+            'name' => $request->name,
             'teacher_id' => $request->teacher_id? $request->teacher_id : null,
             'class' => $request->class,
          ];
@@ -186,16 +196,17 @@ class GradeController extends Controller
             return redirect('/admin/grades/edit/' . $id)->withErrors($validator->messages())->withInput($rules);
          }
          
-         $check = DB::table('grades')->where('name', $gradeName)->first();
+         $check = Grade::where('name', $request->name)->where('class', $request->class)->first();
 
-         if($check) if($check->id != $id)
+         if($check && $check->id != $id)
          {
 
             DB::rollBack();
-            return redirect('/admin/grades/edit/' . $id)->withErrors(['name' => ["The grade " . $request->name . " with class " . $request->class ." is already create !!!"]])->withInput($rules);
+            return redirect('/admin/grades/edit/' . $id)->withErrors(['name' => ["The grade " . $request->name . " with class " . $request->class ." is already created !!!"]])->withInput($rules);
          }
       
 
+         
          if(Grade::where('teacher_id', $request->teacher_id)->first())
          {
             Grade::where('teacher_id', $request->teacher_id)->update([
@@ -203,23 +214,19 @@ class GradeController extends Controller
             ]);
          }
 
-         $post = [
-            'name' => $gradeName,
-            'teacher_id' => $request->teacher_id,
-         ];
-
-         
-
-
-         Grade::where('id', $id)->update($post);
+   
+         Grade::where('id', $id)->update($rules);
          
          DB::commit();
 
+         session()->flash('after_update_grade');
+
          return redirect('/admin/grades');
 
-      } catch (Exception $th) {
+      } catch (Exception $err) {
          DB::rollBack();
-         return abort(500);
+         return dd($err);
+         // return abort(500);
       }
    }
 
@@ -264,29 +271,49 @@ class GradeController extends Controller
             ]);
          }
 
-         $grade = Student::with('grade')->where('id', reset($promoteId))->first();
+         $grade = Student::with('grade', 'relationship')->where('id', reset($promoteId))->first();
+         
          $lastest_grade = DB::table('grades')->where('name', $grade->grade->name)->orderBy('id', 'desc')->first();
 
          
          if($grade->grade->id < $lastest_grade->id)
          {
+            $paket = Payment_grade::where('type', 'Paket')->where('grade_id', $grade->grade->id+1)->first('amount');
+   
+            //harus memberi ada validasi semisal paket dari kelas belom di set up;
+            if(!$paket)
+            {
+               return redirect('/admin/payment-grades/'.$grade->grade->id+1)->withErrors(['paket' => 'Paket payments for '. $grade->grade->name .' - '. $grade->grade->class. ' grades have not been set up']);
+            }
             foreach ($promoteId as $value) {
                
+               Book_student::where('student_id', (int)$value)->delete();
+
                Student::where('id', $value)->update([
                   'grade_id' => (int)$grade->grade->id + 1,
                ]);
+
             }
          } else {
             foreach ($promoteId as $value) {
                
+               Book_student::where('student_id', (int)$value)->delete();
+
                Student::where('id', $value)->update([
                   'is_active' => 0,
+                  'is_graduate' => 1,
                ]);
             }
          }
 
 
+
+
          DB::commit();
+
+         //lakukan kirim email
+         $promotePaket = new MailController();  
+         $promotePaket->cronCreatePaketAfterGraduate($promoteId);
 
          return redirect('/admin/grades/');
 

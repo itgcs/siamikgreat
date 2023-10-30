@@ -13,18 +13,20 @@ class TeacherController extends Controller
 {
    public function index(Request $request)
    {
+      session()->flash('page',  $page = (object)[
+         'page' => 'teachers',
+         'child' => 'database teachers',
+      ]);
+      
+
       try {
-         session()->flash('page',  $page = (object)[
-            'page' => 'teachers',
-            'child' => 'database teachers',
-         ]);
-         session()->flash('preloader', false);
 
          $form = (object) [
             'sort' => $request->sort? $request->sort : null,
             'order' => $request->order? $request->order : null,
             'status' => $request->status? $request->status : null,
             'search' => $request->search? $request->search : null,
+            'type' => $request->type? $request->type:  null,
          ];
 
          $data = [];
@@ -34,15 +36,16 @@ class TeacherController extends Controller
          
          if($request->type && $request->search && $request->order){
             
-            $data = Teacher::where('is_active', $status)->where($request->type,'LIKE','%'. $request->search .'%')->orderBy($request->order, $order)->get();
+            $data = Teacher::where('is_active', $status)->where($request->type,'LIKE','%'. $request->search .'%')->orderBy($request->order, $order)->paginate(15);
          } else if($request->type && $request->search)
          {
-            $data = Teacher::where('is_active', $status)->where($request->type,'LIKE','%'. $request->search .'%')->orderBy('created_at', $order)->get();
+            $data = Teacher::where('is_active', $status)->where($request->type,'LIKE','%'. $request->search .'%')->orderBy('created_at', $order)->paginate(15);
          } else if($request->order) {
-            $data = Teacher::where('is_active', $status)->orderBy($request->order, $order)->get();
+            $data = Teacher::where('is_active', $status)->orderBy($request->order, $order)->paginate(15);
          } else {
 
-            $data = Teacher::where('is_active', $status)->orderBy('created_at', $order)->get();
+            $data = Teacher::where('is_active', $status)->orderBy('created_at', $order)->paginate(15);
+            
          }
          return view('components.teacher.data-teacher')->with('data', $data)->with('form', $form);
 
@@ -52,11 +55,14 @@ class TeacherController extends Controller
    }
    public function getById($id)
    {
+      session()->flash('page',  $page = (object)[
+         'page' => 'teachers',
+         'child' => 'database teachers',
+      ]);
+
+      
+
       try {
-         session()->flash('page',  $page = (object)[
-            'page' => 'teachers',
-            'child' => 'database teachers',
-         ]);
          $data = Teacher::where('unique_id', $id)->first();
          // return view('components.teacher.data-teacher')->with('data', $data);
          return view('components.teacher.detail-teacher')->with('data', $data);
@@ -67,12 +73,16 @@ class TeacherController extends Controller
 
    public function pagePost()
    {
-      try {
+      session()->flash('page',  $page = (object)[
+         'page' => 'teachers',
+         'child' => 'database teachers',
+      ]);
 
-         session()->flash('page',  $page = (object)[
-            'page' => 'teachers',
-            'child' => 'database teachers',
-         ]);
+      
+      
+      try {
+         
+         
          $data = Teacher::orderBy('id', 'desc')->get();
          return view('components.teacher.register-teacher')->with('data', $data);
 
@@ -80,10 +90,17 @@ class TeacherController extends Controller
          return dd($err);
       }
    }
-
+   
    public function actionPost(Request $request)
    {
+      
       try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'teachers',
+            'child' => 'database teachers',
+         ]);
+         
+         session()->flash('preloader', true);
          
          $var = DB::table('teachers')->latest('id')->first();
          $unique_id = '';
@@ -141,7 +158,9 @@ class TeacherController extends Controller
 
          $data = Teacher::create($credentials);
 
-         session()->flash('after_create');
+         session()->flash('after_create_teacher', (object) [
+            'name' => $data->name,
+         ]);
          return redirect('/admin/teachers/detail/' . $unique_id);
          
       } catch (Exception $err) {
@@ -152,11 +171,15 @@ class TeacherController extends Controller
 
    public function editPage($id)
    {
+      session()->flash('page',  $page = (object)[
+         'page' => 'teachers',
+         'child' => 'database teachers',
+      ]);
+
+      
+      
       try {
-         session()->flash('page',  $page = (object)[
-            'page' => 'teachers',
-            'child' => 'database teachers',
-         ]);
+
          $data = Teacher::where('unique_id', $id)->first();
          // return view('components.teacher.data-teacher')->with('data', $data);
          return view('components.teacher.edit-teacher')->with('data', $data);
@@ -167,6 +190,14 @@ class TeacherController extends Controller
 
    public function actionEdit(Request $request, $id)
    {
+
+      session()->flash('page',  $page = (object)[
+         'page' => 'teachers',
+         'child' => 'database teachers',
+      ]);
+
+      session()->flash('preloader', true);
+
       try {
          
          $credentials = $request->only(['id', 'name', 'nik', 'gender', 'place_birth', 'date_birth', 'nationality', 'home_address', 'religion', 'temporary_address', 'email', 'handphone', 'last_education', 'major']);
@@ -219,7 +250,7 @@ class TeacherController extends Controller
          
          Teacher::where('id', $id)->update($credentials);
          
-         session()->flash('after_create');
+         session()->flash('after_update_teacher');
          $target = Teacher::where('id', $id)->first();
          
          return redirect('/admin/teachers/detail/' . $target->unique_id);

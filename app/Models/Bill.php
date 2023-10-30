@@ -29,4 +29,10 @@ class Bill extends Model
    {
       return $this->belongsTo(Student::class, 'student_id');
    }
+
+
+   public function bill_collection()
+   {
+      return $this->hasMany(BillCollection::class, 'bill_id');
+   }
 }

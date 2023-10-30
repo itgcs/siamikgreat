@@ -13,13 +13,13 @@
                              <label>Result Type:</label>
                              @php
                                  
-                                 $selected = $form? $form->sort : 'name';
+                                 $selectedType = $form && $form->type ? $form->type : 'name';
 
                               @endphp
                               <select name="type" class="form-control" required>
-                                  <option {{$selected === 'name' ? 'selected' : ''}} value="name">Name</option>
-                                  <option {{$selected === 'place_birth' ? 'selected' : ''}} value="place_birth">Place Birth</option>
-                                  <option {{$selected === 'nationality' ? 'selected' : ''}} value="nationality">Nationality</option>
+                                  <option {{$selectedType === 'name' ? 'selected' : ''}} value="name">Name</option>
+                                  <option {{$selectedType === 'place_birth' ? 'selected' : ''}} value="place_birth">Place Birth</option>
+                                  <option {{$selectedType === 'nationality' ? 'selected' : ''}} value="nationality">Nationality</option>
                               </select>
                             
                          </div>
@@ -29,14 +29,14 @@
 
                               @php
                                  
-                                 $selected = $form->sort ? $form->sort : 'desc';
+                                 $selectedSort = $form->sort ? $form->sort : 'desc';
 
                               @endphp
 
                            <label>Sort order: <span style="color: red"></span></label>
                            <select name="sort" class="form-control">
-                               <option value="desc" {{$selected === 'desc' ? 'selected' : ''}}>Descending</option>
-                               <option value="asc" {{$selected === 'asc' ? 'selected' : ''}}>Ascending</option>
+                               <option value="desc" {{$selectedSort === 'desc' ? 'selected' : ''}}>Descending</option>
+                               <option value="asc" {{$selectedSort === 'asc' ? 'selected' : ''}}>Ascending</option>
                            </select>                              
                          </div>
                      </div>
@@ -45,17 +45,17 @@
 
                            @php
 
-                              $selected = $form->order? $form->order : 'created_at';
+                              $selectedOrder = $form->order? $form->order : 'created_at';
 
                            @endphp
 
                              <label>Sort by:</label>
                               <select name="order" class="form-control">
-                                    <option {{$selected === 'created_at'? 'selected' : ''}} value="created_at">Register</option>
-                                    <option {{$selected === 'name'? 'selected' : ''}} value="name">Name</option>
-                                    <option {{$selected === 'gender'? 'selected' : ''}} value="gender">Gender</option>
-                                    <option {{$selected === 'place_birth'? 'selected' : ''}} value="place_birth">Place Birth</option>
-                                    <option {{$selected === 'status'? 'selected' : ''}} value="status">Status</option>
+                                    <option {{$selectedOrder === 'created_at'? 'selected' : ''}} value="created_at">Register</option>
+                                    <option {{$selectedOrder === 'name'? 'selected' : ''}} value="name">Name</option>
+                                    <option {{$selectedOrder === 'gender'? 'selected' : ''}} value="gender">Gender</option>
+                                    <option {{$selectedOrder === 'place_birth'? 'selected' : ''}} value="place_birth">Place Birth</option>
+                                    <option {{$selectedOrder === 'status'? 'selected' : ''}} value="status">Status</option>
                               </select>
                             
                          </div>
@@ -66,13 +66,13 @@
 
                            @php
                               
-                              $selected = $form->status ? $form->status : 'true';
-                              $option = $selected === 'false' ? 'true' : 'false';
+                              $selectedStatus = $form->status ? $form->status : 'true';
+                              $option = $selectedStatus === 'false' ? 'true' : 'false';
 
                            @endphp
 
                            <select name="status" class="form-control">
-                               <option  selected value="{{$selected}}">{{$selected === 'true' ? 'Active' : 'Inactive'}}</option>
+                               <option  selected value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Inactive'}}</option>
                                <option  value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
                            </select>                              
                          </div>
@@ -92,6 +92,28 @@
          </div>
      </form >
 
+     @if (sizeof($data) == 0 && ($form->type || $form->sort || $form->order || $form->status || $form->search))
+         
+     <div class="row h-100 my-5">
+        <div class="col-sm-12 my-auto text-center">
+            <h3>The teachers you are looking for does not exist !!!</h3>
+        </div>
+    </div>
+
+     @elseif (sizeof($data) == 0)
+
+     <div class="row h-100 my-5">
+        <div class="col-sm-12 my-auto text-center">
+            <h3>Teacher has never been registered. Click the
+                button below to register teacher's !!!</h3>
+            <a role="button" href="/admin/teachers/register" class="btn btn-success mt-4">
+                <i class="fa-solid fa-plus"></i>
+                Register Teacher
+            </a>
+        </div>
+    </div>
+
+     @else
 
       <a type="button" href="teachers/register" id="#" class="btn btn-success btn mt-5 mx-2">
          <i class="fa-solid fa-user-plus"></i>
@@ -99,7 +121,7 @@
          Register
       </a>
 
-      <div class="card mt-5">
+      <div class="card card-dark mt-5">
        <div class="card-header">
          <h3 class="card-title">Teacher</h3>
 
@@ -199,4 +221,152 @@
      </div>
     </div>
     @include('components.super.delete-teacher')
+
+
+    <div class="d-flex justify-content-end my-5">
+
+    <nav aria-label="...">
+        <ul class="pagination" max-size="2">
+            
+            @php
+            $link= '/admin/teachers?type='.$selectedType.'&sort='.$selectedSort.'&order='.$selectedOrder.'&status='.$selectedStatus.'&search='.$form->search;
+            $previousLink = $link . '&page='.$data->currentPage()-1;
+            $nextLink = $link . '&page='.$data->currentPage()+1;
+            $firstLink = $link . '&page=1';
+            $lastLink = $link . '&page=' . $data->lastPage();
+            
+            $arrPagination = [];
+            $flag = false;
+            
+            if($data->lastPage() - 5 > 0){
+                
+                
+                if($data->currentPage()<=4)
+                {
+                    for ($i=1; $i <= 5; $i++) { 
+                        # code...
+                        $temp = (object) [
+                            
+                            'page' => $i,
+                            'link' => $link . '&page=' . $i,
+                        ];
+                        
+                        array_push($arrPagination, $temp);
+                    }
+                }
+                
+                else if($data->lastPage() - $data->currentPage() > 2)
+                {
+                    $flag = true;
+                    $idx = array($data->currentPage()-2,$data->currentPage()-1,$data->currentPage(),$data->currentPage()+1,$data->currentPage()+2);
+                    
+                    foreach ($idx as $value) {
+                        
+                        $temp = (object) [
+                            
+                            'page' => $value,
+                            'link' => $link . '&page=' . $value,
+                        ];
+                        
+                        array_push($arrPagination, $temp);
+                    }
+                    
+                } else {
+                    
+                    $arrFirst = [];
+                    //ini buat yang current page sampai last page
+                    
+                    for($i=$data->currentPage(); $i<=$data->lastPage(); $i++){
+
+                        $temp = (object) [
+                        
+                        'page' => $i,
+                        'link' => $link . '&page=' . $i,
+                    ];
+                    
+                    array_push($arrFirst, $temp);
+                }
+                
+                
+                $arrLast = [];
+                    $diff = $data->currentPage() - (5 - sizeof($arrFirst));
+                    //ini yang buat current page but decrement
+                    
+
+                    for($i=$diff; $i < $data->currentPage(); $i++){
+
+                        $temp = (object) [
+                            
+                            'page' => $i,
+                        'link' => $link . '&page=' . $i,
+                    ];
+
+                    
+                    array_push($arrLast, $temp);
+                }
+                
+                
+                $arrPagination = array_merge($arrLast, $arrFirst);
+                }
+                
+                
+                
+            } else {
+
+                for($i=1; $i<=$data->lastPage(); $i++)
+                {
+                    $temp = (object) [
+                        
+                        'page' => $i,
+                        'link' => $link . '&page=' . $i,
+                    ];
+
+                    array_push($arrPagination, $temp);
+                }
+            }
+            
+            @endphp
+
+        <li class="mr-1 page-item {{$data->previousPageUrl()? '' : 'disabled'}}">
+            <a class="page-link" href="{{$firstLink}}" tabindex="+1">
+                << First
+            </a>
+        </li>
+
+        <li class="page-item {{$data->previousPageUrl()? '' : 'disabled'}}">
+            <a class="page-link" href="{{$previousLink}}" tabindex="-1">
+                Previous
+            </a>
+        </li>
+
+        @foreach ( $arrPagination as $el)
+        
+        <li class="page-item {{$el->page === $data->currentPage() ? 'active' : ''}}">
+            <a class="page-link" href="{{$el->link}}">
+                {{$el->page}}
+            </a>
+        </li>
+
+        @endforeach
+        
+        <li class="page-item {{$data->nextPageUrl()? '' : 'disabled'}}">
+            <a class="page-link" href="{{$nextLink}}" tabindex="+1">
+                Next
+            </a>
+        </li>
+
+        <li class="ml-1 page-item {{$data->nextPageUrl()? '' : 'disabled'}}">
+            <a class="page-link" href="{{$lastLink}}" tabindex="+1">
+                Last >>
+            </a>
+        </li>
+
+    </ul>
+    
+</nav>
+
+</div>
+    
+    @endif
+
 @endsection

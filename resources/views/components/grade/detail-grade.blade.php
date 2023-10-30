@@ -41,7 +41,7 @@
         </div>
 
 
-        <div class="card col-9">
+        <div class="card card-dark col-9">
             <div class="card-header">
                 <h3 class="card-title">Student</h3>
 

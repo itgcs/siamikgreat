@@ -104,7 +104,7 @@
                      @elseif (strtotime($data->deadline_invoice) < strtotime($currentDate))
                         <span class="badge badge-pill badge-danger"> Past Due </span>
                      @else
-                        <span class="badge badge-pill badge-warning"> {{$invoice}} Days </span>
+                        <span class="badge badge-pill badge-warning"> {{$invoice == 0? 'Today' : $invoice . ' Days'}}</span>
                      @endif
                   </div>
                   </div>
@@ -127,7 +127,7 @@
             
           </div>
 
-          <div class="col-4">
+          <div class="col-4 p-1">
             <div class="card mb-4 p-4">
                <table>
                   <thead>
@@ -135,31 +135,97 @@
                      <th></th>
                   </thead>
                   <tbody>
-                     <tr>
-                        <td align="left">
-                           Amount:
-                        </td>
-                        <td align="right">
-                           IDR. {{number_format($data->amount, 0, ',', '.')}}
-                        </td>
+
+                  @php
+                     $totalInstallment = $data->amount * $data->installment;
+                  @endphp
+
+
+                     @if (sizeof($data->bill_collection))
+
+                     @foreach ($data->bill_collection as $el)
+
+                        <tr>
+                           <td align="left" class="p-1" style="width:65%;">
+                              {{$el->name}} :
+                           </td>
+                           <td align="right" class="p-1">
+                              IDR. {{number_format($el->amount, 0, ',', '.')}}
+                           </td>
+
+                        </tr>
                         
-                     </tr>
+                     @endforeach
+                        
+                     @else
+                     
+                     <tr>
+                        <td align="left" class="p-1" style="width:65%;">
+                              Amount:
+                           </td>
+                           <td align="right">
+                              IDR. {{number_format($data->installment? $totalInstallment : $data->amount, 0, ',', '.')}}
+                           </td>
+                           
+                        </tr>
+
+
+                     @if ($data->installment)
+                        
+                        <tr>
+                           <td align="left" class="p-1" style="width:65%;">
+                              Installment/months : 
+                           </td>
+                           <td align="right">
+                              {{ $data->installment }}
+                           </td>
+
+                        </tr>
+
+                     @endif
 
                      @if ($data->discount)
-                        
-                     <tr>
-                        <td align="left">
-                           Discount:
-                        </td>
-                        <td align="right">
-                           {{$data->discount ? $data->discount : 0}}%
-                        </td>
-                        
-                     </tr>
+
+                        <tr>
+                           <td align="left" class="p-1" style="width:65%;">
+                              Discount:
+                           </td>
+                           <td align="right">
+                              {{$data->discount ? $data->discount : 0}}%
+                           </td>
+
+                        </tr>
+                     @endif
                      @endif
                      
                   </tbody>
                </table>
+
+               @if ($data->bill_collection && $data->installment && $data->type === 'Book') 
+
+               <hr>
+
+
+               <table>
+                  <thead>
+                     <th></th>
+                     <th></th>
+                  </thead>
+
+                  <tbody>
+                     <tr>
+                        <td align="left" class="p-1" style="width:65%;">Total amount :</td>
+                        <td align="right">IDR. {{$data->amount * $data->installment}}</td>
+                     </tr>
+                     <tr>
+                        <td align="left" class="p-1" style="width:65%;">Installment/months :</td>
+                        <td align="right">{{$data->installment}}</td>
+                     </tr>
+                  </tbody>
+               </table>
+                  
+               @endif
+
                <hr>
 
                <table>
@@ -168,12 +234,12 @@
                      <th></th>
                   </thead>
                   <tbody>
-                     @php
+                     @php 
                         $total = $data->discount ? $data->amount - $data->amount * $data->discount/100 : $data->amount;   
                      @endphp
                      <tr>
-                        <td align="left">
-                           Total:
+                        <td align="left" class="p-1" style="width:65%;">
+                           Total :
                         </td>
                         <td align="right">
                            IDR. {{number_format($total, 0, ',', '.')}}
@@ -184,8 +250,17 @@
                   </tbody>
                </table>
             </div>
-
-            <a href="javascript:void(0)" id="update-status" data-id="{{ $data->id }}" data-name="{{ $data->student->name }}" data-subject="{{ $data->subject }}" class="btn btn-success w-100">Paid success</a>
+            @if (!$data->paidOf)
+               @if (strtolower($data->type) == 'paket' && !$data->installment)
+               <a href="/admin/bills/change-paket/{{$data->student->unique_id}}/{{$data->id}}" class="btn btn-info w-100 mb-2" id="change-paket">Change Paket</a>
+               <a href="/admin/bills/intallment-paket/{{$data->id}}" class="btn btn-secondary w-100 mb-2" id="change-paket">Installment Paket</a>
+               @endif
+               @if(strtolower($data->type) == 'book')
+                  <a href="javascript:void(0)" id="update-status-book" data-id="{{ $data->id }}" data-name="{{ $data->student->name }}" data-student-id="{{ $data->id }}" class="btn btn-success w-100">Paid book success</a>
+               @else
+                  <a href="javascript:void(0)" id="update-status" data-id="{{ $data->id }}" data-name="{{ $data->student->name }}" data-subject="{{ $data->subject }}" class="btn btn-success w-100">Paid success</a>
+               @endif
+            @endif
           </div>
         </div>
       </div>

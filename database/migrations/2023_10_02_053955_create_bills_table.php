@@ -18,14 +18,14 @@ return new class extends Migration
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('student_id');
-            $table->foreign('student_id')->references('id')->on('students')->cascadeOnDelete();
+            $table->foreign('student_id')->references('id')->on('students')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('type');
-            $table->string('subject')->nullable();
+            $table->string('subject')->nullable()->default(null);
             $table->bigInteger('amount');
             $table->boolean('paidOf')->default(false);
-            $table->integer('discount')->nullable()->default(0);
+            $table->integer('discount')->nullable()->default(null);
             $table->date('deadline_invoice')->default(date('Y-m-t'));
-            $table->integer('installment')->nullable();
+            $table->integer('installment')->nullable()->default(null);
             $table->timestamps();
         });
     }

@@ -33,9 +33,9 @@
     <div class="row d-flex justify-content-center">
 
 
-       <div class="card col-10">
+       <div class="card card-dark col-11">
             <div class="card-header">
-                <h3 class="card-title">{{$student->grade->name . ' - ' . $student->grade->class}} Books</h3>
+                <h3 class="card-title">Books ( {{$student->grade->name . ' - ' . $student->grade->class}} )</h3>
 
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -86,19 +86,22 @@
                                     IDR {{number_format($el->amount, 0, ',', '.')}}
                                 </td>
                                 <td class="text-center">
-                                 <input class="form-check-input" type="checkbox" value="{{$el->id}}" id="defaultCheck1" name="{{'book-'.$loop->index}}">
+                                    <div class="custom-control form-control-lg custom-checkbox">
+                                        <input type="checkbox" value="{{$el->id}}" id="defaultCheck1" name="{{'book-'.$loop->index}}">
+                                    </div>
                                 </td>
                             </tr>
 
                             @endforeach
                             @else
-                            <tr class="text-center">
-                                <td colspan="5">
 
-                                    <h1>You haven't books data for {{$student->grade->name . ' - ' . $student->grade->class}} yet</h1>
-                                </td>
+                                <tr class="text-center">
+                                    <td colspan="5">
 
-                            </tr>
+                                        <h1>You haven't books data for {{$student->grade->name . ' - ' . $student->grade->class}} yet</h1>
+                                    </td>
+
+                                </tr>
                             @endif
                         </tbody>
                     </table>

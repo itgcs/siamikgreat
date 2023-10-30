@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('unique_id')->unique();  
             $table->string('name');
             $table->unsignedBigInteger('grade_id');
-            $table->foreign('grade_id')->references('id')->on('grades');
+            $table->foreign('grade_id')->references('id')->on('grades')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('gender');
             $table->string('religion');
             $table->string('place_birth');

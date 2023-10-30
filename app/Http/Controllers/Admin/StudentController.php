@@ -24,36 +24,59 @@ class StudentController extends Controller
             'page' => 'students',
             'child' => 'database students',
          ]);
-         session()->flash('preloader', false);
+         
+
+         $grades = Grade::orderBy('id', 'asc')->get();
 
          $form = (object) [
             'sort' => $request->sort? $request->sort : null,
             'order' => $request->order? $request->order : null,
             'status' => $request->status? $request->status : null,
             'search' => $request->search? $request->search : null,
+            'type' => $request->type? $request->type : null,
+            'grade_id' => $request->grade_id && $request->grade_id !== 'all'? $request->grade_id : null,
          ];
 
          $data = [];
          $order = $request->sort ? $request->sort : 'desc';
-         $status = $request->status? ($request->status == 'true' ? true : false) : true;
          
-         if($request->type && $request->search && $request->order){
+         $status = $request->status? ($request->status == 'active' ? true : false) : true;
+         $is_graduate = $request->status && $request->status == 'graduate' ? true : false;
+         
+         if($request->search || ($request->grade_id && $request->order && $order && $request->status && $request->type && $request->grade_id)){
             
-            $data = Student::with('grade')->where('is_active', $status)->where($request->type,'LIKE','%'. $request->search .'%')->orderBy($request->order, $order)->get();
-         } else if($request->type && $request->search)
-         {
-            $data = Student::with('grade')->where('is_active', $status)->where($request->type,'LIKE','%'. $request->search .'%')->orderBy('created_at', $order)->get();
-         } else if($request->order) {
-            $data = Student::with('grade')->where('is_active', $status)->orderBy($request->order, $order)->get();
+            $dataModel = new Student();
+            
+            $data = $dataModel->with('grade')
+            ->where('is_active', $status)
+            ->where('is_graduate', $is_graduate);
+            
+            if($form->search){
+
+               $data = $data->where($request->type,'LIKE','%'. $request->search .'%');
+            }
+            
+            if($form->grade_id){
+
+               $data = $data->where('grade_id', $form->grade_id);
+            }
+
+            if($form->order && $order) {
+               
+               $data = $data->orderBy($request->order, $order);
+               
+            }
+
+            $data = $data->paginate(15);
+
+
          } else {
 
-            $data = Student::with('grade')->where('is_active', $status)->orderBy('created_at', $order)->get();
+            $data = Student::with('grade')->where('is_active', true)->orderBy('created_at', $order)->paginate(15);
          }
 
          
-
-         // return $data;
-         return view('components.student.tableStudent')->with('data', $data)->with('form', $form);
+         return view('components.student.tableStudent')->with('data', $data)->with('form', $form)->with('grades', $grades);
       } catch (Exception $err) {
          //throw $th;
          return abort(500, 'Internal server error');
@@ -128,6 +151,15 @@ class StudentController extends Controller
    {
 
       DB::beginTransaction();
+
+
+      session()->flash('preloader', true);
+      session()->flash('page',  $page = (object)[
+         'page' => 'students',
+         'child' => 'database students',
+      ]);
+
+
       try {
 
          $date_format = new RegisterController();   
@@ -327,7 +359,8 @@ class StudentController extends Controller
             'after_create' => true,
          ];
 
-         // return $data;
+
+         session()->flash('after_update_student');
          
          return view('components.student.detailStudent')->with('data', $data);
          
@@ -456,4 +489,6 @@ class StudentController extends Controller
          ];
       }
    }
+
+                                      
 }

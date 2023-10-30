@@ -11,7 +11,7 @@
          Add grade
       </a>
 
-    <div class="card mt-5">
+    <div class="card card-dark mt-5">
         <div class="card-header">
             <h3 class="card-title">Grades</h3>
 
@@ -90,5 +90,59 @@
         <!-- /.card-body -->
     </div>
 </div>
+
+
+   @if(session('after_create_grade')) 
+
+      <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+      <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+      <script>
+
+        var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+        });
+      
+        setTimeout(() => {
+           Toast.fire({
+              icon: 'success',
+              title: 'Successfully created new grade in the database !!!',
+        });
+        }, 1500);
+
+
+      </script>
+
+  @endif
+
+
+  @if(session('after_update_grade')) 
+   
+  <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+  <script>
+
+    var Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+    });
+  
+    setTimeout(() => {
+       Toast.fire({
+          icon: 'success',
+          title: 'Successfully updated the grade in the database !!!',
+    });
+    }, 1500);
+
+
+  </script>
+
+@endif
 
 @endsection

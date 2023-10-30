@@ -19,7 +19,7 @@
         <div class="row">
 
           <div class="col-lg-8">
-            <div class="card mb-4">
+            <div class="card card-dark mb-4">
               <div class="card-body">
                 <div class="row">
                   <div class="col-sm-4">
@@ -146,28 +146,55 @@
         </div>
       </div>
     </section>
-    @if(session('after_create')) 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   @if(session('after_create_spp_student')) 
+         <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+         <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
-   <script>
+         <script>
+         
+            var Toast = Swal.mixin({
+               toast: true,
+               position: 'top-end',
+               showConfirmButton: false,
+               timer: 3000
+            });
+         
+            setTimeout(() => {
+               Toast.fire({
+                  icon: 'success',
+                  title: 'Data has been saved !!!',
+               });
+            }, 1500);
 
-   var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 3000
-   });
 
-   setTimeout(() => {
-      Toast.fire({
-         icon: 'success',
-         title: 'Data has been saved !!!',
-   });
-   }, 1500);
+         </script>
 
-
-   </script>
+   @endif
         
-    @endif
+   @if(session('after_update_spp_student')) 
+      
+         <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+         <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+         <script>
+         
+         var Toast = Swal.mixin({
+               toast: true,
+               position: 'top-end',
+               showConfirmButton: false,
+               timer: 3000
+         });
+      
+         setTimeout(() => {
+            Toast.fire({
+               icon: 'success',
+               title: 'Data has been updated !!!',
+         });
+         }, 1500);
+      
+      
+         </script>
+        
+   @endif
 
 @endsection

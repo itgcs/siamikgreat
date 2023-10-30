@@ -41,6 +41,6 @@ class ReminderSevenDaysCron extends Command
         $bill->cronReminderMinusSevenDay('SPP');
         $bill->cronReminderMinusSevenDay('Uang Gedung');
         // $bill->cronReminderBook');
-        // $bill->cronReminderMinusSevenDay('Uniform');MinusSevenDay('
+        // $bill->cronReminderMinusSevenDay('Uniform');
     }
 }

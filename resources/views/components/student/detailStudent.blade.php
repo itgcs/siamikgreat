@@ -324,28 +324,54 @@
         </div>
       </div>
     </section>
-    @if($data->after_create) 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  @if(session('after_create_student')) 
+    <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
-   <script>
+    <script>
 
-   var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 3000
-   });
+      var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+      });
+    
+      setTimeout(() => {
+         Toast.fire({
+            icon: 'success',
+            title: 'Successfully registered the students in the database !!!',
+      });
+      }, 1500);
 
-   setTimeout(() => {
-      Toast.fire({
-         icon: 'success',
-         title: 'Data has been saved !!!',
-   });
-   }, 1500);
+
+    </script>
+
+  @endif
+
+  @if(session('after_update_student')) 
+    <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+    <script>
+
+      var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+      });
+    
+      setTimeout(() => {
+         Toast.fire({
+            icon: 'success',
+            title: 'Successfully updated the students in the database !!!',
+      });
+      }, 1500);
 
 
-   </script>
+    </script>
         
-    @endif
+  @endif
 
 @endsection

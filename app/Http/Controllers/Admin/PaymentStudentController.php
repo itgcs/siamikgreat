@@ -66,9 +66,10 @@ class PaymentStudentController extends Controller
             }
          }
 
-         $data = $data->orderBy($form->order, $form->sort)->get();
+         $data = $data->orderBy($form->order, $form->sort)->paginate(15);
 
          $grade = Grade::orderBy('id', 'asc')->get(['id', 'name', 'class']);
+
          
          return view('components.student.spp.data-payment-student')->with('data', $data)->with('form', $form)->with('grade', $grade);
          
@@ -90,6 +91,8 @@ class PaymentStudentController extends Controller
             'page' => 'payments',
             'child' => 'spp-students',
          ]);
+
+         session()->flash('preloader');
 
          $data = Student::with([
          'grade' => function ($query) {
@@ -141,12 +144,10 @@ class PaymentStudentController extends Controller
          $student = Student::where('unique_id', $id)->first();
          
          $check_unique = Payment_student::where('student_id', $student->id)->where('type', $type)->first();
-         
 
          if($check_unique){
             
-            return $check_unique;
-            Payment_student::where('id', $check_unique->id)->update([
+            $spp = Payment_student::where('id', $check_unique->id)->update([
                'type' => $type,
                'amount' => (int)str_replace(".", "", $request->amount),
                'discount' => $request->discount &&  $request->discount>0? (int)$request->discount : null,
@@ -156,7 +157,7 @@ class PaymentStudentController extends Controller
             
             for($i = 0; $i <= $request->installment; $i++)
             {
-               Payment_student::create([
+               $spp = Payment_student::create([
                   'type' => $type,
                   'student_id' => $student->id,
                   'amount' => (int)str_replace(".", "", $request->amount),
@@ -165,8 +166,9 @@ class PaymentStudentController extends Controller
             }
          }
 
+         session()->flash('after_create_spp_student');
          
-         return redirect('/admin/spp-students');
+         return redirect('/admin/spp-students/detail/' . $spp->id);
          
       } catch (Exception $err) {
          return dd($err);
@@ -182,6 +184,8 @@ class PaymentStudentController extends Controller
             'page' => 'payments',
             'child' => 'spp-students',
          ]);
+
+         session()->flash('preloader');
 
          $data = Student::with(['spp_student' => function($query){
             $query->where('type', 'SPP')->get();
@@ -203,10 +207,13 @@ class PaymentStudentController extends Controller
             'page' => 'payments',
             'child' => 'spp-students',
          ]);
+
+         session()->flash('preloader');
          
          $data = Student::with(['spp_student' => function($query){
             $query->where('type', "SPP")->get();
          }])->where('unique_id', $id)->first();
+
 
          return view('components.student.spp.edit-static-payment')->with('data', $data);
 
@@ -241,12 +248,14 @@ class PaymentStudentController extends Controller
             return redirect('/admin/spp-students/edit/'. $id)->withErrors($validator->messages())->withInput($rules);
          }
 
-
-            Payment_student::where('id', $id_student_payment)->update([
-               'amount' => (int)str_replace(".", "", $request->amount),
-               'discount' => $request->discount &&  $request->discount>0? (int)$request->discount : null,
-            ]);
-
+         
+         
+         Payment_student::where('id', $id_student_payment)->update([
+            'amount' => (int)str_replace(".", "", $request->amount),
+            'discount' => $request->discount &&  $request->discount>0? (int)$request->discount : null,
+         ]);
+         
+         session()->flash('after_update_spp_student');
          
          return redirect('/admin/spp-students/detail/' . $id);
          

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('payment_students', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('student_id');
-            $table->foreign('student_id')->references('id')->on('students');
+            $table->foreign('student_id')->references('id')->on('students')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('type');
             $table->bigInteger('amount');
             $table->integer('discount')->nullable()->default(0);

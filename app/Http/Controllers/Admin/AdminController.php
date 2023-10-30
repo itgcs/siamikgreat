@@ -47,13 +47,19 @@ class AdminController extends Controller
 
    public function actionChangeMyPassword(Request $request)
    {
+      
+      session()->flash('page',  $page = (object)[
+         'page' => 'admin',
+         'child' => 'change-password',
+      ]);
+
+      session()->flash('preloader', true);
+
       try {
          //code...
 
-         session()->flash('page',  $page = (object)[
-            'page' => 'admin',
-            'child' => 'change-password',
-         ]);
+         
+
          $user = Auth::user();
 
          if(!$user)

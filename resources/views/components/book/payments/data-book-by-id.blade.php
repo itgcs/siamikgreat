@@ -35,23 +35,26 @@
               @else
               
               
-              <div class="card mt-5">
+              <div class="card card-dark mt-5 p-4">
                 <div class="card-header">
                   <h3 class="card-title">Book List</h3>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
+
+                @if (!$have_all_books)
                   <a role="button" href="/admin/payment-books/{{$data->unique_id}}/add-books" class="btn btn-success my-5 ml-1">
                     <i class="fa-solid fa-plus"></i>
                     Add Book
                   </a>
+                @endif
                   <table class="table table-bordered">
                     <thead>
                       <tr>
                         <th style="width: 10px">#</th>
                         <th>Book name</th>
                         <th>Grade</th>
-                        <th></th>
+                        <th>Date Added</th>
                         <th style="width: 40px">Label</th>
                       </tr>
                 </thead>
@@ -62,11 +65,11 @@
                     <td>{{$loop->index+1}}</td>
                     <td>{{$el->name}}</td>
                     <td>
-                      <div class="progress progress-xs">
-                        <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
-                        </div>
+                        {{$data->grade->name . ' - ' . $data->grade->class}}
                       </td>
-                      <td><span class="badge bg-danger">55%</span></td>
+                      <td>
+                        {{ date('l, d/m/Y', strtotime($el->pivot->created_at)) }}
+                      </td>
                     </tr>
                     @endforeach
                   </tbody>

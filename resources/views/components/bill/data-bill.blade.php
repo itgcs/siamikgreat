@@ -12,14 +12,14 @@
                         <label>Grade:</label>
                         @php
 
-                        $selected = $form && $form->grade? $form->grade : null;
+                        $selectedGrade = $form && $form->grade? $form->grade : null;
 
                         @endphp
                         <select name="grade" class="form-control" required>
-                            <option class="text-center" {{!$selected ? 'selected' : ''}} value="all">-- All Grades --</option>
+                            <option class="text-center" {{!$selectedGrade ? 'selected' : ''}} value="all">-- All Grades --</option>
                             @foreach ($grade as $el)
                                 
-                                <option class="text-center" {{$selected == $el->id ? 'selected' : ''}} value="{{$el->id}}">{{$el->name . ' - '. $el->class}}</option>
+                                <option class="text-center" {{$selectedGrade == $el->id ? 'selected' : ''}} value="{{$el->id}}">{{$el->name . ' - '. $el->class}}</option>
                             
                             @endforeach
                             </option>
@@ -32,18 +32,18 @@
 
                         @php
 
-                        $selected = $form && $form->invoice ? $form->invoice : 'all';
+                        $selectedInvoice = $form && $form->invoice ? $form->invoice : 'all';
 
                         @endphp
 
                         <label>Invoice : <span style="color: red"></span></label>
                         <select name="invoice" class="form-control text-center">
-                            <option {{$selected === 'all'? 'selected' : ''}} value="all" >-- All Invoice --</option>
-                            <option {{$selected === '30'? 'selected' : ''}} value="30" >30 Days</option>
-                            <option {{$selected === '7'? 'selected' : ''}} value="7" >7 Days</option>
-                            <option {{$selected === '1'? 'selected' : ''}} value="1" >Tomorrow</option>
-                            <option {{$selected === 'today'? 'selected' : ''}} value="today" >Today</option>
-                            <option {{$selected === 'pastdue'? 'selected' : ''}} value="pastdue" >Past Due</option>
+                            <option {{$selectedInvoice === 'all'? 'selected' : ''}} value="all" >-- All Invoice --</option>
+                            <option {{$selectedInvoice === '30'? 'selected' : ''}} value="30" >30 Days</option>
+                            <option {{$selectedInvoice === '7'? 'selected' : ''}} value="7" >7 Days</option>
+                            <option {{$selectedInvoice === 'tommorow'? 'selected' : ''}} value="tommorow" >Tomorrow</option>
+                            <option {{$selectedInvoice === 'today'? 'selected' : ''}} value="today" >Today</option>
+                            <option {{$selectedInvoice === 'pastdue'? 'selected' : ''}} value="pastdue" >Past Due</option>
                         </select>
                     </div>
                 </div>
@@ -52,17 +52,18 @@
 
                         @php
 
-                        $selected = $form && $form->type? $form->type : 'all';
+                        $selectedType = $form && $form->type? $form->type : 'all';
 
                         @endphp
 
                         <label>Type : </label>
                         <select name="type" class="form-control text-center">
-                            <option {{$selected === 'all'? 'selected' : ''}} value="all">-- All Type --</option>
-                            <option {{$selected === 'Paket'? 'selected' : ''}} value="Paket">Paket</option>
-                            <option {{$selected === 'Book'? 'selected' : ''}} value="Book">Book</option>
-                            <option {{$selected === 'SPP'? 'selected' : ''}} value="SPP">SPP</option>
-                            <option {{$selected === 'Uniform'? 'selected' : ''}} value="Uniform">Uniform</option>
+                            <option {{$selectedType === 'all'? 'selected' : ''}} value="all">-- All Type --</option>
+                            <option {{$selectedType === 'Paket'? 'selected' : ''}} value="Paket">Paket</option>
+                            <option {{$selectedType === 'Book'? 'selected' : ''}} value="Book">Book</option>
+                            <option {{$selectedType === 'SPP'? 'selected' : ''}} value="SPP">SPP</option>
+                            <option {{$selectedType === 'Uang Gedung'? 'selected' : ''}} value="Uang Gedung">Uang Gedung</option>
+                            <option {{$selectedType === 'Uniform'? 'selected' : ''}} value="Uniform">Uniform</option>
                         </select>
 
                     </div>
@@ -73,14 +74,14 @@
 
                         @php
 
-                            $selected = $form->status != 'all' && $form->status ? $form->status : 'all'
+                            $selectedStatus = $form->status != 'all' && $form->status ? $form->status : 'all'
 
                         @endphp
 
                         <select name="status" class="form-control text-center">
-                            <option {{$selected == 'all'? 'selected' : ''}} value="all">-- All Status --</option>
-                            <option {{$selected == 'true'? 'selected' : ''}} value="true">Paid</option>
-                            <option {{$selected == 'false'? 'selected' : ''}} value="false">Not yet</option>
+                            <option {{$selectedStatus == 'all'? 'selected' : ''}} value="all">-- All Status --</option>
+                            <option {{$selectedStatus == 'true'? 'selected' : ''}} value="true">Paid</option>
+                            <option {{$selectedStatus == 'false'? 'selected' : ''}} value="false">Not yet</option>
                         </select>
                     </div>
                 </div>
@@ -100,17 +101,30 @@
     </div>
 </form>
 
-<div class="container-fluid mt-5">
 
-    @if(sizeof($data) <= 0) <div class="row h-100">
-        <div class="col-sm-12 my-auto text-center">
-            <h3>The bills you are looking for does not exist !!!</h3>
-            {{-- <a role="button" href="/admin/bills/create" class="btn btn-success mt-4">
-                <i class="fa-solid fa-plus"></i>
-                Create bill for student
-            </a> --}}
+@if(sizeof($data) <= 0 && ($form->search || $form->type || $form->invoice || $form->grade || $form->status)) 
+    <div class="container-fluid mt-5">
+        <div class="row h-100">
+            <div class="col-sm-12 my-auto text-center">
+                <h3>The bills you are looking for does not exist !!!</h3>
+                {{-- <a role="button" href="/admin/bills/create" class="btn btn-success mt-4">
+                    <i class="fa-solid fa-plus"></i>
+                    Create bill for student
+                </a> --}}
+            </div>
         </div>
-</div>
+        
+        @elseif (sizeof($data) <= 0)
+        <div class="container-fluid mt-5">
+            <div class="row h-100">
+                <div class="col-sm-12 my-auto text-center">
+                <h3>The bills never been created !!!</h3>
+                {{-- <a role="button" href="/admin/bills/create" class="btn btn-success mt-4">
+                    <i class="fa-solid fa-plus"></i>
+                    Create bill for student
+                </a> --}}
+            </div>
+    </div>
 
 @else
 
@@ -120,7 +134,7 @@
     Create bill for student
 </a> --}}
 
-<div class="card mt-5">
+<div class="card mt-5 card-dark">
     <div class="card-header">
         <h3 class="card-title">Student</h3>
 
@@ -223,9 +237,210 @@
     <!-- /.card-body -->
 </div>
 
+@if ($data->lastPage() > 1)
+    
+
+<div class="d-flex justify-content-end my-5">
+
+    <nav aria-label="...">
+        <ul class="pagination" max-size="2">
+            
+            @php
+            $link= '/admin/bills?grade='.$selectedGrade.'&invoice='.$selectedInvoice.'&type='.$selectedType.'&status='.$selectedStatus.'&search='.$form->search;
+            $previousLink = $link . '&page='.$data->currentPage()-1;
+            $nextLink = $link . '&page='.$data->currentPage()+1;
+            $firstLink = $link . '&page=1';
+            $lastLink = $link . '&page=' . $data->lastPage();
+            
+            $arrPagination = [];
+            $flag = false;
+            
+            if($data->lastPage() - 5 > 0){
+                
+                
+                if($data->currentPage()<=4)
+                {
+                    for ($i=1; $i <= 5; $i++) { 
+                        # code...
+                        $temp = (object) [
+                            
+                            'page' => $i,
+                            'link' => $link . '&page=' . $i,
+                        ];
+                        
+                        array_push($arrPagination, $temp);
+                    }
+                }
+                
+                else if($data->lastPage() - $data->currentPage() > 2)
+                {
+                    $flag = true;
+                    $idx = array($data->currentPage()-2,$data->currentPage()-1,$data->currentPage(),$data->currentPage()+1,$data->currentPage()+2);
+                    
+                    foreach ($idx as $value) {
+                        
+                        $temp = (object) [
+                            
+                            'page' => $value,
+                            'link' => $link . '&page=' . $value,
+                        ];
+                        
+                        array_push($arrPagination, $temp);
+                    }
+                    
+                } else {
+                    
+                    $arrFirst = [];
+                    //ini buat yang current page sampai last page
+                    
+                    for($i=$data->currentPage(); $i<=$data->lastPage(); $i++){
+
+                        $temp = (object) [
+                        
+                        'page' => $i,
+                        'link' => $link . '&page=' . $i,
+                    ];
+                    
+                    array_push($arrFirst, $temp);
+                }
+                
+                
+                $arrLast = [];
+                    $diff = $data->currentPage() - (5 - sizeof($arrFirst));
+                    //ini yang buat current page but decrement
+                    
+
+                    for($i=$diff; $i < $data->currentPage(); $i++){
+
+                        $temp = (object) [
+                            
+                            'page' => $i,
+                        'link' => $link . '&page=' . $i,
+                    ];
+
+                    
+                    array_push($arrLast, $temp);
+                }
+                
+                
+                $arrPagination = array_merge($arrLast, $arrFirst);
+                }
+                
+                
+                
+            } else {
+
+                for($i=1; $i<=$data->lastPage(); $i++)
+                {
+                    $temp = (object) [
+                        
+                        'page' => $i,
+                        'link' => $link . '&page=' . $i,
+                    ];
+
+                    array_push($arrPagination, $temp);
+                }
+            }
+            
+            @endphp
+
+        <li class="mr-1 page-item {{$data->previousPageUrl()? '' : 'disabled'}}">
+            <a class="page-link" href="{{$firstLink}}" tabindex="+1">
+                << First
+            </a>
+        </li>
+
+        <li class="page-item {{$data->previousPageUrl()? '' : 'disabled'}}">
+            <a class="page-link" href="{{$previousLink}}" tabindex="-1">
+                Previous
+            </a>
+        </li>
+
+        @foreach ( $arrPagination as $el)
+        
+        <li class="page-item {{$el->page === $data->currentPage() ? 'active' : ''}}">
+            <a class="page-link" href="{{$el->link}}">
+                {{$el->page}}
+            </a>
+        </li>
+
+        @endforeach
+        
+        <li class="page-item {{$data->nextPageUrl()? '' : 'disabled'}}">
+            <a class="page-link" href="{{$nextLink}}" tabindex="+1">
+                Next
+            </a>
+        </li>
+
+        <li class="ml-1 page-item {{$data->nextPageUrl()? '' : 'disabled'}}">
+            <a class="page-link" href="{{$lastLink}}" tabindex="+1">
+                Last >>
+            </a>
+        </li>
+
+    </ul>
+    
+</nav>
+
+</div>
+
+@endif
 @include('components.super.delete-student')
 
 @endif
 </div>
+
+
+@if(session('create_installment_bill')) 
+    <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+    <script>
+
+      var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+      });
+    
+      setTimeout(() => {
+         Toast.fire({
+            icon: 'success',
+            title: 'Successfully create installment bills for student paket',
+      });
+      }, 1500);
+
+
+    </script>
+
+  @endif
+
+
+@if(session('change_type_paket')) 
+    <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+    <script>
+
+      var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+      });
+    
+      setTimeout(() => {
+         Toast.fire({
+            icon: 'success',
+            title: 'Successfully change bills for student paket',
+      });
+      }, 1500);
+
+
+    </script>
+
+  @endif
+
 
 @endsection

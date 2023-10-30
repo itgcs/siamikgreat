@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('reminderPastDueMinusOneDays:cron')->dailyAt('15:00')->timezone('Asia/Jakarta');
         $schedule->command('reminderPastDueMinusSevenDays:cron')->dailyAt('10:40')->timezone('Asia/Jakarta');
         $schedule->command('reminderPastDue:cron')->dailyAt('17:00')->timezone('Asia/Jakarta');
+        $schedule->command('reminderFeeRegister:cron')->dailyAt('16:00')->timezone('Asia/Jakarta');
     }
 
     /**

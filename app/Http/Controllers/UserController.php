@@ -20,7 +20,7 @@ class UserController extends Controller
          return view('layouts.login');
       } catch (Exception $err) {
          
-         dd($err);
+         return dd($err);
       }
    }
    

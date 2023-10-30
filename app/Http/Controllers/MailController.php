@@ -9,11 +9,17 @@ use App\Mail\DemoMail;
 use App\Mail\FeeRegisMail;
 use App\Mail\SppMail;
 use App\Models\Bill;
+use App\Models\Book;
 use App\Models\Student;
 use Illuminate\Support\Facades\DB;
 use Exception;
-use Illuminate\Console\View\Components\Info;
 use Illuminate\Support\Carbon;
+
+
+// use Illuminate\Bus\Queueable;
+// use Illuminate\Foundation\Bus\Dispatchable;
+// use Illuminate\Queue\InteractsWithQueue;
+// use Illuminate\Queue\SerializesModels;
 
 class MailController extends Controller
 {
@@ -22,6 +28,9 @@ class MailController extends Controller
      *
      * @return response()
      */
+
+   // use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     public function index()
     {
       try {
@@ -116,9 +125,16 @@ class MailController extends Controller
          date_default_timezone_set('Asia/Jakarta');
          
          $data = Student::with(['bill' => function($query) use ($type){
-            $query->where('type', $type)->where('deadline_invoice', '<', date('Y-m-d'))->get();
-         }, 'relationship'])->whereHas('bill', function($query) {
-            $query->where('paidOf', false)->where('deadline_invoice', '<', date('Y-m-d'));
+            $query
+            ->where('type', $type)
+            ->where('deadline_invoice', '<', date('Y-m-d'))
+            ->where('paidOf', false)
+            ->get();
+         }, 'relationship'])->whereHas('bill', function($query) use ($type) {
+            $query
+            ->where('type', $type)
+            ->where('paidOf', false)
+            ->where('deadline_invoice', '<', date('Y-m-d'));
          })->where('is_active', true)->get();
              
 
@@ -150,12 +166,19 @@ class MailController extends Controller
          //code...
          $data = Student::with([
             'bill' => function($query) use ($type) {
-               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(7)->format('y-m-d'))->get();
+               $query
+               ->where('type', $type)
+               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(7)->format('y-m-d'))
+               ->where('paidOf', false)
+               ->get();
          },
             'relationship'
          ])
          ->whereHas('bill', function($query) use ($type) {
-               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(7)->format('y-m-d'));
+               $query
+               ->where('type', $type)
+               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(7)->format('y-m-d'))
+               ->where('paidOf', false);
          })
          ->where('is_active', true)->get();
 
@@ -196,14 +219,22 @@ class MailController extends Controller
          //code...
          $data = Student::with([
             'bill' => function($query) use ($type) {
-               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(1)->format('y-m-d'))->get();
+               $query
+               ->where('type', $type)
+               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(1)->format('y-m-d'))
+               ->where('paidOf', false)
+               ->get();
          },
             'relationship'
          ])
          ->whereHas('bill', function($query) use ($type) {
-               $query->where('type', $type)->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(1)->format('y-m-d'));
+               $query
+               ->where('type', $type)
+               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(1)->format('y-m-d'))
+               ->where('paidOf', false);
          })
-         ->where('is_active', true)->get();
+         ->where('is_active', true)
+         ->get();
 
       
          foreach ($data as  $student)
@@ -252,6 +283,126 @@ class MailController extends Controller
          return [
             'status' => false,
          ];
+      }
+   }
+
+   public function cronCreatePaketAfterGraduate($array =  [])
+   {
+
+      DB::beginTransaction();
+      try {
+         //code...
+
+         
+         // return $students;
+
+         foreach($array as $studentId)
+         {
+
+            $student = Student::with(['relationship', 'grade' => function($query) {
+               $query->with(['bundle' => function($query) {
+                  $query->where('type', 'Paket')->get();
+               }, 'uniform' => function($query) {
+                  $query->where('type', 'Uniform')->get();
+               }]);
+            }])
+            ->where('id', (int)$studentId)
+            ->where('is_active', true)
+            ->first();
+            //lakukan validasi ketika admin lupa memasukkan static payment paket disini;
+            
+            
+            
+            $amount = $student->grade->bundle? $student->grade->bundle->amount : null;
+            $uniformAmount = $student->grade->uniform? $student->grade->uniform->amount : 0; 
+
+            if(!$amount)
+            {
+               $bookAmount = Book::where('grade_id', (int)$student->grade_id)->get();
+               $amountTotal = sizeof($bookAmount) > 0 ? $bookAmount->sum('amount') : 0;
+               $amount = $uniformAmount + $amountTotal;
+            }
+            
+            $bill = Bill::create([
+               'student_id' => $student->id,
+               'type' => 'Paket',
+               'subject' => 'Paket '. $student->grade->name. ' ' .$student->grade->class,
+               'amount' => $amount,
+               'discount' => null,
+               'installment' => null,
+               'paidOf' => false,
+               'deadline_invoice' => Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'),
+            ]);
+
+
+            $mailData = [
+               'student' => $student,
+               'bill' => $bill,
+            ];
+
+            // setelah ini harus handle kirim email
+         }
+
+
+         DB::commit();
+         info('Create paket success at '. date('y-m-d'));
+         // return redirect('/admin/bills');
+         
+      } catch (Exception $err) {
+         DB::rollBack();
+         info('Create paket error at '. date('y-m-d'));
+         // return dd($err);
+      }
+   }
+
+
+
+   public function createNotificationFeeRegister()
+   {
+      try {
+         //sementara gabisa kirim email push array dulu
+
+         $arr = [];
+
+         $data = Student::with([
+            'bill' => function($query)  {
+               $query
+               ->where('type', "Uang Gedung")
+               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'))
+               ->where('paidOf', false)
+               ->get();
+         },
+            'relationship'
+         ])
+         ->whereHas('bill', function($query) {
+               $query
+               ->where('type', "Uang Gedung")
+               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'))
+               ->where('paidOf', false);
+         })
+         ->where('is_active', true)
+         ->get();
+
+
+         foreach ($data as $student) {
+            
+            foreach($student->relationship as $parent)
+            {
+               //ini besok ganti dengan cara mengirim email ke parents
+               
+               array_push($arr, $parent->email);
+            }
+         }
+
+
+
+         // return $arr;
+
+         info('Cron reminder h-30 (notifications create bill)');
+
+      } catch (Exception $err) {
+         
+         return dd($err);
       }
    }
 }

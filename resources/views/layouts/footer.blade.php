@@ -2,7 +2,7 @@
    <strong>Copyright &copy; 2023 <a target="_blank" href="https://great.sch.id/">Great Crystal School</a>.</strong>
    All rights reserved.
    <div class="float-right d-none d-sm-inline-block">
-     <b>Version</b> 3.2.0
+     <b>Version</b> 1.0
    </div>
  </footer>
 
@@ -70,19 +70,10 @@
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('template')}}/dist/js/demo.js"></script>
 
-{{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
-
-
 
 <script>
    $(function () {
-     Initialize Select2 Elements
-     $('.select2').select2()
- 
-     //Initialize Select2 Elements
-     $('.select2bs4').select2({
-       theme: 'bootstrap4'
-     })
+    
  
      //Datemask dd/mm/yyyy
      $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })

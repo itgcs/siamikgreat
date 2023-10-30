@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\MailController;
 use App\Mail\BookEmail;
 use App\Models\Bill;
+use App\Models\BillCollection;
 use App\Models\Book;
 use App\Models\Book_student;
 use App\Models\Grade;
@@ -14,6 +15,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Expr\FuncCall;
 
 class PaymentBookController extends Controller
 {
@@ -32,6 +34,7 @@ class PaymentBookController extends Controller
                 'status' => $request->status? $request->status : null,
                 'search' => $request->search? $request->search : null,
                 'grade_id' => $request->grade_id? $request->grade_id : null,
+                'page' => $request->page? $request->page : null,
              ];
 
              $grade = Grade::orderBy('id', 'asc')->get(['id', 'name', 'class']);
@@ -39,43 +42,41 @@ class PaymentBookController extends Controller
              $order = $request->sort ? $request->sort : 'desc';
              $status = $request->status? ($request->status == 'true' ? true : false) : true;
 
-            if($form->search && $form->order && $form->status && $form->sort && $form->grade_id){
+            if($form->search || $form->page || $request->order && $request->status && $request->sort && $request->grade_id){
             
-                $data = Student::with(['grade'])
-                ->withCount('book')
-                ->orderBy($form->order, $order)
-                ->where('name', 'LIKE', '%'.$form->search.'%')
-                ->where('grade_id', (int)$form->grade_id)
-                ->where('is_active', $status)
-                ->get();
 
-            } else if($form->search && $form->order && $form->status && $form->sort) {
+                $form->grade_id = $form->grade_id == 'all' ? null : $form->grade_id;
 
-                $data = Student::with(['grade'])
-                ->withCount('book')
-                ->where('name', 'LIKE', '%'.$form->search.'%')
-                ->where('is_active', $status)
-                ->orderBy($form->order, $order)
-                ->get();
+                $dataModel = new Student();
 
-            } else if($form->order && $form->status && $form->sort && $form->grade_id){
-
-                $data = Student::with(['grade'])
-                ->withCount('book')
-                ->where('grade_id', (int)$form->grade_id)
-                ->where('is_active', $status)->orderBy($form->order, $order)
-                ->get();
+                $data = $dataModel->with(['grade'])->withCount('book');
                 
-            } else if($form->order && $form->status && $form->sort) {
+
+                if($form->order && $order)
+                {
+                    $data = $data->orderBy($form->order, $order);
+                }
+
+                if($form->search) {
+
+                     $data = $data->where('name', 'LIKE', '%'.$form->search.'%');
+                }
+
+                if($form->grade_id) {
+                     $data = $data->where('grade_id', (int)$form->grade_id);
+                }
+
+                if($status){
+                    $data = $data->where('is_active', $status);
+                }
+
+                $data = $data->paginate(15);
                 
-                $data = Student::with(['grade'])->withCount('book')
-                ->where('is_active', $status)
-                ->orderBy($form->order, $order)
-                ->get();
+            }else {
 
-            } else {
-
-                $data = Student::with('grade')->withCount('book')->where('is_active', $status)->orderBy('id', 'desc')->get();
+                $data = Student::with(['grade'])
+                ->withCount('book')
+                ->where('is_active', $status)->orderBy('id', 'desc')->paginate(15);
             }
 
 
@@ -94,14 +95,22 @@ class PaymentBookController extends Controller
             session()->flash('page',  (object)[
                 'page' => 'payments',
                 'child' => 'payment-books',
-             ]);    
+             ]);
 
-            $data = Student::with(['book', 'grade'])->where('unique_id', $id)->first();
+            $student = Student::where('unique_id', $id)->first();
+
+            $data = Student::with(['book' => function($query) use ($student) {
+                $query->where('grade_id', $student->grade_id)->get();
+            }, 'grade' ])->where('unique_id', $id)->first();
+
+            $haveAllBooks = Book::where('grade_id', $data->grade_id)->get()->count() === sizeof($data->book)? true : false;
             
-            return view('components.book.payments.data-book-by-id')->with('data', $data);
+            // return $data;
+            return view('components.book.payments.data-book-by-id')->with('data', $data)->with('have_all_books', $haveAllBooks);
 
         } catch (Exception $err) {
             return dd($err);
+            return abort(404);
         }
     }
 
@@ -128,8 +137,10 @@ class PaymentBookController extends Controller
              ->where('grade_id', $student->grade_id)
              ->get();
 
+             $bookExist = Book::where('grade_id', $student->grade_id)->first() ? true : false;
+
             // return $data;
-            return view('components.book.payments.add-student-book')->with('data', $data)->with('student', $student);
+            return view('components.book.payments.add-student-book')->with('data', $data)->with('student', $student)->with('bookExist', $bookExist);
 
         } catch (Exception $err) {
             return dd($err);
@@ -139,14 +150,20 @@ class PaymentBookController extends Controller
 
     public function actionAddBook(Request $request, $id)
     {
+        
+
         DB::beginTransaction();
 
         try {
             //code...
-            $bill = [];
+            $bookName = [];
+            $billCollection = [];
             $data = $request->except(['_token', '_method']);
             $student = Student::with(['grade', 'relationship'])->where('id', $id)->first();
-            
+            $totalAmount = 0;
+
+
+
             foreach($data as $el)
             {
 
@@ -154,30 +171,28 @@ class PaymentBookController extends Controller
 
                 if($book) {
 
-                    $temp = [
+                    $totalAmount += (int)$book->amount;
+                    
+                    array_push($billCollection, (array)[
                         'type' => 'Book',
-                        'subject' => $book->name,
-                        'student_id' => $student->id,
+                        // 'bill_id' => (int)$billLastId->id + 1,
+                        'book_id' => $book->id,
+                        'name' => $book->name,
                         'amount' => (int)$book->amount,
-                        'paidOf' => false,
                         'discount' => null,
-                        'deadline_invoice' => Carbon::now()->addDay(30)->format('y-m-d'),
-                        'installment' => null,
-                    ];
-
-                    Book_student::create([
-                        'student_id' => (int)$id,
-                        'book_id' => (int)$el,
                     ]);
+                    
+                    array_push($bookName, $book->name);
 
-                    Bill::create($temp);
-
-                    array_push($bill, $temp);
+                    // Book_student::create([
+                    //     'student_id' => (int)$id,
+                    //     'book_id' => (int)$el,
+                    // ]);
                 }
                 
             }
-
-            if(sizeof($bill)<=0)
+            
+            if(sizeof($billCollection)<=0)
             {
                 DB::rollBack();
                 return redirect('/admin/payment-books/'.$student->unique_id.'/add-books')->withErrors([
@@ -185,17 +200,36 @@ class PaymentBookController extends Controller
                 ]);
             }
             
+            $collect = [
+                'type' => 'Book',
+                'subject' => implode(',', $bookName),
+                'student_id' => (int)$student->id,
+                'amount' => $totalAmount,
+                'paidOf' => false,
+                'discount' => null,
+                'deadline_invoice' => Carbon::now()->addDay(30)->format('y-m-d'),
+                'installment' => null,
+            ];
+            
+            $bill = Bill::create($collect);
+            
+            foreach ($billCollection as $value) {
+                
+                $value['bill_id'] = $bill->id;
+                BillCollection::create($value);
+            }
+
+
             $mailData = [
                 'student' => $student,
                 'bill' => $bill,
             ];
-
-            $mail = new MailController;
-            $mail->addBookEmail($mailData);  
             
-
+            // $mail = new MailController;
+            // $mail->addBookEmail($mailData);  
+            
             DB::commit();
-            return redirect('/admin/payment-books/'.$student->unique_id);
+            return redirect('/admin/bills');
 
         } catch (Exception $err) {
             DB::rollBack();

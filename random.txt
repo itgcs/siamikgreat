@@ -1,7 +1,10 @@
-07.00 - 10.00 = add filter on landing page bills to search deadline invoice pastdue, in month, h-7 days, h-1 days, 
-today and add filter to search by type bills there are book, fee regis, uniform, spp on landing page bills.
-10.00 - 12.00 = trial and error update status paid on bills.
-12.00 - 13.15 = Fix userinterface for information detail bills.
-13.15 - 14.15 = Ishoma
-14.15 - 15.00 = Fix cron job bills reminder.
-14.00 - 16.00 = Create filter search payments by students.
+08.00 - 09.00 = create preloader and notification on event register student, diactivate student, actived student,  and edit student.
+09.00 - 10.00 = create preloader and notification on event register teacher, create book, edit book and edit teacher.
+10.00 - 11.00 = create preloader and notification on event create static spp by students, and edit static spp by students.
+11.00 - 12.00 = create preloader and notification on event create static spp by grades, and edit static spp by grades.
+12.00 - 13.00 = Ishoma.
+13.00 - 14.00 = create preloader and notification on event create add book for students and landing page bills.
+13.00 - 14.00 = create cron job for push new notification bills fee registers for parent.
+14.00 - 15.00 = create cron job for push new notification bills pakets for parent.
+14.00 - 15.00 = create cron job for push new notification bills uniforms for parent.
+15.00 - 16.00 = create cron job for push new notification bills books for parent.

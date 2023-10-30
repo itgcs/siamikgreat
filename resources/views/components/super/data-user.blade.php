@@ -17,9 +17,9 @@
         </i>
         Add user
     </a>
-    <div class="card mt-3 ">
+    <div class="card card-dark mt-3">
         <div class="card-header">
-            <h3 class="card-title">Student</h3>
+            <h3 class="card-title">Users</h3>
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">

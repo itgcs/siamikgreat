@@ -23,9 +23,9 @@
             <i class="fa-solid fa-plus"></i>
             Create payment
         </a>
-        <div class="card mt-5">
+        <div class="card card-dark mt-5">
             <div class="card-header">
-                <h3 class="card-title">Grades Payments for <b>{{$data->name}} {{$data->class}}</b></h3>
+                <h3 class="card-title"><em>{{$data->name}} {{$data->class}}</em></h3>
 
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -92,7 +92,56 @@
         <!-- /.card-body -->
 </div>
 
-{{-- </div> --}}
+@if(session('after_create_payment_grade')) 
+         <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+         <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+         <script>
+         
+            var Toast = Swal.mixin({
+               toast: true,
+               position: 'top-end',
+               showConfirmButton: false,
+               timer: 3000
+            });
+         
+            setTimeout(() => {
+               Toast.fire({
+                  icon: 'success',
+                  title: 'Data has been saved !!!',
+               });
+            }, 1500);
+
+
+         </script>
+
+   @endif
+        
+   @if(session('after_update_payment_grade')) 
+      
+         <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+         <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+         <script>
+         
+         var Toast = Swal.mixin({
+               toast: true,
+               position: 'top-end',
+               showConfirmButton: false,
+               timer: 3000
+         });
+      
+         setTimeout(() => {
+            Toast.fire({
+               icon: 'success',
+               title: 'Data has been updated !!!',
+         });
+         }, 1500);
+      
+      
+         </script>
+        
+   @endif
 
 @include('components.grade.payment.delete-payment')
 

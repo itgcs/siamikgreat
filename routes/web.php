@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\{
    TeacherController,
 };
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\Notification\NotificationBillCreated;
 use App\Http\Controllers\SuperAdmin\{
    SuperAdminController,
    StudentController as SuperStudentController
@@ -39,7 +40,7 @@ Route::get('/', [UserController::class, 'login']);
 Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin');
 Route::get('/counter', Counter::class);
 
-Route::get('send-mail', [MailController::class, 'cronReminderMinusSevenDay']);
+Route::get('send-mail', [MailController::class, 'createNotificationFeeRegister']);
 Route::get('/coba', [RegisterController::class, 'handleFeeRegister']);
 
 Route::middleware(['admin'])->prefix('/admin')->group(function () {
@@ -120,9 +121,15 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::get('/create', [BillController::class, 'chooseStudent']);
       Route::get('/create-spp/{id}', [BillController::class, 'pageSPP']);
       Route::get('/detail-payment/{id}', [BillController::class, 'detailPayment']);
-      Route::post('/post-spp/{id}', [BillController::class, 'actionSPP'])->name('create.spp');
       Route::get('/create-payment/{id}', [BillController::class, 'pagePayment']);
-      Route::put('/update-paid/{id}', [BillController::class, 'paidOf']);
+      Route::get('/change-paket/{student_id}/{bill_id}', [BillController::class, 'pageChangePaket']);
+      Route::get('/intallment-paket/{bill_id}', [BillController::class, 'pagePaketInstallment']);
+      Route::post('/post-spp/{id}', [BillController::class, 'actionSPP'])->name('create.spp');
+      Route::post('/post-intallment-paket/{bill_id}', [BillController::class, 'actionPaketInstallment'])->name('create.installment');
+      Route::put('/change-paket/{bill_id}/{student_id}', [BillController::class, 'actionChangePaket'])->name('action.edit.paket');
+      Route::put('/update-paid/{bill_id}/{student_id}', [BillController::class, 'paidOfBook'])->name('action.book.payment');
+      Route::patch('/update-paid/{id}', [BillController::class, 'paidOf']);
+
    });
 
 
@@ -148,7 +155,10 @@ Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
    
    
    Route::prefix('/student')->group(function () {
+      Route::get('/re-registration/{student_id}', [SuperStudentController::class, 'pageReRegis']);
       Route::patch('/{id}', [SuperStudentController::class, 'inactiveStudent']);
+      Route::patch('/activate/{student_id}', [SuperStudentController::class, 'activateStudent']);
+      Route::patch('/re-registration/{student_id}', [SuperStudentController::class, 'actionReRegis'])->name('action.re-regis');
    });
    
    Route::prefix('/user')->group(function () {
@@ -170,4 +180,10 @@ Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
       Route::put('/deactivated/{id}', [TeacherController::class, 'deactivated']);
    });
 
+});
+
+
+Route::prefix('created')->group(function () {
+
+   Route::get('/paket', [NotificationBillCreated::class, 'test']);
 });

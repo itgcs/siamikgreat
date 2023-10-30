@@ -63,7 +63,7 @@ class PaymentGradeController extends Controller
             $query->orderBy('type', 'asc');
          }])->where('id', $id)->first();
 
-         // return $data;  
+         // return $data; 
 
          return view('components.grade.payment.data-payment')->with('data', $data);
          
@@ -106,6 +106,7 @@ class PaymentGradeController extends Controller
             'child' => 'payment-grades',
          ]);
 
+         
          return view('components.grade.payment.form-payment')->with('data', $data)->with('type', $type);
       } catch (Exception $err) {
          
@@ -118,13 +119,14 @@ class PaymentGradeController extends Controller
    {
 
       DB::beginTransaction();
+      session()->flash('page', (object)[
+         'page' =>'payments',
+         'child' => 'payment-grades',
+      ]);
+      session()->flash('preloader');
 
       try {
          //code...
-         session()->flash('page', (object)[
-            'page' =>'payments',
-            'child' => 'payment-grades',
-         ]);
 
          $rules  = [
             'type' => $type,
@@ -163,6 +165,7 @@ class PaymentGradeController extends Controller
 
          DB::commit();
 
+         session()->flash('after_create_payment_grade');
          return redirect('/admin/payment-grades' . '/' . $id);
          
       } catch (Exception $err) {
@@ -220,6 +223,8 @@ class PaymentGradeController extends Controller
          ]);
 
          $data = Payment_grade::where('id', $id)->first();
+
+         session()->flash('after_update_payment_grade');
 
          return redirect('/admin/payment-grades' . '/' . $data->grade_id);
 

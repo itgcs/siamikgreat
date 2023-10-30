@@ -832,7 +832,7 @@
                             <div class="col-md-4">
                                <label for="installment">Installment / Month</label>
                                <input name="installment" type="number" class="form-control"
-                               id="installment" placeholder="(Cicilan)" value="{{old('installment')}}" max="12" min="0">
+                               id="installment" placeholder="(Cicilan)" value="{{old('installment')}}" max="12" min="2">
                             </div>
                            </div>
 

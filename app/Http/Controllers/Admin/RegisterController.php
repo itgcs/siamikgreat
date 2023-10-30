@@ -24,7 +24,6 @@ class RegisterController extends Controller
       try {
          //code...
          $grade = Grade::orderBy('id', 'asc')->get();
-         session()->flash('preloader', false);
          session()->flash('page',  $page = (object)[
             'page' => 'students',
             'child' => 'register students',
@@ -76,6 +75,7 @@ class RegisterController extends Controller
             'nationality' => $request->studentNationality,
             'place_of_issue' => $request->studentPlace_of_issue,
             'date_exp' => $request->studentDate_exp ? $this->changeDateFormat($request->studentDate_exp) : null,
+            'is_graduate' => false,
          ];
          
          $rules = [
@@ -246,7 +246,7 @@ class RegisterController extends Controller
             ];
             
             // return $data;
-            session()->flash('success', 'Student with name' . $student->name . 'has  been registered');
+            session()->flash('after_create_student');
             DB::commit();
             session()->flash('page',  $page = (object)[
                'page' => 'students',
@@ -410,7 +410,7 @@ class RegisterController extends Controller
 
 
       $installment  = $installment && $installment > 1 ? $installment : 1;
-
+      
       
 
          if ($amount % 10000 == 0) {
@@ -424,7 +424,7 @@ class RegisterController extends Controller
       for($i=1; $i<=$installment; $i++){
          $currentDate = date('Y-m-d');
          $newDate = date('Y-m-d', strtotime('+'.$i.' month', strtotime($currentDate)));
-         $subject = $installment == 1? 'Uang Gedung' : 'Uang Gedung, cicilan ke ' . $i;
+         $subject = $installment <= 1? 'Uang Gedung' : $i;
          $subjectEmail = $installment <= 1? 'Berikut pembayaran Uang Gedung '.$student->name : 'Berikut pembayaran Uang Gedung, cicilan ke ' . $i . ' untuk bulan ini';
             Bill::create([
                'student_id' => $student->id,

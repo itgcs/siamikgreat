@@ -14,16 +14,16 @@
 
                               @php
 
-                                 $selected = $form && $form->grade_id? $form->grade_id : null;
+                                 $selectedGrade = $form && $form->grade_id? $form->grade_id : 'all';
 
                               @endphp
 
                                 <label>Grade :</label>
                                  <select name="grade_id" class="form-control">
-                                            <option {{!$selected? 'selected' : ''}} value="">All Grades</option>
+                                            <option {{$selectedGrade == 'all' ? 'selected' : ''}} value="all">All Grades</option>
                                        @foreach ($grade as $el)
                                        
-                                            <option {{$selected == $el->id? 'selected' : ''}} value="{{$el->id}}">{{$el->name . '-' . $el->class}}</option>
+                                            <option {{$selectedGrade == $el->id? 'selected' : ''}} value="{{$el->id}}">{{$el->name . '-' . $el->class}}</option>
                                            
                                        @endforeach
                                  </select>
@@ -35,15 +35,15 @@
 
                                  @php
 
-                                    $selected = $form && $form->order? $form->order : 'id';
+                                    $selectedSort = $form && $form->order? $form->order : 'id';
 
                                  @endphp
 
                                    <label>Sort by:</label>
                                     <select name="order" class="form-control">
-                                          <option {{$selected === 'id'? 'selected' : ''}} value="id">Register</option>
-                                          <option {{$selected === 'name'? 'selected' : ''}} value="name">Name</option>
-                                          <option {{$selected === 'grade_id'? 'selected' : ''}} value="grade_id">Grade</option>
+                                          <option {{$selectedSort === 'id'? 'selected' : ''}} value="id">Register</option>
+                                          <option {{$selectedSort === 'name'? 'selected' : ''}} value="name">Name</option>
+                                          <option {{$selectedSort === 'grade_id'? 'selected' : ''}} value="grade_id">Grade</option>
                                     </select>
                                   
                                </div>
@@ -53,14 +53,14 @@
 
                                  @php
                                     
-                                    $selected = $form && $form->sort ? $form->sort : 'desc';
+                                    $selectedOrder = $form && $form->sort ? $form->sort : 'desc';
 
                                  @endphp
 
                               <label>Sort order: <span style="color: red"></span></label>
                               <select name="sort" class="form-control">
-                                  <option value="desc" {{$selected === 'desc' ? 'selected' : ''}}>Descending</option>
-                                  <option value="asc" {{$selected === 'asc' ? 'selected' : ''}}>Ascending</option>
+                                  <option value="desc" {{$selectedOrder === 'desc' ? 'selected' : ''}}>Descending</option>
+                                  <option value="asc" {{$selectedOrder === 'asc' ? 'selected' : ''}}>Ascending</option>
                               </select>                              
                             </div>
                         </div>
@@ -70,13 +70,13 @@
 
                                  @php
                                  
-                                    $selected = $form && $form->status ? $form->status : 'true';
-                                    $option = $selected === 'false' ? 'true' : 'false';
+                                    $selectedStatus = $form && $form->status ? $form->status : 'true';
+                                    $option = $selectedStatus === 'false' ? 'true' : 'false';
 
                                  @endphp
 
                                  <select name="status" class="form-control">
-                                     <option  selected value="{{$selected}}">{{$selected === 'true' ? 'Active' : 'Inactive'}}</option>
+                                     <option  selected value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Inactive'}}</option>
                                      <option  value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
                                  </select>                              
                                </div>
@@ -96,9 +96,30 @@
                </div>
            </form >
 
-            <div class="card mt-5">
+        @if (sizeof($data) <=0 && ($form->search || $form->sort ||  $form->order || $form->grade_id || $form->status))
+            
+            <div class="row h-100 mt-5">
+                <div class="col-sm-12 my-auto text-center ">
+                    <h3>Payment book you are looking for does not exist !!!</h3>
+                </div>
+            </div>
+
+        @elseif (sizeof($data) <=0)
+    
+        <div class="row h-100 mt-5">
+            <div class="col-sm-12 my-auto text-center ">
+                <h3>Payment book has never been created !!!</h3>
+            </div>
+        </div>
+
+        @else
+            
+        
+
+
+            <div class="card my-5 card-dark">
             <div class="card-header">
-              <h3 class="card-title">Student</h3>
+              <h3 class="card-title">Book payments</h3>
     
               <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -187,7 +208,160 @@
             </div>
             <!-- /.card-body -->
             </div>
+
+
+            <div class="d-flex justify-content-end">
+
+                <nav aria-label="...">
+                    <ul class="pagination" max-size="2">
+                        
+                        @php
+                        $link= '/admin/payment-books?grade_id='.$selectedGrade.'&order='.$selectedSort.'&sort='.$selectedOrder.'&status='.$selectedStatus.'&search='.$form->search;
+                        $previousLink = $link . '&page='.$data->currentPage()-1;
+                        $nextLink = $link . '&page='.$data->currentPage()+1;
+                        $firstLink = $link . '&page=1';
+                        $lastLink = $link . '&page=' . $data->lastPage();
+                        
+                        $arrPagination = [];
+                        $flag = false;
+                        
+                        if($data->lastPage() - 5 > 0){
+                            
+                            
+                            if($data->currentPage()<=4)
+                            {
+                                for ($i=1; $i <= 5; $i++) { 
+                                    # code...
+                                    $temp = (object) [
+                                        
+                                        'page' => $i,
+                                        'link' => $link . '&page=' . $i,
+                                    ];
+                                    
+                                    array_push($arrPagination, $temp);
+                                }
+                            }
+                            
+                            else if($data->lastPage() - $data->currentPage() > 2)
+                            {
+                                $flag = true;
+                                $idx = array($data->currentPage()-2,$data->currentPage()-1,$data->currentPage(),$data->currentPage()+1,$data->currentPage()+2);
+                                
+                                foreach ($idx as $value) {
+                                    
+                                    $temp = (object) [
+                                        
+                                        'page' => $value,
+                                        'link' => $link . '&page=' . $value,
+                                    ];
+                                    
+                                    array_push($arrPagination, $temp);
+                                }
+                                
+                            } else {
+                                
+                                $arrFirst = [];
+                                //ini buat yang current page sampai last page
+                                
+                                for($i=$data->currentPage(); $i<=$data->lastPage(); $i++){
+            
+                                    $temp = (object) [
+                                    
+                                    'page' => $i,
+                                    'link' => $link . '&page=' . $i,
+                                ];
+                                
+                                array_push($arrFirst, $temp);
+                            }
+                            
+                            
+                            $arrLast = [];
+                                $diff = $data->currentPage() - (5 - sizeof($arrFirst));
+                                //ini yang buat current page but decrement
+                                
+            
+                                for($i=$diff; $i < $data->currentPage(); $i++){
+            
+                                    $temp = (object) [
+                                        
+                                        'page' => $i,
+                                    'link' => $link . '&page=' . $i,
+                                ];
+            
+                                
+                                array_push($arrLast, $temp);
+                            }
+                            
+                            
+                            $arrPagination = array_merge($arrLast, $arrFirst);
+                            }
+                            
+                            
+                            
+                        } else {
+            
+                            for($i=1; $i<=$data->lastPage(); $i++)
+                            {
+                                $temp = (object) [
+                                    
+                                    'page' => $i,
+                                    'link' => $link . '&page=' . $i,
+                                ];
+            
+                                array_push($arrPagination, $temp);
+                            }
+                        }
+                        
+                        @endphp
+            
+                    <li class="mr-1 page-item {{$data->previousPageUrl()? '' : 'disabled'}}">
+                        <a class="page-link" href="{{$firstLink}}" tabindex="+1">
+                            << First
+                        </a>
+                    </li>
+            
+                    <li class="page-item {{$data->previousPageUrl()? '' : 'disabled'}}">
+                        <a class="page-link" href="{{$previousLink}}" tabindex="-1">
+                            Previous
+                        </a>
+                    </li>
+            
+                    @foreach ( $arrPagination as $el)
+                    
+                    <li class="page-item {{$el->page === $data->currentPage() ? 'active' : ''}}">
+                        <a class="page-link" href="{{$el->link}}">
+                            {{$el->page}}
+                        </a>
+                    </li>
+            
+                    @endforeach
+                    
+                    <li class="page-item {{$data->nextPageUrl()? '' : 'disabled'}}">
+                        <a class="page-link" href="{{$nextLink}}" tabindex="+1">
+                            Next
+                        </a>
+                    </li>
+            
+                    <li class="ml-1 page-item {{$data->nextPageUrl()? '' : 'disabled'}}">
+                        <a class="page-link" href="{{$lastLink}}" tabindex="+1">
+                            Last >>
+                        </a>
+                    </li>
+            
+                </ul>
+                
+            </nav>
+            
+            </div>
+
+            @endif
          </div>
+{{--         
+        @if($data->currentPage() > 1) --}}
+
+         
+
+        {{-- @endif --}}
          
          @include('components.super.delete-student')
 @endsection

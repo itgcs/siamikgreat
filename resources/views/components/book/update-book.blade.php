@@ -38,7 +38,7 @@
                                     <div class="col-md-6">
                                         <label for="grade_id">Grades<span style="color: red">*</span></label>
                                         @php
-                                            $grade_id = old('grade_id') ? old('grade_id') : $book->id;
+                                            $grade_id = old('grade_id') ? old('grade_id') : $book->grade_id;
                                         @endphp
                                         <select name="grade_id" class="form-control">
 
@@ -46,7 +46,7 @@
 
                                                 <option class="text-center" 
                                                 {{$el->id == $grade_id ? 'selected' : ''}} 
-                                                value="{{$el->id}}" {{old('grade_id') == $el->id ? 'selected' : ''}}>{{$el->name . ' - ' . $el->class}}</option>
+                                                value="{{$el->id}}" >{{$el->name . ' - ' . $el->class}}</option>
                                                 
                                             @endforeach
                                         </select>

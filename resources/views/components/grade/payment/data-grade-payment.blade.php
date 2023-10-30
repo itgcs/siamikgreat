@@ -6,7 +6,7 @@
 <div class="container-fluid">
 
     <h2 class="text-center display-4">Grades Search</h2>
-           <form class="mt-5" action="/admin/payment-grades">
+           <form class="my-5" action="/admin/payment-grades">
                <div class="row">
                    <div class="col-md-10 offset-md-2">
                        <div class="row">
@@ -47,9 +47,18 @@
                </div>
            </form >
 
-    <div class="card mt-5">
+           @if (sizeof($data)<=0)
+
+           <div class="col-sm-12 my-auto text-center m-5">
+            <h3>The payment grades you are looking for does not exist !!!</h3>
+        </div>
+               
+           @else
+
+
+    <div class="card card-dark mt-5">
         <div class="card-header">
-            <h3 class="card-title">Grades</h3>
+            <h3 class="card-title">Payment Grades</h3>
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -146,5 +155,8 @@
         <!-- /.card-body -->
     </div>
 </div>
+
+           
+@endif
 
 @endsection
