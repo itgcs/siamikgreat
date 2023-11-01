@@ -149,7 +149,7 @@ class RegisterController extends Controller
             //fee register
 
             'type' => 'Uang Gedung',
-            'amount' => $request->amount && $request->dp > 0?  (int)str_replace(".", "", $request->amount) : null,
+            'amount' => $request->amount && $request->amount > 0?  (int)str_replace(".", "", $request->amount) : 0,
             'dp' => $request->dp && $request->dp > 0? (int)str_replace(".", "", $request->dp) : 0,
             'installment' => $request->installment && $request->installment > 0 ? $request->installment : null,
             'sendEmail' => $request->sendEmail? true : false,
@@ -216,8 +216,8 @@ class RegisterController extends Controller
 
             //fee register
 
-            'amount' => 'required|integer|min:10000',
-            'dp' => 'nullable|integer|min:10000',
+            'amount' => 'required|integer',
+            'dp' => 'nullable|integer',
             'installment' => 'nullable|integer',
             'sendEmail' => 'required|boolean',
          ]);
@@ -238,75 +238,82 @@ class RegisterController extends Controller
             ])->withInput($rules);
          }
 
+         $paket = Payment_grade::where('grade_id', $request->gradeId)
+         ->where('type', 'Paket')
+         ->first();
+
+         if(!$paket){
+            DB::rollBack();
+               // return 'masuk';
+               return redirect('/admin/register')->withErrors([
+                  'paket' => 'Paket grade is not found !!!', 
+               ])->withInput($rules);
+         }
 
          $student = Student::create($credentials);
          $relationship = $this->handleRelationship($request, $student);
          $brotherOrSister = $this->handleBrotherOrSister($request, $student);
          
          // return $relationship;
-         if($student && $relationship->success && $brotherOrSister->success)
-         {
-            // return 'post';
-            
-            $student = Student::with('relationship')->where('id', $student->id)->first();
-            $brotherOrSister = Student::find($student->id);
-            $feeRegister = $this->handleFeeRegister($rules['amount'], $request->installment, $student, $rules['dp']);
-            $paket = $this->handlePaketPayment($student);
-
-            if(!$feeRegister->success){
-               DB::rollBack();
-               return $feeRegister->success;
-            }
-
-            if(!$paket->success){
-               DB::rollBack();
-               return dd($paket->success);
-            }
-
-            if($paket->success == 404){
-               DB::rollBack();
-               return redirect('/admin/register')->withErrors([
-                  'paket' => 'Paket grade is not found !!!', 
-               ])->withInput($rules);
-            }
-            
-            $data = (object) [
-               'student' => $student,
-               'brother_or_sisters' => $brotherOrSister->brotherOrSister()->get(),
-               'after_create' => 'Success register student with name ' . $student->name,
-            ];
-            
-            // return $data;
-            session()->flash('after_create_student');
-            DB::commit();
-            session()->flash('page',  $page = (object)[
-               'page' => 'students',
-               'child' => 'database students',
-            ]);
-            return view('components.student.detailStudent')->with('data', $data);
-            
-         } else if(!$relationship->success){
+         if(!$relationship->success){
             DB::rollBack();
             return 'Error at relationship';
          } else if (!$brotherOrSister->success){
             DB::rollBack();
             return 'Error at brother or sister';
-         } else {
-            DB::rollBack();
-            return 'Internal server error!!!';
          }
+
+         // return 'post';
+            
+         $student = Student::with('relationship')->where('id', $student->id)->first();
+         $brotherOrSister = Student::find($student->id);
+         $feeRegister = $this->handleFeeRegister($rules['amount'], $request->installment, $student, $rules['dp']);
+         // $paket = $this->handlePaketPayment($student);
+         
+
+         $currentDate = date('Y-m-d');
+
+         $newDate = date('Y-m-d', strtotime('+1 month', strtotime($currentDate)));
+
+         Bill::create([
+            'student_id' => $student->id,
+            'type' => 'Paket',
+            'amount' => $paket->amount,
+            'paidOf' => false,
+            'deadline_invoice' => $newDate,
+            'subject' => 'Paket', 
+         ]);  
+         
+         $data = (object) [
+            'student' => $student,
+            'brother_or_sisters' => $brotherOrSister->brotherOrSister()->get(),
+            'after_create' => 'Success register student with name ' . $student->name,
+         ];
+         
+         // return $data;
+         session()->flash('after_create_student');
+         session()->flash('page',  $page = (object)[
+            'page' => 'students',
+            'child' => 'database students',
+         ]);
+         
+         DB::commit();
+
+         return view('components.student.detailStudent')->with('data', $data);
 
 
       } catch (Exception $err) {
          
          DB::rollBack();
-         return dd($err);
+         abort(500);
+         // return dd($err);
       }
    }
 
 
    private function handleRelationship($request, $student)
    {
+      
       try {
          //code...
 
@@ -369,6 +376,7 @@ class RegisterController extends Controller
 
    private function handleBrotherOrSister($request, $student)
    {
+      
       try {
          //code...
          $credentialsBrotherOrSister = [];
@@ -406,7 +414,6 @@ class RegisterController extends Controller
 
    public function changeDateFormat($date)
    {
-
       try {
          //code...
          $date = explode('/', $date);
@@ -421,10 +428,15 @@ class RegisterController extends Controller
 
    public function updateRelation($id, $credential)
    {
+
+      
       try {
          //code...
          
          Relationship::where('id', $id)->update($credential);
+
+         
+         
 
          return Relationship::where('id', $id)->first();
 
@@ -436,6 +448,8 @@ class RegisterController extends Controller
 
    private function handleFeeRegister($amount, $installment=1, $student, $dp)
    {
+      
+
       try {
 
 
@@ -487,7 +501,8 @@ class RegisterController extends Controller
                ]);
             }
          }
-
+         
+         
          return (object)['success' => true];
       } catch (Exception $err) {
          DB::rollBack();
@@ -496,38 +511,23 @@ class RegisterController extends Controller
    }
 
 
-   private function handlePaketPayment($student)
-   {
-      try {
-         //code...
+   // private function handlePaketPayment($student)
+   // {
+      
+   //    try {
+   //       //code...
 
-         $paket = Payment_grade::where('grade_id', $student->grade_id)
-         ->where('type', 'Paket')
-         ->first();
+         
 
-         if(!$paket){
-            return (object)['success' => 404];
-         }
 
-         $currentDate = date('Y-m-d');
-
-         $newDate = date('Y-m-d', strtotime('+1 month', strtotime($currentDate)));
-
-         Bill::create([
-            'student_id' => $student->id,
-            'type' => 'Paket',
-            'amount' => $paket->amount,
-            'paidOf' => false,
-            'deadline_invoice' => $newDate,
-            'subject' => 'Paket', 
-         ]);  
-
-         return (object)['success' => true];
-      } catch (Exception $err) {
-         //throw $th;
-         DB::rollBack();
-         return (object)['success' => false, 'error' => dd($err)];
-      }
-   }
+         
+         
+   //       return (object)['success' => true];
+   //    } catch (Exception $err) {
+   //       //throw $th;
+   //       DB::rollBack();
+   //       return (object)['success' => false, 'error' => dd($err)];
+   //    }
+   // }
 
 }

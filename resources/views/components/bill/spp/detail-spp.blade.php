@@ -86,13 +86,17 @@
                   </div>
                 </div>
                 <hr>
+                @php
+                     $currentDate = date('y-m-d');
+                     $dateInvoice1 = date_create($currentDate);
+                     $dateInvoice2 = date_create(date('y-m-d', strtotime($data->deadline_invoice)));
+                     $dateInvoiceWarning = date_diff($dateInvoice1, $dateInvoice2);
+                     $invoice = $dateInvoiceWarning->format('%a');
+                @endphp
                 <div class="row">
                   <div class="col-sm-4">
                     <p class="mb-0">Invoice</p>
                   </div>
-                  @php
-                     $currentDate = date('y-m-d');
-                  @endphp  
                   <div class="col-sm-8">
                      <div class="mb-0">
 
@@ -124,7 +128,102 @@
               </div>
             </div>
 
-            
+            <div class="card">
+             <div class="card-header">
+               <h3 class="card-title">
+                  <i class="fa-solid fa-file-invoice mr-1"></i>
+                 Bills
+               </h3>
+               <div class="card-tools">
+                 {{-- <ul class="nav nav-pills ml-auto">
+                   <li class="nav-item">
+                     <a class="nav-link active" href="#revenue-chart" data-toggle="tab">New</a>
+                   </li>
+                 </ul> --}}
+               </div>
+             </div><!-- /.card-header -->
+             <div class="card-body">
+               <div class="tab-content p-0">
+                 <!-- Morris chart - Sales -->
+                 <div class="chart tab-pane active" id="revenue-chart"
+                      style="position: relative;">
+
+                    
+                  @if (sizeof($data->bill_installments) == 0)
+                  <div class="d-flex justify-content-center">
+
+                    <h2>Data bill does not exist !!!</h2>
+                  
+                  </div>
+                  @else
+                     {{-- <h1>New Bills</h1> --}}
+                     <div>
+                      <!-- /.card-header -->
+                      <div>
+                        <ul class="todo-list" data-widget="todo-list">
+
+                        @php
+                          $currentDate = date('y-m-d');
+                       @endphp 
+
+                          @foreach ($data->bill_installments as $el)
+                            
+                          
+                          <li>
+                            <!-- drag handle -->
+                            <span class="handle">
+                              <i class="fas fa-ellipsis-v"></i>
+                              <i class="fas fa-ellipsis-v"></i>
+                            </span>
+                            <!-- checkbox -->
+                            <div  class="icheck-primary d-inline ml-2">
+                              <span class="text-muted">[ {{date( 'd F Y',strtotime($el->deadline_invoice))}} ]</span>
+                            </div>
+                            <!-- todo text -->
+                            <span class="text">( {{$el->type}} ) {{$el->student->name}}</span>
+                            <!-- Emphasis label -->
+                            
+
+                            @if ($el->paidOf)
+                              
+                              <small class="badge badge-success"><i class="far fa-checklist"></i> Success</small>
+
+                            @elseif (strtotime($el->deadline_invoice) < strtotime($currentDate))
+
+                              <small class="badge badge-danger"><i class="far fa-clock"></i> Past Due</small>
+                            @else
+                              @php
+                                  $date1 = date_create($currentDate);
+                                  $date2 = date_create(date('y-m-d', strtotime($el->deadline_invoice)));
+                                  $dateWarning = date_diff($date1, $date2);
+                                  $dateDiff = $dateWarning->format('%a') == 0? 'Today' : $dateWarning->format('%a'). ' days';
+                              @endphp
+                              <small class="badge badge-warning"><i class="far fa-clock"></i> {{
+
+                                  $dateDiff
+                              
+                              }}</small>
+                            @endif
+                            <!-- General tools such as edit or delete-->
+                            <div class="tools">
+                              <a href="/admin/bills/detail-payment/{{$el->id}}" target="_blank">
+                                <i class="fas fa-search"></i>
+                              </a>
+                            </div>
+                          </li>
+                          
+                          @endforeach
+                        </ul>
+                      </div>
+                    </div>
+
+                    @endif
+
+                  </div>
+               </div>
+             </div><!-- /.card-body -->
+           </div>
+           <!-- /.card -->
           </div>
 
           <div class="col-4 p-1">

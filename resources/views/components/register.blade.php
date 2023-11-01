@@ -837,10 +837,10 @@
                                     </div>
                                     <input name="amount" type="text" class="form-control"
                                     id="amount" placeholder="Enter amount capital fee" value="{{old('amount') ? number_format(old('amount'), 0, ',', '.') : ''}}" required>
-                                    @if($errors->any())
-                                             <p style="color: red">{{$errors->first('amount')}}</p>
-                                    @endif
                                 </div>
+                                @if($errors->any())
+                                         <p style="color: red">{{$errors->first('amount')}}</p>
+                                @endif
                             </div>
 
                             <div class="col-md-4">
@@ -851,10 +851,10 @@
                                         </div>
                                         <input name="dp" type="text" class="form-control"
                                         id="dp" placeholder="Enter done payment" value="{{old('dp') ? number_format(old('dp'), 0, ',', '.') : ''}}">
-                                        @if($errors->any())
-                                            <p style="color: red">{{$errors->first('dp')}}</p>
-                                        @endif
-                                </div>
+                                    </div>
+                                    @if($errors->any())
+                                        <p style="color: red">{{$errors->first('dp')}}</p>
+                                    @endif
                             </div>
 
                             <div class="col-md-4">
@@ -907,9 +907,9 @@
 
     @if($errors->first('paket'))
 
-    <?php
+    <script>
 
-      echo "<script>
+
 
         var Toast = Swal.mixin({
               toast: true,
@@ -921,12 +921,12 @@
 
            Toast.fire({
               icon: 'error',
-              title: ".$errors->first('paket').",
+              title: 'Invalid amount paket, please check the grade data payment first !!!',
         });
       
-      </script>"
+    </script>
 
-    ?>
-        @endif
+    
+    @endif
     @endif
 @endsection

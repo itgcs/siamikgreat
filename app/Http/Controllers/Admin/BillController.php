@@ -281,16 +281,10 @@ class BillController extends Controller
 
                $query->with('grade')->get();
 
-         }, 'bill_collection', 'installment' 
+         }, 'bill_collection', 'bill_installments' 
          ])->where('id', $id)->first();
 
-         $now = Carbon::now()->setTimezone('Asia/Jakarta');
-         $explode = explode('-', $data->deadline_invoice);
-         $targetDate = Carbon::create($explode[0], $explode[1], $explode[2])->setTimezone('Asia/Jakarta');
-         $diff = $now->diff($targetDate);
-         $invoice = $diff->days;
-
-         return view('components.bill.spp.detail-spp')->with('data', $data)->with('invoice', $invoice);
+         return view('components.bill.spp.detail-spp')->with('data', $data);
          
       } catch (Exception $err) {
          // return dd($err);
@@ -747,9 +741,14 @@ class BillController extends Controller
             return redirect()->back()->withErrors($validator->messages())->withInput($rules);
          }
 
+         if((int)$bill->amount/(int)$request->installment % 10_000 == 0){
 
-         $billPerMonth = ceil((int)$bill->amount / (int)$request->installment);
-         $billPerMonth += (10_000 - ($billPerMonth % 10_000));
+            $billPerMonth = $bill->amount / $request->installment;
+
+         } else {
+            $billPerMonth = ceil((int)$bill->amount / (int)$request->installment);
+            $billPerMonth += (10_000 - ($billPerMonth % 10_000));
+         }
          $main_id = null;
 
          for($i = 1; $i <= $request->installment; $i++)
@@ -758,15 +757,15 @@ class BillController extends Controller
             if($i == 1)
             {
                
-               $bill = Bill::where('id', $bill->id)->update([
+               Bill::where('id', $bill->id)->update([
                   'subject' => $i,
                   'installment' => $request->installment,
-                  'amount' => $billPerMonth,
+                  'amount_installment' => $billPerMonth,
                   'date_change_bill' => now(),
                ]);
 
                $main_id = $bill->id;
-
+               $bill_child = $bill;
                
 
             } else {
@@ -775,14 +774,15 @@ class BillController extends Controller
                   $currentDate = $bill->deadline_invoice;
                   $newDate = date('Y-m-d', strtotime('+'.($i-1).' month', strtotime($currentDate)));
 
-                  Bill::create([
+                  $bill_child = Bill::create([
                      'student_id' => $bill->student_id,
                      'type' => 'Paket',
                      'subject' => $i,
-                     'amount' => $billPerMonth,
+                     'amount' => $bill->amount,
                      'paidOf' => false,
                      'discount' => null,
                      'installment' => $request->installment,
+                     'amount_installment' => $billPerMonth,
                      'deadline_invoice' => $newDate, 
 
                   ]);
@@ -791,7 +791,7 @@ class BillController extends Controller
 
             InstallmentPaket::create([
                'main_id' => $main_id,
-               'child_id' => $bill,
+               'child_id' => $bill_child->id,
             ]);
          }
 

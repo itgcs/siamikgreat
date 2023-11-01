@@ -24,8 +24,8 @@
                                         $bookName= old('name') ? old('name') : $book->name;
                                     @endphp
 
-                                    <div class="col-md-12">
-                                        <label for="name">Book name<span style="color: red">*</span></label>
+                                    <div class="col-md-6">
+                                        <label for="name">Book name<span style="color: red">*</span> :</label>
                                         <input name="name" type="text" class="form-control" id="name"
                                             placeholder="Enter book name" value="{{$bookName}}" required>
 
@@ -33,10 +33,24 @@
                                         <p style="color: red">{{$errors->first('name')}}</p>
                                         @endif
                                     </div>
+                                    @php
+                                        $nisb = old('nisb') ? old('nisb') : $book->nisb;
+                                    @endphp
+                                    
+                                    <div class="col-md-6">
+                                        <label for="nisb">NISB :</label>
+                                        <input name="nisb" type="text" class="form-control" id="nisb"
+                                            placeholder="Enter book nisb" value="{{$nisb}}">
+
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('nisb')}}</p>
+                                        @endif
+                                    </div>
+
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-6">
-                                        <label for="grade_id">Grades<span style="color: red">*</span></label>
+                                        <label for="grade_id">Grades<span style="color: red">*</span> :</label>
                                         @php
                                             $grade_id = old('grade_id') ? old('grade_id') : $book->grade_id;
                                         @endphp
@@ -56,7 +70,7 @@
                                     </div>
                                     <div class="col-md-6">
     
-                                        <label for="amount">Amount<span style="color: red">*</span></label>
+                                        <label for="amount">Amount<span style="color: red">*</span> :</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">Rp.</span>

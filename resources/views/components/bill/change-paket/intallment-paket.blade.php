@@ -29,7 +29,7 @@
                                         <input name="amount" type="text" class="form-control" id="amount"
                                             placeholder="Enter amount" value="{{number_format($data->amount, 0, ',' , '.')}}" readonly>
                                         <div class="input-group-append">
-                                           <span class="input-group-text">,00</span>
+                                           <span class="input-group-text">.00</span>
                                           </div>
                                        </div>
                           

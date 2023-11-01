@@ -105,12 +105,14 @@ class BookController extends Controller
                 'name' => $request->name,
                 'grade_id' => (int)$request->grade_id,
                 'amount' => (int)str_replace(".", "", $request->amount),
+                'nisb' => $request->nisb? $request->nisb : null,
             ];
             
             $validator = Validator::make($rules, [
                 'name' => 'required|string|min:3',
                 'grade_id' => 'required|integer',
                 'amount' => 'required|integer|min:10000',
+                'nisb' => 'nullable|string|min:5|unique:books'
             ]);
             
 
@@ -174,18 +176,35 @@ class BookController extends Controller
                 'name' => $request->name,
                 'grade_id' => (int)$request->grade_id,
                 'amount' => (int)str_replace(".", "", $request->amount),
+                'nisb' => $request->nisb? $request->nisb : null,
             ];
 
             $validator = Validator::make($rules, [
                 'name' => 'required|string|min:3',
                 'grade_id' => 'required|integer',
                 'amount' => 'required|integer|min:10000',
+                'nisb' => 'nullable|string'
             ]);
 
-
+            
             if($validator->fails())
             {
                 return redirect('/admin/books/edit' .'/'. $id)->withErrors($validator->messages())->withInput($rules);
+            }
+            
+            if($rules['nisb'])
+            {
+                $nisbExist = Book::where('nisb', $rules['nisb'])->first();
+                
+                if($nisbExist && $id != $nisbExist->id){
+                    
+                    
+                    return redirect('/admin/books/edit' .'/'. $id)->withErrors([
+                        'nisb' => [
+                            'The nisb has already been taken.',
+                        ]
+                    ])->withInput($rules);
+                }
             }
 
             Book::where('id', $id)->update($rules);

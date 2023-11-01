@@ -18,8 +18,8 @@
                             <!-- form start -->
                             <div class="card-body">
                                 <div class="form-group row">
-                                    <div class="col-md-12">
-                                        <label for="name">Book name<span style="color: red">*</span></label>
+                                    <div class="col-md-6">
+                                        <label for="name">Book name<span style="color: red">*</span> :</label>
                                         <input name="name" type="text" class="form-control" id="name"
                                             placeholder="Enter book name" value="{{old('name')}}" required>
 
@@ -27,10 +27,22 @@
                                         <p style="color: red">{{$errors->first('name')}}</p>
                                         @endif
                                     </div>
+                                    <div class="col-md-6">
+    
+                                        <label for="nisb">NISB :</label>
+                                        
+                                            <input name="nisb" type="text" class="form-control" id="nisb"
+                                                placeholder="Enter nisb"
+                                                value="{{ old('nisb') }}">
+    
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('nisb')}}</p>
+                                        @endif
+                                    </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-6">
-                                        <label for="grade_id">Grades<span style="color: red">*</span></label>
+                                        <label for="grade_id">Grades<span style="color: red">*</span> :</label>
                                         <select name="grade_id" class="form-control">
 
                                             <option class="text-center" value="" disabled {{old('grade_id') ? '' : 'selected'}}> ------ SELECT GRADE -------</option>
@@ -47,7 +59,7 @@
                                     </div>
                                     <div class="col-md-6">
     
-                                        <label for="amount">Amount<span style="color: red">*</span></label>
+                                        <label for="amount">Amount<span style="color: red">*</span> :</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">Rp.</span>

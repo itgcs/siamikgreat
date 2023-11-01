@@ -39,7 +39,7 @@ class Bill extends Model
       return $this->hasMany(BillCollection::class, 'bill_id');
    }
 
-   public function installment()
+   public function bill_installments()
    {
       return $this->belongsToMany(Bill::class, 'installment_pakets', 'main_id', 'child_id');
    }
