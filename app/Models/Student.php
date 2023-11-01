@@ -18,6 +18,7 @@ class Student extends Model
       'grade_id',
       'gender',
       'religion',
+      'nisn',
       'place_birth',
       'date_birth',
       'id_or_passport',

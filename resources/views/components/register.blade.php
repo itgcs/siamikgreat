@@ -25,7 +25,7 @@
                                        @endif
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Gender<span style="color: red">*</span></label>
                                             <select name="studentGender" class="form-control" required>
@@ -54,7 +54,7 @@
                                            @endif
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
 
                                         <label>Date of Birth<span style="color: red">*</span></label>
                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
@@ -76,7 +76,7 @@
                                         @endif
                                         
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                        <div class="form-group">
                                            <label>Grade<span style="color: red">*</span></label>
                                            <select name="gradeId" class="form-control" required>
@@ -118,6 +118,14 @@
                                            @endif
                                        </div>
                                    </div>
+                                   <div class="col-md-3">
+                                        <label for="nisn">NISN</label>
+                                        <input name="nisn" type="text" class="form-control"
+                                            id="nisn" placeholder="Enter nisn" value="{{old('nisn')}}">
+                                            @if($errors->any())
+                                            <p style="color: red">{{$errors->first('nisn')}}</p>
+                                            @endif
+                                    </div>
                                 </div>
                                 <br>
                                 <br>
@@ -439,7 +447,7 @@
                                  <input name="motherId_or_passport" type="text" class="form-control"
                                     id="motherId_or_passport" placeholder="Enter mother's ID/Passport" value="{{old('mother_id_or_passport')}}" required>
                                     @if($errors->any())
-                                       <p style="color: red">{{$errors->first('motherId_or_passport')}}</p>
+                                       <p style="color: red">{{$errors->first('mother_id_or_passport')}}</p>
                                     @endif
                               
                               </div>
@@ -821,14 +829,34 @@
                      <div class="card-body">
                          <div class="form-group row">
 
-                           <div class="col-md-8">
-                              <label for="amount">Amount <span style="color: red;">*</span></label>
-                              <input name="amount" type="text" class="form-control"
-                              id="amount" placeholder="Enter brother's or sister's name" value="{{old('amount')}}" required>
-                              @if($errors->any())
-                                       <p style="color: red">{{$errors->first('amount')}}</p>
-                              @endif
-                           </div>
+                            <div class="col-md-4">
+                                <label for="amount">Amount <span style="color: red;">*</span></label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Rp.</span>
+                                    </div>
+                                    <input name="amount" type="text" class="form-control"
+                                    id="amount" placeholder="Enter amount capital fee" value="{{old('amount') ? number_format(old('amount'), 0, ',', '.') : ''}}" required>
+                                    @if($errors->any())
+                                             <p style="color: red">{{$errors->first('amount')}}</p>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="dp">DP</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Rp.</span>
+                                        </div>
+                                        <input name="dp" type="text" class="form-control"
+                                        id="dp" placeholder="Enter done payment" value="{{old('dp') ? number_format(old('dp'), 0, ',', '.') : ''}}">
+                                        @if($errors->any())
+                                            <p style="color: red">{{$errors->first('dp')}}</p>
+                                        @endif
+                                </div>
+                            </div>
+
                             <div class="col-md-4">
                                <label for="installment">Installment / Month</label>
                                <input name="installment" type="number" class="form-control"
@@ -836,13 +864,13 @@
                             </div>
                            </div>
 
-
+                           
                            <div class="row">
                             <div class="col-12 ml-2">
                               <div class="icheck-primary">
-                                <input type="checkbox" id="sendEmail" name="sendEmail" value="{{true}}">
+                                <input type="checkbox" id="sendEmail" name="sendEmail" value="{{true}}" required>
                                 <label for="sendEmail">
-                                   Send email notifications fee for parents.
+                                   I agree with the term.
                                 </label>
                               </div>
                             </div>
@@ -869,4 +897,36 @@
         <!-- /.row -->
     </div><!-- /.container-fluid -->
 </section>
+
+
+
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+  @if ($errors->any())
+
+    @if($errors->first('paket'))
+
+    <?php
+
+      echo "<script>
+
+        var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 8000
+        });
+      
+
+           Toast.fire({
+              icon: 'error',
+              title: ".$errors->first('paket').",
+        });
+      
+      </script>"
+
+    ?>
+        @endif
+    @endif
 @endsection

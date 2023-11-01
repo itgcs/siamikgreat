@@ -192,7 +192,13 @@
                         {{$el->student->name}}
                     </td>
                      @php
-                        $amount  = $el->discount ? $el->amount - $el->amount * $el->discount/100 : $el->amount
+                        if($el->type == 'SPP')
+                        {
+                            $amount  = $el->discount ? $el->amount - ($el->amount * $el->discount/100) : $el->amount;
+                        } else {
+                            
+                            $amount = $el->installment? $el->amount_installment : $el->amount;
+                        }
 
                      @endphp
                         <td>
@@ -201,7 +207,7 @@
                         @if($el->discount)
                         <br><small class="text-muted">discount: {{$el->discount}}%</small>
                         @elseif ($el->installment)
-                        <br><small class="text-muted">installment: {{$el->installment}} month</small>
+                        <br><small class="text-muted">installment: {{$el->installment}}x</small>
                         @endif   
                      </td>
                         <td>

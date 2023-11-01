@@ -20,22 +20,22 @@ class StudentController extends Controller
    {
       try {
          //code...
-         session()->flash('page',  $page = (object)[
-            'page' => 'students',
-            'child' => 'database students',
-         ]);
-      // session()->flash('preloader', true);
+      session()->flash('page',  $page = (object)[
+         'page' => 'students',
+         'child' => 'database students',
+      ]);
+      
+      info('inactive was successfully');
       Student::where('id', $id)->update([
          'is_active' => 0,
       ]);
-      
       
       return response()->json([
             'success' => true,
       ]); 
       } catch (Exception $err) {
          return response()->json([
-            'error' => $err
+            'error' => 'error'
       ]);
       }
    }

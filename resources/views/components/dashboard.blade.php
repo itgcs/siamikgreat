@@ -101,7 +101,7 @@
                       style="position: relative; height: 310px;">
 
                     
-                      @if (sizeof($data->dataBill) == 0)
+                  @if (sizeof($data->dataBill) == 0)
                   <div class="d-flex justify-content-center">
 
                     <h2>Data bill does not exist !!!</h2>
@@ -159,7 +159,7 @@
                             <!-- General tools such as edit or delete-->
                             <div class="tools">
                               <a href="/admin/bills/detail-payment/{{$el->id}}" target="_blank">
-                                <i class="fas fa-link"></i>
+                                <i class="fas fa-search"></i>
                               </a>
                             </div>
                           </li>
@@ -233,7 +233,7 @@
                           <!-- General tools such as edit or delete-->
                           <div class="tools">
                             <a href="/admin/bills/detail-payment/{{$el->id}}" target="_blank">
-                              <i class="fas fa-link"></i>
+                              <i class="fas fa-search"></i>
                             </a>
                           </div>
                         </li>

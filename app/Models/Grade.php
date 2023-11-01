@@ -44,6 +44,10 @@ class Grade extends Model
       return $this->hasOne(Payment_grade::class);
     }
 
+    public function capital_fee()
+    {
+      return $this->hasOne(Payment_grade::class);
+    }
     
     public function bundle()
     {

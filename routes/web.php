@@ -127,7 +127,7 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::post('/post-spp/{id}', [BillController::class, 'actionSPP'])->name('create.spp');
       Route::post('/post-intallment-paket/{bill_id}', [BillController::class, 'actionPaketInstallment'])->name('create.installment');
       Route::put('/change-paket/{bill_id}/{student_id}', [BillController::class, 'actionChangePaket'])->name('action.edit.paket');
-      Route::put('/update-paid/{bill_id}/{student_id}', [BillController::class, 'paidOfBook'])->name('action.book.payment');
+      Route::patch('/update-paid/{bill_id}/{student_id}', [BillController::class, 'paidOfBook'])->name('action.book.payment');
       Route::patch('/update-paid/{id}', [BillController::class, 'paidOf']);
 
    });

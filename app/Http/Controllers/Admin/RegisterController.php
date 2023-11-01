@@ -8,9 +8,13 @@ use App\Mail\SppMail;
 use App\Models\Bill;
 use App\Models\Brothers_or_sister;
 use App\Models\Grade;
+use App\Models\Installment_Paket;
+use App\Models\InstallmentPaket;
+use App\Models\Payment_grade;
 use App\Models\Relationship;
 use App\Models\Student;
 use App\Models\Student_relation;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\Validator;
@@ -50,7 +54,7 @@ class RegisterController extends Controller
             'child' => 'register students',
          ]);
 
-         $var = DB::table('students')->latest()->first();
+         $var = Student::orderBy('id', 'desc')->first();
          $unique_id = '';
          
          if( $var && date('Ym') == substr($var->unique_id, 0, 6))
@@ -69,6 +73,7 @@ class RegisterController extends Controller
             'grade_id' => (int)$request->gradeId,
             'gender' => $request->studentGender,
             'religion' => $request->studentReligion,
+            'nisn' => $request->nisn,
             'place_birth' => $request->studentPlace_birth,
             'date_birth' => $request->studentDate_birth ? $this->changeDateFormat($request->studentDate_birth) : null,
             'id_or_passport' => $request->studentId_or_passport,
@@ -83,6 +88,7 @@ class RegisterController extends Controller
             'grade_id' => $request->gradeId,
             'gender' => $request->studentGender,
             'religion' => $request->studentReligion,
+            'nisn' => $request->nisn,
             'place_birth' => $request->studentPlace_birth,
             'date_birth' => $request->studentDate_birth ? $this->changeDateFormat($request->studentDate_birth) : null,
             'id_or_passport' => $request->studentId_or_passport,
@@ -143,18 +149,20 @@ class RegisterController extends Controller
             //fee register
 
             'type' => 'Uang Gedung',
-            'amount' => $request->amount? (int)str_replace(".", "", $request->amount) : null,
+            'amount' => $request->amount && $request->dp > 0?  (int)str_replace(".", "", $request->amount) : null,
+            'dp' => $request->dp && $request->dp > 0? (int)str_replace(".", "", $request->dp) : 0,
             'installment' => $request->installment && $request->installment > 0 ? $request->installment : null,
             'sendEmail' => $request->sendEmail? true : false,
          ];     
          
-         // return $credentials;
+         // return $rules;
          
          $validator = Validator::make($rules, [
             'name' => 'string|required|min:3',
             'grade_id' => 'integer|required',
             'gender' => 'string|required',
             'religion' => 'string|required',
+            'nisn' => 'string|nullable|min:7|max:12',
             'place_birth' => 'string|required',
             'date_birth' => 'date|required',
             'id_or_passport' => 'string|required|min:9|max:16|unique:students',
@@ -166,12 +174,12 @@ class RegisterController extends Controller
             'father_religion' => 'string|required',
             'father_place_birth' => 'string|required',
             'father_date_birth' => 'date|required',
-            'father_id_or_passport' => 'string|required|min:15|max:16',
+            'father_id_or_passport' => 'string|required|min:12|max:16',
             'father_nationality' => 'string|required',
-            'father_phone' => 'nullable|string|max:13|min:9',
+            'father_phone' => 'nullable|string|max:15|min:6',
             'father_home_address' => 'required|string',
-            'father_mobilephone' => 'required|string|max:13|min:9',
-            'father_telephone' => 'nullable|string|max:13|min:9',
+            'father_mobilephone' => 'required|string|max:15|min:6',
+            'father_telephone' => 'nullable|string|max:15|min:6',
             'father_email' => 'required|string|email',
             //mother validation
             'mother_name' => 'string|required|min:3',
@@ -183,11 +191,11 @@ class RegisterController extends Controller
             'mother_occupation' => 'nullable|string',
             'mother_company_name' => 'nullable|string',
             'mother_company_address' => 'nullable|string',
-            'mother_phone' => 'nullable|string|max:13|min:9',
+            'mother_phone' => 'nullable|string|max:15|min:6',
             'mother_home_address' => 'required|string',
-            'mother_telephone' => 'nullable|string|max:13|min:9',
-            'mother_mobilephone' => 'required|string|max:13|min:9',
-            'mother_telephone' => 'nullable|string|max:13|min:9',
+            'mother_telephone' => 'nullable|string|max:15|min:6',
+            'mother_mobilephone' => 'required|string|max:15|min:6',
+            'mother_telephone' => 'nullable|string|max:15|min:6',
             'mother_email' => 'required|string|email',
 
             'brotherOrSisterName1' => 'nullable|string',
@@ -208,7 +216,8 @@ class RegisterController extends Controller
 
             //fee register
 
-            'amount' => 'required|integer',
+            'amount' => 'required|integer|min:10000',
+            'dp' => 'nullable|integer|min:10000',
             'installment' => 'nullable|integer',
             'sendEmail' => 'required|boolean',
          ]);
@@ -217,8 +226,18 @@ class RegisterController extends Controller
          if($validator->fails())
          {
             DB::rollBack();
+            
             return redirect('/admin/register')->withErrors($validator->messages())->withInput($rules);
          }
+         
+         if($rules['amount'] < $rules['dp'])
+         {
+            DB::rollBack();
+            return redirect('/admin/register')->withErrors([
+               'dp' => ['Done payment cannot be greater than the capital fee !!!'],
+            ])->withInput($rules);
+         }
+
 
          $student = Student::create($credentials);
          $relationship = $this->handleRelationship($request, $student);
@@ -231,13 +250,25 @@ class RegisterController extends Controller
             
             $student = Student::with('relationship')->where('id', $student->id)->first();
             $brotherOrSister = Student::find($student->id);
-            $feeRegister = $this->handleFeeRegister($request->amount, $request->installment, $request->sendEmail, $request->father_email, $request->mother_email, $student);
-            
+            $feeRegister = $this->handleFeeRegister($rules['amount'], $request->installment, $student, $rules['dp']);
+            $paket = $this->handlePaketPayment($student);
+
             if(!$feeRegister->success){
                DB::rollBack();
-               return $feeRegister->error;
+               return $feeRegister->success;
             }
-            
+
+            if(!$paket->success){
+               DB::rollBack();
+               return dd($paket->success);
+            }
+
+            if($paket->success == 404){
+               DB::rollBack();
+               return redirect('/admin/register')->withErrors([
+                  'paket' => 'Paket grade is not found !!!', 
+               ])->withInput($rules);
+            }
             
             $data = (object) [
                'student' => $student,
@@ -262,7 +293,7 @@ class RegisterController extends Controller
             return 'Error at brother or sister';
          } else {
             DB::rollBack();
-            return 'internal server error!!!';
+            return 'Internal server error!!!';
          }
 
 
@@ -332,7 +363,6 @@ class RegisterController extends Controller
 
       } catch (Exception $err) {
          DB::rollBack();
-         return $err;
          return (object) ['success' => false];
       }
    }
@@ -404,52 +434,97 @@ class RegisterController extends Controller
       }
    }
 
-   private function handleFeeRegister($amount, $installment=1, $sendEmail, $email_f, $email_m, $student)
+   private function handleFeeRegister($amount, $installment=1, $student, $dp)
    {
       try {
 
 
       $installment  = $installment && $installment > 1 ? $installment : 1;
       
-      
+         
+         $amountTotal = (int)$amount - (int)$dp;
 
-         if ($amount % 10000 == 0) {
-            $billPerMonth = (int)$amount / (int)$installment;
+         if (($amountTotal/$installment) % 10_000 === 0) {
+            $billPerMonth = (int)$amountTotal / (int)$installment;
          } else {
             
-            $billPerMonth = ceil((int)$amount / (int)$installment);
-            $billPerMonth += (10000 - ($billPerMonth % 10000));
+            $billPerMonth = ceil((int)$amountTotal / (int)$installment);
+            $billPerMonth += (10_000 - ($billPerMonth % 10_000));
          }
          
-      for($i=1; $i<=$installment; $i++){
+         $main_id = null;
          $currentDate = date('Y-m-d');
-         $newDate = date('Y-m-d', strtotime('+'.$i.' month', strtotime($currentDate)));
-         $subject = $installment <= 1? 'Uang Gedung' : $i;
-         $subjectEmail = $installment <= 1? 'Berikut pembayaran Uang Gedung '.$student->name : 'Berikut pembayaran Uang Gedung, cicilan ke ' . $i . ' untuk bulan ini';
-            Bill::create([
+         
+         for($i=1; $i<=$installment; $i++){
+
+            $newDate = date('Y-m-d', strtotime('+'.$i.' month', strtotime($currentDate)));
+            $subject = $installment <= 1? 'Capital Fee' : $i;
+
+            $bill = Bill::create([
                'student_id' => $student->id,
-               'type' => 'Uang Gedung',
-               'amount' => $billPerMonth,
+               'type' => 'Capital Fee',
+               'amount' => $amount,
+               'dp' => $dp,
                'paidOf' => false,
                'discount' => null,
                'deadline_invoice' =>$newDate,
                'installment' => $installment == 1? null : $installment,
+               'amount_installment' => $installment > 1 ? $billPerMonth : 0,
                'subject' => $subject, 
             ]);   
 
-            $mailData = (object) [
-               "student" => 'coba',
-            ];
+            if($i == 1)
+            {
+               $main_id = $bill->id;
+            }
 
 
-            if($sendEmail && $i == 1){
-               Mail::to($email_f)->send(new SppMail($mailData, $subjectEmail));
-               Mail::to($email_m)->send(new SppMail($mailData, $subjectEmail));
+            if($installment > 1) {
+               
+               InstallmentPaket::create([
+                  'main_id' => $main_id,
+                  'child_id' => $bill->id,
+               ]);
             }
          }
 
          return (object)['success' => true];
       } catch (Exception $err) {
+         DB::rollBack();
+         return (object)['success' => false, 'error' => dd($err)];
+      }
+   }
+
+
+   private function handlePaketPayment($student)
+   {
+      try {
+         //code...
+
+         $paket = Payment_grade::where('grade_id', $student->grade_id)
+         ->where('type', 'Paket')
+         ->first();
+
+         if(!$paket){
+            return (object)['success' => 404];
+         }
+
+         $currentDate = date('Y-m-d');
+
+         $newDate = date('Y-m-d', strtotime('+1 month', strtotime($currentDate)));
+
+         Bill::create([
+            'student_id' => $student->id,
+            'type' => 'Paket',
+            'amount' => $paket->amount,
+            'paidOf' => false,
+            'deadline_invoice' => $newDate,
+            'subject' => 'Paket', 
+         ]);  
+
+         return (object)['success' => true];
+      } catch (Exception $err) {
+         //throw $th;
          DB::rollBack();
          return (object)['success' => false, 'error' => dd($err)];
       }

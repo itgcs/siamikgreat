@@ -136,9 +136,6 @@
                   </thead>
                   <tbody>
 
-                  @php
-                     $totalInstallment = $data->amount * $data->installment;
-                  @endphp
 
 
                      @if (sizeof($data->bill_collection))
@@ -161,23 +158,36 @@
                      
                      <tr>
                         <td align="left" class="p-1" style="width:65%;">
-                              Amount:
+                              Amount :
                            </td>
                            <td align="right">
-                              IDR. {{number_format($data->installment? $totalInstallment : $data->amount, 0, ',', '.')}}
+                              IDR. {{number_format($data->amount, 0, ',', '.')}}
                            </td>
                            
                         </tr>
+                     
+                     @if ($data->dp)
+                        
+                        <tr>
+                           <td align="left" class="p-1" style="width:65%;">
+                              Done payment : 
+                           </td>
+                           <td align="right">
+                              IDR. {{number_format($data->dp, 0, ',', '.')}}
+                           </td>
 
+                        </tr>
+                        
+                     @endif
 
                      @if ($data->installment)
                         
                         <tr>
                            <td align="left" class="p-1" style="width:65%;">
-                              Installment/months : 
+                              Installment : 
                            </td>
                            <td align="right">
-                              {{ $data->installment }}
+                              {{ $data->installment }}x
                            </td>
 
                         </tr>
@@ -235,7 +245,12 @@
                   </thead>
                   <tbody>
                      @php 
-                        $total = $data->discount ? $data->amount - $data->amount * $data->discount/100 : $data->amount;   
+                        if ($data->type == "SPP") {
+                           # code...   
+                           $total = $data->discount ? $data->amount - $data->amount * $data->discount/100 : $data->amount;   
+                        } else {
+                           $total = $data->installment ? $data->amount_installment : $data->amount;
+                        }
                      @endphp
                      <tr>
                         <td align="left" class="p-1" style="width:65%;">
@@ -268,8 +283,8 @@
 
     @includeIf('components.super.update-paid')
 
-    @if(session('after_create')) 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   @if(session('after_create')) 
+    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 
    <script>
 

@@ -17,6 +17,7 @@ class Book extends Model
         'grade_id',
         'name',
         'amount',
+        'nisb',
         'created_at',
         'updated_at',
     ];

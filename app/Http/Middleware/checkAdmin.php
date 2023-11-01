@@ -19,7 +19,9 @@ class checkAdmin
          
          if(!Auth::check()){
             session()->flash('errors', 'Invalid Credentials');
-            return redirect('/');
+            return redirect('/')->withErrors([
+               'credentials' => 'Invalid credentials, please login first !!!'
+            ]);
          } else {
             $user = Auth::user();
             if($user->role === 'superadmin')

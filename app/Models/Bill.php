@@ -17,10 +17,13 @@ class Bill extends Model
       'type',
       'subject',
       'amount',
+      'dp',
       'paidOf',
       'discount',
       'deadline_invoice',
+      'date_change_bill',
       'installment',
+      'amount_installment',
       'created_at',	
       'updated_at'	
     ]; 
@@ -34,5 +37,10 @@ class Bill extends Model
    public function bill_collection()
    {
       return $this->hasMany(BillCollection::class, 'bill_id');
+   }
+
+   public function installment()
+   {
+      return $this->belongsToMany(Bill::class, 'installment_pakets', 'main_id', 'child_id');
    }
 }

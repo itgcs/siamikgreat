@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->unsignedBigInteger('grade_id');
             $table->foreign('grade_id')->references('id')->on('grades')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('nisn')->nullable()->default(NULL)->unique();
             $table->string('gender');
             $table->string('religion');
             $table->string('place_birth');

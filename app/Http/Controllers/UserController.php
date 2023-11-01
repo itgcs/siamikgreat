@@ -54,7 +54,7 @@ class UserController extends Controller
 
          if(!$check)
          {
-            return response()->json(['error' => 'invalid username/password']);
+            return redirect()->back()->withErrors(['invalid' => 'invalid username/password']);
          }
          
 

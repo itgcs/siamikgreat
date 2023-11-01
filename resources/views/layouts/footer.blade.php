@@ -44,7 +44,7 @@
 <!-- overlayScrollbars -->
 <script src="{{asset('template')}}/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 <!-- AdminLTE App -->
-<script src="{{asset('template')}}/dist/js/adminlte.js"></script>
+{{-- <script src="{{asset('template')}}/dist/js/adminlte.js"></script> --}}
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('template')}}/dist/js/demo.js"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
@@ -227,13 +227,6 @@
    document.querySelector("#actions .cancel").onclick = function() {
      myDropzone.removeAllFiles(true)
    }
-   // DropzoneJS Demo Code End
-
-   $(document).ready(function(){
-   $("#").click(function(){
-      alert("The paragraph was clicked.");
-   });
-   });
  </script>
 
 
@@ -252,6 +245,26 @@
 
         // Memasukkan nilai yang telah diformat kembali ke dalam input
         input.value = formattedValue;
+    });
+
+    // Fungsi untuk menambahkan tanda titik sebagai pemisah ribuan
+    function addThousandSeparator(value) {
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    // Mendapatkan elemen input
+    const inputdp = document.getElementById("dp");
+
+    // Menambahkan event listener pada input saat pengguna mengetik
+    inputdp.addEventListener("input", function () {
+        // Mengambil nilai input tanpa tanda titik dan karakter non-angka
+        const rawValue = inputdp.value.replace(/[^0-9]/g, '');
+
+        // Mengubah nilai input dengan menambahkan tanda titik setiap 3 digit
+        const formattedValue = addThousandSeparator(rawValue);
+
+        // Memasukkan nilai yang telah diformat kembali ke dalam input
+        inputdp.value = formattedValue;
     });
 
     // Fungsi untuk menambahkan tanda titik sebagai pemisah ribuan

@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('books', function (Blueprint $table) {
+        Schema::create('installment_pakets', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('grade_id');
-            $table->foreign('grade_id')->references('id')->on('grades')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('name');
-            $table->bigInteger('amount')->default(0);
-            $table->string('nisb')->default(NULL)->nullable();
+            $table->unsignedBigInteger('main_id');
+            $table->foreign('main_id')->on('bills')->references('id');
+            $table->unsignedBigInteger('child_id');
+            $table->foreign('child_id')->on('bills')->references('id');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('books');
+        Schema::dropIfExists('installment_pakets');
     }
 };

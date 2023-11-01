@@ -9,6 +9,7 @@ use App\Models\BillCollection;
 use App\Models\Book;
 use App\Models\Book_student;
 use App\Models\Grade;
+use App\Models\InstallmentPaket;
 use App\Models\Payment_grade;
 use App\Models\Student;
 use Carbon\Carbon;
@@ -280,7 +281,7 @@ class BillController extends Controller
 
                $query->with('grade')->get();
 
-         }, 'bill_collection' 
+         }, 'bill_collection', 'installment' 
          ])->where('id', $id)->first();
 
          $now = Carbon::now()->setTimezone('Asia/Jakarta');
@@ -358,6 +359,7 @@ class BillController extends Controller
    {
 
       DB::beginTransaction();
+         
       session()->flash('page', (object)[
          'page' => 'Bills',
          'child' => 'database bills'
@@ -365,10 +367,7 @@ class BillController extends Controller
 
       try {
          //code...
-         $bill = Bill::with(['bill_collection' => function($query) use ($bill_id) {
-                  
-               $query->where('bill_id', $bill_id)->get();
-         }])
+         $bill = Bill::with(['bill_collection'])
          ->where('id', $bill_id)
          ->first();
 
@@ -377,17 +376,25 @@ class BillController extends Controller
          {   
             Book_student::create([
                'book_id' => $el->id,
-               'student' => $student_id,
+               'student_id' => $student_id,
             ]);
          }
 
          Bill::where('id', $bill_id)->update([
             'paidOf' => true,
          ]);
+         
+         DB::commit();
 
-         return redirect('/admin/bills');
+         return (object) [
+            'success' => true,
+         ];
          
       } catch (Exception $err) {
+         DB::rollBack();
+         return (object) [
+            'success' => false,
+         ];
          return dd($err);
       }
    }
@@ -743,6 +750,7 @@ class BillController extends Controller
 
          $billPerMonth = ceil((int)$bill->amount / (int)$request->installment);
          $billPerMonth += (10_000 - ($billPerMonth % 10_000));
+         $main_id = null;
 
          for($i = 1; $i <= $request->installment; $i++)
          {
@@ -750,13 +758,16 @@ class BillController extends Controller
             if($i == 1)
             {
                
-               Bill::where('id', $bill->id)->update([
+               $bill = Bill::where('id', $bill->id)->update([
                   'subject' => $i,
                   'installment' => $request->installment,
                   'amount' => $billPerMonth,
+                  'date_change_bill' => now(),
                ]);
 
+               $main_id = $bill->id;
 
+               
 
             } else {
                
@@ -776,6 +787,12 @@ class BillController extends Controller
 
                   ]);
             }
+
+
+            InstallmentPaket::create([
+               'main_id' => $main_id,
+               'child_id' => $bill,
+            ]);
          }
 
 

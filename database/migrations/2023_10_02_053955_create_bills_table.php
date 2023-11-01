@@ -22,10 +22,13 @@ return new class extends Migration
             $table->string('type');
             $table->string('subject')->nullable()->default(null);
             $table->bigInteger('amount');
+            $table->bigInteger('dp')->default(0);
             $table->boolean('paidOf')->default(false);
             $table->integer('discount')->nullable()->default(null);
             $table->date('deadline_invoice')->default(date('Y-m-t'));
             $table->integer('installment')->nullable()->default(null);
+            $table->integer('amount_installment')->default(0);
+            $table->dateTime('date_change_bill')->default(null)->nullable();
             $table->timestamps();
         });
     }

@@ -6,7 +6,21 @@
     <link rel="stylesheet" href="../../css/app.css">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" type="text/css" href={{ URL::asset('style.css'); }} >
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous"> --}}
+    
+    <link rel="stylesheet" href="{{asset('template')}}/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="{{asset('template')}}/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- JQVMap -->
+  <link rel="stylesheet" href="{{asset('template')}}/plugins/jqvmap/jqvmap.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{asset('template')}}/dist/css/adminlte.min.css">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="{{asset('template')}}/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+  <!-- Daterange picker -->
+  <link rel="stylesheet" href="{{asset('template')}}/plugins/daterangepicker/daterangepicker.css">
+  <!-- summernote -->
+  <link rel="stylesheet" href="{{asset('template')}}/plugins/summernote/summernote-bs4.min.css">
     <title>Login</title>
 </head>
 
@@ -19,19 +33,10 @@
 
     
     <section class="vh-100">
-       @if(session()->has('errors'))
-       <div class="w-100 z-index-1 position-absolute alert alert-danger d-flex align-items-center alert-dismissible fade show" role="alert">
-         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
-         <div>
-           <strong>{{session('errors')}}</strong> check your username or password !!!
-         </div>
-         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-      @endif
        <div class="container-fluid h-custom">
         <div class="row d-flex justify-content-center align-items-center h-100">
           <div class="col-md-9 col-lg-6 col-xl-5">
-             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+             <img src="{{asset('/images')}}/logo-school.png"
              class="img-fluid" alt="Sample image">
           </div>
           <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
@@ -79,38 +84,64 @@
           </div>
         </div>
       </div>
-      <div
+      {{-- <div
         class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
         <!-- Copyright -->
         <div class="text-white mb-3 mb-md-0">
           Copyright © 2020. All rights reserved.
         </div>
         <!-- Copyright -->
-    
-        <!-- Right -->
-        <div>
-          <a href="#!" class="text-white me-4">
-            <i class="fab fa-facebook-f"></i>
-          </a>
-          <a href="#!" class="text-white me-4">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#!" class="text-white me-4">
-            <i class="fab fa-google"></i>
-          </a>
-          <a href="#!" class="text-white">
-            <i class="fab fa-linkedin-in"></i>
-          </a>
-        </div>
-        <!-- Right -->
-      </div>
-    </section>
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
    
 
-   @if(session('success.update.password'))
 
-   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      </div> --}}
+    </section>
+
+  <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+  @if ($errors->any())
+
+    @if($errors->first('invalid'))
+      <script>
+
+        var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 8000
+        });
+      
+
+           Toast.fire({
+              icon: 'error',
+              title: 'Invalid username or password, make sure your input is correctly !!!',
+        });
+      
+      </script>
+    @endif
+    @if($errors->first('credentials'))
+      <script>
+
+        var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 8000
+        });
+      
+
+           Toast.fire({
+              icon: 'error',
+              title: 'Invalid credentials, make sure you login first !!!',
+        });
+      
+      </script>
+    @endif
+  @endif
+
+
+  @if(session('success.update.password'))
 
    <script>
 

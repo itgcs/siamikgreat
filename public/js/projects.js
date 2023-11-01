@@ -14,6 +14,8 @@ $(document).ready(function () {
             confirmButtonText: "Yes, inactive!",
         }).then((result) => {
             if (result.isConfirmed) {
+
+                console.log(value);
                 $.ajax({
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
@@ -30,12 +32,6 @@ $(document).ready(function () {
                         id: value,
                         _token: token,
                     },
-                    //   success: function () {
-
-                    //       //...
-
-                    //
-                    //   }
                 })
                     .then((res) => {
                         console.log(res);
@@ -56,6 +52,7 @@ $(document).ready(function () {
                             icon: "error",
                             title: "Oops...",
                             text: "Something went wrong!",
+                            // text: err,
                             footer: '<a href="">Why do I have this issue?</a>',
                         });
                     });
