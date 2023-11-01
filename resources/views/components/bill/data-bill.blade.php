@@ -6,8 +6,8 @@
 <form class="my-5" action="/admin/bills">
     <div class="row">
         <div class="col-md-10 offset-md-1">
-            <div class="row">
-                <div class="col-6">
+            <div class="row mb-1">
+                <div class="col-lg-6">
                     <div class="form-group">
                         <label>Grade:</label>
                         @php
@@ -27,7 +27,7 @@
 
                     </div>
                 </div>
-                <div class="col-2">
+                <div class="col-lg-2">
                     <div class="form-group">
 
                         @php
@@ -47,7 +47,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-2">
+                <div class="col-lg-2">
                     <div class="form-group">
 
                         @php
@@ -58,17 +58,17 @@
 
                         <label>Type : </label>
                         <select name="type" class="form-control text-center">
-                            <option {{$selectedType === 'all'? 'selected' : ''}} value="all">-- All Type --</option>
+                            <option class="bg-primary" {{$selectedType === 'all'? 'selected' : ''}} value="all">-- All Type --</option>
+                            <option {{$selectedType === 'Capital Fee'? 'selected' : ''}} value="Capital Fee">Capital Fee</option>
+                            <option {{$selectedType === 'Uniform'? 'selected' : ''}} value="Uniform">Uniform</option>
                             <option {{$selectedType === 'Paket'? 'selected' : ''}} value="Paket">Paket</option>
                             <option {{$selectedType === 'Book'? 'selected' : ''}} value="Book">Book</option>
                             <option {{$selectedType === 'SPP'? 'selected' : ''}} value="SPP">SPP</option>
-                            <option {{$selectedType === 'Uang Gedung'? 'selected' : ''}} value="Uang Gedung">Uang Gedung</option>
-                            <option {{$selectedType === 'Uniform'? 'selected' : ''}} value="Uniform">Uniform</option>
                         </select>
 
                     </div>
                 </div>
-                <div class="col-2">
+                <div class="col-lg-2">
                     <div class="form-group">
                         <label>Paid: <span style="color: red"></span></label>
 
@@ -83,6 +83,58 @@
                             <option {{$selectedStatus == 'true'? 'selected' : ''}} value="true">Paid</option>
                             <option {{$selectedStatus == 'false'? 'selected' : ''}} value="false">Not yet</option>
                         </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>From :</label>
+                        
+                        <div class="input-group date" id="reservationBillFrom"
+                         data-target-input="nearest">
+                            <input name="from_bill" type="text"
+                             class="form-control datetimepicker-input"
+                             data-target="#reservationBillFrom" 
+                             data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
+                             value="{{$form->from_bill ? date("d/m/Y", strtotime($form->from_bill)) : ''}}"
+                             placeholder="DD/MM/YYYY"
+                             />
+                            <div class="input-group-append" data-target="#reservationBillFrom"
+                             data-toggle="datetimepicker">
+                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+
+                            @if($errors->any())
+                            <p style="color: red">{{$errors->first('from_bill')}}</p>
+                        @endif
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>To :</label>
+                        <div class="input-group date" id="reservationBillTo"
+                        data-target-input="nearest">
+                           <input name="to_bill" type="text"
+                            class="form-control datetimepicker-input"
+                            data-target="#reservationBillTo" 
+                            data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
+                            value="{{$form->to_bill ? date("d/m/Y", strtotime($form->to_bill)) : ''}}"
+                            placeholder="DD/MM/YYYY"
+                            />
+                           <div class="input-group-append" data-target="#reservationBillTo"
+                            data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                           </div>
+
+                           @if($errors->any())
+                           <p style="color: red">{{$errors->first('to_bill')}}</p>
+                       @endif
+
+                       </div>
+
                     </div>
                 </div>
             </div>

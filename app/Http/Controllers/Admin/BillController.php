@@ -43,11 +43,12 @@ class BillController extends Controller
             'status' => $request->status && $request->status !== 'all'? $request->status : null,
             'search' => $request->search? $request->search : null,
             'page' => $request->page? $request->page : null,
+            'from_bill' => $request->from_bill? $request->from_bill : null,
+            'to_bill' => $request->to_bill? $request->to_bill : null,
          ];
          
 
-         if($form->search || $request->page
-         || $request->grade && $request->type && $request->invoice && $request->status)
+         if($form->search || $request->page || $form->from_bill || $form->to_bill || $request->grade && $request->type && $request->invoice && $request->status)
          {
             
             $data = new Bill();
@@ -61,6 +62,16 @@ class BillController extends Controller
                   ->where('name','LIKE', '%'.$form->search.'%')
                   ->where('grade_id', (int)$form->grade);
                });
+            }
+
+            if($form->from_bill){
+               
+               $data = $data->whereDate('created_at', '>=', date('Y-m-d 00:00:00', strtotime($form->from_bill)));
+            }
+
+            if($form->to_bill){
+               
+               $data = $data->whereDate('created_at', '<=', date('Y-m-d 00:00:00', strtotime($form->to_bill)));
             }
             
             if ($form->search) {
@@ -82,6 +93,8 @@ class BillController extends Controller
                
                $data = $data->where('paidOf', $statusPaid);
             }
+
+            
             
             if($form->invoice)
             {

@@ -116,6 +116,12 @@
      $('#reservationBrotherOrSisterBirthDate5').datetimepicker({
          format: 'DD/MM/YYYY'
      });
+     $('#reservationBillFrom').datetimepicker({
+         format: 'DD/MM/YYYY'
+     });
+     $('#reservationBillTo').datetimepicker({
+         format: 'DD/MM/YYYY'
+     });
      
      //Date and time picker
      $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
