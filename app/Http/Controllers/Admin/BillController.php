@@ -27,6 +27,8 @@ class BillController extends Controller
    {
       try {
 
+
+
          session()->flash('page', (object)[
             'page' => 'Bills',
             'child' => 'database bills'
@@ -46,8 +48,9 @@ class BillController extends Controller
             'from_bill' => $request->from_bill? $request->from_bill : null,
             'to_bill' => $request->to_bill? $request->to_bill : null,
          ];
-         
 
+         $flag_date = true;
+         
          if($form->search || $request->page || $form->from_bill || $form->to_bill || $request->grade && $request->type && $request->invoice && $request->status)
          {
             
@@ -64,14 +67,48 @@ class BillController extends Controller
                });
             }
 
-            if($form->from_bill){
+            if($form->from_bill) {
                
-               $data = $data->whereDate('created_at', '>=', date('Y-m-d 00:00:00', strtotime($form->from_bill)));
+               
+               $explode_f = explode('/', $form->from_bill);
+               $date_f = $explode_f[2].'-'.$explode_f[1].'-'.$explode_f[0];
+               
+               $f_carbon = Carbon::createFromDate($date_f, 'Asia/Jakarta'); 
+               $f_carbon->setTime(0, 0, 0);
+               $f_carbon->setTimezone('Asia/Jakarta');
+               $f_formated = $f_carbon->format('Y-m-d 00:00:00');
             }
-
+            
             if($form->to_bill){
                
-               $data = $data->whereDate('created_at', '<=', date('Y-m-d 00:00:00', strtotime($form->to_bill)));
+
+               $explode_t = explode('/', $form->to_bill);
+               $date_t = $explode_t[2].'-'.$explode_t[1].'-'.$explode_t[0];
+               
+               $t_carbon = Carbon::createFromDate($date_t, 'Asia/Jakarta'); 
+               $t_carbon->setTime(0, 0, 0);
+               $t_carbon->setTimezone('Asia/Jakarta');
+               $t_formated = $t_carbon->format('Y-m-d 00:00:00');
+            }
+
+            if($form->from_bill && $form->to_bill){
+               // $fromDate = 
+               $data = $data->whereRaw("created_at BETWEEN '{$f_formated}' AND '{$t_formated}'");
+               $form->from_bill = $explode_f[0].'/'.$explode_f[1].'/'.$explode_f[2];
+               $form->to_bill = $explode_t[0].'/'.$explode_t[1].'/'.$explode_t[2];
+               
+
+               $flag_date = $f_carbon->timestamp > $t_carbon->timestamp ? false : true;
+            }
+            
+            else if($form->from_bill){
+               $data = $data->whereDate('created_at', '>=', $f_formated);
+               $form->from_bill = $explode_f[0].'/'.$explode_f[1].'/'.$explode_f[2];
+            }
+            
+            else if($form->to_bill){
+               $data = $data->whereDate('created_at', '<=', $t_formated);
+               $form->to_bill = $explode_t[0].'/'.$explode_t[1].'/'.$explode_t[2];
             }
             
             if ($form->search) {
@@ -128,13 +165,18 @@ class BillController extends Controller
                $query->with('grade')->get();
             }])
             ->orderBy('updated_at', 'desc')
-               ->paginate(15);
-               
-            }
+            ->paginate(15);
             
-            
-            // return $data;
-         return view('components.bill.data-bill')->with('data', $data)->with('grade', $grades)->with('form', $form)->with('bill', $bill);
+         }
+         
+         
+         // return $form;
+         return view('components.bill.data-bill')
+         ->with('data', $data)
+         ->with('grade', $grades)
+         ->with('form', $form)
+         ->with('bill', $bill)
+         ->with('flag_date', $flag_date);
          
       } catch (Exception $err) {
          //throw $th;

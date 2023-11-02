@@ -94,10 +94,10 @@
                         <div class="input-group date" id="reservationBillFrom"
                          data-target-input="nearest">
                             <input name="from_bill" type="text"
-                             class="form-control datetimepicker-input"
+                             class="form-control"
                              data-target="#reservationBillFrom" 
                              data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                             value="{{$form->from_bill ? date("d/m/Y", strtotime($form->from_bill)) : ''}}"
+                             value="{{$form->from_bill ? $form->from_bill : ''}}"
                              placeholder="DD/MM/YYYY"
                              />
                             <div class="input-group-append" data-target="#reservationBillFrom"
@@ -118,10 +118,10 @@
                         <div class="input-group date" id="reservationBillTo"
                         data-target-input="nearest">
                            <input name="to_bill" type="text"
-                            class="form-control datetimepicker-input"
+                            class="form-control"
                             data-target="#reservationBillTo" 
                             data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                            value="{{$form->to_bill ? date("d/m/Y", strtotime($form->to_bill)) : ''}}"
+                            value="{{$form->to_bill ? $form->to_bill : ''}}"
                             placeholder="DD/MM/YYYY"
                             />
                            <div class="input-group-append" data-target="#reservationBillTo"
@@ -154,7 +154,7 @@
 </form>
 
 
-@if(sizeof($data) <= 0 && ($form->search || $form->type || $form->invoice || $form->grade || $form->status)) 
+@if(sizeof($data) <= 0 && ($form->search || $form->type || $form->invoice || $form->grade || $form->status || $form->from_bill || $from->to_bill)) 
     <div class="container-fluid mt-5">
         <div class="row h-100">
             <div class="col-sm-12 my-auto text-center">
@@ -475,9 +475,10 @@
   @endif
 
 
+  <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
 @if(session('change_type_paket')) 
-    <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-    <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
     <script>
 
@@ -499,6 +500,29 @@
     </script>
 
   @endif
+
+@if (!$flag_date)
+
+<script>
+
+    var Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+    });
+  
+    setTimeout(() => {
+       Toast.fire({
+          icon: 'warning',
+          title: "Warning !!!, The from date cannot be more than to date.",
+    });
+    }, 1500);
+
+
+  </script>
+    
+@endif
 
 
 @endsection
