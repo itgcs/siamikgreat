@@ -466,7 +466,7 @@ class RegisterController extends Controller
             $billPerMonth += (10_000 - ($billPerMonth % 10_000));
          }
          
-         $main_id = null;
+         $main_id = [];
          $currentDate = date('Y-m-d');
          
          for($i=1; $i<=$installment; $i++){
@@ -487,19 +487,20 @@ class RegisterController extends Controller
                'subject' => $subject, 
             ]);   
 
-            if($i == 1)
-            {
-               $main_id = $bill->id;
-            }
+            array_push($main_id, $bill->id);
+         }
 
+         foreach($main_id as $el) {
+            
 
-            if($installment > 1) {
-               
+            foreach($main_id as $child_id) {
+
                InstallmentPaket::create([
-                  'main_id' => $main_id,
-                  'child_id' => $bill->id,
+                  'main_id' => $el,
+                  'child_id' => $child_id,
                ]);
             }
+
          }
          
          
@@ -511,23 +512,5 @@ class RegisterController extends Controller
    }
 
 
-   // private function handlePaketPayment($student)
-   // {
-      
-   //    try {
-   //       //code...
-
-         
-
-
-         
-         
-   //       return (object)['success' => true];
-   //    } catch (Exception $err) {
-   //       //throw $th;
-   //       DB::rollBack();
-   //       return (object)['success' => false, 'error' => dd($err)];
-   //    }
-   // }
 
 }

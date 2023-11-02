@@ -119,12 +119,12 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
    Route::prefix('/bills')->group(function() {
       Route::get('/', [BillController::class, 'index']);
       Route::get('/create', [BillController::class, 'chooseStudent']);
-      Route::get('/create-spp/{id}', [BillController::class, 'pageSPP']);
+      Route::get('/create-bills/{id}', [BillController::class, 'pageCreateBill']);
       Route::get('/detail-payment/{id}', [BillController::class, 'detailPayment']);
       Route::get('/create-payment/{id}', [BillController::class, 'pagePayment']);
       Route::get('/change-paket/{student_id}/{bill_id}', [BillController::class, 'pageChangePaket']);
       Route::get('/intallment-paket/{bill_id}', [BillController::class, 'pagePaketInstallment']);
-      Route::post('/post-spp/{id}', [BillController::class, 'actionSPP'])->name('create.spp');
+      Route::post('/post-bill/{id}', [BillController::class, 'actionCreateBill'])->name('create.bill');
       Route::post('/post-intallment-paket/{bill_id}', [BillController::class, 'actionPaketInstallment'])->name('create.installment');
       Route::put('/change-paket/{bill_id}/{student_id}', [BillController::class, 'actionChangePaket'])->name('action.edit.paket');
       Route::patch('/update-paid/{bill_id}/{student_id}', [BillController::class, 'paidOfBook'])->name('action.book.payment');

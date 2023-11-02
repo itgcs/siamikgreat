@@ -128,14 +128,7 @@ class PaymentBookController extends Controller
              ->where('unique_id', $id)
              ->first(['id', 'name', 'grade_id']);
 
-             $data = Book::whereNotIn('id', function($query) use ($student) {
-                $query
-                ->select('book_id')
-                ->from('book_students')
-                ->where('student_id', $student->id);
-             })
-             ->where('grade_id', $student->grade_id)
-             ->get();
+             $data = Book::where('grade_id', $student->grade_id)->get();
 
              $bookExist = Book::where('grade_id', $student->grade_id)->first() ? true : false;
 
@@ -183,11 +176,6 @@ class PaymentBookController extends Controller
                     ]);
                     
                     array_push($bookName, $book->name);
-
-                    // Book_student::create([
-                    //     'student_id' => (int)$id,
-                    //     'book_id' => (int)$el,
-                    // ]);
                 }
                 
             }
@@ -217,16 +205,7 @@ class PaymentBookController extends Controller
                 
                 $value['bill_id'] = $bill->id;
                 BillCollection::create($value);
-            }
-
-
-            $mailData = [
-                'student' => $student,
-                'bill' => $bill,
-            ];
-            
-            // $mail = new MailController;
-            // $mail->addBookEmail($mailData);  
+            } 
             
             DB::commit();
             return redirect('/admin/bills');

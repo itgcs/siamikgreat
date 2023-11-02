@@ -127,12 +127,13 @@
                 <hr>
               </div>
             </div>
+            @if (sizeof($data->bill_installments) > 0)
 
             <div class="card">
              <div class="card-header">
                <h3 class="card-title">
                   <i class="fa-solid fa-file-invoice mr-1"></i>
-                 Bills
+                 Installments
                </h3>
                <div class="card-tools">
                  {{-- <ul class="nav nav-pills ml-auto">
@@ -149,13 +150,6 @@
                       style="position: relative;">
 
                     
-                  @if (sizeof($data->bill_installments) == 0)
-                  <div class="d-flex justify-content-center">
-
-                    <h2>Data bill does not exist !!!</h2>
-                  
-                  </div>
-                  @else
                      {{-- <h1>New Bills</h1> --}}
                      <div>
                       <!-- /.card-header -->
@@ -217,16 +211,16 @@
                       </div>
                     </div>
 
-                    @endif
-
+                    
                   </div>
                </div>
-             </div><!-- /.card-body -->
-           </div>
-           <!-- /.card -->
-          </div>
+            </div><!-- /.card-body -->
+         </div>
+         <!-- /.card -->
+         @endif
+      </div>
 
-          <div class="col-4 p-1">
+          <div class="col-lg-4 p-1">
             <div class="card mb-4 p-4">
                <table>
                   <thead>
@@ -237,7 +231,7 @@
 
 
 
-                     @if (sizeof($data->bill_collection))
+                     @if (sizeof($data->bill_collection)>0)
 
                      @foreach ($data->bill_collection as $el)
 
@@ -245,8 +239,8 @@
                            <td align="left" class="p-1" style="width:65%;">
                               {{$el->name}} :
                            </td>
-                           <td align="right" class="p-1">
-                              IDR. {{number_format($el->amount, 0, ',', '.')}}
+                           <td align="left" class="p-1">
+                              Rp. {{number_format($el->amount, 0, ',', '.')}}
                            </td>
 
                         </tr>
@@ -259,8 +253,8 @@
                         <td align="left" class="p-1" style="width:65%;">
                               Amount :
                            </td>
-                           <td align="right">
-                              IDR. {{number_format($data->amount, 0, ',', '.')}}
+                           <td align="left">
+                              Rp. {{number_format($data->amount, 0, ',', '.')}}
                            </td>
                            
                         </tr>
@@ -271,8 +265,8 @@
                            <td align="left" class="p-1" style="width:65%;">
                               Done payment : 
                            </td>
-                           <td align="right">
-                              IDR. {{number_format($data->dp, 0, ',', '.')}}
+                           <td align="left">
+                              - Rp. {{number_format($data->dp, 0, ',', '.')}}
                            </td>
 
                         </tr>
@@ -285,7 +279,7 @@
                            <td align="left" class="p-1" style="width:65%;">
                               Installment : 
                            </td>
-                           <td align="right">
+                           <td align="">
                               {{ $data->installment }}x
                            </td>
 
@@ -323,12 +317,12 @@
 
                   <tbody>
                      <tr>
-                        <td align="left" class="p-1" style="width:65%;">Total amount :</td>
-                        <td align="right">IDR. {{$data->amount * $data->installment}}</td>
+                        <td align="left" class="p-1 font-weight-bold" style="width:65%;">Total amount :</td>
+                        <td align="right">Rp. {{$data->amount * $data->installment}} </td>
                      </tr>
                      <tr>
-                        <td align="left" class="p-1" style="width:65%;">Installment/months :</td>
-                        <td align="right">{{$data->installment}}</td>
+                        <td align="left" class="p-1 font-weight-bold" style="width:65%;">Installment/months :</td>
+                        <td align="right"> {{$data->installment}} </td>
                      </tr>
                   </tbody>
                </table>
@@ -352,11 +346,11 @@
                         }
                      @endphp
                      <tr>
-                        <td align="left" class="p-1" style="width:65%;">
+                        <td align="left" class="p-1 font-weight-bold" style="width:65%;">
                            Total :
                         </td>
-                        <td align="right">
-                           IDR. {{number_format($total, 0, ',', '.')}}
+                        <td align="right" class="font-weight-bold">
+                           Rp. {{number_format($total, 0, ',', '.')}}
                         </td>
                         
                      </tr>

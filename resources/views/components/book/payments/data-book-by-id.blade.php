@@ -42,12 +42,10 @@
                 <!-- /.card-header -->
                 <div class="card-body">
 
-                @if (!$have_all_books)
                   <a role="button" href="/admin/payment-books/{{$data->unique_id}}/add-books" class="btn btn-success my-5 ml-1">
                     <i class="fa-solid fa-plus"></i>
                     Add Book
                   </a>
-                @endif
                   <table class="table table-bordered">
                     <thead>
                       <tr>
@@ -55,8 +53,6 @@
                         <th>Book name</th>
                         <th>Grade</th>
                         <th>Date Added</th>
-                        <th style="width: 40px">Label</th>
-                      </tr>
                 </thead>
                 <tbody>
                   
@@ -75,16 +71,7 @@
                   </tbody>
               </table>
             </div>
-            <!-- /.card-body -->
-            <div class="card-footer clearfix">
-              <ul class="pagination pagination-sm m-0 float-right">
-                <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-              </ul>
-            </div>
+
           </div>
           <!-- /.card -->
           

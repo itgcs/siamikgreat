@@ -59,7 +59,7 @@
                                         <label>Date of Birth<span style="color: red">*</span></label>
                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
                                             <input name="studentDate_birth" type="text"
-                                                class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                                class="form-control " placeholder={{date("d/m/Y")}}
                                                 data-target="#reservationdate" 
                                                 data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                                 value="{{old('date_birth') ? date("d/m/Y", strtotime(old('date_birth'))) : ''}}"
@@ -207,7 +207,7 @@
                                         <div class="input-group date" id="reservationdateStudentDateExp"
                                             data-target-input="nearest">
                                             <input name="studentDate_exp" type="text"
-                                                class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                                class="form-control " placeholder={{date("d/m/Y")}}
                                                 data-target="#reservationdateStudentDateExp" 
                                                 data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                                 value="{{old('date_exp') ? date("d/m/Y", strtotime(old('date_exp'))) : ''}}"
@@ -314,7 +314,7 @@
                                     <div class="input-group date" id="reservationFatherBirthDate"
                                         data-target-input="nearest">
                                         <input name="fatherBirth_date" type="text"
-                                            class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                            class="form-control " placeholder={{date("d/m/Y")}}
                                             data-target="#reservationFatherBirthDate" 
                                             data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                             required value="{{old('father_date_birth') ? date("d-m-Y", strtotime(old('father_date_birth'))) : ''}}"/>
@@ -509,7 +509,7 @@
                                  <div class="input-group date" id="reservationMotherBirthDate"
                                      data-target-input="nearest">
                                      <input name="motherBirth_date" type="text"
-                                         class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                         class="form-control " placeholder={{date("d/m/Y")}}
                                          data-target="#reservationMotherBirthDate" 
                                          data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                          value="{{old('mother_date_birth') ? date("d/m/Y", strtotime(old('mother_date_birth'))) : ''}}"
@@ -639,7 +639,7 @@
                               <div class="input-group date" id="reservationBrotherOrSisterBirthDate1"
                                   data-target-input="nearest">
                                   <input name="brotherOrSisterBirth_date1" type="text"
-                                  class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                  class="form-control " placeholder={{date("d/m/Y")}}
                                   data-target="#reservationBrotherOrSisterBirthDate1" 
                                       data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                       value="{{old('brotherOrSisterBirth_date1') ? date("d/m/Y", strtotime(old('brotherOrSisterBirth_date1'))) : ''}}"
@@ -679,7 +679,7 @@
                                  <div class="input-group date" id="reservationBrotherOrSisterBirthDate2"
                                      data-target-input="nearest">
                                      <input name="brotherOrSisterBirth_date2" type="text"
-                                     class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                     class="form-control " placeholder={{date("d/m/Y")}}
                                          data-target="#reservationBrotherOrSisterBirthDate2" 
                                          data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                          value="{{old('brotherOrSisterBirth_date2') ? date("d/m/Y", strtotime(old('brotherOrSisterBirth_date2'))) : ''}}"
@@ -717,7 +717,7 @@
                                     <div class="input-group date" id="reservationBrotherOrSisterBirthDate3"
                                         data-target-input="nearest">
                                         <input name="brotherOrSisterBirth_date3" type="text"
-                                        class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                        class="form-control " placeholder={{date("d/m/Y")}}
                                             data-target="#reservationBrotherOrSisterBirthDate3" 
                                             data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                             value="{{old('brotherOrSisterBirth_date3') ? date("d/m/Y", strtotime(old('brotherOrSisterBirth_date3'))) : ''}}"
@@ -755,7 +755,7 @@
                                     <div class="input-group date" id="reservationBrotherOrSisterBirthDate4"
                                         data-target-input="nearest">
                                         <input name="brotherOrSisterBirth_date4" type="text"
-                                        class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                        class="form-control " placeholder={{date("d/m/Y")}}
                                             data-target="#reservationBrotherOrSisterBirthDate4" 
                                             data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                             value="{{old('brotherOrSisterBirth_date4') ? date("d/m/Y", strtotime(old('brotherOrSisterBirth_date4'))) : ''}}"
@@ -793,7 +793,7 @@
                                     <div class="input-group date" id="reservationBrotherOrSisterBirthDate5"
                                         data-target-input="nearest">
                                         <input name="brotherOrSisterBirth_date5" type="text"
-                                        class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                        class="form-control " placeholder={{date("d/m/Y")}}
                                             data-target="#reservationBrotherOrSisterBirthDate5" 
                                             data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                             value="{{old('brotherOrSisterBirth_date5') ? date("d/m/Y", strtotime(old('brotherOrSisterBirth_date5'))) : ''}}"

@@ -188,7 +188,7 @@ class BillController extends Controller
       
       session()->flash('page', (object)[
          'page' => 'Bills',
-         'child' => 'database bills'
+         'child' => 'create bills'
       ]);
       
       try {
@@ -197,62 +197,77 @@ class BillController extends Controller
          $form = (object) [
             'sort' => $request->sort? $request->sort : null,
             'order' => $request->order? $request->order : null,
-            'status' => $request->status? $request->status : null,
             'search' => $request->search? $request->search : null,
+            'grade_id' => $request->grade_id? $request->grade_id : null,
          ];
+
+         $grade = Grade::orderBy('id', 'asc')->get();
+
+         // return $form;
          
          $data = [];
          $order = $request->sort ? $request->sort : 'desc';
-         $status = $request->status? ($request->status == 'true' ? true : false) : true;
          
-         if($request->type && $request->search && $request->order){
+         $dataModel = new Student();
+         $dataModel = $dataModel->with('grade')->where('is_active', true);
+
+         if($form->search || $request->grade_id && $request->order && $request->sort){
             
-            $data = Student::with('grade')->where('is_active', $status)->where($request->type,'LIKE','%'. $request->search .'%')->orderBy($request->order, $order)->get();
-         } else if($request->type && $request->search)
-         {
-            $data = Student::with('grade')->where('is_active', $status)->where($request->type,'LIKE','%'. $request->search .'%')->orderBy('created_at', $order)->get();
-         } else if($request->order) {
-            $data = Student::with('grade')->where('is_active', $status)->orderBy($request->order, $order)->get();
+            $data = $dataModel;
+
+            if($request->grade_id !== 'all'){
+
+               $data = $data->where('grade_id', $form->grade_id);
+            }
+
+            if($order && $request->sort){
+               
+               $data = $data->orderBy($request->order, $order);
+            }
+
+            if($form->search){
+
+               $data = $data->where('name', 'LIKE', '%'.$form->search.'%');
+            }
+            
+
+            $data = $data->get();
+            
+
          } else {
             
-            $data = Student::with('grade')->withCount('bill as total_bill')->orderBy('created_at', $order)->get();
+            $data = $dataModel->orderBy('created_at', $order)->get();
          }
 
          
-         return view('components.bill.choose-bill')->with('data', $data)->with('form', $form);
+         return view('components.bill.choose-bill')->with('data', $data)->with('form', $form)->with('grade', $grade);
       } catch (Exception $err) {
-         //throw $th;
+         throw $err;
          return abort(500, 'Internal server error');
       }
    }
    
    
-   public function pageSPP($id)
+   public function pageCreateBill($id)
    {
       
       session()->flash('page', (object)[
          'page' => 'Bills',
-         'child' => 'database bills'
+         'child' => 'create bills'
       ]);
       
       try {
          //code...
-         $data = Student::with(['grade' => function ($query) {
-            $query->with(['spp' => function ($query2) {
-               $query2->where('type', 'SPP')->first();
-            }])->first();
-         }])->where('unique_id', $id)->first();
+         $data = Student::with(['grade'])->where('unique_id', $id)->first();
          
-         // return $data;
-         
-         return view('components.bill.spp.create-spp')->with('data', $data);
+         return view('components.bill.spp.create-bill')->with('data', $data);
       } catch (Exception $err) {
          return dd($err);
       }
    }
    
    
-   public function actionSPP(Request $request, $id)
+   public function actionCreateBill(Request $request, $id)
    {
       session()->flash('page', (object)[
          'page' => 'Bills',
@@ -263,59 +278,43 @@ class BillController extends Controller
 
       try {
          //code...
+
          $student = Student::with('relationship')->where('id', $id)->first();
          date_default_timezone_set('Asia/Jakarta');
+
          $rules = [
             'student_id' => $id,
             'subject' => $request->subject,
+            'type' => $request->type,
             'description' => $request->description,
             'amount' => $request->amount ? (int)str_replace(".", "", $request->amount) : null,
-            'discount' => $request->discount ?  (int)$request->discount : null,
-            
+            'deadline_invoice' => date('Y-m-t'),
          ];
 
          $validator = Validator::make($rules, [
-            'subject' => 'nullable|string|min:3',
+            'type' => 'required|string|min:3',
+            'subject' => 'required|string|min:3',
             'description' => 'nullable|string|min: 10',
             'amount' => 'required|integer|min:10000',
-            'discount' => 'nullable|integer|max:99',
          ]);
 
 
          if($validator->fails())
          {
-            return redirect('/admin/bills/create-spp/'. $student->unique_id)->withErrors($validator->errors())->withInput($rules);
+            session()->flash('page', (object)[
+               'page' => 'Bills',
+               'child' => 'create bills'
+            ]);
+            return redirect('/admin/bills/create-bills/'. $student->unique_id)->withErrors($validator->errors())->withInput($rules);
          }
 
-         Bill::create([
-            'type' => 'SPP',
-            'student_id' => $id,
-            'subject' => $request->subject,
-            'description' => $request->description,
-            'amount' => (int)$request->amount ? (int)str_replace(".", "", $request->amount) : null,
-            'discount' => (int)$request->discount > 0 ?  (int)$request->discount : null,
-            'deadline_invoice' => date('Y-m-d'),
-         ]);   
-
-         $bill = Bill::where('student_id', $student->id)->where('paidOf', false)->get();
-
-         $mailData = [
-            'name' => $student->name,
-            'student' => $student,
-            'bill' => $bill,
-        ];
-         
-         // foreach($student->relationship as $el)
-         // {
-         //    Mail::to($el->email)->send(new SppMail($mailData));
-         // }
+         Bill::create($rules);   
 
          return redirect('/admin/bills');
 
       } catch (Exception $err) {
          //throw $th;
          return dd($err);
-         return abort(500);
       }
    }
 
@@ -381,11 +380,16 @@ class BillController extends Controller
             $books = Book::where('grade_id', $bill->student->grade_id)->get();
             
             foreach($books as $book) {
+
+               $bookExist = Book_student::where('student_id', $bill->student_id)->where('book_id', $book->id)->first();
                
-               Book_student::create([
-                  'student_id' => $bill->student_id,
-                  'book_id' => $book->id,
-               ]);
+               if(!$bookExist)
+               {
+                  Book_student::create([
+                     'student_id' => $bill->student_id,
+                     'book_id' => $book->id,
+                  ]);
+               }
             }
          }
 
@@ -407,14 +411,14 @@ class BillController extends Controller
    public function paidOfBook($bill_id, $student_id)
    {
 
-      DB::beginTransaction();
-         
+      
       session()->flash('page', (object)[
          'page' => 'Bills',
          'child' => 'database bills'
       ]);
 
       try {
+         DB::beginTransaction();
          //code...
          $bill = Bill::with(['bill_collection'])
          ->where('id', $bill_id)
@@ -423,10 +427,15 @@ class BillController extends Controller
 
          foreach($bill->bill_collection as $el)
          {   
-            Book_student::create([
-               'book_id' => $el->id,
-               'student_id' => $student_id,
-            ]);
+            $bookExist = Book_student::where('student_id', $student_id)->where('book_id', $el->book_id)->first();
+
+            if(!$bookExist)
+            {
+               Book_student::create([
+                  'book_id' => $el->book_id,
+                  'student_id' => $student_id,
+               ]);
+            }
          }
 
          Bill::where('id', $bill_id)->update([
@@ -436,7 +445,7 @@ class BillController extends Controller
          DB::commit();
 
          return (object) [
-            'success' => true,
+            'success' => false,
          ];
          
       } catch (Exception $err) {
@@ -804,7 +813,7 @@ class BillController extends Controller
             $billPerMonth = ceil((int)$bill->amount / (int)$request->installment);
             $billPerMonth += (10_000 - ($billPerMonth % 10_000));
          }
-         $main_id = null;
+         $main_id = [];
 
          for($i = 1; $i <= $request->installment; $i++)
          {
@@ -819,35 +828,43 @@ class BillController extends Controller
                   'date_change_bill' => now(),
                ]);
 
-               $main_id = $bill->id;
-               $bill_child = $bill;
+
+               array_push($main_id, $bill->id);
                
-
-            } else {
                
-
-                  $currentDate = $bill->deadline_invoice;
-                  $newDate = date('Y-m-d', strtotime('+'.($i-1).' month', strtotime($currentDate)));
-
-                  $bill_child = Bill::create([
-                     'student_id' => $bill->student_id,
-                     'type' => 'Paket',
-                     'subject' => $i,
-                     'amount' => $bill->amount,
-                     'paidOf' => false,
-                     'discount' => null,
-                     'installment' => $request->installment,
-                     'amount_installment' => $billPerMonth,
-                     'deadline_invoice' => $newDate, 
-
-                  ]);
+            } 
+            
+            if($i>1){
+               
+               
+               $currentDate = $bill->deadline_invoice;
+               $newDate = date('Y-m-d', strtotime('+'.($i-1).' month', strtotime($currentDate)));
+               
+               $bill_child = Bill::create([
+                  'student_id' => $bill->student_id,
+                  'type' => 'Paket',
+                  'subject' => $i,
+                  'amount' => $bill->amount,
+                  'paidOf' => false,
+                  'discount' => null,
+                  'installment' => $request->installment,
+                  'amount_installment' => $billPerMonth,
+                  'deadline_invoice' => $newDate, 
+                  
+               ]);
+               array_push($main_id, $bill_child->id);
             }
 
 
-            InstallmentPaket::create([
-               'main_id' => $main_id,
-               'child_id' => $bill_child->id,
-            ]);
+         }
+         
+         foreach($main_id as $el){
+            foreach($main_id as $child_id){
+               InstallmentPaket::create([
+                  'main_id' => $el,
+                  'child_id' => $child_id,
+               ]);
+            }
          }
 
 

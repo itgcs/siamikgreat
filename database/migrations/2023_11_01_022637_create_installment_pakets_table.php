@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('installment_pakets', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('main_id');
-            $table->foreign('main_id')->on('bills')->references('id');
+            $table->foreign('main_id')->on('bills')->references('id')->cascadeOnDelete();
             $table->unsignedBigInteger('child_id');
-            $table->foreign('child_id')->on('bills')->references('id');
+            $table->foreign('child_id')->on('bills')->references('id')->cascadeOnDelete();
             $table->timestamps();
         });
     }

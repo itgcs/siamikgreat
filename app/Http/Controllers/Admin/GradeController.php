@@ -235,13 +235,18 @@ class GradeController extends Controller
    {
       try {
          //code...
-         $data = Student::with('grade')->where('grade_id', $id)->orderBy('name', 'asc')->get();
+         $data = Student::with(['grade', 'bill' => function($query) {
+
+            $query->where('paidOf', false)->get();
+         }])->where('grade_id', $id)->orderBy('name', 'asc')->get();
          $grade = Grade::where('id', $id)->first();
          
          session()->flash('page',  $page = (object)[
             'page' => 'grades',
             'child' => 'database grades',
          ]);
+
+         // return $data;
 
          return view('components.grade.promotion.page')->with('data', $data)->with('grade', $grade);
          

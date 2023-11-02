@@ -102,7 +102,13 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                 <input class="form-check-input" type="checkbox" value="{{$el->id}}" id="defaultCheck1" name="{{'promote'.$loop->index+1}}">
+                                @if (sizeof($el->bill)<=0)
+                                    
+                                    <input class="form-check-input" type="checkbox" value="{{$el->id}}" id="defaultCheck1" name="{{'promote'.$loop->index+1}}">
+                                @else
+                                    
+                                    <p class="text-muted">There are unpaid bills</p>
+                                @endif
                                 </td>
                             </tr>
 

@@ -149,6 +149,14 @@
       </a>
       <ul class="nav nav-treeview">
         <li class="nav-item">
+          <a href="/admin/bills/create" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'create bills' ? 'active' : '') : ''}}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Create</p>
+          </a>
+        </li>
+      </ul>
+      <ul class="nav nav-treeview">
+        <li class="nav-item">
           <a href="/admin/bills" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database bills' ? 'active' : '') : ''}}">
             <i class="far fa-circle nav-icon"></i>
             <p>Data</p>

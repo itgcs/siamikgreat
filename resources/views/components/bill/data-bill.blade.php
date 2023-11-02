@@ -86,7 +86,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row mb-1">
+            <div class="row mb-4">
                 <div class="col-6">
                     <div class="form-group">
                         <label>From :</label>
@@ -154,7 +154,7 @@
 </form>
 
 
-@if(sizeof($data) <= 0 && ($form->search || $form->type || $form->invoice || $form->grade || $form->status || $form->from_bill || $from->to_bill)) 
+@if(sizeof($data) <= 0 && ($form->search || $form->type || $form->invoice || $form->grade || $form->status || $form->from_bill || $form->to_bill)) 
     <div class="container-fluid mt-5">
         <div class="row h-100">
             <div class="col-sm-12 my-auto text-center">
