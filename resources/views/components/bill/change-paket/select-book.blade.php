@@ -39,7 +39,6 @@
 
 
                 <div class="card-tools">
-                    <input class="form-control-sm" type="number" name="installment_book" placeholder="Installment/month" max="12" min="2" style="width:153px";/>
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                         <i class="fas fa-minus"></i>
                     </button>
@@ -95,7 +94,7 @@
                             @endforeach
                             @else
                             <tr class="text-center">
-                                <td colspan="5">
+                                <td colspan="5" class="text-center">
                                     <h1>You haven't books data for {{$student->grade->name . ' - ' . $student->grade->class}} yet</h1>
                                 </td>
                                 
@@ -116,7 +115,6 @@
                 <h3 class="card-title">Uniform ( {{ $student->grade->name . ' ' . $student->grade->class }} )</h3>
                 
                 <div class="card-tools">                        
-                        <input class="form-control-sm mr-3" type="number" name="installment_uniform" placeholder="Installment/month" max="12" min="2" style="width:153px";/>
                         <i class="fas fa-minus"></i>
                     </button>
                 </div>

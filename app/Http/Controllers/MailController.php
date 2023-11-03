@@ -108,7 +108,7 @@ class MailController extends Controller
             }
             
          }
-         info("Cron Job create spp success at ". date('d-m-Y'), []);
+         info("Cron Job create spp success at ". date('d-m-Y'));
          DB::commit();
       } catch (Exception $err) {
          //throw $th;

@@ -373,7 +373,9 @@ $(document).ready(function () {
             confirmButtonText: "Yes, update it!",
         }).then((result) => {
             if (result.isConfirmed) {
-                console.log(value);
+                console.log('id bill' + value);
+                console.log('name students' + name);
+                console.log('students' + studentId);
                 $.ajax({
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
@@ -392,7 +394,7 @@ $(document).ready(function () {
                     },
                 })
                     .then((res) => {
-                        console.log(res);
+                        
                         Swal.fire(
                             "Updated!",
                             `Paid invoice #${value} from ${name} has been successfully.`,

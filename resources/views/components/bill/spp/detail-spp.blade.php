@@ -364,10 +364,15 @@
                <a href="/admin/bills/intallment-paket/{{$data->id}}" class="btn btn-secondary w-100 mb-2" id="change-paket">Installment Paket</a>
                @endif
                @if(strtolower($data->type) == 'book')
-                  <a href="javascript:void(0)" id="update-status-book" data-id="{{ $data->id }}" data-name="{{ $data->student->name }}" data-student-id="{{ $data->id }}" class="btn btn-success w-100">Paid book success</a>
+                  <a href="javascript:void(0)" id="update-status-book" data-id="{{ $data->id }}" data-name="{{ $data->student->name }}" data-student-id="{{ $data->student->id }}" class="btn btn-success w-100">Paid book success</a>
                @else
                   <a href="javascript:void(0)" id="update-status" data-id="{{ $data->id }}" data-name="{{ $data->student->name }}" data-subject="{{ $data->subject }}" class="btn btn-success w-100">Paid success</a>
                @endif
+                  
+            @else 
+                  
+                  <a target="_blank" href="/admin/bills/paid/pdf/{{$data->id}}" class="btn btn-warning w-100 mb-2" id="change-paket"><i class="fa-solid fa-file-pdf fa-bounce" style="color: #000000; margin-right:2px;"></i>Print PDF</a>
+                  
             @endif
           </div>
         </div>

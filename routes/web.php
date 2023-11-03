@@ -124,6 +124,7 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::get('/create-payment/{id}', [BillController::class, 'pagePayment']);
       Route::get('/change-paket/{student_id}/{bill_id}', [BillController::class, 'pageChangePaket']);
       Route::get('/intallment-paket/{bill_id}', [BillController::class, 'pagePaketInstallment']);
+      Route::get('/paid/pdf/{bill_id}', [BillController::class, 'pagePdf']);
       Route::post('/post-bill/{id}', [BillController::class, 'actionCreateBill'])->name('create.bill');
       Route::post('/post-intallment-paket/{bill_id}', [BillController::class, 'actionPaketInstallment'])->name('create.installment');
       Route::put('/change-paket/{bill_id}/{student_id}', [BillController::class, 'actionChangePaket'])->name('action.edit.paket');

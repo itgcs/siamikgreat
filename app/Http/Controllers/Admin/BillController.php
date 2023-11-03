@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-
+use PDO;
 
 class BillController extends Controller
 {
@@ -366,16 +366,16 @@ class BillController extends Controller
          {
 
             DB::rollBack();
-            return redirect('/admin/bills/detail-payment/'.$id)->withErrors([
-               'id' => 'Id not found !!!'
-            ]);
+            return (object) [
+               'success' => false,
+            ];
          }
 
          Bill::where('id', $id)->update([
                'paidOf' => true,
          ]);
 
-         if(strtolower($bill->type) === 'paket')
+         if($bill->type == 'Paket')
          {
             $books = Book::where('grade_id', $bill->student->grade_id)->get();
             
@@ -445,7 +445,7 @@ class BillController extends Controller
          DB::commit();
 
          return (object) [
-            'success' => false,
+            'success' => true,
          ];
          
       } catch (Exception $err) {
@@ -453,7 +453,6 @@ class BillController extends Controller
          return (object) [
             'success' => false,
          ];
-         return dd($err);
       }
    }
 
@@ -534,10 +533,6 @@ class BillController extends Controller
          
          $bookArray = $request->except(['_token', '_method', 'uniform', 'installment_book', 'installment_uniform']);
          $uniform = $request->only('uniform');
-         $installment = (object) [
-            'book' => $request->installment_book && $request->installment_book > 1? $request->installment_book : NULL,
-            'uniform' => $request->installment_uniform && $request->installment_uniform > 1? $request->installment_uniform : NULL, 
-         ];
 
          $totalAmountBook = 0;
 
@@ -556,110 +551,35 @@ class BillController extends Controller
                'bill' => 'Bill id not found !!!',
             ]);
          }
-         
-         if($installment->book > 12 || $installment->uniform > 12)
-         {
-            return redirect()->back()->withErrors([
-               'bill' => 'Installments must not exceed 12 months',
-            ]);
-         }
 
          $bookName = [];
          $bookId = [];
 
          foreach ($bookArray as $el) {
             
-               $book = Book::where('id', (int)$el)->first();
+         $book = Book::where('id', (int)$el)->first();
 
-               BillCollection::create([
-                  'bill_id' => $bill_id,
-                  'book_id' => $book->id,
-                  'type' => 'Book',
-                  'name' => $book->name,
-                  'amount' => $book->amount,
-               ]);
+            BillCollection::create([
+               'bill_id' => $bill_id,
+               'book_id' => $book->id,
+               'type' => 'Book',
+               'name' => $book->name,
+               'amount' => $book->amount,
+            ]);
 
-               $totalAmountBook += $book->amount;
-               array_push($bookName, $book->name);
-               array_push($bookId, $book->id);
+            $totalAmountBook += $book->amount;
+            array_push($bookName, $book->name);
+            array_push($bookId, $book->id);
          }
 
 
-         if($installment->book) {
-            
-            
-            if (($totalAmountBook/$installment->book) % 10_000 === 0) {
-               $billPerMonth = (int)$totalAmountBook / (int)$installment->book;
-            } else {
-               
-               $billPerMonth = ceil((int)$totalAmountBook / (int)$installment->book);
-               $billPerMonth += (10_000 - ($billPerMonth % 10_000));
-            }
-
-            for($i=1; $i<=$installment->book; $i++)
-            {
-               if($i === 1)
-               {
-                  Bill::where('id', $bill_id)->update([
-                     'type' => 'Book',
-                     'subject' => $i,
-                     'amount' => $billPerMonth,
-                     'installment' => $installment->book,
-                  ]);
-                  
-               } else {
-                  
-                  $currentDate = $checkBill->deadline_invoice;
-                  $newDate = date('Y-m-d', strtotime('+'.($i-1).' month', strtotime($currentDate)));
-
-
-
-                  $bill = Bill::create([
-                     'student_id' => $student_id,
-                     'type' => 'Book',
-                     'subject' =>  $i,
-                     'amount' => $billPerMonth,
-                     'paidOf' => false,
-                     'discount' => NULL,
-                     'installment' => $installment->book,
-                     'deadline_invoice' => $newDate,
-                  ]);
-
-                  foreach($bookId as $id)
-                  {
-                     $book = Book::where('id', (int)$id)->first();
-
-                     BillCollection::create([
-                        'bill_id' => $bill->id,
-                        'book_id' => $book->id,
-                        'type' => 'Book',
-                        'name' => $book->name,
-                        'amount' => $book->amount,
-                     ]);
-                  }
-
-               }
-            }
-
-
-            // add book directly when users choose installment
-
-            foreach($bookId as $id)
-            {
-               Book_student::create([
-                  'book_id' => $id,
-                  'student_id' => $student_id,
-               ]);
-            }
-
-         } else { 
-            sizeof($bookName) > 0 ? Bill::where('id', $bill_id)
+    
+         sizeof($bookName) > 0 ? Bill::where('id', $bill_id)
             ->update([
                'type' => 'Book',
                'subject' => 'Book '.implode(",",$bookName),
                'amount' => $totalAmountBook,
             ]) : '' ;
-         }
 
 
          foreach($uniform as $el)
@@ -675,37 +595,7 @@ class BillController extends Controller
             }
 
 
-            if($installment->uniform){
-               
-               if (($uniform->amount/$installment->uniform) % 10_000 == 0) {
-                  $billPerMonthUniform = (int)$uniform->amount / (int)$installment->uniform;
-               } else {
-                  
-                  $billPerMonthUniform = ceil((int)$uniform->amount / (int)$installment->uniform);
-                  $billPerMonthUniform += (10_000 - ($billPerMonthUniform % 10_000));
-               }
-
-               for($i = 1; $i<=$installment->uniform; $i++){
-
-
-                  $currentDate = $checkBill->deadline_invoice;
-                  $newDate = date('Y-m-d', strtotime('+'.($i-1).' month', strtotime($currentDate)));
-
-                  Bill::create([
-                     'student_id' => $student_id,
-                     'type' => 'Uniform',
-                     'subject' => $i,
-                     'amount' => $billPerMonthUniform,
-                     'paidOf' => false,
-                     'discount' => null,
-                     'installment' => $installment->uniform,
-                     'deadline_invoice' => $i > 1 ? $newDate : $checkBill->deadline_invoice, 
-
-                  ]);
-               }
-
-
-            } else {
+            
 
                Bill::create([
                   'student_id' => $student_id,
@@ -718,11 +608,6 @@ class BillController extends Controller
                   'deadline_invoice' => $checkBill->deadline_invoice, 
                ]);
             }
-
-
-         }
-
-         //kurang create notification dan email,
 
          DB::commit();
 
@@ -885,6 +770,35 @@ class BillController extends Controller
 
       } catch (Exception $err) {
          
+         return dd($err);
+      }
+   }
+
+   public function pagePdf($bill_id){
+      
+      session()->flash('page', (object)[
+         'page' => 'Bills',
+         'child' => 'database bills'
+      ]);
+
+      try {
+
+         
+         $data = Bill::with(['student', 'bill_collection', 'bill_installments'])
+         ->where('id', $bill_id)
+         ->first();
+
+         if(!$data->paidOf){
+
+            return redirect('/admin/bills/detail-payment/'.$bill_id);
+         }
+          $nameFormatPdf = Carbon::now()->format('YmdHis') . mt_rand(1000, 9999).'_'.date('d-m-Y').'_'.$data->type.'_'.$data->student->name.'.pdf';
+
+          $pdf = app('dompdf.wrapper');
+          $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $data])->setPaper('a4', 'portrait');
+          return $pdf->stream($nameFormatPdf);  
+
+      } catch (Exception $err) {
          return dd($err);
       }
    }

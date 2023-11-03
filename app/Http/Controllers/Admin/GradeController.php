@@ -238,7 +238,12 @@ class GradeController extends Controller
          $data = Student::with(['grade', 'bill' => function($query) {
 
             $query->where('paidOf', false)->get();
-         }])->where('grade_id', $id)->orderBy('name', 'asc')->get();
+         }])
+         ->where('grade_id', $id)
+         ->where('is_active', true)
+         ->orderBy('name', 'asc')
+         ->get();
+         
          $grade = Grade::where('id', $id)->first();
          
          session()->flash('page',  $page = (object)[
