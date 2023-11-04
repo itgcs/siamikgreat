@@ -8,21 +8,4 @@
 16.00 - 17.00 = testing error for register student with new field nisn and create bill capital fee and paket.
 
 
-08.00 - 09.00 = add validation for nisn and done payment field.
-09.00 - 10.00 = fix installment for capital fee.
-10.00 - 11.00 = fix installment for paket.
-11.00 - 12.00 = add relation manyto many for bills has installment.
-12.00 - 13.00 = Ishoma.
-13.00 - 14.00 = fix detail for bill has installment for capital fee and paket.
-14.00 - 15.00 = fix installment for paket with relation many to many .
-15.00 - 16.00 = add detail user interface for bill has installment.
-16.00 - 17.00 = add feature filter date at bills like bank bca.
-
-
-07.00 - 10.00 = testing and error query sql feature date at bills.
-10.00 - 11.00 = create userinterface form for custom bills.
-11.00 - 12.00 = craete backend and testing and error create custom bills.
-12.00 - 13.00 = Ishoma.
-13.00 - 14.00 = handle add field nisb for book with validation.
-14.00 - 15.00 = handle where bills paket paidOf or create installment paket book .
-15.00 - 16.00 = add detail user interface for bill has installment.
+https://www.billdu.com/invoice-template/profession-graphic-design-pdf/

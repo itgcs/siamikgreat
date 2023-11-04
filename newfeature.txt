@@ -11,3 +11,6 @@
 ~   detail bill diperjelas                                              [v]
 ~   fix installment paket                                               [v]
 ~   fix installment capital fee                                         [v]
+
+
+

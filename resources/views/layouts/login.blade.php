@@ -53,14 +53,14 @@
               <!-- Email input -->
               <div class="form-outline mb-4">
                 <input type="text" id="form3Example3" class="form-control form-control-lg"
-                  placeholder="Enter a valid email address" name="username"/>
-                <label class="form-label" for="form3Example3">Email address</label>
+                  placeholder="Enter a valid username" name="username" autocomplete="off"/>
+                <label class="form-label" for="form3Example3">Username</label>
               </div>
     
               <!-- Password input -->
               <div class="form-outline mb-3">
                 <input type="password" id="form3Example4" class="form-control form-control-lg"
-                  placeholder="Enter password" name="password"/>
+                  placeholder="Enter password" name="password" autocomplete="off"/>
                 <label class="form-label" for="form3Example4">Password</label>
               </div>
     

@@ -54,6 +54,7 @@
             font-size: 12px;
             color: grey;
             margin-top: 20px;
+            margin-bottom: 70px;
         }
 
         .student {
@@ -74,6 +75,27 @@
 
         .date_container {
             vertical-align: bottom;
+        }
+
+        .detail {
+            width: 100%;
+            padding: .5em;
+        }
+
+        .header_table {
+            background-color: rgba(252, 86, 35, 0.671);
+            color: white;
+        }
+
+        .body_table {
+            background-color: rgba(167, 163, 163, 0.315);
+        }
+
+        .table_detail {
+            margin-top: 20px;
+        }
+        hr {
+            width: 100%;
         }
         
     </style>
@@ -193,21 +215,41 @@
         <p class="address"><b>Great Crystal School</b>, Jl. Raya Darmo Permai III, Surabaya, Indonesia</p>
 
 
-        @if ($data->type == 'Book')
-
-        <table>
-            <thead>
-                <th>Description</th>
-                <th>Price</th>
+        
+        <table class="detail table_detail">
+            <thead class="detail header_table">
+                <th class="detail" align="left">Description</th>
+                <th class="detail" align="left">Price</th>
             </thead>
+            
+            <tbody >
+                @if ($data->type == 'Book')
+                
+                @foreach ($data->bill_collection as $el)
+                
+                    <tr class="detail body_table">
 
-            <tbody>
-                <td>{{$data->type}}</td>
+                        <td class="detail">{{$el->name}} book</td>
+                        <td class="detail">Rp. {{number_format($el->amount, 0, ',', '.')}}</td>
+                    </tr>
+
+                @endforeach
+                
+                @else
+
+                
+                    <tr class="detail body_table">
+
+                        <td class="detail">{{$data->type}}</td>
+                        <td class="detail">Rp. {{number_format($data->amount, 0, ',', '.')}}</td>
+                    </tr>
+
             </tbody>
         </table>
 
-            
-        @endif
 
-</body>
+        
+        @endif
+        
+    </body>
 </html>
