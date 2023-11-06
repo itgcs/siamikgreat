@@ -120,6 +120,7 @@
       
       </script>
     @endif
+    
     @if($errors->first('credentials'))
       <script>
 

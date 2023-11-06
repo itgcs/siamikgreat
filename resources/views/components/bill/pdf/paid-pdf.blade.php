@@ -6,6 +6,8 @@
 
     <style>
 
+
+
         body{
             font-family: 'Roboto', sans-serif;
         }
@@ -50,11 +52,12 @@
             font-weight: 
         }
         
+
         .address {
             font-size: 12px;
             color: grey;
-            margin-top: 20px;
             margin-bottom: 70px;
+            margin-top: 30px;
         }
 
         .student {
@@ -83,19 +86,31 @@
         }
 
         .header_table {
-            background-color: rgba(252, 86, 35, 0.671);
+            background-color: rgb(255, 115, 0);
             color: white;
         }
 
         .body_table {
-            background-color: rgba(167, 163, 163, 0.315);
+            background-color: rgba(95, 95, 95, 0.243);
         }
 
         .table_detail {
             margin-top: 20px;
         }
-        hr {
-            width: 100%;
+        .subtotal {
+          width: 50%;
+        }
+        .total {
+         width: 50%;
+         font-style: 'bold';
+         background-color: rgba(95, 95, 95, 0.012);
+        }
+
+        .paid {
+         color: rgb(2, 134, 2);
+        }
+        .unpaid {
+         color: rgb(145, 0, 0);
         }
         
     </style>
@@ -171,7 +186,7 @@
                     </thead>
                     <tbody class="date_detail">
                         <tr >
-                            <td align="left" style="padding: 0">
+                            <td align="right" style="padding: 0">
     
                                 <p>Invoice no :</p>
                                 
@@ -183,7 +198,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td align="left" style="padding: 0">
+                            <td align="right" style="padding: 0">
     
                                 <p>Date issue :</p>
                                 
@@ -195,7 +210,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td align="left" style="padding: 0">
+                            <td align="right" style="padding: 0">
     
                                 <p>Due date :</p>
                                 
@@ -206,13 +221,31 @@
     
                             </td>
                         </tr>
+                        <tr>
+                            <td align="right" style="padding: 0">
+    
+                                <p>Status :</p>
+                                
+                            </td>
+                            <td align="right" style="padding: 0">
+    
+                              @if ($data->paidOf)
+                              
+                              <p class="paid"><b>paid</b></p>
+                              @else
+                              <p class="unpaid"><b>unpaid</b></p>
+
+                              @endif
+
+    
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </td>
         </table>
 
-
-        <p class="address"><b>Great Crystal School</b>, Jl. Raya Darmo Permai III, Surabaya, Indonesia</p>
+        <p class="address"><b>Great Crystal School</b> {{date('l, d F Y')}}, Jl. Raya Darmo Permai III, Surabaya, Indonesia</p>
 
 
         
@@ -235,6 +268,15 @@
 
                 @endforeach
                 
+                @elseif ($data->installment)
+
+
+                  <tr class="detail body_table">
+
+                      <td class="detail">{{$data->type}} installment ({{$data->subject}})</td>
+                      <td class="detail">Rp. {{number_format($data->amount_installment, 0, ',', '.')}}</td>
+                  </tr>
+
                 @else
 
                 
@@ -244,12 +286,62 @@
                         <td class="detail">Rp. {{number_format($data->amount, 0, ',', '.')}}</td>
                     </tr>
 
+               @endif
+               <tr>
+
+                  <td ></td>
+                  <td>
+                     <table style="width:100%; margin-top: 60px;">
+                        <thead>
+                           <tr>
+                              @if ($data->installment)
+                                 <td align="right" class="subtotal">Subtotal :</td>
+                                 <td align="right" class="subtotal">{{number_format($data->amount_installment, 0, ',', '.')}}</td>
+                              @else
+                                 <td align="right" class="subtotal">Subtotal :</td>
+                                 <td align="right" class="subtotal">Rp. {{number_format($data->amount, 0, ',', '.')}}</td>
+                              @endif
+                                 @if ($data->dp)
+                                 <td align="right" style="width:50%">Done payment :</td>
+                                 <td align="right" style="width:50%">- Rp.{{number_format($data->dp, 0, ',', '.')}}</td>
+                                 @endif
+                        </tr>
+                        </thead>
+                     </table>
+                     
+                     {{-- start garis tepi --}}
+                     <table style="width:100%;">
+                        <thead>
+                           <tr>
+                              <hr>
+                           </tr>
+                        </thead>
+                     </table>
+                     {{-- end garis tepi --}}
+                     <table style="width:100%;">
+                        <thead>
+                           <tr>
+                              @if ($data->dp)
+                              <td align="right" style="width:50%">Done payment :</td>
+                              <td align="right" style="width:50%">- Rp.{{number_format($data->dp, 0, ',', '.')}}</td>
+                              @endif
+                           </tr>
+                           <tr>
+                           @if ($data->installment)
+                              <td align="right" class="total">Total :</td>
+                              <td align="right" class="total">{{number_format($data->amount_installment, 0, ',', '.')}}</td>
+                           @else
+                           <td align="right" class="total">Total :</td>
+                           <td align="right" class="total">Rp. {{number_format($data->amount, 0, ',', '.')}}</td>
+                           @endif
+                        </tr>
+                        </thead>
+                     </table>
+               </td>
+               </tr>
+
             </tbody>
         </table>
-
-
-        
-        @endif
         
     </body>
 </html>

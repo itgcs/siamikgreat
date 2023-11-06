@@ -38,12 +38,12 @@ class MailController extends Controller
 
          $student = Student::with(
             ['bill' => function($query){
-               $query->where('type', 'Uang Gedung')->get();
+               $query->where('type', 'Capital Fee')->get();
             }, 
              'relationship' => function($query){
                $query->get(['email']);
             },])->whereHas('bill', function($query) {
-               $query->where('type', 'Uang Gedung')->where('paidOf', false)->where('deadline_invoice', '>', date('y-m-d'));
+               $query->where('type', 'Capital Fee')->where('paidOf', false)->where('deadline_invoice', '>', date('y-m-d'));
             })->where('id', 10)->first();
          
             // return $student;
@@ -53,7 +53,7 @@ class MailController extends Controller
             'past_due' => false
         ];
 
-        Mail::to('tkeluarga111@gmail.com')->send(new FeeRegisMail($mailData, 'Berikut pembayaran Uang Gedung cicilan ke 1 untuk' .$student->name));
+        Mail::to('tkeluarga111@gmail.com')->send(new FeeRegisMail($mailData, 'Berikut pembayaran Capital Fee cicilan ke 1 untuk' .$student->name));
            
         return dd("Email is sent successfully.");
       } catch (Exception $err) {
@@ -197,7 +197,7 @@ class MailController extends Controller
                if($type === 'SPP') {
 
                   Mail::to($parent->email)->send(new SppMail($mailData, 'Reminder h-7 pembayaran '. strtolower($student->bill[0]->subject) .' sebelum jatuh tempo'));
-               } else if ($type === 'Uang Gedung'){
+               } else if ($type === 'Capital Fee'){
                   Mail::to($parent->email)->send(new FeeRegisMail($mailData, 'Reminder h-7 pembayaran '. strtolower($student->bill[0]->subject) .' sebelum jatuh tempo'));
                }
             }
@@ -367,7 +367,7 @@ class MailController extends Controller
          $data = Student::with([
             'bill' => function($query)  {
                $query
-               ->where('type', "Uang Gedung")
+               ->where('type', "Capital Fee")
                ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'))
                ->where('paidOf', false)
                ->get();
@@ -376,7 +376,7 @@ class MailController extends Controller
          ])
          ->whereHas('bill', function($query) {
                $query
-               ->where('type', "Uang Gedung")
+               ->where('type', "Capital Fee")
                ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'))
                ->where('paidOf', false);
          })
