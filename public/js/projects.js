@@ -14,7 +14,6 @@ $(document).ready(function () {
             confirmButtonText: "Yes, inactive!",
         }).then((result) => {
             if (result.isConfirmed) {
-
                 console.log(value);
                 $.ajax({
                     headers: {
@@ -278,9 +277,9 @@ $(document).ready(function () {
                             "success"
                         );
 
-                          setTimeout(() => {
-                              window.location.href = '/admin/books'
-                          }, 2500)
+                        setTimeout(() => {
+                            window.location.href = "/admin/books";
+                        }, 2500);
 
                         // $(`#index_payment_${value}`).remove();
                     })
@@ -300,10 +299,15 @@ $(document).ready(function () {
         event.preventDefault();
         const value = $(this).attr("data-id");
         const name = $(this).attr("data-name");
-        const subject = $(this).attr('data-subject')
+        const subject = $(this).attr("data-subject");
         let token = $("meta[name='csrf-token']").attr("content");
         Swal.fire({
-            title: "Are you sure want to label paid " + subject + ' from ' + name + "?",
+            title:
+                "Are you sure want to label paid " +
+                subject +
+                " from " +
+                name +
+                "?",
             text: "You won't be able to revert this!",
             icon: "warning",
             showCancelButton: true,
@@ -338,12 +342,12 @@ $(document).ready(function () {
                             "success"
                         );
 
-                          setTimeout(() => {
-                              window.location.href = `/admin/bills/detail-payment/${value}`
-                          }, 2500)
-
-                        $(`#update-status`).remove();
                         $(`#change-paket`).remove();
+                        $(`#update-status`).remove();
+
+                        setTimeout(() => {
+                            window.location.href = `/admin/bills/detail-payment/${value}`;
+                        }, 2500);
                     })
                     .catch((err) => {
                         Swal.fire({
@@ -361,10 +365,15 @@ $(document).ready(function () {
         event.preventDefault();
         const value = $(this).attr("data-id");
         const name = $(this).attr("data-name");
-        const studentId = $(this).attr('data-student-id')
+        const studentId = $(this).attr("data-student-id");
         let token = $("meta[name='csrf-token']").attr("content");
         Swal.fire({
-            title: "Are you sure want to label paid for invoice #" + value + ' from ' + name + "?",
+            title:
+                "Are you sure want to label paid for invoice #" +
+                value +
+                " from " +
+                name +
+                "?",
             text: "You won't be able to revert this!",
             icon: "warning",
             showCancelButton: true,
@@ -373,9 +382,9 @@ $(document).ready(function () {
             confirmButtonText: "Yes, update it!",
         }).then((result) => {
             if (result.isConfirmed) {
-                console.log('id bill' + value);
-                console.log('name students' + name);
-                console.log('students' + studentId);
+                console.log("id bill" + value);
+                console.log("name students" + name);
+                console.log("students" + studentId);
                 $.ajax({
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
@@ -394,16 +403,15 @@ $(document).ready(function () {
                     },
                 })
                     .then((res) => {
-                        
                         Swal.fire(
                             "Updated!",
                             `Paid invoice #${value} from ${name} has been successfully.`,
                             "success"
                         );
 
-                          setTimeout(() => {
-                              window.location.href = `/admin/bills/detail-payment/${value}`
-                          }, 2500)
+                        setTimeout(() => {
+                            window.location.href = `/admin/bills/detail-payment/${value}`;
+                        }, 2500);
 
                         $(`#update-status-book`).remove();
                     })
@@ -418,7 +426,6 @@ $(document).ready(function () {
             }
         });
     });
-
 
     $("body").on("click", "#active-student", function (event) {
         event.preventDefault();

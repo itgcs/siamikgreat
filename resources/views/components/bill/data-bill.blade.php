@@ -216,10 +216,10 @@
                     <th>
                         Grade
                     </th>
-                    <th style="width: 8%" class="text-center">
+                    <th class="text-center">
                         Class
                     </th>
-                    <th style="width: 8%" class="text-center">
+                    <th class="text-center">
                         Paid of
                     </th>
                     <th style="width: 8%" class="text-center">

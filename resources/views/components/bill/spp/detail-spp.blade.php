@@ -148,7 +148,6 @@
                  <!-- Morris chart - Sales -->
                  <div class="chart tab-pane active" id="revenue-chart"
                       style="position: relative;">
-
                     
                      {{-- <h1>New Bills</h1> --}}
                      <div>
@@ -184,43 +183,46 @@
 
                             @elseif (strtotime($el->deadline_invoice) < strtotime($currentDate))
 
-                              <small class="badge badge-danger"><i class="far fa-clock"></i> Past Due</small>
+                            <small class="badge badge-danger"><i class="far fa-clock"></i> Past Due</small>
                             @else
-                              @php
+                            @php
                                   $date1 = date_create($currentDate);
                                   $date2 = date_create(date('y-m-d', strtotime($el->deadline_invoice)));
                                   $dateWarning = date_diff($date1, $date2);
                                   $dateDiff = $dateWarning->format('%a') == 0? 'Today' : $dateWarning->format('%a'). ' days';
-                              @endphp
+                                  @endphp
                               <small class="badge badge-warning"><i class="far fa-clock"></i> {{
-
-                                  $dateDiff
-                              
+                                 
+                                 $dateDiff
+                                 
                               }}</small>
                             @endif
                             <!-- General tools such as edit or delete-->
                             <div class="tools">
-                              <a href="/admin/bills/detail-payment/{{$el->id}}" target="_blank">
-                                <i class="fas fa-search"></i>
+                               <a href="/admin/bills/detail-payment/{{$el->id}}" target="_blank">
+                                 <i class="fas fa-search"></i>
                               </a>
-                            </div>
+                           </div>
                           </li>
                           
                           @endforeach
                         </ul>
-                      </div>
-                    </div>
-
-                    
+                     </div>
                   </div>
+
+                  
+                  
                </div>
-            </div><!-- /.card-body -->
-         </div>
-         <!-- /.card -->
-         @endif
+            </div>
+         </div><!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+      <a target="_blank" href="/admin/bills/installment-pdf/{{$data->id}}" class="btn btn-dark w-100 mb-2" id="change-paket"><i class="fa-solid fa-file-pdf fa-bounce" style="color: white; margin-right:2px;"></i>Report PDF</a>
+
+      @endif
       </div>
 
-          <div class="col-lg-4 p-1">
+      <div class="col-lg-4 p-1">
             <div class="card mb-4 p-4">
                <table>
                   <thead>
@@ -242,24 +244,30 @@
                            <td align="left" class="p-1">
                               Rp. {{number_format($el->amount, 0, ',', '.')}}
                            </td>
-
-                        </tr>
-                        
-                     @endforeach
-                        
-                     @else
-                     
-                     <tr>
-                        <td align="left" class="p-1" style="width:65%;">
-                              Amount :
+                           <td align="left" class="p-1" style="width:65%;">
+                              Charge :
                            </td>
-                           <td align="left">
-                              Rp. {{number_format($data->amount, 0, ',', '.')}}
+                           <td align="left" class="p-1">
+                              Rp. {{number_format($el->charge, 0, ',', '.')}}
                            </td>
                            
                         </tr>
-                     
-                     @if ($data->dp)
+                        
+                        @endforeach
+                        
+                        @else
+                        
+                        <tr>
+                           <td align="left" class="p-1" style="width:65%;">
+                              Amount :
+                           </td>
+                           <td align="left">
+                              Rp. {{number_format($data->amount - $data->charge, 0, ',', '.')}}
+                           </td>
+                           
+                        </tr>
+                        
+                        @if ($data->dp)
                         
                         <tr>
                            <td align="left" class="p-1" style="width:65%;">
@@ -271,10 +279,10 @@
 
                         </tr>
                         
-                     @endif
-
-                     @if ($data->installment)
+                        @endif
                         
+                     @if ($data->installment)
+                     
                         <tr>
                            <td align="left" class="p-1" style="width:65%;">
                               Installment : 
@@ -284,17 +292,29 @@
                            </td>
 
                         </tr>
+                        
+                        @endif
 
-                     @endif
-
-                     @if ($data->discount)
-
+                        @if ($data->discount)
+                        
                         <tr>
                            <td align="left" class="p-1" style="width:65%;">
                               Discount:
                            </td>
-                           <td align="right">
+                           <td align="left">
                               {{$data->discount ? $data->discount : 0}}%
+                           </td>
+
+                        </tr>
+                     @endif
+                     @if ($data->charge)
+
+                        <tr>
+                           <td align="left" class="p-1" style="width:65%;">
+                              Charge:
+                           </td>
+                           <td align="left">
+                             + Rp. {{ number_format($data->charge,0,',','.') }}
                            </td>
 
                         </tr>
@@ -307,8 +327,8 @@
                @if ($data->bill_collection && $data->installment && $data->type === 'Book') 
 
                <hr>
-
-
+               
+               
                <table>
                   <thead>
                      <th></th>
@@ -318,11 +338,11 @@
                   <tbody>
                      <tr>
                         <td align="left" class="p-1 font-weight-bold" style="width:65%;">Total amount :</td>
-                        <td align="right">Rp. {{$data->amount * $data->installment}} </td>
+                        <td align="right">Rp. {{$data->amount}} </td>
                      </tr>
                      <tr>
-                        <td align="left" class="p-1 font-weight-bold" style="width:65%;">Installment/months :</td>
-                        <td align="right"> {{$data->installment}} </td>
+                        <td align="left" class="p-1 font-weight-bold" style="width:65%;">Installment :</td>
+                        <td align="right"> {{$data->installment}}x </td>
                      </tr>
                   </tbody>
                </table>
@@ -340,9 +360,11 @@
                      @php 
                         if ($data->type == "SPP") {
                            # code...   
-                           $total = $data->discount ? $data->amount - $data->amount * $data->discount/100 : $data->amount;   
+                           $total = $data->discount ? $data->amount - $data->amount * $data->discount/100 : $data->amount;
+                           $total = $total;
                         } else {
                            $total = $data->installment ? $data->amount_installment : $data->amount;
+                           $total = $total;
                         }
                      @endphp
                      <tr>
@@ -358,21 +380,19 @@
                   </tbody>
                </table>
             </div>
+            <a target="_blank" href="/admin/bills/paid/pdf/{{$data->id}}" class="btn btn-warning w-100 mb-2" id="change-paket"><i class="fa-solid fa-file-pdf fa-bounce" style="color: #000000; margin-right:2px;"></i>Print PDF</a>
             @if (!$data->paidOf)
                @if (strtolower($data->type) == 'paket' && !$data->installment)
                <a href="/admin/bills/change-paket/{{$data->student->unique_id}}/{{$data->id}}" class="btn btn-info w-100 mb-2" id="change-paket">Change Paket</a>
                <a href="/admin/bills/intallment-paket/{{$data->id}}" class="btn btn-secondary w-100 mb-2" id="change-paket">Installment Paket</a>
                @endif
                @if(strtolower($data->type) == 'book')
-                  <a href="javascript:void(0)" id="update-status-book" data-id="{{ $data->id }}" data-name="{{ $data->student->name }}" data-student-id="{{ $data->student->id }}" class="btn btn-success w-100">Paid book success</a>
+                  <a href="javascript:void(0)" id="update-status-book" data-id="{{ $data->id }}" data-name="{{ $data->student->name }}" data-student-id="{{ $data->student->id }}" class="btn btn-success w-100 mb-2">Paid book success</a>
                @else
-                  <a href="javascript:void(0)" id="update-status" data-id="{{ $data->id }}" data-name="{{ $data->student->name }}" data-subject="{{ $data->subject }}" class="btn btn-success w-100">Paid success</a>
+                  <a href="javascript:void(0)" id="update-status" data-id="{{ $data->id }}" data-name="{{ $data->student->name }}" data-subject="{{ $data->subject }}" class="btn btn-success w-100 mb-2">Paid success</a>
                @endif
                   
-            @else 
-                  
-                  <a target="_blank" href="/admin/bills/paid/pdf/{{$data->id}}" class="btn btn-warning w-100 mb-2" id="change-paket"><i class="fa-solid fa-file-pdf fa-bounce" style="color: #000000; margin-right:2px;"></i>Print PDF</a>
-                  
+               
             @endif
           </div>
         </div>

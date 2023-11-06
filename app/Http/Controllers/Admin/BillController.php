@@ -371,30 +371,32 @@ class BillController extends Controller
             ];
          }
 
-         Bill::where('id', $id)->update([
-               'paidOf' => true,
-         ]);
-
+         
          if($bill->type == 'Paket')
          {
             $books = Book::where('grade_id', $bill->student->grade_id)->get();
             
             foreach($books as $book) {
-
-               $bookExist = Book_student::where('student_id', $bill->student_id)->where('book_id', $book->id)->first();
-               
-               if(!$bookExist)
-               {
-                  Book_student::create([
-                     'student_id' => $bill->student_id,
-                     'book_id' => $book->id,
-                  ]);
+                  
+                  $bookExist = Book_student::where('student_id', $bill->student_id)->where('book_id', $book->id)->first();
+                  
+                  if(!$bookExist)
+                  {
+                     Book_student::create([
+                        'student_id' => $bill->student_id,
+                        'book_id' => $book->id,
+                     ]);
+                  }
                }
             }
-         }
+            
+         Bill::where('id', $id)->update([
+               'paidOf' => true,
+               'paid_date' => Carbon::now()->setTimezone('Asia/Jakarta'),
+            ]);
 
          DB::commit();
-
+         
          return (object) [
             'success' => true,
          ];
@@ -423,12 +425,12 @@ class BillController extends Controller
          $bill = Bill::with(['bill_collection'])
          ->where('id', $bill_id)
          ->first();
-
-
+         
+         
          foreach($bill->bill_collection as $el)
          {   
             $bookExist = Book_student::where('student_id', $student_id)->where('book_id', $el->book_id)->first();
-
+            
             if(!$bookExist)
             {
                Book_student::create([
@@ -437,13 +439,14 @@ class BillController extends Controller
                ]);
             }
          }
-
+         
          Bill::where('id', $bill_id)->update([
             'paidOf' => true,
+            'paid_date' => Carbon::now()->setTimezone('Asia/Jakarta'),
          ]);
          
          DB::commit();
-
+         
          return (object) [
             'success' => true,
          ];
@@ -495,14 +498,9 @@ class BillController extends Controller
 
          $uniform = $student->grade->uniform? $student->grade->uniform : null;
 
-         $data = Book::whereNotIn('id', function($query) use ($student) {
-             $query
-             ->select('book_id')
-             ->from('book_students')
-             ->where('student_id', $student->id);
-          })
-          ->where('grade_id', $student->grade_id)
-          ->get();
+         $data = Book::where('grade_id', $student->grade_id)
+         ->orderBy('name', 'asc')
+         ->get();
 
 
          // return $data;
@@ -690,13 +688,13 @@ class BillController extends Controller
             return redirect()->back()->withErrors($validator->messages())->withInput($rules);
          }
 
-         if((int)$bill->amount/(int)$request->installment % 10_000 == 0){
+         if((int)$bill->amount/(int)$request->installment % 1_000 == 0){
 
             $billPerMonth = $bill->amount / $request->installment;
 
          } else {
             $billPerMonth = ceil((int)$bill->amount / (int)$request->installment);
-            $billPerMonth += (10_000 - ($billPerMonth % 10_000));
+            $billPerMonth += (1_000 - ($billPerMonth % 1_000));
          }
          $main_id = [];
 
@@ -709,7 +707,7 @@ class BillController extends Controller
                Bill::where('id', $bill->id)->update([
                   'subject' => $i,
                   'installment' => $request->installment,
-                  'amount_installment' => $billPerMonth,
+                  'amount_installment' => $billPerMonth + $bill->charge,
                   'date_change_bill' => now(),
                ]);
 
@@ -784,21 +782,55 @@ class BillController extends Controller
       try {
 
          
-         $data = Bill::with(['student', 'bill_collection', 'bill_installments'])
+         $data = Bill::with(['student' => function ($query) {
+            $query->with('grade');
+         }, 'bill_collection', 'bill_installments'])
          ->where('id', $bill_id)
          ->first();
 
-         if(!$data->paidOf){
+         // if(!$data->paidOf){
 
-            return redirect('/admin/bills/detail-payment/'.$bill_id);
-         }
+         //    return redirect('/admin/bills/detail-payment/'.$bill_id);
+         // }
+         
           $nameFormatPdf = Carbon::now()->format('YmdHis') . mt_rand(1000, 9999).'_'.date('d-m-Y').'_'.$data->type.'_'.$data->student->name.'.pdf';
-
+          
           $pdf = app('dompdf.wrapper');
           $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $data])->setPaper('a4', 'portrait');
           return $pdf->stream($nameFormatPdf);  
 
+         } catch (Exception $err) {
+         return abort(500);
+      }
+   }
+   
+   public function reportInstallmentPdf($bill_id)
+   {
+      try {
+         
+         $data = Bill::with(['student' => function ($query) {
+            $query->with('grade');
+         }, 
+         'bill_installments' => function($query) {
+            $query->orderBy('id');
+         }])
+         ->where('id', $bill_id)
+         ->first();
+         
+         if(!$data || sizeof($data->bill_installments) <= 0)
+         {
+            return redirect('/admin/bills/detail-payment/'.$bill_id);
+         }
+         
+         $nameFormatPdf = Carbon::now()->format('YmdHis') . mt_rand(1000, 9999).'_'.date('d-m-Y').'_'.$data->type.'_'.$data->student->name.'.pdf';
+         
+         $pdf = app('dompdf.wrapper');
+         $pdf->loadView('components.bill.pdf.installment-pdf', ['data' => $data])->setPaper('a4', 'portrait');
+          
+         return $pdf->stream($nameFormatPdf);  
+
       } catch (Exception $err) {
+         
          return dd($err);
       }
    }

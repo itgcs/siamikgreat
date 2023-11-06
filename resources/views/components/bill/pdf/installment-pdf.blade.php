@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Invoice #{{$data->id}}</title>
+    <title>Installment {{$data->type}}</title>
     <style>
 
 
@@ -67,7 +67,7 @@
         }
         
         .head_student {
-            font-size: 12px;
+            font-size: 15px;
             margin: 0;
         }
 
@@ -127,7 +127,7 @@
             </thead>
             <tbody>
                 <td align="left" class="header1">
-                    <h2 class="invoice">Invoice</h2>
+                    <h2 class="invoice">Report</h2>
                 </td>
                 <td align="center" class="header2">
                 <div >
@@ -170,7 +170,7 @@
             </thead>
             <td>
                 <div class="student">
-                    <p class="head_student"><strong>BILL TO :</strong></p> <br>
+                    <p class="head_student"><strong>Installment {{strtolower($data->type)}} :</strong></p> <br>
                     <p>{{$data->student->name}}</p>
                     <p>{{$data->student->grade->name}} {{$data->student->grade->class}}</p>
                     <p>{{$data->student->place_birth}}</p>
@@ -188,12 +188,12 @@
                         <tr >
                             <td align="right" style="padding: 0">
     
-                                <p>Invoice no :</p>
+                                <p>Total installment :</p>
                                 
                             </td>
                             <td align="right" style="padding: 0">
     
-                                <p><b>#{{$data->id}}</b></p>
+                                <p><b>{{$data->installment}}x</b></p>
     
                             </td>
                         </tr>
@@ -205,7 +205,7 @@
                             </td>
                             <td align="right" style="padding: 0">
     
-                                <p><b>{{date('d/m/Y', strtotime($data->created_at))}}</b></p>
+                                <p><b>{{date('d/m/Y', strtotime($data->bill_installments[sizeof($data->bill_installments)-1]->created_at))}}</b></p>
     
                             </td>
                         </tr>
@@ -217,26 +217,7 @@
                             </td>
                             <td align="right" style="padding: 0">
     
-                                <p><b>{{date('d/m/Y', strtotime($data->deadline_invoice))}}</b></p>
-    
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="right" style="padding: 0">
-    
-                                <p>Status :</p>
-                                
-                            </td>
-                            <td align="right" style="padding: 0">
-    
-                              @if ($data->paidOf)
-                              
-                              <p class="paid"><b>paid</b></p>
-                              @else
-                              <p class="unpaid"><b>unpaid</b></p>
-
-                              @endif
-
+                                <p><b>{{date('d/m/Y', strtotime($data->bill_installments[sizeof($data->bill_installments)-1]->deadline_invoice))}}</b></p>
     
                             </td>
                         </tr>
@@ -252,70 +233,61 @@
         <table class="detail table_detail">
             <thead class="detail header_table">
                 <th class="detail" align="left">Description</th>
+                <th class="detail" align="left">Due date</th>
+                <th class="detail" align="left">Status</th>
                 <th class="detail" align="left">Price</th>
             </thead>
             
             <tbody >
-                @if ($data->type == 'Book')
                 
-                @foreach ($data->bill_collection as $el)
-                
-                    <tr class="detail body_table">
+               @foreach ($data->bill_installments as $item)
+                   
+               <tr class="detail body_table">
+                  <td class="detail" align="left">{{$item->type}}</td>
+                  <td class="detail" align="left">{{date('d/m/Y', strtotime($item->deadline_invoice))}}</td>
+                  <td class="detail" align="left">
 
-                        <td class="detail">{{$el->name}} book</td>
-                        <td class="detail">Rp. {{number_format($el->amount, 0, ',', '.')}}</td>
-                    </tr>
+                     @if($item->paidOf)
+                        <strong class="paid">paid</strong>
+                     @else
+                        <strong class="unpaid">unpaid</strong>
+                     @endif
 
-                @endforeach
-                
-                @elseif ($data->installment)
+                  </td>
+                  <td class="detail" align="left">{{number_format($data->amount_installment - $data->charge, 0, ',', '.')}}</td>
+               </tr>
 
+               @endforeach
 
-                  <tr class="detail body_table">
-
-                      <td class="detail">{{$data->type}} installment ({{$data->subject}})</td>
-                      <td class="detail">Rp. {{number_format($data->amount_installment - $data->charge, 0, ',', '.')}}</td>
-                  </tr>
-
-                @else
-
-                
-                    <tr class="detail body_table">
-
-                        <td class="detail">{{$data->type}}</td>
-                        <td class="detail">Rp. {{number_format($data->amount - $data->charge, 0, ',', '.')}}</td>
-                    </tr>
-
-               @endif
                <tr>
 
+                  <td ></td>
+                  <td ></td>
                   <td ></td>
                   <td>
                      <table style="width:100%; margin-top: 60px;">
                         <thead>
-                           @if ($data->installment)
-                              <tr>  
-                                 <td align="right" class="subtotal">Subtotal :</td>
-                                 <td align="right" class="subtotal">Rp. {{number_format($data->amount_installment - $data->charge, 0, ',', '.')}}</td>
-                              </tr>
-                              @else
+                           
                               <tr>
                                  <td align="right" class="subtotal">Subtotal :</td>
                                  <td align="right" class="subtotal">Rp. {{number_format($data->amount - $data->charge, 0, ',', '.')}}</td>
                               </tr>
-                                 @endif
                                  @if ($data->dp)
                               <tr>
                                  <td align="right" style="width:50%">Done payment :</td>
                                  <td align="right" style="width:50%">- Rp.{{number_format($data->dp, 0, ',', '.')}}</td>
                               </tr>
                                  @endif
-                                 @if ($data->charge > 0)
-                              <tr>
-                                 <td align="right" style="width:50%">Charge :</td>
-                                 <td align="right" style="width:50%">+ Rp.{{number_format($data->charge, 0, ',', '.')}}</td>
-                              </tr>
+                              @foreach ($data->bill_installments as $item)
+                                  
+                                 @if ($item->charge > 0)
+                                 <tr>
+                                    <td align="right" style="width:50%">Charge :</td>
+                                    <td align="right" style="width:50%">+ Rp.{{number_format($item->charge, 0, ',', '.')}}</td>
+                                 </tr>
                                  @endif
+
+                              @endforeach
                         </thead>
                      </table>
                      
@@ -337,13 +309,8 @@
                               @endif
                            </tr>
                            <tr>
-                           @if ($data->installment)
-                              <td align="right" class="total">Total :</td>
-                              <td align="right" class="total">Rp. {{number_format($data->amount_installment, 0, ',', '.')}}</td>
-                           @else
                            <td align="right" class="total">Total :</td>
                            <td align="right" class="total">Rp. {{number_format($data->amount, 0, ',', '.')}}</td>
-                           @endif
                         </tr>
                         </thead>
                      </table>
