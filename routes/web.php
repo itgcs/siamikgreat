@@ -52,6 +52,8 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
    Route::prefix('/register')->group(function () {
       Route::get('/', [RegisterController::class, 'index']);
       Route::post('/post', [RegisterController::class, 'register'])->name('actionRegister');
+      Route::get('/edit-installment-capital/{bill_id}', [RegisterController::class, 'pageEditInstallment']);
+      Route::put('/edit-installment-capital/{bill_id}', [RegisterController::class, 'actionEditInstallment'])->name('action.edit.installment');
    });
 
    Route::prefix('/list')->group(function () {
@@ -126,6 +128,7 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::get('/intallment-paket/{bill_id}', [BillController::class, 'pagePaketInstallment']);
       Route::get('/paid/pdf/{bill_id}', [BillController::class, 'pagePdf']);
       Route::get('/installment-pdf/{bill_id}', [BillController::class, 'reportInstallmentPdf']);
+      Route::get('/edit-installment-paket/{bill_id}', [BillController::class, 'pageEditInstallment']);
       Route::post('/post-bill/{id}', [BillController::class, 'actionCreateBill'])->name('create.bill');
       Route::post('/post-intallment-paket/{bill_id}', [BillController::class, 'actionPaketInstallment'])->name('create.installment');
       Route::put('/change-paket/{bill_id}/{student_id}', [BillController::class, 'actionChangePaket'])->name('action.edit.paket');

@@ -246,7 +246,7 @@ class RegisterController extends Controller
             DB::rollBack();
                // return 'masuk';
                return redirect('/admin/register')->withErrors([
-                  'paket' => 'Paket grade is not found !!!', 
+                  'paket' => ['Paket grade is not found'], 
                ])->withInput($rules);
          }
 
@@ -257,10 +257,10 @@ class RegisterController extends Controller
          // return $relationship;
          if(!$relationship->success){
             DB::rollBack();
-            return 'Error at relationship';
+            return abort(500);
          } else if (!$brotherOrSister->success){
             DB::rollBack();
-            return 'Error at brother or sister';
+            return abort(500);
          }
 
          // return 'post';
@@ -298,6 +298,11 @@ class RegisterController extends Controller
          ]);
          
          DB::commit();
+
+         if($request->installment)
+         {
+            return redirect('/admin/register/edit-installment-capital/'.$feeRegister->last_bill->id);
+         }
 
          return view('components.student.detailStudent')->with('data', $data);
 
@@ -458,13 +463,16 @@ class RegisterController extends Controller
          
          $amountTotal = (int)$amount - (int)$dp;
 
-         if (($amountTotal/$installment) % 10_000 === 0) {
+         if (($amountTotal/$installment) % 1_000 === 0) {
             $billPerMonth = (int)$amountTotal / (int)$installment;
          } else {
             
             $billPerMonth = ceil((int)$amountTotal / (int)$installment);
-            $billPerMonth += (10_000 - ($billPerMonth % 10_000));
+            $billPerMonth += (1_000 - ($billPerMonth % 1_000));
          }
+
+         $lastBillPerMonth = ($amountTotal % $billPerMonth) == 0? $billPerMonth : $amountTotal % $billPerMonth;
+
          
          $main_id = [];
          $currentDate = date('Y-m-d');
@@ -473,6 +481,26 @@ class RegisterController extends Controller
 
             $newDate = date('Y-m-d', strtotime('+'.$i.' month', strtotime($currentDate)));
             $subject = $installment <= 1? 'Capital Fee' : $i;
+
+            if($i == $installment) {
+               
+
+               $bill = Bill::create([
+                  'student_id' => $student->id,
+                  'type' => 'Capital Fee',
+                  'amount' => $amount,
+                  'dp' => $dp,
+                  'paidOf' => false,
+                  'discount' => null,
+                  'deadline_invoice' =>$newDate,
+                  'installment' => $installment == 1? null : $installment,
+                  'amount_installment' => $installment > 1 ? $lastBillPerMonth : 0,
+                  'subject' => $subject, 
+               ]);   
+
+               array_push($main_id, $bill->id);
+               continue;
+            } 
 
             $bill = Bill::create([
                'student_id' => $student->id,
@@ -504,13 +532,141 @@ class RegisterController extends Controller
          }
          
          
-         return (object)['success' => true];
+         return (object)['success' => true, 'last_bill' => $bill];
       } catch (Exception $err) {
          DB::rollBack();
          return (object)['success' => false, 'error' => dd($err)];
       }
    }
 
+   
 
+   public function pageEditInstallment($bill_id)
+   {
+      try {
+         //code...
+         session()->flash('page',  $page = (object)[
+            'page' => 'students',
+            'child' => 'register students',
+         ]);
+         
+         $data = Bill::with(['student', 'bill_installments' => function($query) {
+            $query->orderBy('id', 'asc');
+            
+         }])->where('id', $bill_id)->first();
+
+         if(!$data || sizeof($data->bill_installments) <= 0 ) {
+            return abort(404);
+         }
+
+         if(date('y-m-d',strtotime($data->created_at)) !== date('y-m-d'))
+         {
+            return abort(404);
+         }
+
+         if($data->type != 'Capital Fee')
+         {
+            return redirect()->back();
+         }
+
+         return view('components.installment-register')->with('data', $data);
+
+      } catch (Exception $err) {
+         return abort(500);
+      }
+   }
+
+
+   public function actionEditInstallment(Request $request)
+   {
+
+      session()->flash('page',  $page = (object)[
+         'page' => 'students',
+         'child' => 'register students',
+      ]);
+
+      DB::beginTransaction();
+
+      try {
+         //code...
+         $bills = $request->except(['_token', '_method', 'sendEmail']);
+         $totalBill = 0;
+         $installment = 0;
+
+         foreach($bills as $el)
+         {
+            if($el)
+            {
+               $installment++;
+            }
+         }
+
+         foreach($bills as $key => $amount_installment)
+         {
+            $id = str_replace('index_', '', $key);
+
+            $billExist = Bill::where("id", (int)$id)->first();
+
+            if(!$billExist)
+            {
+               DB::rollBack();
+               return redirect()->back()->withErrors([
+                  'bill' => ['bills error when search installment !!!'],
+               ])
+               ->withInput($bills);
+            }
+
+            $amount = $amount_installment? str_replace('.','',$amount_installment) : 0;
+            
+            $totalBill+=$amount;
+
+            if($amount != 0)
+            {
+               Bill::where("id", (int)$id)->update([
+                  'amount_installment' => $amount,
+                  'installment' => $installment,
+               ]);
+            } else {
+               Bill::where("id", (int)$id)->delete();
+            }
+            
+         }
+         
+         if(($billExist->amount-$billExist->dp) != $totalBill)
+         {
+            DB::rollBack();
+               return redirect()->back()->withErrors([ 
+                  'bill' => ['The total installment must be Rp ' . number_format($billExist->amount,0,',','.')],
+               ])
+            ->withInput($bills);
+         }
+
+         $student = Student::where('id', $billExist->student_id)->first();
+
+         if(!$student){
+            DB::rollBack();
+               return redirect()->back()->withErrors([
+                  'bill' => ['student not found !!!'],
+               ])
+               ->withInput($bills);
+         }
+
+         session()->flash('after_create_student', 'Successfully register student with name '. $student->name);
+
+         DB::commit();
+
+         if($billExist->type == 'Paket')
+         {          
+            return redirect('/admin/bills');
+         }
+
+
+         return redirect('/admin/detail/'.$student->unique_id);
+         
+      } catch (Exception $err) {
+         return dd($err);
+      }
+
+   }
 
 }

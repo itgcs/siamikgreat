@@ -262,7 +262,7 @@
                 
                     <tr class="detail body_table">
 
-                        <td class="detail">{{$el->name}} book</td>
+                        <td class="detail"><strong>{{$el->name}} book</strong></td>
                         <td class="detail">Rp. {{number_format($el->amount, 0, ',', '.')}}</td>
                     </tr>
 
@@ -273,7 +273,7 @@
 
                   <tr class="detail body_table">
 
-                      <td class="detail">{{$data->type}} installment ({{$data->subject}})</td>
+                      <td class="detail"><strong>{{$data->type}} installment ({{$data->subject}})</strong></td>
                       <td class="detail">Rp. {{number_format($data->amount_installment - $data->charge, 0, ',', '.')}}</td>
                   </tr>
 
@@ -282,7 +282,7 @@
                 
                     <tr class="detail body_table">
 
-                        <td class="detail">{{$data->type}}</td>
+                        <td class="detail"><strong>{{$data->type}}</strong></td>
                         <td class="detail">Rp. {{number_format($data->amount - $data->charge, 0, ',', '.')}}</td>
                     </tr>
 
@@ -293,29 +293,29 @@
                   <td>
                      <table style="width:100%; margin-top: 60px;">
                         <thead>
-                           @if ($data->installment)
+                            @if ($data->installment)
                               <tr>  
                                  <td align="right" class="subtotal">Subtotal :</td>
                                  <td align="right" class="subtotal">Rp. {{number_format($data->amount_installment - $data->charge, 0, ',', '.')}}</td>
                               </tr>
-                              @else
+                            @else
                               <tr>
                                  <td align="right" class="subtotal">Subtotal :</td>
                                  <td align="right" class="subtotal">Rp. {{number_format($data->amount - $data->charge, 0, ',', '.')}}</td>
                               </tr>
-                                 @endif
-                                 @if ($data->dp)
-                              <tr>
-                                 <td align="right" style="width:50%">Done payment :</td>
-                                 <td align="right" style="width:50%">- Rp.{{number_format($data->dp, 0, ',', '.')}}</td>
-                              </tr>
-                                 @endif
-                                 @if ($data->charge > 0)
+                                @if ($data->dp)
+                                <tr>
+                                  <td align="right" style="width:50%">Done payment :</td>
+                                  <td align="right" style="width:50%">- Rp.{{number_format($data->dp, 0, ',', '.')}}</td>
+                                </tr>
+                                @endif
+                            @endif
+                            @if ($data->charge > 0)
                               <tr>
                                  <td align="right" style="width:50%">Charge :</td>
                                  <td align="right" style="width:50%">+ Rp.{{number_format($data->charge, 0, ',', '.')}}</td>
                               </tr>
-                                 @endif
+                            @endif
                         </thead>
                      </table>
                      
@@ -330,16 +330,10 @@
                      {{-- end garis tepi --}}
                      <table style="width:100%;">
                         <thead>
-                           <tr>
-                              @if ($data->dp)
-                              <td align="right" style="width:50%">Done payment :</td>
-                              <td align="right" style="width:50%">- Rp.{{number_format($data->dp, 0, ',', '.')}}</td>
-                              @endif
-                           </tr>
-                           <tr>
-                           @if ($data->installment)
-                              <td align="right" class="total">Total :</td>
-                              <td align="right" class="total">Rp. {{number_format($data->amount_installment, 0, ',', '.')}}</td>
+                            <tr>
+                                @if ($data->installment)
+                                <td align="right" class="total">Total :</td>
+                              <td align="right" class="total">Rp. {{number_format($data->amount_installment + $data->charge, 0, ',', '.')}}</td>
                            @else
                            <td align="right" class="total">Total :</td>
                            <td align="right" class="total">Rp. {{number_format($data->amount, 0, ',', '.')}}</td>

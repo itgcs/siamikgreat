@@ -335,19 +335,32 @@ $(document).ready(function () {
                     },
                 })
                     .then((res) => {
+
                         console.log(res);
-                        Swal.fire(
-                            "Updated!",
-                            `Payment 2${subject} from ${name} has been successfully.`,
-                            "success"
-                        );
 
-                        $(`#change-paket`).remove();
-                        $(`#update-status`).remove();
-
-                        setTimeout(() => {
-                            window.location.href = `/admin/bills/detail-payment/${value}`;
-                        }, 2500);
+                        if(!res.success)
+                        {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: res.text,
+                                footer: '<a href="">Why do I have this issue?</a>',
+                            });
+                        } else {
+                            
+                            Swal.fire(
+                                "Updated!",
+                                `Payment 2${subject} from ${name} has been successfully.`,
+                                "success"
+                            );
+    
+                            $(`#change-paket`).remove();
+                            $(`#update-status`).remove();
+    
+                            setTimeout(() => {
+                                window.location.href = `/admin/bills/detail-payment/${value}`;
+                            }, 2500);
+                        }
                     })
                     .catch((err) => {
                         Swal.fire({
@@ -458,26 +471,29 @@ $(document).ready(function () {
                         id: value,
                         _token: token,
                     },
-                    //   success: function () {
-
-                    //       //...
-
-                    //
-                    //   }
                 })
                     .then((res) => {
                         console.log(res);
-                        Swal.fire(
-                            "Activate!",
-                            `${name} has been activate.`,
-                            "success"
-                        );
 
-                        //   setTimeout(() => {
-                        //       window.location.href = '/admin/list'
-                        //   }, 1500)
+                        if(!res.success)
+                        {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: res.text,
+                                footer: '<a href="">Why do I have this issue?</a>',
+                            });
+                        } else {
+                            
+                            Swal.fire(
+                                "Activate!",
+                                `${name} has been activate.`,
+                                "success"
+                            );
+    
+                            $(`#index_student_${value}`).remove();
+                        }
 
-                        $(`#index_student_${value}`).remove();
                     })
                     .catch((err) => {
                         Swal.fire({

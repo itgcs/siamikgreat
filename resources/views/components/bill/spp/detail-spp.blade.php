@@ -217,7 +217,7 @@
          </div><!-- /.card-body -->
       </div>
       <!-- /.card -->
-      <a target="_blank" href="/admin/bills/installment-pdf/{{$data->id}}" class="btn btn-dark w-100 mb-2" id="change-paket"><i class="fa-solid fa-file-pdf fa-bounce" style="color: white; margin-right:2px;"></i>Report PDF</a>
+      <a target="_blank" href="/admin/bills/installment-pdf/{{$data->id}}" class="btn btn-dark w-100 mb-2" id='report-pdf'><i class="fa-solid fa-file-pdf fa-bounce" style="color: white; margin-right:2px;"></i>Report PDF</a>
 
       @endif
       </div>
@@ -371,7 +371,7 @@
                         <td align="left" class="p-1 font-weight-bold" style="width:65%;">
                            Total :
                         </td>
-                        <td align="right" class="font-weight-bold">
+                        <td align="left" class="font-weight-bold">
                            Rp. {{number_format($total, 0, ',', '.')}}
                         </td>
                         

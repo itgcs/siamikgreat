@@ -160,6 +160,8 @@
 
         
         
+        {{-- Start table --}}
+       
 
         <table style="width: 100%;">
             <thead>
@@ -239,11 +241,14 @@
             </thead>
             
             <tbody >
+                @php
+                    $totalCharge = 0;
+                @endphp
                 
                @foreach ($data->bill_installments as $item)
-                   
+
                <tr class="detail body_table">
-                  <td class="detail" align="left">{{$item->type}}</td>
+                  <td class="detail" align="left"><strong> {{$item->type}} installment ({{$item->subject}}) </strong></td>
                   <td class="detail" align="left">{{date('d/m/Y', strtotime($item->deadline_invoice))}}</td>
                   <td class="detail" align="left">
 
@@ -254,70 +259,67 @@
                      @endif
 
                   </td>
-                  <td class="detail" align="left">{{number_format($data->amount_installment - $data->charge, 0, ',', '.')}}</td>
+                  <td class="detail" align="left">Rp. {{number_format($item->amount_installment - $item->charge, 0, ',', '.')}}</td>
                </tr>
+
+               @php
+                   $totalCharge+=$item->charge;
+               @endphp
 
                @endforeach
 
-               <tr>
-
-                  <td ></td>
-                  <td ></td>
-                  <td ></td>
-                  <td>
-                     <table style="width:100%; margin-top: 60px;">
-                        <thead>
-                           
-                              <tr>
-                                 <td align="right" class="subtotal">Subtotal :</td>
-                                 <td align="right" class="subtotal">Rp. {{number_format($data->amount - $data->charge, 0, ',', '.')}}</td>
-                              </tr>
-                                 @if ($data->dp)
-                              <tr>
-                                 <td align="right" style="width:50%">Done payment :</td>
-                                 <td align="right" style="width:50%">- Rp.{{number_format($data->dp, 0, ',', '.')}}</td>
-                              </tr>
-                                 @endif
-                              @foreach ($data->bill_installments as $item)
-                                  
-                                 @if ($item->charge > 0)
-                                 <tr>
-                                    <td align="right" style="width:50%">Charge :</td>
-                                    <td align="right" style="width:50%">+ Rp.{{number_format($item->charge, 0, ',', '.')}}</td>
-                                 </tr>
-                                 @endif
-
-                              @endforeach
-                        </thead>
-                     </table>
-                     
-                     {{-- start garis tepi --}}
-                     <table style="width:100%;">
-                        <thead>
-                           <tr>
-                              <hr>
-                           </tr>
-                        </thead>
-                     </table>
-                     {{-- end garis tepi --}}
-                     <table style="width:100%;">
-                        <thead>
-                           <tr>
-                              @if ($data->dp)
-                              <td align="right" style="width:50%">Done payment :</td>
-                              <td align="right" style="width:50%">- Rp.{{number_format($data->dp, 0, ',', '.')}}</td>
-                              @endif
-                           </tr>
-                           <tr>
-                           <td align="right" class="total">Total :</td>
-                           <td align="right" class="total">Rp. {{number_format($data->amount, 0, ',', '.')}}</td>
-                        </tr>
-                        </thead>
-                     </table>
-               </td>
-               </tr>
-
             </tbody>
+        </table>
+
+
+        <table class="detail" style="margin-top:60px;">
+            <thead class="detail">
+                <tr class="detail">
+                    <td style="width:50%;"></td>
+                    <td style="width:50%;">
+                       <table style="width:100%;">
+                          <thead>
+                             
+                                <tr>
+                                   <td align="right" class="subtotal">Subtotal :</td>
+                                   <td align="right" class="subtotal">Rp. {{number_format(($data->amount-$data->dp) - $totalCharge, 0, ',', '.')}}</td>
+                                </tr>
+                                   @if ($data->dp)
+                                <tr>
+                                   <td align="right" style="width:50%">Done payment :</td>
+                                   <td align="right" style="width:50%">+ Rp.{{number_format($data->dp, 0, ',', '.')}}</td>
+                                </tr>
+                                   @endif
+                                    
+                                   @if ($totalCharge > 0)
+                                   <tr>
+                                      <td align="right" style="width:50%">Charge :</td>
+                                      <td align="right" style="width:50%">+ Rp.{{number_format($totalCharge, 0, ',', '.')}}</td>
+                                   </tr>
+                                   @endif
+                          </thead>
+                       </table>
+                       
+                       {{-- start garis tepi --}}
+                       <table style="width:100%;">
+                          <thead>
+                             <tr>
+                                <hr>
+                             </tr>
+                          </thead>
+                       </table>
+                       {{-- end garis tepi --}}
+                       <table style="width:100%;">
+                          <thead>
+                             <tr>
+                             <td align="right" class="total">Total :</td>
+                             <td align="right" class="total">Rp. {{number_format(($data->amount-$totalCharge), 0, ',', '.')}}</td>
+                          </tr>
+                          </thead>
+                       </table>
+                 </td>
+                 </tr>
+            </thead>
         </table>
         
     </body>

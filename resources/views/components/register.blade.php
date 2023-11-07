@@ -821,7 +821,7 @@
 
                     <div class="card card-dark">
                      <div class="card-header">
-                         <h3 class="card-title">Fee register (uang gedung)
+                         <h3 class="card-title">Capital Fee
                          </h3>
                      </div>
                      <!-- /.card-header -->
@@ -881,8 +881,37 @@
                  </div>
                  <!-- /.card-body Brother or sisters -->
                         
-                        <div class="d-flex justify-content-center my-5">
-                            <button type="submit" class="col-11 btn btn-success">Register Now</button>
+                        {{-- <div class="d-flex justify-content-center my-5">
+                            <button type="submit" class="col-12 btn btn-success">Register Now</button>
+                        </div> --}}
+
+                        <!-- Button trigger modal -->
+                        <div class="d-flex justify-content-end m-5">
+                        <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#exampleModalCenter">
+                            Register now
+                        </button>
+                    </div>
+                        
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Register student</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure want to register new students?
+                                    Make sure your paket grade has been updated !!!
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
+                                <button type="submit" class="btn btn-success">Yes register</button>
+                                </div>
+                            </div>
+                            </div>
                         </div>
                     </form>
 

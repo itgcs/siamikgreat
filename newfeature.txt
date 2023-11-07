@@ -11,6 +11,6 @@
 ~   detail bill diperjelas                                              [v]
 ~   fix installment paket                                               [v]
 ~   fix installment capital fee                                         [v]
-
-
-
+~   change installment paket manual by admin                            []
+~   change installment capital fee manual by admin                      []
+~   create others type filter for bills                                 []

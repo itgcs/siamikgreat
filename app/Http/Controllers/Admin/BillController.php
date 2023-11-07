@@ -368,6 +368,7 @@ class BillController extends Controller
             DB::rollBack();
             return (object) [
                'success' => false,
+               'text' => 'Id bill with ' . $id . ' not found !!!'
             ];
          }
 
@@ -406,6 +407,7 @@ class BillController extends Controller
          DB::rollBack();
          return (object) [
             'success' => false,
+            'text' => 'Internal server error !!!',
          ];
       }
    }
@@ -696,6 +698,10 @@ class BillController extends Controller
             $billPerMonth = ceil((int)$bill->amount / (int)$request->installment);
             $billPerMonth += (1_000 - ($billPerMonth % 1_000));
          }
+
+
+         $lastBillPerMonth = $bill->amount % $billPerMonth == 0 ? $billPerMonth : $bill->amount % $billPerMonth;
+
          $main_id = [];
 
          for($i = 1; $i <= $request->installment; $i++)
@@ -714,10 +720,29 @@ class BillController extends Controller
 
                array_push($main_id, $bill->id);
                
-               
+               continue;
             } 
             
-            if($i>1){
+            if($i == $request->installment)
+            {
+               $currentDate = $bill->deadline_invoice;
+               $newDate = date('Y-m-d', strtotime('+'.($i-1).' month', strtotime($currentDate)));
+               
+               $bill_child = Bill::create([
+                  'student_id' => $bill->student_id,
+                  'type' => 'Paket',
+                  'subject' => $i,
+                  'amount' => $bill->amount,
+                  'paidOf' => false,
+                  'discount' => null,
+                  'installment' => $request->installment,
+                  'amount_installment' => $lastBillPerMonth,
+                  'deadline_invoice' => $newDate, 
+                  
+               ]);
+               array_push($main_id, $bill_child->id);
+               continue;
+            }
                
                
                $currentDate = $bill->deadline_invoice;
@@ -736,7 +761,6 @@ class BillController extends Controller
                   
                ]);
                array_push($main_id, $bill_child->id);
-            }
 
 
          }
@@ -764,7 +788,9 @@ class BillController extends Controller
          session()->flash('create_installment_bill');
 
          DB::commit();
-         return redirect('/admin/bills');
+
+         
+         return redirect('/admin/bills/edit-installment-paket/'.$bill->id);
 
       } catch (Exception $err) {
          
@@ -831,7 +857,43 @@ class BillController extends Controller
 
       } catch (Exception $err) {
          
-         return dd($err);
+         abort(500);
+      }
+   }
+
+
+   public function pageEditInstallment($bill_id)
+   {
+      try {
+         //code...
+         session()->flash('page',  $page = (object)[
+            'page' => 'students',
+            'child' => 'register students',
+         ]);
+         
+         $data = Bill::with(['student', 'bill_installments' => function($query) {
+            $query->orderBy('id', 'asc');
+            
+         }])->where('id', $bill_id)->first();
+
+         if(!$data || sizeof($data->bill_installments) <= 0 ) {
+            return abort(404);
+         }
+
+         if(date('y-m-d',strtotime($data->created_at)) !== date('y-m-d'))
+         {
+            return abort(404);
+         }
+
+         if($data->type != 'Paket')
+         {
+            return redirect()->back();
+         }
+
+         return view('components.installment-register')->with('data', $data);
+
+      } catch (Exception $err) {
+         return abort(500);
       }
    }
 }

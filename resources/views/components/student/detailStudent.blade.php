@@ -374,4 +374,32 @@
         
   @endif
 
+  @if(session('after_create_student')) 
+    <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+    <script>
+      var notif = '{{session('after_create_student')}}'
+
+      var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+      });
+    
+      setTimeout(() => {
+         Toast.fire({
+            icon: 'success',
+            title: notif,
+      });
+      }, 1500);
+
+
+    </script>
+        
+  @endif
+
+
+
 @endsection

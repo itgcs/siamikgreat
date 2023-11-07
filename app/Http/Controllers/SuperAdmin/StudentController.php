@@ -49,6 +49,14 @@ class StudentController extends Controller
 
          $student = Student::where('id', $student_id)->first();
 
+         if($student)
+         {
+            return (object) [
+               'success' => false,
+               'text' => 'Student not found !!!',
+            ];
+         }
+
          if(!$student->is_active && $student->is_graduate)
          {
 
@@ -75,6 +83,7 @@ class StudentController extends Controller
          
          return (object) [
             'success' => false,
+            'text' => 'Internal server error !!!',
          ];
       }
 
