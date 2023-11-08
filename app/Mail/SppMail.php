@@ -5,6 +5,7 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -15,14 +16,16 @@ class SppMail extends Mailable
 
     public $mailData;
     public $subject;
+    public $pdf;
     
     /**
      * Create a new message instance.
      */
-    public function __construct($mailData, $subject)
+    public function __construct($mailData, $subject, $pdf)
     {
         $this->mailData = $mailData;
         $this->subject = $subject;
+        $this->pdf = $pdf;
     }
 
     /**
@@ -52,6 +55,9 @@ class SppMail extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        return [
+            Attachment::fromData(fn () => $this->pdf->output(), 'SPP '.date('F Y', strtotime($this->mailData['bill'][0]->created_at)). ' ' . $this->mailData['student']->name)
+            ->withMime('application/pdf')
+        ];
     }
 }

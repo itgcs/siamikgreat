@@ -40,7 +40,7 @@ Route::get('/', [UserController::class, 'login']);
 Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin');
 Route::get('/counter', Counter::class);
 
-Route::get('send-mail', [MailController::class, 'createNotificationFeeRegister']);
+Route::get('send-mail', [MailController::class, 'cronChargePastDue']);
 Route::get('/coba', [RegisterController::class, 'handleFeeRegister']);
 
 Route::middleware(['admin'])->prefix('/admin')->group(function () {

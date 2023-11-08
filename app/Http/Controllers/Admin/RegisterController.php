@@ -572,7 +572,8 @@ class RegisterController extends Controller
          return view('components.installment-register')->with('data', $data);
 
       } catch (Exception $err) {
-         return abort(500);
+         
+         return abort(404);
       }
    }
 

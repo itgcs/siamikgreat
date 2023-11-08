@@ -89,7 +89,7 @@ class MailController extends Controller
                'amount' => $student->spp_student? $student->spp_student->amount : $student->grade->spp->amount,
                'paidOf' => false,
                'discount' => $student->spp_student ? ($student->spp_student->discount? $student->spp_student->discount : null) : null,
-               'deadline_invoice' => date("Y-m-t", strtotime(now())),
+               'deadline_invoice' => Carbon::now()->setTimezone('Asia/Jakarta')->addDays(10)->format('Y-m-d'),
                'installment' => 0,
             ]);
             
@@ -98,13 +98,23 @@ class MailController extends Controller
                'bill' => [$createBill],
                'past_due' => false,
             ];
+
+            $pdfBill = Bill::with(['student' => function ($query) {
+               $query->with('grade');
+            }, 'bill_collection', 'bill_installments'])
+            ->where('id', $createBill->id)
+            ->first();
+            
+             $nameFormatPdf = Carbon::now()->format('YmdHis') . mt_rand(1000, 9999).'_'.date('d-m-Y').'_'.$pdfBill->type.'_'.$pdfBill->student->name.'.pdf';
+             
+             $pdf = app('dompdf.wrapper');
+             $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
             
             
             
             foreach($student->relationship as $el)
             {
-               Mail::to($el->email)->send(new SppMail($mailData, "Tagihan SPP " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat."));
-               
+               Mail::to($el->email)->send(new SppMail($mailData, "Tagihan SPP " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf));
             }
             
          }
@@ -119,7 +129,7 @@ class MailController extends Controller
    }
 
 
-   public function cronReminderPastDue($type = "SPP")
+   public function cronChargePastDue($type = "SPP")
    {
       try {
          date_default_timezone_set('Asia/Jakarta');
@@ -135,26 +145,42 @@ class MailController extends Controller
             ->where('type', $type)
             ->where('paidOf', false)
             ->where('deadline_invoice', '<', date('Y-m-d'));
-         })->where('is_active', true)->get();
+         })->where('is_active', true)->get(['id']);
              
+         // return $data;
 
-         foreach ($data as $value) {
+         foreach ($data as $student) {
 
-            foreach ($value->relationship as $value2) {
-
+            foreach ($student->bill as $bill) {
+               # code...
                $mailData = [
-                  'student' => $value,
-                  'bill' => $value->bill,
+                  'student' => $student,
+                  'bill' => [$bill],
                   'past_due' => true,
                ];
-               
-               Mail::to($value2->email)->send(new SppMail($mailData, "Berikut adalah total " . $type . " tagihan anda yang sudah jatuh tempo"));
+
+               $pdfBill = Bill::with(['student' => function ($query) {
+                  $query->with('grade');
+               }, 'bill_collection', 'bill_installments'])
+               ->where('id', $bill->id)
+               ->first();
+                
+                $pdf = app('dompdf.wrapper');
+                $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
+
+               foreach ($student->relationship as $relationship) {
+   
+                  
+                  Mail::to($relationship->email)->send(new SppMail($mailData, "Charge " . $type . " tagihan anda yang sudah jatuh tempo", $pdf));
+               }
             }
+
             
          }
          info("Cron Job reminder success at ". date('d-m-Y'));
          
      } catch (Exception $err) {
+
          info("Cron Job reminder Error at: " . $err);
      }
    }
@@ -196,7 +222,7 @@ class MailController extends Controller
 
                if($type === 'SPP') {
 
-                  Mail::to($parent->email)->send(new SppMail($mailData, 'Reminder h-7 pembayaran '. strtolower($student->bill[0]->subject) .' sebelum jatuh tempo'));
+                  // Mail::to($parent->email)->send(new SppMail($mailData, 'Reminder h-7 pembayaran '. strtolower($student->bill[0]->subject) .' sebelum jatuh tempo'));
                } else if ($type === 'Capital Fee'){
                   Mail::to($parent->email)->send(new FeeRegisMail($mailData, 'Reminder h-7 pembayaran '. strtolower($student->bill[0]->subject) .' sebelum jatuh tempo'));
                }
@@ -247,7 +273,7 @@ class MailController extends Controller
 
             foreach($student->relationship as $parent)
             {
-               Mail::to($parent->email)->send(new SppMail($mailData, 'Reminder h-1 pembayaran '. strtolower($student->bill[0]->subject) .' sebelum jatuh tempo'));
+               // Mail::to($parent->email)->send(new SppMail($mailData, 'Reminder h-1 pembayaran '. strtolower($student->bill[0]->subject) .' sebelum jatuh tempo'));
             }
          }
 

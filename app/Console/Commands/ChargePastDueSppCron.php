@@ -12,7 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ReminderCron extends Command
+class ChargePastDueSppCron extends Command
 {
     /**
      * The name and signature of the console command.
@@ -22,14 +22,14 @@ class ReminderCron extends Command
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $signature = 'reminderPastDue:cron';
+    protected $signature = 'chargePastDueSpp:cron';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Check reminder payment past due daily';
+    protected $description = 'Charge past due spp';
 
     /**
      * Execute the console command.
@@ -39,9 +39,6 @@ class ReminderCron extends Command
         info("Reminder past due Job running at ". now());
 
         $bill = new MailController;
-        $bill->cronReminderPastDue('SPP');
-        $bill->cronReminderPastDue('Uang Gedung');
-        // $bill->cronReminderPastDue('Book');
-        // $bill->cronReminderPastDue('Uniform');
+        $bill->cronChargePastDue();
     }
 }

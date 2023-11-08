@@ -633,6 +633,8 @@ class BillController extends Controller
 
          $bill = Bill::with('student')->where('id', $bill_id)->first();
 
+         // return $bill;
+
          if(!$bill){
             
             return redirect()->back()->withErrors([
@@ -813,17 +815,12 @@ class BillController extends Controller
          }, 'bill_collection', 'bill_installments'])
          ->where('id', $bill_id)
          ->first();
-
-         // if(!$data->paidOf){
-
-         //    return redirect('/admin/bills/detail-payment/'.$bill_id);
-         // }
          
           $nameFormatPdf = Carbon::now()->format('YmdHis') . mt_rand(1000, 9999).'_'.date('d-m-Y').'_'.$data->type.'_'.$data->student->name.'.pdf';
           
           $pdf = app('dompdf.wrapper');
           $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $data])->setPaper('a4', 'portrait');
-          return $pdf->stream($nameFormatPdf);  
+          return $pdf->stream($nameFormatPdf);
 
          } catch (Exception $err) {
          return abort(500);
@@ -880,7 +877,7 @@ class BillController extends Controller
             return abort(404);
          }
 
-         if(date('y-m-d',strtotime($data->created_at)) !== date('y-m-d'))
+         if(date('y-m-d',strtotime($data->created_at)) != date('y-m-d'))
          {
             return abort(404);
          }
