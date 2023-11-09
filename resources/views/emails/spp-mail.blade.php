@@ -41,9 +41,16 @@
         }
 
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Muli:300,400,700" rel="stylesheet" type="text/css" />
+
     <style type="text/css">
-        @import url(https://fonts.googleapis.com/css?family=Muli:300,400,700);
+
+        @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;700;900&family=Roboto:wght@300;400;700&display=swap');
+
+        @import url('https://fonts.googleapis.com/css?family=Muli:300,400,700');
 
     </style>
     <!--<![endif]-->
@@ -146,18 +153,6 @@
                                                     <table border="0" cellpadding="0" cellspacing="0"
                                                         role="presentation" style="vertical-align:top;" width="100%">
                                                         <tbody>
-                                                            <tr>
-                                                                <td align="left"
-                                                                    style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                                                    <div
-                                                                        style="font-family:Muli, Arial, sans-serif;font-size:20px;font-weight:400;line-height:30px;text-align:left;color:#333333;">
-                                                                        <h1
-                                                                            style="margin: 0; font-size: 24px; line-height: normal; font-weight: bold;">
-                                                                            Tagihan SPP</h1>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-
                                                             @if($mailData['past_due'])
                                                             <tr>
                                                                 <td style="width:100%;" align="center">
@@ -168,6 +163,19 @@
                                                                 </td>
                                                             </tr>
                                                             @endif
+
+                                                            <tr>
+                                                                <td align="left"
+                                                                    style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                                    <div
+                                                                        style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:20px;font-weight:400;line-height:30px;text-align:left;color:#333333;">
+                                                                        <h1
+                                                                            style="margin: 0; font-size: 24px; line-height: normal; font-weight: 700;">
+                                                                            Tagihan {{$mailData['bill'][0]->type}}</h1>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+
                                                             <tr>
                                                                 <td
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">
@@ -191,7 +199,7 @@
 
                                                                 @if ($mailData['past_due'] === 'reminder')
                                                                 <div
-                                                                style="font-family:Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
+                                                                style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
                                                                     <p style="margin: 0;">
                                                                        {{'Hai, tagihan '.$mailData['bill'][0]->subject.' untuk ' .
                                                                         $mailData['student']->name . ' kurang '. str_replace('H-', '', $mailData['past_due']). ' hari lagi akan jatuh tempo. Mohon selesaikan pembayaran
@@ -199,19 +207,25 @@
                                                                     </p>
 
                                                                 </div>
-                                                                @else
+                                                                @elseif ($mailData['past_due'])
                                                                     <div
-                                                                        style="font-family:Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
+                                                                        style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
                                                                         <p style="margin: 0;">
-                                                                            {{ $mailData['past_due'] ? 
-                                                                            'Hai, tagihan anda untuk '. $mailData['student']->name . ' sudah lewat jatuh tempo, Mohon segera lunasi tagihan Anda.' :
-                                                                            'Hai, tagihan SPP untuk ' .
+                                                                            {{ 
+                                                                            'Hai, tagihan anda untuk '. $mailData['student']->name . ' sudah lewat jatuh tempo, Mohon segera lunasi tagihan Anda.' }}
+                                                                    </div>
+                                                                    @else
+                                                                    <div
+                                                                        style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
+                                                                        <p style="margin: 0;">
+                                                                            {{ 
+                                                                            'Hai, tagihan '.$mailData['bill'][0]->type.' untuk ' .
                                                                             $mailData['student']->name . ' pada ' .
                                                                             $dateString . ' telah
                                                                             berhasil dibuat. Mohon selesaikan pembayaran
                                                                             untuk tagihan Anda.' }}</p>
-
                                                                     </div>
+
                                                                 @endif
 
 
@@ -245,7 +259,7 @@
                                                                 <td style="vertical-align:top;padding:10px 25px;">
                                                                     <table border="0" cellpadding="0" cellspacing="0"
                                                                         role="presentation"
-                                                                        style="background-color:#f6f6f6;" width="100%">
+                                                                        style="background-color:#f6f6f6;margin-top:15px;margin-bottom:15px;" width="100%">
                                                                         <tbody>
                                                                             <tr>
                                                                                 <td align="left" class="receipt-table"
@@ -253,7 +267,7 @@
                                                                                     <table cellpadding="0"
                                                                                         cellspacing="0" width="100%"
                                                                                         border="0"
-                                                                                        style="color:#333333;font-family:Muli, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;">
+                                                                                        style="color:#333333;font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;">
                                                                                         <tbody>
                                                                                             <tr>
                                                                                                 <th colspan="2"
@@ -300,7 +314,7 @@
                                                                                                 <td align="right"
                                                                                                     valign="top"
                                                                                                     style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
-                                                                                                    IDR.
+                                                                                                    Rp.
                                                                                                     {{number_format($amount - $item->charge, 0, ',', '.')}}
                                                                                                 </td>
                                                                                             </tr>
@@ -323,7 +337,7 @@
                                                                                                 <td align="right"
                                                                                                 valign="top"
                                                                                                 style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
-                                                                                                    IDR.
+                                                                                                    Rp.
                                                                                                     {{number_format($item->charge, 0, ',', '.')}}
                                                                                                 </td>
                                                                                             </tr>
@@ -341,7 +355,7 @@
                                                                                                 </td>
                                                                                                 <td align="right"
                                                                                                     style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal; font-weight: bold; padding: 20px 0 0;">
-                                                                                                    IDR. {{number_format($total, 0, ',', '.')}}
+                                                                                                    Rp. {{number_format($total, 0, ',', '.')}}
                                                                                                 </td>
                                                                                             </tr>
                                                                                         </tbody>
@@ -361,7 +375,72 @@
                                     </tbody>
                                 </table>
                             </div>
+                            {{-- end table invoice --}}
 
+                            <div style="margin-top:20px auto;max-width:600px;">
+                                <table align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+                                    <tbody>
+                                        <tr>
+                                            <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+                    
+                                                <div class="mj-column-per-100 mj-outlook-group-fix"
+                                                    style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                                                    <table border="0" cellpadding="0" cellspacing="0" role="presentation"
+                                                        style="vertical-align:top;" width="100%">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td align="center"
+                                                                    style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                                    <div
+                                                                       style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:17px;font-weight:400;line-height:20px;text-align:center;color:red;">
+                                                                        <b> {{ $mailData['past_due'] ? 'Invoice pembayaran sudah melewati jatuh tempo' : 'Invoice deadline pembayaran ' . date('d/m/Y', strtotime($mailData['bill'][0]->deadline_invoice))}}</b></div> <br><br>
+                                                                    
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                            @php
+                                                                $textWa = 'Saya sudah melakukan pembayaran '. $mailData['bill'][0]->type .' dengan nomer invoice %23'.$mailData['bill'][0]->id.' untuk '. $mailData['student']->name . ', dan beserta bukti transfer yang saya kirim melalui wa ini dengan nominal sebesar Rp. ' . number_format($mailData['bill'][0]->amount,0,',','.');
+                                                            @endphp
+                                                                <td align="center"
+                                                                    style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                                    <div
+                                                                       style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:15px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
+                                                                       Untuk melakukan pembayaran silahkan kirim ke rekening <span id="copy-text" style="color:#f08922;">12312312312</span> dengan nama rekening 
+                                                                       <span id="copy-text" style="color:#f08922;">Great Crystal School</span>. kirim dengan nominal yang sesuai kemudian kirim bukti pembayaran ke 
+                                                                       <a style="text-decoration:none;color:#f08922;" href="wa.me/+6281388284488?text={{str_replace(' ', '%20', $textWa)}}">+62 813 8828 4488</a></div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                    <td align="center"
+                                                                        style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                                        <div>
+                                                                           <a href="wa.me/+6281388284488?text={{str_replace(' ', '%20', $textWa)}}" style="
+                                                                            background-color: #ca6800;
+                                                                            border: none;
+                                                                            color: white;
+                                                                            border-radius:10px;
+                                                                            padding: 10px 20px;
+                                                                            text-align: center;
+                                                                            text-decoration: none;
+                                                                            display: inline-block;
+                                                                            font-family:Roboto,Mulish, Muli, Arial, sans-serif;
+                                                                            font-size: 15px;
+                                                                            font-weight: 300;
+                                                                            margin: 4px 2px;
+                                                                            cursor: pointer;
+                                                                            " >Kirim Bukti Transfer</a>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                    
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
                         </td>
                     </tr>
@@ -383,50 +462,12 @@
                                         <tr>
                                             <td align="center"
                                                 style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                                <div
-                                                   style="font-family:Muli, Arial, sans-serif;font-size:20px;font-weight:400;line-height:20px;text-align:center;color:red;">
-                                                    <b> {{ $mailData['past_due'] ? 'Invoice pembayaran sudah melewati jatuh tempo, dimohon untuk segera membayar tagihan' : 'Invoice deadline pembayaran ' . date('d/m/Y', strtotime($mailData['bill'][0]->deadline_invoice))}}</b></div> <br><br>
-                                                
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                        @php
-                                            $textWa = 'Saya sudah melakukan pembayaran '. $mailData['bill'][0]->type .' dengan nomer invoice %23'.$mailData['bill'][0]->id.' untuk '. $mailData['student']->name . ', dan beserta bukti transfer yang saya kirim melalui wa ini dengan nominal sebesar Rp. ' . number_format($mailData['bill'][0]->amount,0,',','.');
-                                        @endphp
-                                            <td align="center"
-                                                style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                                <div
-                                                   style="font-family:Muli, Arial, sans-serif;font-size:20px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
-                                                   Untuk melakukan pembayaran silahkan ke rekening <span id="copy-text" style="color:#f08922;">12312312312</span> dengan nama rekening 
-                                                   <span id="copy-text" style="color:#f08922;">Great Crystal School</span> dengan nominal yang sesuai lalu kirim bukti pembayaran ke 
-                                                   <a href="wa.me/+6281388284488?text={{str_replace(' ', '%20', $textWa)}}">+6281388284488</a></div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                                <td align="center"
-                                                    style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                                    <div>
-                                                       <a href="wa.me/+6281388284488?text={{str_replace(' ', '%20', $textWa)}}" style="
-                                                        background-color: #b55e00;
-                                                        border: none;
-                                                        color: white;
-                                                        padding: 10px 20px;
-                                                        text-align: center;
-                                                        text-decoration: none;
-                                                        display: inline-block;
-                                                        font-size: 15px;
-                                                        font-weight: 300;
-                                                        margin: 4px 2px;
-                                                        cursor: pointer;
-                                                        " >Kirim Bukti Transfer</a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        <tr>
-                                            <td align="center"
-                                                style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                        
+                                                <img align="center" border="0" src="https://iili.io/JBnPNVa.png" alt="Logo" title="Logo" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 134px;" width="134"/>
+                                                        
+
                                                 <div         
-                                                    style="font-family:Muli, Arial, sans-serif;font-size:14px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
+                                                    style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:14px;font-weight:400;line-height:20px;text-align:center;color:#616161;margin-top:15px;">
                                                     © {{date('Y');}} [Great Crystal], JL. RAYA DARMO PERMAI III, PUNCAK
                                                     PERMAI SQUARE SURABAYA, INDONESIA</div>
                                             </td>

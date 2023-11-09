@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DemoMail;
 use App\Mail\FeeRegisMail;
+use App\Mail\PaymentSuccessMail;
 use App\Mail\SppMail;
 use App\Models\Bill;
 use App\Models\Book;
@@ -61,6 +62,67 @@ class MailController extends Controller
          return dd($err);
       }
         
+    }
+
+    public function cobaTemplate($type='SPP')
+    {
+      try {
+         date_default_timezone_set('Asia/Jakarta');
+
+         // Carbon::now()->setTimezone('Asia/Jakarta')->subDays(1)->format('Y-m-d H:i:s');
+
+         $students = Student::with([
+            'bill' => function($query) use ($type) {
+               $query
+               ->where('type', $type)
+               ->where('paid_date', '>', Carbon::now()->setTimezone('Asia/Jakarta')->subDays(1)->format('Y-m-d H:i:s'))
+               ->where('paidOf', true)
+               ->get();
+         },
+            'relationship'
+         ])
+         ->whereHas('bill', function($query) use ($type) {
+               $query
+               ->where('type', $type)
+               ->where('paid_date', '>', Carbon::now()->setTimezone('Asia/Jakarta')->subDays(1)->format('Y-m-d H:i:s'))
+               ->where('paidOf', true);
+         })->get();
+
+         foreach ($students as $student) {
+
+            foreach ($student->bill as $bill) {
+               # code...
+               $mailData = [
+                  'student' => $student,
+                  'bill' => [$bill],
+                  'past_due' => true,
+               ];
+               
+               $pdfBill = Bill::with(['student' => function ($query) {
+                  $query->with('grade');
+               }, 'bill_collection', 'bill_installments'])
+               ->where('id', $bill->id)
+               ->first();
+               
+                $pdf = app('dompdf.wrapper');
+                $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
+
+                foreach ($student->relationship as $relationship) {
+                  $mailData['name'] = $relationship->name;
+                  // return view('emails.payment-success')->with('mailData', $mailData);
+                  
+                  Mail::to($relationship->email)->send(new PaymentSuccessMail($mailData, "Payment " . $type . " has confirmed!", $pdf));
+               }
+            }
+
+            
+         }
+
+         
+     } catch (Exception $err) {
+        info("Cron Job reminder Error at: " . $err);
+        return dd($err);
+     }
     }
 
     public function cronCreateSpp()
@@ -133,6 +195,18 @@ class MailController extends Controller
    {
       try {
          date_default_timezone_set('Asia/Jakarta');
+
+
+         $billCharge = Bill::where('paidOf', false)->where('deadline_invoice', '<', date('Y-m-d'))->where('type', $type)->get(['id', 'amount', 'charge', 'installment', 'amount_installment']);
+
+         foreach ($billCharge as $bill) {
+            # code...
+            Bill::where('id', $bill->id)->update([
+               'amount'=> $bill->amount+ 100_000,
+               'charge'=> $bill->charge+ 100_000,
+               'amount_installment' => $bill->installment? $bill->amount_installment + 100_000 : $bill->amount_installment,
+            ]);
+         }
          
          $data = Student::with(['bill' => function($query) use ($type){
             $query
@@ -145,7 +219,7 @@ class MailController extends Controller
             ->where('type', $type)
             ->where('paidOf', false)
             ->where('deadline_invoice', '<', date('Y-m-d'));
-         })->where('is_active', true)->get(['id']);
+         })->get();
              
          // return $data;
 
@@ -180,8 +254,8 @@ class MailController extends Controller
          info("Cron Job reminder success at ". date('d-m-Y'));
          
      } catch (Exception $err) {
-
-         info("Cron Job reminder Error at: " . $err);
+        info("Cron Job reminder Error at: " . $err);
+        return dd($err);
      }
    }
 
