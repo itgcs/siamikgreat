@@ -16,6 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('bill_id');
             $table->foreign('bill_id')->on('bills')->references('id')->cascadeOnDelete()->cascadeOnUpdate();
             $table->boolean('status')->default(true);
+            $table->boolean('past_due')->default(false);
+            $table->boolean('charge')->default(false);
             $table->timestamps();
         });
     }

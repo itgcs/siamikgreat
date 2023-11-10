@@ -107,10 +107,12 @@ class MailController extends Controller
                
                 $pdf = app('dompdf.wrapper');
                 $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
-
+               
                 foreach ($student->relationship as $relationship) {
                   $mailData['name'] = $relationship->name;
-                  // return view('emails.payment-success')->with('mailData', $mailData);
+                  return view('emails.payment-success')->with('mailData', $mailData);
+
+                  
                   
                   Mail::to($relationship->email)->send(new PaymentSuccessMail($mailData, "Payment " . $type . " has confirmed!", $pdf));
                }
@@ -169,7 +171,7 @@ class MailController extends Controller
          
          DB::commit();
          
-         foreach($billCreated as $mailData) {
+         foreach($billCreated as $idx => $mailData) {
 
                $pdfBill = Bill::with(['student' => function ($query) {
                   $query->with('grade');
@@ -181,17 +183,17 @@ class MailController extends Controller
                 $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');         
                
             try {
-
-               foreach($student->relationship as $el)
+               foreach($data[$idx]->relationship as $el)
                {
                      //code...
                      $mailData['name'] = $el->name;
-                     Mail::to($el->email)->send(new SppMail($mailData, "Tagihan SPP " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf));
+                     Mail::to($el->email)->send(new SppMail($mailData, "Tagihan SPP " . $data[$idx]->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf));
                
                }
-                  statusInvoiceMail::create([
+               statusInvoiceMail::create([
                      'bill_id' => $pdfBill->id,
                   ]);
+
             } catch (Exception) {
                      
                statusInvoiceMail::create([
@@ -211,6 +213,56 @@ class MailController extends Controller
    }
 
 
+   public function createNotificationFeeRegister()
+   {
+      try {
+         //sementara gabisa kirim email push array dulu
+
+         $arr = [];
+
+         $data = Student::with([
+            'bill' => function($query)  {
+               $query
+               ->where('type', "Capital Fee")
+               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'))
+               ->where('paidOf', false)
+               ->get();
+         },
+            'relationship'
+         ])
+         ->whereHas('bill', function($query) {
+               $query
+               ->where('type', "Capital Fee")
+               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'))
+               ->where('paidOf', false);
+         })
+         ->where('is_active', true)
+         ->get();
+
+
+         foreach ($data as $student) {
+            
+            foreach($student->relationship as $parent)
+            {
+               //ini besok ganti dengan cara mengirim email ke parents
+               
+               array_push($arr, $parent->email);
+            }
+         }
+
+
+
+         // return $arr;
+
+         info('Cron reminder h-30 (notifications create bill)');
+
+      } catch (Exception $err) {
+         
+         return dd($err);
+      }
+   }
+
+
    public function cronChargePastDue($type = "SPP")
    {
       try {
@@ -222,12 +274,93 @@ class MailController extends Controller
          foreach ($billCharge as $bill) {
             # code...
             Bill::where('id', $bill->id)->update([
-               'amount'=> $bill->amount+ 100_000,
-               'charge'=> $bill->charge+ 100_000,
+               'amount'=> $bill->amount + 100_000,
+               'charge'=> $bill->charge + 100_000,
                'amount_installment' => $bill->installment? $bill->amount_installment + 100_000 : $bill->amount_installment,
             ]);
          }
          
+         $data = Student::with(['bill' => function($query) use ($type){
+            $query
+            ->where('type', $type)
+            ->where('deadline_invoice', '<', date('Y-m-d'))
+            ->where('paidOf', false)
+            ->get();
+         }, 'relationship'])->whereHas('bill', function($query) use ($type) {
+            $query
+            ->where('type', $type)
+            ->where('paidOf', false)
+            ->where('deadline_invoice', '<', date('Y-m-d'));
+         })->get();
+             
+         // return $data;
+
+         foreach ($data as $student) {
+
+            foreach ($student->bill as $bill) {
+               # code...
+               $mailData = [
+                  'student' => $student,
+                  'bill' => [$bill],
+                  'past_due' => true,
+               ];
+
+               $pdfBill = Bill::with(['student' => function ($query) {
+                  $query->with('grade');
+               }, 'bill_installments'])
+               ->where('id', $bill->id)
+               ->first();
+                
+               $pdf = app('dompdf.wrapper');
+               $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
+               $pdfReport = null;
+               
+               if($pdfBill->installment)
+               {
+                  $pdfReport = app('dompdf.wrapper');
+                  $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
+               }
+
+               try {
+                  //code...
+                  foreach ($student->relationship as $relationship) {
+                     
+                     Mail::to($relationship->email)->send(new SppMail($mailData, "Charge " . $type . " tagihan anda yang sudah jatuh tempo", $pdf, $pdfReport));
+                  }
+
+                  statusInvoiceMail::create([
+                     'bill_id' => $bill->id,
+                     'charge' => true,
+                     'past_due' => true,
+                  ]);
+
+               } catch (Exception) {
+
+                  statusInvoiceMail::create([
+                     'bill_id' => $bill->id,
+                     'status' => false,
+                     'charge' => true,
+                     'past_due' => true,
+                  ]);
+               }
+            }
+
+            
+         }
+         info("Cron Job charge success at ". date('d-m-Y'));
+         
+     } catch (Exception $err) {
+        info("Cron Job reminder Error at: " . $err);
+        return dd($err);
+     }
+   }
+
+
+
+   public function  cronReminder($type = "SPP")
+   {
+      try {
+         //code...
          $data = Student::with(['bill' => function($query) use ($type){
             $query
             ->where('type', $type)
@@ -262,70 +395,36 @@ class MailController extends Controller
                 $pdf = app('dompdf.wrapper');
                 $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
 
-               foreach ($student->relationship as $relationship) {
-   
-                  
-                  Mail::to($relationship->email)->send(new SppMail($mailData, "Charge " . $type . " tagihan anda yang sudah jatuh tempo", $pdf));
+
+               try {
+                  //code...
+                  foreach ($student->relationship as $relationship) {
+                     
+                     Mail::to($relationship->email)->send(new SppMail($mailData, "Charge " . $type . " tagihan anda yang sudah jatuh tempo", $pdf));
+                  }
+
+                  statusInvoiceMail::create([
+                     'bill_id' => $bill->id,
+                     'charge' => false,
+                     'past_due' => true,
+                  ]);
+
+               } catch (Exception) {
+
+
+                  statusInvoiceMail::create([
+                     'bill_id' => $bill->id,
+                     'status' => false,
+                     'charge' => false,
+                     'past_due' => true,
+                  ]);
                }
             }
 
             
          }
          info("Cron Job reminder success at ". date('d-m-Y'));
-         
-     } catch (Exception $err) {
-        info("Cron Job reminder Error at: " . $err);
-        return dd($err);
-     }
-   }
 
-
-   public function  cronReminderMinusSevenDay($type = "SPP")
-   {
-      try {
-         //code...
-         $data = Student::with([
-            'bill' => function($query) use ($type) {
-               $query
-               ->where('type', $type)
-               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(7)->format('y-m-d'))
-               ->where('paidOf', false)
-               ->get();
-         },
-            'relationship'
-         ])
-         ->whereHas('bill', function($query) use ($type) {
-               $query
-               ->where('type', $type)
-               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(7)->format('y-m-d'))
-               ->where('paidOf', false);
-         })
-         ->where('is_active', true)->get();
-
-      
-         foreach ($data as  $student)
-         {
-            $mailData = [
-               'student' => $student,
-               'bill' => $student->bill,
-               'past_due' => 'H-7',
-            ];
-
-            foreach($student->relationship as $parent)
-            {
-
-               if($type === 'SPP') {
-
-                  // Mail::to($parent->email)->send(new SppMail($mailData, 'Reminder h-7 pembayaran '. strtolower($student->bill[0]->subject) .' sebelum jatuh tempo'));
-               } else if ($type === 'Capital Fee'){
-                  Mail::to($parent->email)->send(new FeeRegisMail($mailData, 'Reminder h-7 pembayaran '. strtolower($student->bill[0]->subject) .' sebelum jatuh tempo'));
-               }
-            }
-         }
-
-         Info("Cron Job reminder H-7 success at ". date('d-m-Y'));
-         
-         return 'success';
       } catch (Exception $err) {
          Info("Cron Job reminder H-7 error: ". $err);
          
@@ -475,54 +574,58 @@ class MailController extends Controller
       }
    }
 
-
-
-   public function createNotificationFeeRegister()
+   public function notificationPaidSuccess($type='SPP')
    {
       try {
-         //sementara gabisa kirim email push array dulu
-
-         $arr = [];
-
-         $data = Student::with([
-            'bill' => function($query)  {
+         //code...
+         $students = Student::with([
+            'bill' => function($query) use ($type) {
                $query
-               ->where('type', "Capital Fee")
-               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'))
-               ->where('paidOf', false)
+               ->where('type', $type)
+               ->where('paid_date', '>', Carbon::now()->setTimezone('Asia/Jakarta')->subDays(1)->format('Y-m-d H:i:s'))
+               ->where('paidOf', true)
                ->get();
          },
             'relationship'
          ])
-         ->whereHas('bill', function($query) {
+         ->whereHas('bill', function($query) use ($type) {
                $query
-               ->where('type', "Capital Fee")
-               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'))
-               ->where('paidOf', false);
-         })
-         ->where('is_active', true)
-         ->get();
+               ->where('type', $type)
+               ->where('paid_date', '>', Carbon::now()->setTimezone('Asia/Jakarta')->subDays(1)->format('Y-m-d H:i:s'))
+               ->where('paidOf', true);
+         })->get();
 
+         foreach ($students as $student) {
 
-         foreach ($data as $student) {
-            
-            foreach($student->relationship as $parent)
-            {
-               //ini besok ganti dengan cara mengirim email ke parents
+            foreach ($student->bill as $bill) {
+               # code...
+               $mailData = [
+                  'student' => $student,
+                  'bill' => [$bill],
+                  'past_due' => true,
+               ];
                
-               array_push($arr, $parent->email);
+               $pdfBill = Bill::with(['student' => function ($query) {
+                  $query->with('grade');
+               }, 'bill_collection', 'bill_installments'])
+               ->where('id', $bill->id)
+               ->first();
+               
+                $pdf = app('dompdf.wrapper');
+                $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
+
+                foreach ($student->relationship as $relationship) {
+                  $mailData['name'] = $relationship->name;
+                  // return view('emails.payment-success')->with('mailData', $mailData);
+                  
+                  Mail::to($relationship->email)->send(new PaymentSuccessMail($mailData, "Payment " . $type . " has confirmed!", $pdf));
+               }
             }
-         }
-
-
-
-         // return $arr;
-
-         info('Cron reminder h-30 (notifications create bill)');
-
+         } 
+         
       } catch (Exception $err) {
          
-         return dd($err);
+         info('Cron job send notification payment success error at ' . $err);
       }
    }
 }

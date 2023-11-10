@@ -244,12 +244,6 @@
                            <td align="left" class="p-1">
                               Rp. {{number_format($el->amount, 0, ',', '.')}}
                            </td>
-                           <td align="left" class="p-1" style="width:65%;">
-                              Charge :
-                           </td>
-                           <td align="left" class="p-1">
-                              Rp. {{number_format($el->charge, 0, ',', '.')}}
-                           </td>
                            
                         </tr>
                         
@@ -307,7 +301,7 @@
 
                         </tr>
                      @endif
-                     @if ($data->charge)
+                     @if ($data->charge > 0)
 
                         <tr>
                            <td align="left" class="p-1" style="width:65%;">

@@ -251,7 +251,7 @@
         
         <table class="detail table_detail">
             <thead class="detail header_table">
-                <th class="detail" align="left">Description</th>
+                <th class="detail" align="left">{{$data->type == 'Book' ? 'Book' : 'Description'}}</th>
                 <th class="detail" align="left">Price</th>
             </thead>
             
@@ -262,7 +262,7 @@
                 
                     <tr class="detail body_table">
 
-                        <td class="detail"><strong>{{$el->name}} book</strong></td>
+                        <td class="detail"><strong>{{$el->name}}</strong></td>
                         <td class="detail">Rp. {{number_format($el->amount, 0, ',', '.')}}</td>
                     </tr>
 
