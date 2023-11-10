@@ -11,6 +11,7 @@ use App\Mail\PaymentSuccessMail;
 use App\Mail\SppMail;
 use App\Models\Bill;
 use App\Models\Book;
+use App\Models\statusInvoiceMail;
 use App\Models\Student;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -132,6 +133,8 @@ class MailController extends Controller
       try {
          //code...
          date_default_timezone_set('Asia/Jakarta');
+
+         $billCreated = [];
          
          $data = Student::with(['relationship', 'spp_student' => function($query) {
             $query->where('type', 'SPP')->get();
@@ -155,33 +158,50 @@ class MailController extends Controller
                'installment' => 0,
             ]);
             
-            $mailData = [
+            $mailDatas = [
                'student' => $student,
                'bill' => [$createBill],
                'past_due' => false,
             ];
 
-            $pdfBill = Bill::with(['student' => function ($query) {
-               $query->with('grade');
-            }, 'bill_collection', 'bill_installments'])
-            ->where('id', $createBill->id)
-            ->first();
-            
-             $nameFormatPdf = Carbon::now()->format('YmdHis') . mt_rand(1000, 9999).'_'.date('d-m-Y').'_'.$pdfBill->type.'_'.$pdfBill->student->name.'.pdf';
-             
-             $pdf = app('dompdf.wrapper');
-             $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
-            
-            
-            
-            foreach($student->relationship as $el)
-            {
-               Mail::to($el->email)->send(new SppMail($mailData, "Tagihan SPP " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf));
-            }
-            
+            array_push($billCreated, $mailDatas);          
          }
-         info("Cron Job create spp success at ". date('d-m-Y'));
+         
          DB::commit();
+         
+         foreach($billCreated as $mailData) {
+
+               $pdfBill = Bill::with(['student' => function ($query) {
+                  $query->with('grade');
+               }, 'bill_collection', 'bill_installments'])
+               ->where('id', $mailData['bill'][0]->id)
+               ->first();
+                
+                $pdf = app('dompdf.wrapper');
+                $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');         
+               
+            try {
+
+               foreach($student->relationship as $el)
+               {
+                     //code...
+                     $mailData['name'] = $el->name;
+                     Mail::to($el->email)->send(new SppMail($mailData, "Tagihan SPP " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf));
+               
+               }
+                  statusInvoiceMail::create([
+                     'bill_id' => $pdfBill->id,
+                  ]);
+            } catch (Exception) {
+                     
+               statusInvoiceMail::create([
+                  'bill_id' => $pdfBill->id,
+                  'status' => false,
+               ]);
+            }
+         }
+
+         info("Cron Job create spp success at ". date('d-m-Y'));
       } catch (Exception $err) {
          //throw $th;
          DB::rollBack();

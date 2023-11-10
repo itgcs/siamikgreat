@@ -43,4 +43,9 @@ class Bill extends Model
    {
       return $this->belongsToMany(Bill::class, 'installment_pakets', 'main_id', 'child_id');
    }
+
+   public function bill_status()
+   {
+      return $this->hasMany(statusInvoiceMail::class, 'bill_id');
+   }
 }
