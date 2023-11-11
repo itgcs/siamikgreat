@@ -553,8 +553,6 @@ class MailController extends Controller
                ->where('paidOf', false);
          })
          ->get();
-
-         
          
          foreach ($data as $student) {
             
@@ -615,7 +613,7 @@ class MailController extends Controller
 
    public function createNotificationUniform()
    {
-
+      
    }
 
    public function cronCreatePaketAfterGraduate($array =  [])
