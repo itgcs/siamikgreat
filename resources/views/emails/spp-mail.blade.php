@@ -399,7 +399,7 @@
                                                             </tr>
                                                             <tr>
                                                             @php
-                                                                $textWa = 'Saya sudah melakukan pembayaran '. $mailData['bill'][0]->type .' dengan nomer invoice %23'.$mailData['bill'][0]->id.' untuk '. $mailData['student']->name . ', dan beserta bukti transfer yang saya kirim melalui wa ini dengan nominal sebesar Rp. ' . number_format($mailData['bill'][0]->amount,0,',','.');
+                                                                $textWa = 'Saya sudah melakukan pembayaran '. $mailData['bill'][0]->type .' dengan nomer invoice %23'.$mailData['bill'][0]->id.' untuk '. $mailData['student']->name . ', dan beserta bukti transfer yang saya kirim melalui wa ini dengan nominal sebesar Rp. ' . number_format($total,0,',','.');
                                                             @endphp
                                                                 <td align="center"
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">

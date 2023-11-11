@@ -5,6 +5,7 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -15,14 +16,18 @@ class FeeRegisMail extends Mailable
 
     public $mailData;
     public $subject;
+    public $pdf;
+    public $pdfReport;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($mailData, $subject)
+    public function __construct($mailData, $subject, $pdf, $pdfReport=null)
     {
         $this->mailData = $mailData;
         $this->subject = $subject;
+        $this->pdf = $pdf;
+        $this->pdfReport = $pdfReport;
     }
 
     /**
@@ -52,6 +57,18 @@ class FeeRegisMail extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        $file = [
+            Attachment::fromData(fn () => $this->pdf->output(), 'SPP '.date('F Y', strtotime($this->mailData['bill'][0]->created_at)). ' ' . $this->mailData['student']->name)
+            ->withMime('application/pdf'),
+        ];
+
+        if($this->pdfReport)
+        {
+            array_push($file, 
+            Attachment::fromData(fn () => $this->pdfReport->output(), 'Report '. $this->mailData['bill'][0]->type. ' ' .date('F Y'). ' ' . $this->mailData['student']->name)
+            ->withMime('application/pdf'));
+        }
+
+        return $file;
     }
 }

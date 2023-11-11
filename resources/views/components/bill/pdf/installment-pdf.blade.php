@@ -234,7 +234,7 @@
         
         <table class="detail table_detail">
             <thead class="detail header_table">
-                <th class="detail" align="left">Description</th>
+                <th class="detail" align="left">Installment</th>
                 <th class="detail" align="left">Due date</th>
                 <th class="detail" align="left">Status</th>
                 <th class="detail" align="left">Price</th>
@@ -248,7 +248,7 @@
                @foreach ($data->bill_installments as $item)
 
                <tr class="detail body_table">
-                  <td class="detail" align="left"><strong> {{$item->type}} installment ({{$item->subject}}) </strong></td>
+                  <td class="detail" align="left"><strong> {{$item->type}} ({{$item->subject}}) </strong></td>
                   <td class="detail" align="left">{{date('d/m/Y', strtotime($item->deadline_invoice))}}</td>
                   <td class="detail" align="left">
 

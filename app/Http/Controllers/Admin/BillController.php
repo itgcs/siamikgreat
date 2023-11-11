@@ -728,7 +728,7 @@ class BillController extends Controller
             if($i == $request->installment)
             {
                $currentDate = $bill->deadline_invoice;
-               $newDate = date('Y-m-d', strtotime('+'.($i-1).' month', strtotime($currentDate)));
+               $newDate = date('Y-m-10', strtotime('+'.($i-1).' month', strtotime($currentDate)));
                
                $bill_child = Bill::create([
                   'student_id' => $bill->student_id,
@@ -748,7 +748,7 @@ class BillController extends Controller
                
                
                $currentDate = $bill->deadline_invoice;
-               $newDate = date('Y-m-d', strtotime('+'.($i-1).' month', strtotime($currentDate)));
+               $newDate = date('Y-m-10', strtotime('+'.($i-1).' month', strtotime($currentDate)));
                
                $bill_child = Bill::create([
                   'student_id' => $bill->student_id,

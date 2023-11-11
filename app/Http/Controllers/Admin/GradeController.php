@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\MailController;
 use App\Models\Bill;
+use App\Models\Book;
 use App\Models\Book_student;
 use App\Models\Grade;
 use App\Models\Payment_grade;
@@ -317,13 +318,10 @@ class GradeController extends Controller
          }
 
 
+         $this->billPaketGraduate($promoteId);
 
 
          DB::commit();
-
-         //lakukan kirim email
-         $promotePaket = new MailController();  
-         $promotePaket->cronCreatePaketAfterGraduate($promoteId);
 
          return redirect('/admin/grades/');
 
@@ -355,6 +353,70 @@ class GradeController extends Controller
       } catch (Exception $err) {
          
          return dd($err);
+      }
+   }
+
+
+
+   public function billPaketGraduate($array)
+   {
+      DB::beginTransaction();
+      try {
+         //code...
+
+         foreach($array as $studentId)
+         {
+
+            $student = Student::with(['relationship', 'grade' => function($query) {
+               $query->with(['bundle' => function($query) {
+                  $query->where('type', 'Paket')->get();
+               }, 'uniform' => function($query) {
+                  $query->where('type', 'Uniform')->get();
+               }]);
+            }])
+            ->where('id', (int)$studentId)
+            ->where('is_active', true)
+            ->first();
+
+            //lakukan validasi ketika admin lupa memasukkan static payment paket disini;
+            
+            
+            
+            $amount = $student->grade->bundle? $student->grade->bundle->amount : null;
+            $uniformAmount = $student->grade->uniform? $student->grade->uniform->amount : 0; 
+
+            if(!$amount)
+            {
+               $bookAmount = Book::where('grade_id', (int)$student->grade_id)->get();
+               $amountTotal = sizeof($bookAmount) > 0 ? $bookAmount->sum('amount') : 0;
+               $amount = $uniformAmount + $amountTotal;
+            }
+            
+            Bill::create([
+               'student_id' => $student->id,
+               'type' => 'Paket',
+               'subject' => 'Paket '. $student->grade->name. ' ' .$student->grade->class,
+               'amount' => $amount,
+               'discount' => null,
+               'installment' => null,
+               'paidOf' => false,
+               'deadline_invoice' => Carbon::now()->setTimezone('Asia/Jakarta')->addMonth()->format('Y-m-10'),
+            ]);
+
+         }
+
+
+         DB::commit();
+         
+         return (object) [
+            'status' => true,
+         ];
+         
+      } catch (Exception $err) {
+         DB::rollBack();
+         return (object) [
+            'status' => false,
+         ];
       }
    }
 }

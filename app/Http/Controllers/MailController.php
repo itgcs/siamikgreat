@@ -55,7 +55,7 @@ class MailController extends Controller
             'past_due' => false
         ];
 
-        Mail::to('tkeluarga111@gmail.com')->send(new FeeRegisMail($mailData, 'Berikut pembayaran Capital Fee cicilan ke 1 untuk' .$student->name));
+      //   Mail::to('tkeluarga111@gmail.com')->send(new FeeRegisMail($mailData, 'Berikut pembayaran Capital Fee cicilan ke 1 untuk' .$student->name));
            
         return dd("Email is sent successfully.");
       } catch (Exception $err) {
@@ -224,7 +224,7 @@ class MailController extends Controller
             'bill' => function($query)  {
                $query
                ->where('type', "Capital Fee")
-               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'))
+               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(9)->format('y-m-d'))
                ->where('paidOf', false)
                ->get();
          },
@@ -233,20 +233,65 @@ class MailController extends Controller
          ->whereHas('bill', function($query) {
                $query
                ->where('type', "Capital Fee")
-               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'))
+               ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(9)->format('y-m-d'))
                ->where('paidOf', false);
          })
-         ->where('is_active', true)
          ->get();
 
-
+         
          foreach ($data as $student) {
             
-            foreach($student->relationship as $parent)
-            {
-               //ini besok ganti dengan cara mengirim email ke parents
+            foreach ($student->bill as $createBill) {
                
-               array_push($arr, $parent->email);
+               // return 'nyampe';
+               $mailData = [
+                  'student' => $student,
+                  'bill' => [$createBill],
+                  'past_due' => false,
+               ];
+
+
+               $pdfBill = Bill::with(['student' => function ($query) {
+                  $query->with('grade');
+               }, 'bill_installments'])
+               ->where('id', $createBill->id)
+               ->first();
+
+                
+                $pdf = app('dompdf.wrapper');
+                $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
+
+                $pdfReport = null;
+
+               if($createBill->installment){
+                  
+                  $pdfReport = app('dompdf.wrapper');
+                  $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
+               }
+
+               try {
+
+                  foreach($student->relationship as $parent)
+               {
+                  $mailData['name'] = $parent->name;
+                  // return view('emails.fee-regis-mail')->with('mailData', $mailData);
+                  Mail::to($parent->email)->send(new FeeRegisMail($mailData, "Tagihan Capital Fee " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf, $pdfReport));
+                  
+               }
+
+               statusInvoiceMail::create([
+                  'status' =>true,
+                  'bill_id' => $createBill->id,
+               ]);
+
+               } catch (Exception $err) {
+
+                  statusInvoiceMail::create([
+                  'status' =>false,
+                  'bill_id' => $createBill->id,
+                  ]);
+               }
+               
             }
          }
 
@@ -514,9 +559,12 @@ class MailController extends Controller
 
          
          // return $students;
+         $idx = 0;
 
          foreach($array as $studentId)
          {
+
+            $idx++;
 
             $student = Student::with(['relationship', 'grade' => function($query) {
                $query->with(['bundle' => function($query) {
@@ -542,7 +590,7 @@ class MailController extends Controller
                $amount = $uniformAmount + $amountTotal;
             }
             
-            $bill = Bill::create([
+            Bill::create([
                'student_id' => $student->id,
                'type' => 'Paket',
                'subject' => 'Paket '. $student->grade->name. ' ' .$student->grade->class,
@@ -550,16 +598,9 @@ class MailController extends Controller
                'discount' => null,
                'installment' => null,
                'paidOf' => false,
-               'deadline_invoice' => Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'),
+               'deadline_invoice' => Carbon::now()->setTimezone('Asia/Jakarta')->addMonths($idx)->format('Y-m-10'),
             ]);
 
-
-            $mailData = [
-               'student' => $student,
-               'bill' => $bill,
-            ];
-
-            // setelah ini harus handle kirim email
          }
 
 
@@ -582,7 +623,7 @@ class MailController extends Controller
             'bill' => function($query) use ($type) {
                $query
                ->where('type', $type)
-               ->where('paid_date', '>', Carbon::now()->setTimezone('Asia/Jakarta')->subDays(1)->format('Y-m-d H:i:s'))
+               ->where('paid_date', '>= ', Carbon::now()->setTimezone('Asia/Jakarta')->subDays(1)->format('Y-m-d H:i:s'))
                ->where('paidOf', true)
                ->get();
          },
@@ -591,7 +632,7 @@ class MailController extends Controller
          ->whereHas('bill', function($query) use ($type) {
                $query
                ->where('type', $type)
-               ->where('paid_date', '>', Carbon::now()->setTimezone('Asia/Jakarta')->subDays(1)->format('Y-m-d H:i:s'))
+               ->where('paid_date', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDays(1)->format('Y-m-d H:i:s'))
                ->where('paidOf', true);
          })->get();
 

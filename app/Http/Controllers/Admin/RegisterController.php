@@ -273,7 +273,7 @@ class RegisterController extends Controller
 
          $currentDate = date('Y-m-d');
 
-         $newDate = date('Y-m-d', strtotime('+1 month', strtotime($currentDate)));
+         $newDate = date('Y-m-10', strtotime('+1 month', strtotime($currentDate)));
 
          Bill::create([
             'student_id' => $student->id,
@@ -475,11 +475,11 @@ class RegisterController extends Controller
 
          
          $main_id = [];
-         $currentDate = date('Y-m-d');
+         // $currentDate = date('Y-m-d');
          
          for($i=1; $i<=$installment; $i++){
 
-            $newDate = date('Y-m-d', strtotime('+'.$i.' month', strtotime($currentDate)));
+            $newDate = Carbon::now()->setTimezone('Asia/Jakarta')->addMonths($i)->format('Y-m-10');
             $subject = $installment <= 1? 'Capital Fee' : $i;
 
             if($i == $installment) {
@@ -498,7 +498,11 @@ class RegisterController extends Controller
                   'subject' => $subject, 
                ]);   
 
-               array_push($main_id, $bill->id);
+               if($i>1)
+               {
+                  array_push($main_id, $bill->id);
+               }
+
                continue;
             } 
 
