@@ -2,7 +2,7 @@
   
 namespace App\Http\Controllers;
 
-use App\Mail\BookEmail;
+use App\Mail\BookMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DemoMail;
@@ -55,7 +55,7 @@ class MailController extends Controller
             'past_due' => false
         ];
 
-      //   Mail::to('tkeluarga111@gmail.com')->send(new FeeRegisMail($mailData, 'Berikut pembayaran Capital Fee cicilan ke 1 untuk' .$student->name));
+     
            
         return dd("Email is sent successfully.");
       } catch (Exception $err) {
@@ -538,6 +538,7 @@ class MailController extends Controller
          $data = Student::with([
             'bill' => function($query)  {
                $query
+               ->with('bill_collection')
                ->where('type', "Book")
                ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                ->where('paidOf', false)
@@ -553,14 +554,12 @@ class MailController extends Controller
          })
          ->get();
 
-         // return $data;
-
+         
          
          foreach ($data as $student) {
             
             foreach ($student->bill as $createBill) {
                
-               // return 'nyampe';
                $mailData = [
                   'student' => $student,
                   'bill' => $createBill,
@@ -570,7 +569,7 @@ class MailController extends Controller
 
                $pdfBill = Bill::with(['student' => function ($query) {
                   $query->with('grade');
-               }, 'bill_installments'])
+               }, 'bill_installments', 'bill_collection'])
                ->where('id', $createBill->id)
                ->first();
 
@@ -578,24 +577,14 @@ class MailController extends Controller
                 $pdf = app('dompdf.wrapper');
                 $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
 
-               //  $pdfReport = null;
 
-               // if($createBill->installment){
-                  
-               //    $pdfReport = app('dompdf.wrapper');
-               //    $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
-               // }
-
-               // return $pdf->stream();
-
+               
                try {
 
                   foreach($student->relationship as $parent)
                {
                   $mailData['name'] = $parent->name;
-                  return view('emails.book-mail')->with('mailData', $mailData);
-                  Mail::to($parent->email)->send(new BookEmail($mailData, "Tagihan Buku " . $student->name.  " ". date('l, d F Y') ." sudah dibuat.", $pdf));
-                  
+                  Mail::to($parent->email)->send(new BookMail($mailData, "Tagihan Buku " . $student->name.  " ". date('l, d F Y') ." sudah dibuat.", $pdf));
                }
 
                statusInvoiceMail::create([
@@ -604,7 +593,7 @@ class MailController extends Controller
                ]);
 
                } catch (Exception $err) {
-
+                  return dd($err);
                   statusInvoiceMail::create([
                   'status' =>false,
                   'bill_id' => $createBill->id,
@@ -619,9 +608,14 @@ class MailController extends Controller
          
       } catch (Exception $err) {
           
-
+         return dd($err);
          info('Cron notification Books error at ' . now());
       }
+   }
+
+   public function createNotificationUniform()
+   {
+
    }
 
    public function cronCreatePaketAfterGraduate($array =  [])

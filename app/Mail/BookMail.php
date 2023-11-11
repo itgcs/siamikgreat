@@ -5,11 +5,12 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class BookEmail extends Mailable
+class BookMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -42,7 +43,7 @@ class BookEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'components.emails.demo-mail',
+            view: 'emails.book-mail',
         );
     }
 
@@ -53,6 +54,9 @@ class BookEmail extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        return [
+            Attachment::fromData(fn () => $this->pdf->output(), 'Tagihan buku '.date('F Y', strtotime($this->mailData['bill'][0]->created_at)). ' ' . $this->mailData['student']->name)
+            ->withMime('application/pdf'),
+        ];
     }
 }
