@@ -58,7 +58,7 @@ class FeeRegisMail extends Mailable
     public function attachments(): array
     {
         $file = [
-            Attachment::fromData(fn () => $this->pdf->output(), 'SPP '.date('F Y', strtotime($this->mailData['bill'][0]->created_at)). ' ' . $this->mailData['student']->name)
+            Attachment::fromData(fn () => $this->pdf->output(), 'Capital Fee '.date('F Y', strtotime($this->mailData['bill'][0]->created_at)). ' ' . $this->mailData['student']->name)
             ->withMime('application/pdf'),
         ];
 

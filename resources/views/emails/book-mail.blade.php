@@ -171,7 +171,7 @@
                                                                         style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:20px;font-weight:400;line-height:30px;text-align:left;color:#333333;">
                                                                         <h1
                                                                             style="margin: 0; font-size: 24px; line-height: normal; font-weight: 700;">
-                                                                            Tagihan {{$mailData['bill'][0]->type}}</h1>
+                                                                            Tagihan {{$mailData['bill']->type}}</h1>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -201,7 +201,7 @@
                                                                 <div
                                                                 style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
                                                                     <p style="margin: 0;">
-                                                                       {{'Hai, tagihan '.$mailData['bill'][0]->subject.' untuk ' .
+                                                                       {{'Hai, tagihan '.$mailData['bill']->subject.' untuk ' .
                                                                         $mailData['student']->name . ' kurang '. str_replace('H-', '', $mailData['past_due']). ' hari lagi akan jatuh tempo. Mohon selesaikan pembayaran
                                                                         untuk tagihan Anda.' }}
                                                                     </p>
@@ -219,7 +219,7 @@
                                                                         style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
                                                                         <p style="margin: 0;">
                                                                             {{ 
-                                                                            'Hai, tagihan '.$mailData['bill'][0]->type.' untuk ' .
+                                                                            'Hai, tagihan '.$mailData['bill']->type.' untuk ' .
                                                                             $mailData['student']->name . ' pada ' .
                                                                             $dateString . ' telah
                                                                             berhasil dibuat. Mohon selesaikan pembayaran
@@ -289,16 +289,16 @@
                                                                                             @endphp
 
 
-                                                                                            @foreach ($mailData['bill']
+                                                                                            @foreach ($mailData['bill']->bill_collection
                                                                                             as $item)
 
                                                                                             <tr>
                                                                                                 <td colspan="2"
                                                                                                     style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
-                                                                                                    @php
-                                                                                                    $amount = $item->installment? $item->amount_installment : $item->amount;
+                                                                                                    {{-- @php
+                                                                                                    $amount = $item->discount ? $item->amount - $item->amount * $item->discount/100 : $item->amount;
                                                                                                     $total += $amount;
-                                                                                                    @endphp
+                                                                                                    @endphp --}}
                                                                                                     <p
                                                                                                         style="margin: 0;">
                                                                                                         {{-- {{$item->type}}
@@ -308,40 +308,17 @@
                                                                                                             style="color: #a7a7a7;font-size: 14px;line-height: 14px;">
                                                                                                             × 1 </span> --}}
 
-                                                                                                         {{$item->installment? $item->type.' '.'('.$item->subject.')' : $item->subject}}
+                                                                                                         {{$item->name}}
                                                                                                     </p>
                                                                                                 </td>
                                                                                                 <td align="right"
                                                                                                     valign="top"
                                                                                                     style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
                                                                                                     Rp.
-                                                                                                    {{number_format($amount - $item->charge, 0, ',', '.')}}
+                                                                                                    {{number_format($item->amount, 0, ',', '.')}}
                                                                                                 </td>
                                                                                             </tr>
-                                                                                            @if ($item->charge > 0)
-                                                                                            <tr>
-                                                                                                <td colspan="2"
-                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
-                                                                                                    <p
-                                                                                                        style="margin: 0;">
-                                                                                                        {{-- {{$item->type}}
-                                                                                                        -
-                                                                                                        {{date('M Y', strtotime($item->created_at))}} --}}
-                                                                                                        {{-- <span
-                                                                                                            style="color: #a7a7a7;font-size: 14px;line-height: 14px;">
-                                                                                                            × 1 </span> --}}
-
-                                                                                                        Charge
-                                                                                                    </p>
-                                                                                                </td>
-                                                                                                <td align="right"
-                                                                                                valign="top"
-                                                                                                style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
-                                                                                                    Rp.
-                                                                                                    {{number_format($item->charge, 0, ',', '.')}}
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                            @endif
+                                                                                            
                                                                                             @endforeach
 
                                                                                             <tr>
@@ -355,7 +332,7 @@
                                                                                                 </td>
                                                                                                 <td align="right"
                                                                                                     style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal; font-weight: bold; padding: 20px 0 0;">
-                                                                                                    Rp. {{number_format($total, 0, ',', '.')}}
+                                                                                                    Rp. {{number_format($mailData['bill']->amount, 0, ',', '.')}}
                                                                                                 </td>
                                                                                             </tr>
                                                                                         </tbody>
@@ -393,13 +370,13 @@
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                                     <div
                                                                        style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:17px;font-weight:400;line-height:20px;text-align:center;color:red;">
-                                                                        <b> {{ $mailData['past_due'] ? 'Invoice pembayaran sudah melewati jatuh tempo' : 'Invoice deadline pembayaran ' . date('d/m/Y', strtotime($mailData['bill'][0]->deadline_invoice))}}</b></div> <br><br>
+                                                                        <b> {{ $mailData['past_due'] ? 'Invoice pembayaran sudah melewati jatuh tempo' : 'Invoice deadline pembayaran ' . date('d/m/Y', strtotime($mailData['bill']->deadline_invoice))}}</b></div> <br><br>
                                                                     
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                             @php
-                                                                $textWa = 'Saya sudah melakukan pembayaran '. $mailData['bill'][0]->type .' dengan nomer invoice %23'.$mailData['bill'][0]->id.' untuk '. $mailData['student']->name . ', dan beserta bukti transfer yang saya kirim melalui wa ini dengan nominal sebesar Rp. ' . number_format($total,0,',','.');
+                                                                $textWa = 'Saya sudah melakukan pembayaran '. $mailData['bill']->type .' dengan nomer invoice %23'.$mailData['bill']->id.' untuk '. $mailData['student']->name . ', dan beserta bukti transfer yang saya kirim melalui wa ini dengan nominal sebesar Rp. ' . number_format($mailData['bill']->amount,0,',','.');
                                                             @endphp
                                                                 <td align="center"
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">
@@ -407,14 +384,14 @@
                                                                        style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:15px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
                                                                        Untuk melakukan pembayaran silahkan kirim ke rekening <span id="copy-text" style="color:#f08922;">12312312312</span> dengan nama rekening 
                                                                        <span id="copy-text" style="color:#f08922;">Great Crystal School</span>. kirim dengan nominal yang sesuai kemudian kirim bukti pembayaran ke 
-                                                                       <a style="text-decoration:none;color:#f08922;" href="wa.me/+6281388284488?text={{str_replace(' ', '%20', $textWa)}}">+62 813 8828 4488</a></div>
+                                                                       <a style="text-decoration:none;color:#f08922;" href="/wa.me/+6281388284488?text={{str_replace(' ', '%20', $textWa)}}">+62 813 8828 4488</a></div>
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                     <td align="center"
                                                                         style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                                         <div>
-                                                                           <a href="wa.me/+6281388284488?text={{str_replace(' ', '%20', $textWa)}}" style="
+                                                                           <a href="/wa.me/+6281388284488?text={{str_replace(' ', '%20', $textWa)}}" style="
                                                                             background-color: #ca6800;
                                                                             border: none;
                                                                             color: white;

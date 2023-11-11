@@ -34,7 +34,7 @@ class DashboardController extends Controller
          $newBillData = Bill::with('student')->orderBy('id', 'desc')->take(6)->get();
          $pastDueData =  Bill::with('student')
          ->where('paidOf', false)
-         ->where('deadline_invoice', '<',  Carbon::now()->setTimezone('Asia/Jakarta')->subDays(1)->format('y-m-d'))
+         ->where('deadline_invoice', '<',  Carbon::now()->setTimezone('Asia/Jakarta')->format('y-m-d'))
          ->take(6)
          ->get();
 

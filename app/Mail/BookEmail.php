@@ -14,14 +14,16 @@ class BookEmail extends Mailable
     use Queueable, SerializesModels;
 
 
-    public $mailData, $subject;
+    public $mailData, $subject, $pdf;
     /**
      * Create a new message instance.
      */
-    public function __construct($mailData, $subject)
+
+    public function __construct($mailData, $subject, $pdf)
     {
-        $mailData = $this->mailData;
-        $subject = $this->subject;
+        $this->mailData = $mailData;
+        $this->subject = $subject;
+        $this->pdf = $pdf;
     }
 
     /**
