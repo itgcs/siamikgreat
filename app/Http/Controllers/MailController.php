@@ -591,7 +591,6 @@ class MailController extends Controller
                ]);
 
                } catch (Exception $err) {
-                  return dd($err);
                   statusInvoiceMail::create([
                   'status' =>false,
                   'bill_id' => $createBill->id,
@@ -613,7 +612,84 @@ class MailController extends Controller
 
    public function createNotificationUniform()
    {
-      
+      try {
+         //sementara gabisa kirim email push array dulu
+
+         $data = Student::with([
+            'bill' => function($query)  {
+               $query
+               ->where('type', "Uniform")
+               ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+               ->where('paidOf', false)
+               ->get();
+         },
+            'relationship'
+         ])
+         ->whereHas('bill', function($query) {
+               $query
+               ->where('type', "Uniform")
+               ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+               ->where('paidOf', false);
+         })
+         ->get();
+
+         
+         foreach ($data as $student) {
+            
+            foreach ($student->bill as $createBill) {
+               
+               // return 'nyampe';
+               $mailData = [
+                  'student' => $student,
+                  'bill' => [$createBill],
+                  'past_due' => false,
+               ];
+
+
+               $pdfBill = Bill::with(['student' => function ($query) {
+                  $query->with('grade');
+               }])
+               ->where('id', $createBill->id)
+               ->first();
+
+                
+                $pdf = app('dompdf.wrapper');
+                $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
+
+               try {
+
+                  foreach($student->relationship as $parent)
+               {
+                  $mailData['name'] = $parent->name;
+                  return view('emails.spp-mail')->with('mailData', $mailData);
+                  Mail::to($parent->email)->send(new SppMail($mailData, "Tagihan Uniform " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf));
+                  
+               }
+
+               statusInvoiceMail::create([
+                  'status' =>true,
+                  'bill_id' => $createBill->id,
+               ]);
+
+               } catch (Exception $err) {
+
+                  statusInvoiceMail::create([
+                  'status' =>false,
+                  'bill_id' => $createBill->id,
+                  ]);
+               }
+               
+            }
+         }
+
+
+         info('Cron notification Fee Register success at ' . now());
+         
+      } catch (Exception $err) {
+         
+         return dd($err);
+         info('Cron notification Fee Register error at ' . now());
+      }
    }
 
    public function cronCreatePaketAfterGraduate($array =  [])
