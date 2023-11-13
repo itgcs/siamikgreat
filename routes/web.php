@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\{
 };
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\Notification\NotificationBillCreated;
+use App\Http\Controllers\Notification\NotificationPastDue;
 use App\Http\Controllers\SuperAdmin\{
    SuperAdminController,
    StudentController as SuperStudentController
@@ -41,7 +42,7 @@ Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin
 Route::get('/counter', Counter::class);
 
 // Route::get('send-mail', [MailController::class, 'createNotificationUniform']);
-Route::get('/coba', [NotificationBillCreated::class, 'paket']);
+Route::get('/coba', [NotificationPastDue::class, 'cronChargePastDue']);
 
 Route::middleware(['admin'])->prefix('/admin')->group(function () {
    

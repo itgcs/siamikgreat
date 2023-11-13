@@ -286,7 +286,7 @@
 
                                                                                             <tr>
                                                                                                 <td colspan="2"
-                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
+                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;width:50%;">
                                                                                                     {{-- @php
                                                                                                     $amount = $item->discount ? $item->amount - $item->amount * $item->discount/100 : $item->amount;
                                                                                                     $total += $amount;
@@ -305,7 +305,7 @@
                                                                                                 </td>
                                                                                                 <td align="right"
                                                                                                     valign="top"
-                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
+                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;width:50%;">
                                                                                                     Rp.
                                                                                                     {{number_format($item->amount, 0, ',', '.')}}
                                                                                                 </td>
@@ -319,11 +319,11 @@
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <td colspan="2"
-                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal; font-weight: bold; padding: 20px 0 0;">
+                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal; font-weight: bold; padding: 20px 0 0;width:50%;">
                                                                                                     Total Pembayaran
                                                                                                 </td>
                                                                                                 <td align="right"
-                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal; font-weight: bold; padding: 20px 0 0;">
+                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal; font-weight: bold; padding: 20px 0 0;width:50%;">
                                                                                                     Rp. {{number_format($mailData['bill']->amount, 0, ',', '.')}}
                                                                                                 </td>
                                                                                             </tr>

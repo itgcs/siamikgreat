@@ -288,7 +288,7 @@
 
                                                                                             <tr>
                                                                                                 <td colspan="2"
-                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
+                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;width:50%;">
                                                                                                     @php
                                                                                                     $amount = $item->installment? $item->amount_installment : $item->amount;
                                                                                                     $total += $amount;
@@ -301,7 +301,7 @@
                                                                                                 </td>
                                                                                                 <td align="right"
                                                                                                     valign="top"
-                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
+                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;width:50%;">
                                                                                                     Rp.
                                                                                                     {{number_format($amount - $item->charge, 0, ',', '.')}}
                                                                                                 </td>
@@ -309,7 +309,7 @@
                                                                                             @if ($item->charge > 0)
                                                                                             <tr>
                                                                                                 <td colspan="2"
-                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
+                                                                                                    style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;width:50%;">
                                                                                                     <p
                                                                                                         style="margin: 0;">
                                                                                                         {{-- {{$item->type}}
@@ -324,7 +324,7 @@
                                                                                                 </td>
                                                                                                 <td align="right"
                                                                                                 valign="top"
-                                                                                                style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
+                                                                                                style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;width:50%;">
                                                                                                     Rp.
                                                                                                     {{number_format($item->charge, 0, ',', '.')}}
                                                                                                 </td>

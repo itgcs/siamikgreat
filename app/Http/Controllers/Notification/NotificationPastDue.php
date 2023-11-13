@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DemoMail;
 use App\Mail\FeeRegisMail;
+use App\Mail\PaketMail;
 use App\Mail\PaymentSuccessMail;
 use App\Mail\SppMail;
 use App\Models\Bill;
@@ -20,7 +21,7 @@ use Illuminate\Support\Carbon;
 
 class NotificationPastDue extends Controller
 {
-    public function cronChargePastDue($type = 'SPP', $charge = false)
+    public function cronChargePastDue($type = 'Paket', $charge = false)
     {
       DB::beginTransaction();
         try {
@@ -85,22 +86,37 @@ class NotificationPastDue extends Controller
   
                  try {
                     //code...
+                     $subs = $charge? "Charge tagihan " . $type . " anda yang sudah melewati jatuh tempo" : "Tagihan " . $type . " anda yang sudah jatuh tempo";
+
                     foreach ($student->relationship as $relationship) {
                        $mailData['name'] = $relationship->name;
   
-                       if($type == 'SPP') {
+                       if($type == 'SPP' || $type == 'Uniform') {
   
-                          Mail::to($relationship->email)->send(new SppMail($mailData, "Charge " . $type . " tagihan anda yang sudah jatuh tempo", $pdf, $pdfReport));
-                       } else {
-  
-                          // return view('emails.fee-regis-mail')->with('mailData', $mailData);
-                          Mail::to($relationship->email)->send(new FeeRegisMail($mailData, "Charge " . $type . " tagihan anda yang sudah jatuh tempo", $pdf, $pdfReport));
-                       }
+                        //   return view('emails.spp-mail')->with('mailData', $mailData);
+                          Mail::to($relationship->email)->send(new SppMail($mailData, $subs, $pdf, $pdfReport));
+                        } else if($type == 'Capital Fee') {
+                           
+                        //   return view('emails.fee-regis-mail')->with('mailData', $mailData);
+                        Mail::to($relationship->email)->send(new FeeRegisMail($mailData, $subs, $pdf, $pdfReport));
+                        
+                        } else if($type == 'Paket') {
+                           $mailData['change'] = false;
+                          return view('emails.paket-mail')->with('mailData', $mailData);
+                           Mail::to($relationship->email)->send(new PaketMail($mailData, $subs, $pdf, $pdfReport));
+                           
+                        } else if($type == 'Book'){
+                           $mailData['bill'] = $bill;
+                           Mail::to($relationship->email)->send(new BookMail($mailData, $subs, $pdf, $pdfReport));
+                        } else {
+                           
+                           Mail::to($relationship->email)->send(new SppMail($mailData, $subs, $pdf, $pdfReport));
+                        }
                     }
   
                     statusInvoiceMail::create([
                        'bill_id' => $bill->id,
-                       'charge' => true,
+                       'charge' => $charge,
                        'past_due' => true,
                     ]);
   
@@ -109,7 +125,7 @@ class NotificationPastDue extends Controller
                     statusInvoiceMail::create([
                        'bill_id' => $bill->id,
                        'status' => false,
-                       'charge' => true,
+                       'charge' => $charge,
                        'past_due' => true,
                     ]);
                  }
@@ -120,11 +136,11 @@ class NotificationPastDue extends Controller
 
            DB::commit();
 
-           info("Cron Job charge success at ". date('d-m-Y'));
+           info("Cron Job pastdue success at ". date('d-m-Y'));
            
        } catch (Exception $err) {
           DB::rollBack();
-          info("Cron Job reminder Error at: " . $err);
+          info("Cron Job pastdue Error at: " . $err);
        }
     }
 }
