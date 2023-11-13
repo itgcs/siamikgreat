@@ -21,28 +21,55 @@ use Illuminate\Support\Carbon;
 class NotificationPaymentSuccess extends Controller
 {
 
-    public function paymentSuccess($type = 'Paket')
+    public function paymentSuccess($type = 'etc')
     {
         DB::beginTransaction();
         date_default_timezone_set('Asia/Jakarta');
         try {
            //code...
-           $students = Student::with([
-              'bill' => function($query) use ($type) {
-                 $query
-                 ->where('type', $type)
-                 ->where('paid_date', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
-                 ->where('paidOf', true)
-                 ->get();
-           },
-              'relationship'
-           ])
-           ->whereHas('bill', function($query) use ($type) {
-                 $query
-                 ->where('type', $type)
-                 ->where('paid_date', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
-                 ->where('paidOf', true);
-           })->get();
+
+         if($type == 'etc') {
+
+            $students = Student::with([
+               'bill' => function($query) use ($type) {
+                  $query
+                  ->whereNotIn('type', ["SPP", "Capital Fee", "Paket", "Book", "Uniform"])
+                  ->where('paid_date', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                  ->where('paidOf', true)
+                  ->get();
+            },
+               'relationship'
+            ])
+            ->whereHas('bill', function($query) use ($type) {
+                  $query
+                  ->whereNotIn('type', ["SPP", "Capital Fee", "Paket", "Book", "Uniform"])
+                  ->where('paid_date', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                  ->where('paidOf', true);
+            })->get();
+
+
+         } else {
+            
+            $students = Student::with([
+               'bill' => function($query) use ($type) {
+                  $query
+                  ->where('type', $type)
+                  ->where('paid_date', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                  ->where('paidOf', true)
+                  ->get();
+            },
+               'relationship'
+            ])
+            ->whereHas('bill', function($query) use ($type) {
+                  $query
+                  ->where('type', $type)
+                  ->where('paid_date', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                  ->where('paidOf', true);
+            })->get();
+
+         }
+
+           return $students;
   
            foreach ($students as $student) {
   

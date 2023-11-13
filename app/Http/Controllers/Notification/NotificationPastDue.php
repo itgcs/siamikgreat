@@ -21,7 +21,7 @@ use Illuminate\Support\Carbon;
 
 class NotificationPastDue extends Controller
 {
-    public function cronChargePastDue($type = 'Spp', $charge = false)
+    public function cronChargePastDue($type = 'etc', $charge = false)
     {
       DB::beginTransaction();
         try {
@@ -42,21 +42,42 @@ class NotificationPastDue extends Controller
                 }
            }
 
-           
-           $data = Student::with(['bill' => function($query) use ($type){
-              $query
-              ->where('type', $type)
-              ->where('deadline_invoice', '<', date('Y-m-d'))
-              ->where('paidOf', false)
-              ->get();
-           }, 'relationship'])->whereHas('bill', function($query) use ($type) {
-              $query
-              ->where('type', $type)
-              ->where('paidOf', false)
-              ->where('deadline_invoice', '<', date('Y-m-d'));
-           })->get();
+         
+         if($type == 'etc') 
+         {
+
+            $data = Student::with(['bill' => function($query) use ($type){
+               $query
+               ->whereNotIn('type', ['SPP', "Capital Fee", "Paker", "Book", "uniform"])
+               ->where('deadline_invoice', '<', date('Y-m-d'))
+               ->where('paidOf', false)
+               ->get();
+            }, 'relationship'])->whereHas('bill', function($query) use ($type) {
+               $query
+               ->whereNotIn('type', ['SPP', "Capital Fee", "Paker", "Book", "uniform"])
+               ->where('paidOf', false)
+               ->where('deadline_invoice', '<', date('Y-m-d'));
+            })->get();
+
+         } else {
+            
+            $data = Student::with(['bill' => function($query) use ($type){
+               $query
+               ->where('type', $type)
+               ->where('deadline_invoice', '<', date('Y-m-d'))
+               ->where('paidOf', false)
+               ->get();
+            }, 'relationship'])->whereHas('bill', function($query) use ($type) {
+               $query
+               ->where('type', $type)
+               ->where('paidOf', false)
+               ->where('deadline_invoice', '<', date('Y-m-d'));
+            })->get();
+         }
+
+
                
-           // return $data;
+           return $data;
   
            foreach ($data as $student) {
   
@@ -105,7 +126,7 @@ class NotificationPastDue extends Controller
                         //   return view('emails.paket-mail')->with('mailData', $mailData);
                         Mail::to($relationship->email)->send(new PaketMail($mailData, $subs, $pdf, $pdfReport));
                         
-                     } else if($type == 'Book'){
+                        } else if($type == 'Book'){
                            $mailData['bill'] = $bill;
                            // return view('emails.book-mail')->with('mailData', $mailData);
                            Mail::to($relationship->email)->send(new BookMail($mailData, $subs, $pdf, $pdfReport));
