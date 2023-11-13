@@ -379,7 +379,7 @@
                         <td align="left" class="p-1 font-weight-bold" style="width:65%;">
                            Total :
                         </td>
-                        <td align="left" class="font-weight-bold">
+                        <td align="right" class="font-weight-bold">
                            Rp. {{number_format($total, 0, ',', '.')}}
                         </td>
                         

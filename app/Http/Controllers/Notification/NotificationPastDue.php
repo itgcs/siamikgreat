@@ -22,7 +22,9 @@ class NotificationPastDue extends Controller
 {
     public function cronChargePastDue($type = 'SPP', $charge = false)
     {
+      DB::beginTransaction();
         try {
+
            date_default_timezone_set('Asia/Jakarta');
   
            if($charge) 
@@ -39,7 +41,6 @@ class NotificationPastDue extends Controller
                 }
            }
 
-           
            
            $data = Student::with(['bill' => function($query) use ($type){
               $query
@@ -116,11 +117,14 @@ class NotificationPastDue extends Controller
   
               
            }
+
+           DB::commit();
+
            info("Cron Job charge success at ". date('d-m-Y'));
            
        } catch (Exception $err) {
+          DB::rollBack();
           info("Cron Job reminder Error at: " . $err);
-          return dd($err);
        }
     }
 }

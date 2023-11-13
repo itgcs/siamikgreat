@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DemoMail;
 use App\Mail\FeeRegisMail;
+use App\Mail\PaketMail;
 use App\Mail\PaymentSuccessMail;
 use App\Mail\SppMail;
 use App\Models\Bill;
@@ -114,18 +115,20 @@ class NotificationBillCreated extends Controller
            $data = Student::with([
               'bill' => function($query)  {
                  $query
-                 ->where('type', "Capital Fee")
-                 ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(9)->format('y-m-d'))
+                 ->where('type', "Paket")
+                 ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                  ->where('paidOf', false)
+                 ->where('installment', null)
                  ->get();
-           },
-              'relationship'
-           ])
-           ->whereHas('bill', function($query) {
-                 $query
-                 ->where('type', "Capital Fee")
-                 ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(9)->format('y-m-d'))
-                 ->where('paidOf', false);
+                },
+                'relationship'
+                ])
+                ->whereHas('bill', function($query) {
+                    $query
+                    ->where('type', "Paket")
+                    ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                    ->where('paidOf', false)
+                    ->where('installment', null);
            })
            ->get();
   
@@ -137,6 +140,7 @@ class NotificationBillCreated extends Controller
                 $mailData = [
                     'student' => $student,
                     'bill' => [$createBill],
+                    'change' => false,
                     'past_due' => false,
                 ];
   
@@ -164,8 +168,8 @@ class NotificationBillCreated extends Controller
                 foreach($student->relationship as $parent)
                 {
                    $mailData['name'] = $parent->name;
-                   // return view('emails.fee-regis-mail')->with('mailData', $mailData);
-                   Mail::to($parent->email)->send(new FeeRegisMail($mailData, "Tagihan Capital Fee " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf, $pdfReport));
+                   return view('emails.paket-mail')->with('mailData', $mailData);
+                   Mail::to($parent->email)->send(new PaketMail($mailData, "Tagihan Paket " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf, $pdfReport));
                 }
   
                  statusInvoiceMail::create([
@@ -196,6 +200,8 @@ class NotificationBillCreated extends Controller
     {
         try {
   
+         // return  Carbon::now()->setTimezone('Asia/Jakarta')->addDays(9)->format('y-m-d');
+
            $data = Student::with([
               'bill' => function($query)  {
                  $query
@@ -275,7 +281,8 @@ class NotificationBillCreated extends Controller
         } catch (Exception $err) {
 
            info('Cron notification Fee Register error at ' . now());
-        }
+            return $err;
+         }
     }
 
     public function book() 
@@ -406,10 +413,10 @@ class NotificationBillCreated extends Controller
   
                  try {
   
-                    foreach($student->relationship as $parent)
+                  foreach($student->relationship as $parent)
                  {
                     $mailData['name'] = $parent->name;
-                    // return view('emails.spp-mail')->with('mailData', $mailData);
+                  //   return view('emails.spp-mail')->with('mailData', $mailData);
                     Mail::to($parent->email)->send(new SppMail($mailData, "Tagihan Uniform " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf));
                     
                  }
@@ -439,4 +446,101 @@ class NotificationBillCreated extends Controller
            info('Cron notification Fee Register error at ' . now());
         }
     }
+
+    public function changePaket()
+    {
+        try {
+  
+            $data = Student::with([
+              'bill' => function($query)  {
+                 $query
+                    ->where('type', "Paket")
+                    ->where('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                    ->where('paidOf', false)
+                    ->get();
+                },
+                'relationship'
+                ])
+                ->whereHas('bill', function($query) {
+                    $query
+                    ->where('type', "Paket")
+                    ->where('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                    ->where('paidOf', false);
+            })
+            ->get();
+  
+           
+           foreach ($data as $student) {
+              
+              foreach ($student->bill as $createBill) {
+
+
+                $past_due = false;
+
+                if(strtotime($createBill->deadline_invoice) < strtotime(date('y-m-d')))
+                {
+                    $past_due = true;
+                }
+
+                $mailData = [
+                    'student' => $student,
+                    'bill' => [$createBill],
+                    'change' => true,
+                    'past_due' => $past_due,
+                ];
+  
+  
+                $pdfBill = Bill::with(['student' => function ($query) {
+                   $query->with('grade');
+                }, 'bill_installments'])
+                ->where('id', $createBill->id)
+                ->first();
+  
+                  
+                  $pdf = app('dompdf.wrapper');
+                  $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
+  
+                  $pdfReport = null;
+  
+                 if($createBill->installment){
+                    
+                    $pdfReport = app('dompdf.wrapper');
+                    $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
+                 }
+  
+                try {
+  
+                foreach($student->relationship as $parent)
+                {
+                   $mailData['name'] = $parent->name;
+                   return view('emails.paket-mail')->with('mailData', $mailData);
+                   Mail::to($parent->email)->send(new PaketMail($mailData, "Tagihan Paket " . $student->name.  " berhasil diubah, ". date('l, d F Y') ." sudah dibuat.", $pdf, $pdfReport));
+                }
+  
+                 statusInvoiceMail::create([
+                    'status' =>true,
+                    'bill_id' => $createBill->id,
+                 ]);
+  
+                 } catch (Exception $err) {
+  
+                    statusInvoiceMail::create([
+                    'status' =>false,
+                    'bill_id' => $createBill->id,
+                    ]);
+                 }
+                 
+              }
+           }
+  
+           info('Cron notification Fee Register success at ' . now());
+           
+        } catch (Exception $err) {
+
+           info('Cron notification Fee Register error at ' . now());
+        }
+    }
+
+
+
 }

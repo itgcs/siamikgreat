@@ -196,39 +196,31 @@
                                                                 <td align="left"
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">
 
-
-                                                                @if ($mailData['past_due'] === 'reminder')
-                                                                <div
-                                                                style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
-                                                                    <p style="margin: 0;">
-                                                                       {{'Hai, tagihan '.$mailData['bill']->subject.' untuk ' .
-                                                                        $mailData['student']->name . ' kurang '. str_replace('H-', '', $mailData['past_due']). ' hari lagi akan jatuh tempo. Mohon selesaikan pembayaran
-                                                                        untuk tagihan Anda.' }}
-                                                                    </p>
-
-                                                                </div>
-                                                                @elseif ($mailData['past_due'])
+                                                                @if ($mailData['past_due'])
                                                                     <div
                                                                         style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
                                                                         <p style="margin: 0;">
                                                                             {{ 
-                                                                            'Hai, tagihan anda untuk '. $mailData['student']->name . ' sudah lewat jatuh tempo, Mohon segera lunasi tagihan Anda.' }}
+                                                                            'Dear '.$mailData['name'].', tagihan anda untuk '. $mailData['student']->name . ' sudah lewat jatuh tempo' }}
+                                                                        </p>
                                                                     </div>
-                                                                    @else
+                                                                @else
                                                                     <div
                                                                         style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
                                                                         <p style="margin: 0;">
                                                                             {{ 
-                                                                            'Hai, tagihan '.$mailData['bill']->type.' untuk ' .
+                                                                            'Dear '.$mailData['name'].', tagihan '.$mailData['bill']->type.' untuk ' .
                                                                             $mailData['student']->name . ' pada ' .
                                                                             $dateString . ' telah
-                                                                            berhasil dibuat. Mohon selesaikan pembayaran
-                                                                            untuk tagihan Anda.' }}</p>
+                                                                            berhasil dibuat.' }}</p>
                                                                     </div>
 
                                                                 @endif
 
-
+                                                                <div
+                                                                    style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
+                                                                        <p>Mohon selesaikan pembayaran untuk tagihan Anda.</p>
+                                                                </div>
 
                                                                 </td>
                                                             </tr>
@@ -273,7 +265,7 @@
                                                                                                 <th colspan="2"
                                                                                                     align="left"
                                                                                                     style="padding-bottom: 10px; color: #7e7e7e; font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase;">
-                                                                                                    Tanggal: {{$date}}
+                                                                                                    Invoice: #{{$mailData['bill']->id}}
                                                                                                 </th>
                                                                                                 <th align="right"
                                                                                                     style="padding-bottom: 10px; color: #7e7e7e; font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase;">
@@ -365,15 +357,30 @@
                                                     <table border="0" cellpadding="0" cellspacing="0" role="presentation"
                                                         style="vertical-align:top;" width="100%">
                                                         <tbody>
+                                                            @php
+                                                                $fontColor = $mailData['past_due'] ? 'red' : 'rgb(73, 73, 73)';
+                                                            @endphp
+
                                                             <tr>
                                                                 <td align="center"
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                                     <div
-                                                                       style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:17px;font-weight:400;line-height:20px;text-align:center;color:red;">
-                                                                        <b> {{ $mailData['past_due'] ? 'Invoice pembayaran sudah melewati jatuh tempo' : 'Invoice deadline pembayaran ' . date('d/m/Y', strtotime($mailData['bill']->deadline_invoice))}}</b></div> <br><br>
+                                                                       style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:17px;font-weight:400;line-height:20px;text-align:center;color:{{$fontColor}};">
+                                                                        <b> {{ $mailData['past_due'] ? 'Invoice pembayaran sudah melewati jatuh tempo' : 'Invoice deadline pembayaran' }}</b></div> <br><br>
                                                                     
                                                                 </td>
                                                             </tr>
+                                                            {{-- @if ($mailData['past_due']) --}}
+                                                                <tr>
+                                                                    <td align="center"
+                                                                        style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                                        <div
+                                                                           style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:17px;font-weight:400;line-height:20px;text-align:center;color:rgb(73, 73, 73);">
+                                                                            <b> {{date('d/m/Y', strtotime($mailData['bill']->deadline_invoice))}}</b></div> <br><br>
+
+                                                                    </td>
+                                                                </tr>
+                                                            {{-- @endif --}}
                                                             <tr>
                                                             @php
                                                                 $textWa = 'Saya sudah melakukan pembayaran '. $mailData['bill']->type .' dengan nomer invoice %23'.$mailData['bill']->id.' untuk '. $mailData['student']->name . ', dan beserta bukti transfer yang saya kirim melalui wa ini dengan nominal sebesar Rp. ' . number_format($mailData['bill']->amount,0,',','.');

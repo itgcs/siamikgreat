@@ -41,7 +41,7 @@ Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin
 Route::get('/counter', Counter::class);
 
 // Route::get('send-mail', [MailController::class, 'createNotificationUniform']);
-// Route::get('/coba', [MailController::class, 'cobaTemplate']);
+Route::get('/coba', [NotificationBillCreated::class, 'paket']);
 
 Route::middleware(['admin'])->prefix('/admin')->group(function () {
    
