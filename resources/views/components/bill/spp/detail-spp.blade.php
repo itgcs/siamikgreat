@@ -125,6 +125,20 @@
                   </div>
                 </div>
                 <hr>
+                @if ($data->installment)
+                   
+                <div class="row">
+                   <div class="col-sm-4">
+                      <p class="mb-0">Installment</p>
+                     </div>
+                     <div class="col-sm-8">
+                        <p class="text-muted mb-0">
+                           {{$data->installment}}x
+                        </p>
+                     </div>
+                  </div>
+                  <hr>
+               @endif
               </div>
             </div>
             @if (sizeof($data->bill_installments) > 0)
@@ -238,10 +252,10 @@
                      @foreach ($data->bill_collection as $el)
 
                         <tr>
-                           <td align="left" class="p-1" style="width:65%;">
+                           <td align="left" class="p-1" style="width:50%;">
                               {{$el->name}} :
                            </td>
-                           <td align="left" class="p-1">
+                           <td align="right" class="p-1">
                               Rp. {{number_format($el->amount, 0, ',', '.')}}
                            </td>
                            
@@ -252,11 +266,11 @@
                         @else
                         
                         <tr>
-                           <td align="left" class="p-1" style="width:65%;">
+                           <td align="left" class="p-1" style="width:50%;">
                               Amount :
                            </td>
-                           <td align="left">
-                              Rp. {{number_format($data->amount - $data->charge, 0, ',', '.')}}
+                           <td align="right">
+                              Rp.{{number_format($data->amount - $data->charge, 0, ',', '.')}}
                            </td>
                            
                         </tr>
@@ -264,11 +278,11 @@
                         @if ($data->dp)
                         
                         <tr>
-                           <td align="left" class="p-1" style="width:65%;">
+                           <td align="left" class="p-1" style="width:50%;">
                               Done payment : 
                            </td>
-                           <td align="left">
-                              - Rp. {{number_format($data->dp, 0, ',', '.')}}
+                           <td align="right">
+                              -Rp.{{number_format($data->dp, 0, ',', '.')}}
                            </td>
 
                         </tr>
@@ -278,10 +292,10 @@
                      @if ($data->installment)
                      
                         <tr>
-                           <td align="left" class="p-1" style="width:65%;">
+                           <td align="left" class="p-1" style="width:50%;">
                               Installment : 
                            </td>
-                           <td align="">
+                           <td align="right">
                               {{ $data->installment }}x
                            </td>
 
@@ -292,10 +306,10 @@
                         @if ($data->discount)
                         
                         <tr>
-                           <td align="left" class="p-1" style="width:65%;">
+                           <td align="left" class="p-1" style="width:50%;">
                               Discount:
                            </td>
-                           <td align="left">
+                           <td align="right">
                               {{$data->discount ? $data->discount : 0}}%
                            </td>
 
@@ -304,10 +318,10 @@
                      @if ($data->charge > 0)
 
                         <tr>
-                           <td align="left" class="p-1" style="width:65%;">
+                           <td align="left" class="p-1" style="width:50%;">
                               Charge:
                            </td>
-                           <td align="left">
+                           <td align="right">
                              + Rp. {{ number_format($data->charge,0,',','.') }}
                            </td>
 

@@ -304,7 +304,7 @@ class MailController extends Controller
    }
 
 
-   public function cronChargePastDue($type = "Capital Fee")
+   public function cronChargePastDue($type = "SPP")
    {
       try {
          date_default_timezone_set('Asia/Jakarta');
@@ -661,7 +661,7 @@ class MailController extends Controller
                   foreach($student->relationship as $parent)
                {
                   $mailData['name'] = $parent->name;
-                  return view('emails.spp-mail')->with('mailData', $mailData);
+                  // return view('emails.spp-mail')->with('mailData', $mailData);
                   Mail::to($parent->email)->send(new SppMail($mailData, "Tagihan Uniform " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf));
                   
                }
