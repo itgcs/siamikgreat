@@ -21,7 +21,7 @@ use Illuminate\Support\Carbon;
 
 class NotificationPastDue extends Controller
 {
-    public function cronChargePastDue($type = 'Paket', $charge = false)
+    public function cronChargePastDue($type = 'Spp', $charge = false)
     {
       DB::beginTransaction();
         try {
@@ -86,7 +86,7 @@ class NotificationPastDue extends Controller
   
                  try {
                     //code...
-                     $subs = $charge? "Charge tagihan " . $type . " anda yang sudah melewati jatuh tempo" : "Tagihan " . $type . " anda yang sudah jatuh tempo";
+                     $subs = $charge? "Tagihan " . $type . " anda terkena charge karena sudah melewati jatuh tempo" : "Tagihan " . $type . " anda yang sudah jatuh tempo";
 
                     foreach ($student->relationship as $relationship) {
                        $mailData['name'] = $relationship->name;
@@ -102,11 +102,12 @@ class NotificationPastDue extends Controller
                         
                         } else if($type == 'Paket') {
                            $mailData['change'] = false;
-                          return view('emails.paket-mail')->with('mailData', $mailData);
-                           Mail::to($relationship->email)->send(new PaketMail($mailData, $subs, $pdf, $pdfReport));
-                           
-                        } else if($type == 'Book'){
+                        //   return view('emails.paket-mail')->with('mailData', $mailData);
+                        Mail::to($relationship->email)->send(new PaketMail($mailData, $subs, $pdf, $pdfReport));
+                        
+                     } else if($type == 'Book'){
                            $mailData['bill'] = $bill;
+                           // return view('emails.book-mail')->with('mailData', $mailData);
                            Mail::to($relationship->email)->send(new BookMail($mailData, $subs, $pdf, $pdfReport));
                         } else {
                            

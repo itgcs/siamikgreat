@@ -388,12 +388,10 @@
                                                                         @php
 
                                                                         $total = 0;
-
+                                                                        $data = $mailData['bill'][0]->type == 'Book' ? $mailData['bill'][0]->bill_collection : $mailData['bill']
                                                                         @endphp
 
-
-                                                                        @foreach ($mailData['bill']
-                                                                        as $item)
+                                                                        @foreach ($data as $item)
 
                                                                         <tr>
                                                                             <td colspan="2"
@@ -414,17 +412,16 @@
                                                                                      {{-- {{$item->subject}} --}}
 
 
-                                                                                    {{$item->type}}
+                                                                                    {{$mailData['bill'][0]->type == 'Book' ? $item->name : $item->type}}
                                                                                 </p>
                                                                             </td>
                                                                             <td align="right"
                                                                                 valign="top"
                                                                                 style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
-                                                                                Rp.
-                                                                                {{number_format($item->amount - $item->charge, 0, ',', '.')}}
+                                                                                Rp. {{number_format($item->amount - $item->charge, 0, ',', '.')}}
                                                                             </td>
                                                                         </tr>
-                                                                        @if ($item->charge > 0) 
+                                                                        @if ($mailData['bill'][0]->type != 'Book' && $item->charge > 0) 
                                                                         <tr>
                                                                             <td colspan="2"
                                                                                 style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">

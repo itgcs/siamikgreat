@@ -60,7 +60,7 @@ class PaymentSuccessMail extends Mailable
     {
 
         $file = [
-            Attachment::fromData(fn () => $this->pdf->output(), 'SPP '.date('F Y', strtotime($this->mailData['bill'][0]->created_at)). ' ' . $this->mailData['student']->name)
+            Attachment::fromData(fn () => $this->pdf->output(), 'Invoice '. $this->mailData['bill'][0]->type . ' ' .date('F Y', strtotime($this->mailData['bill'][0]->created_at)). ' ' . $this->mailData['student']->name)
             ->withMime('application/pdf'),
         ];
 
@@ -68,7 +68,7 @@ class PaymentSuccessMail extends Mailable
         if($this->pdfReport)
         {
             array_push($file, 
-            Attachment::fromData(fn () => $this->pdfReport->output(), 'SPP '.date('F Y', strtotime($this->mailData['bill'][0]->created_at)). ' ' . $this->mailData['student']->name)
+            Attachment::fromData(fn () => $this->pdfReport->output(), 'Report '. $this->mailData['bill'][0]->type . ' ' . date('F Y', strtotime($this->mailData['bill'][0]->created_at)). ' ' . $this->mailData['student']->name)
             ->withMime('application/pdf'),);
         }
 

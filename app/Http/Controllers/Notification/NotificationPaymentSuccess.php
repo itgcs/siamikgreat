@@ -21,7 +21,7 @@ use Illuminate\Support\Carbon;
 class NotificationPaymentSuccess extends Controller
 {
 
-    public function paymentSuccess($type = 'SPP')
+    public function paymentSuccess($type = 'Paket')
     {
         DB::beginTransaction();
         date_default_timezone_set('Asia/Jakarta');
@@ -31,7 +31,7 @@ class NotificationPaymentSuccess extends Controller
               'bill' => function($query) use ($type) {
                  $query
                  ->where('type', $type)
-                 ->where('paid_date', '>= ', Carbon::now()->setTimezone('Asia/Jakarta')->subDays(1)->format('Y-m-d H:i:s'))
+                 ->where('paid_date', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                  ->where('paidOf', true)
                  ->get();
            },
@@ -40,7 +40,7 @@ class NotificationPaymentSuccess extends Controller
            ->whereHas('bill', function($query) use ($type) {
                  $query
                  ->where('type', $type)
-                 ->where('paid_date', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDays(1)->format('Y-m-d H:i:s'))
+                 ->where('paid_date', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                  ->where('paidOf', true);
            })->get();
   
@@ -62,11 +62,19 @@ class NotificationPaymentSuccess extends Controller
                  
                   $pdf = app('dompdf.wrapper');
                   $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
+
+                  $pdfReport = null;
+
+                  if($pdfBill->installment){
+                     
+                     $pdfReport = app('dompdf.wrapper');
+                     $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
+                  }
   
                   foreach ($student->relationship as $relationship) {
                     $mailData['name'] = $relationship->name;
-                    
-                    Mail::to($relationship->email)->send(new PaymentSuccessMail($mailData, "Payment " . $type . " has confirmed!", $pdf));
+                     // return view('emails.payment-success')->with('mailData', $mailData);
+                    Mail::to($relationship->email)->send(new PaymentSuccessMail($mailData, "Payment " . $type . " has confirmed!", $pdf, $pdfReport));
                  }
               }
            } 
