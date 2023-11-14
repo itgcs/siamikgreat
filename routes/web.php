@@ -133,7 +133,7 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::get('/installment-pdf/{bill_id}', [BillController::class, 'reportInstallmentPdf']);
       Route::get('/edit-installment-paket/{bill_id}', [BillController::class, 'pageEditInstallment']);
       Route::get('/status', [StatusMailSend::class, 'index']);
-      
+      Route::get('/status/{status_id}', [StatusMailSend::class, 'view']);
       Route::post('/post-bill/{id}', [BillController::class, 'actionCreateBill'])->name('create.bill');
       Route::post('/post-intallment-paket/{bill_id}', [BillController::class, 'actionPaketInstallment'])->name('create.installment');
       Route::put('/change-paket/{bill_id}/{student_id}', [BillController::class, 'actionChangePaket'])->name('action.edit.paket');

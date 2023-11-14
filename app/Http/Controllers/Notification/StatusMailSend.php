@@ -101,4 +101,29 @@ class StatusMailSend extends Controller
             return dd($err);
         }
     }
+
+
+    public function view($status_id)
+    {
+
+        session()->flash('page', (object)[
+            'page' => 'Bills',
+            'child' => 'status bills'
+        ]);
+
+        try {
+            //code...
+
+            $data = statusInvoiceMail::with([
+                'bill' => function($query) {
+                    $query->with('student');
+                }
+            ])->where('id', $status_id)->first();
+
+            return view('components.bill.status.detail-status-bill')->with('data', $data);
+
+        } catch (Exception $err) {
+            return dd($err);
+        }
+    }
 }

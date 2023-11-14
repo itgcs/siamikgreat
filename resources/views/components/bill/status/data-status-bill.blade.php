@@ -185,7 +185,7 @@
                         </td>
                         <td class="project-actions text-right toastsDefaultSuccess text-center">
                             <a class="btn btn-primary"
-                                href="/admin/bills/detail-payment/{{$el->id}}">
+                                href="/admin/bills/status/{{$el->id}}">
                                 <i class="fas fa-folder">
                                 </i>
                                 View
