@@ -31,7 +31,7 @@ class NotificationPaymentSuccess extends Controller
          if($type == 'etc') {
 
             $students = Student::with([
-               'bill' => function($query) use ($type) {
+               'bill' => function($query) {
                   $query
                   ->whereNotIn('type', ["SPP", "Capital Fee", "Paket", "Book", "Uniform"])
                   ->where('paid_date', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
@@ -40,7 +40,7 @@ class NotificationPaymentSuccess extends Controller
             },
                'relationship'
             ])
-            ->whereHas('bill', function($query) use ($type) {
+            ->whereHas('bill', function($query) {
                   $query
                   ->whereNotIn('type', ["SPP", "Capital Fee", "Paket", "Book", "Uniform"])
                   ->where('paid_date', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
@@ -69,7 +69,7 @@ class NotificationPaymentSuccess extends Controller
 
          }
 
-           return $students;
+         //   return $students;
   
            foreach ($students as $student) {
   

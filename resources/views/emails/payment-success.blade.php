@@ -311,9 +311,9 @@
                               <div style="font-size: 14px; line-height: 160%; text-align: center; word-wrap: break-word;">
                                 <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 22px; line-height: 35.2px;">Dear {{$mailData['name']}},</span></p>
                                 <p style="font-size: 14px; line-height: 160%;">&nbsp;</p>
-                                <p style="font-size: 1em; line-height: 160%;"><span style="font-size: 18px; line-height: 6px;">Your transaction was successful</span></p>
-                                <p style="font-size: 14px; line-height: 160%;">&nbsp;</p>
-                                <p style="font-size: 1em; line-height: 160%;"><span style="font-size: 18px; line-height: 6px;">We advise to keep this email for future reference!</span></p>
+                                <p style="font-size: 1.2em; line-height: 160%;color:#333333;">Your transaction was successful,</p>
+                                {{-- <p style="font-size: 14px; line-height: 160%;">&nbsp;</p> --}}
+                                <p style="font-size: 1.2em; line-height: 160%;color:#333333;">We advise to keep this email for future reference!</p>
                               </div>
 
                             </td>

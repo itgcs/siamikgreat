@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
     {
         date_default_timezone_set('Asia/Jakarta');
         $schedule->command('spp:cron')->monthlyOn(1, '08:00')->timezone('Asia/Jakarta');
-        $schedule->command('chargePastDueSpp:cron')->monthlyOn(10, '13:10')->timezone('Asia/Jakarta');
+        $schedule->command('chargePastDueSpp:cron')->monthlyOn(11, '13:10')->timezone('Asia/Jakarta');
         $schedule->command('reminderPastDueMinusOneDays:cron')->monthlyOn(11, '15:00')->timezone('Asia/Jakarta');
         // $schedule->command('reminderPastDueMinusSevenDays:cron')->dailyAt('10:40')->timezone('Asia/Jakarta');
         // $schedule->command('reminderFeeRegister:cron')->dailyAt('16:00')->timezone('Asia/Jakarta');
