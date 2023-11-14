@@ -17,7 +17,8 @@
                <p>Total Students Active</p>
              </div>
              <div class="icon">
-               <i class="ion ion-bag"></i>
+               {{-- <i class="ion ion-bag"></i> --}}
+               <i class="fa-solid fa-graduation-cap"></i>
              </div>
              <a href="/admin/list" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
            </div>
@@ -34,7 +35,8 @@
                <p>Total Teachers Active</p>
              </div>
              <div class="icon">
-               <i class="ion ion-stats-bars"></i>
+               {{-- <i class="ion ion-stats-bars"></i> --}}
+               <i class="fa-solid fa-chalkboard-user"></i>
              </div>
              <a href="/admin/teachers" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
            </div>
@@ -49,7 +51,8 @@
                <p>Bills last 30 days</p>
              </div>
              <div class="icon">
-               <i class="ion ion-person-add"></i>
+               {{-- <i class="ion ion-person-add"></i> --}}
+               <i class="fa-solid fa-receipt"></i>
              </div>
              <a href="/admin/bills" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
            </div>
@@ -64,7 +67,8 @@
                <p>Bills Past Due</p>
              </div>
              <div class="icon">
-               <i class="ion ion-pie-graph"></i>
+               {{-- <i class="ion ion-pie-graph"></i> --}}
+               <i class="fa-solid fa-calendar-xmark"></i>
              </div>
              <a href="/admin/bills?grade=all&invoice=pastdue&type=all&status=false&search=" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
            </div>
@@ -109,9 +113,9 @@
                   </div>
                   @else
                      {{-- <h1>New Bills</h1> --}}
-                     <div class="card">
+                     <div >
                       <!-- /.card-header -->
-                      <div class="card-body">
+                      <div >
                         <ul class="todo-list" data-widget="todo-list">
 
                         @php
@@ -183,9 +187,9 @@
                   @else
 
                    {{-- <canvas id="sales-chart-canvas" height="300" style="height: 300px;"></canvas> --}}
-                   <div class="card">
+                   <div>
                     <!-- /.card-header -->
-                    <div class="card-body">
+                    <div>
                       <ul class="todo-list" data-widget="todo-list">
 
                       @php

@@ -64,6 +64,7 @@
                             <option {{$selectedType === 'Paket'? 'selected' : ''}} value="Paket">Paket</option>
                             <option {{$selectedType === 'Book'? 'selected' : ''}} value="Book">Book</option>
                             <option {{$selectedType === 'SPP'? 'selected' : ''}} value="SPP">SPP</option>
+                            <option {{$selectedType === 'Others'? 'selected' : ''}} value="Others">Others</option>
                         </select>
 
                     </div>

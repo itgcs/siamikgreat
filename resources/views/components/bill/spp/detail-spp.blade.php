@@ -23,10 +23,10 @@
               <div class="card-body">
                 <div class="row">
                   <div class="col-sm-4">
-                    <p class="mb-0">Unique ID</p>
+                    <p class="mb-0">Nomor Invoice</p>
                   </div>
                   <div class="col-sm-8">
-                    <p class="text-muted mb-0">#{{$data->id}}</p>
+                    <p class="text-muted mb-0">#{{str_pad((string)$data->id, 8, "0", STR_PAD_LEFT)}}</p>
                   </div>
                </div>
                <hr>

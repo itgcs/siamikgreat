@@ -21,7 +21,7 @@ use Illuminate\Support\Carbon;
 class NotificationPaymentSuccess extends Controller
 {
 
-    public function paymentSuccess($type = 'etc')
+    public function paymentSuccess($type = 'SPP')
     {
         DB::beginTransaction();
         date_default_timezone_set('Asia/Jakarta');

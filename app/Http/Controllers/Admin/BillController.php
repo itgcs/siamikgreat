@@ -111,17 +111,17 @@ class BillController extends Controller
                $form->to_bill = $explode_t[0].'/'.$explode_t[1].'/'.$explode_t[2];
             }
             
-            if ($form->search) {
-               
-               $data = $data->whereHas('student', function($query) use ($form) {
-                  $query->where('name', 'LIKE' ,'%'.$form->search.'%');
-               });
-            }
+            
             
             
             if($form->type)
             {
-               $data = $data->where('type', $form->type);
+               if(strtolower($form->type) != 'others'){
+                  
+                  $data = $data->where('type', $form->type);
+               } else {
+                  $data = $data->whereNotIn('type', ['SPP', "Capital Fee", "Paket", "Uniform", "Book"]);
+               }
             }
             
             if($form->status)
@@ -141,6 +141,7 @@ class BillController extends Controller
                   $data = $data
                   ->where('deadline_invoice', '<=' ,Carbon::now()->setTimezone('Asia/Jakarta')->addDays((int)$form->invoice)->format('y-m-d'))
                   ->where('deadline_invoice', '>=' ,Carbon::now()->setTimezone('Asia/Jakarta')->format('y-m-d'));
+
                } else {
                   
                   
@@ -154,6 +155,17 @@ class BillController extends Controller
                      $data = $data->where('deadline_invoice', $operator, Carbon::now()->setTimezone('Asia/Jakarta')->format('y-m-d'));
                   }
                   
+               }
+            }
+
+            if ($form->search) {
+               
+               if(is_numeric($form->search)) {
+                  $data = $data->orWhere('id', (int)$form->search);
+               } else {
+                  $data = $data->whereHas('student', function($query) use ($form) {
+                     $query->where('name', 'LIKE' ,'%'.$form->search.'%');
+                  });
                }
             }
             

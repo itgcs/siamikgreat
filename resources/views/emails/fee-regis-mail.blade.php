@@ -255,6 +255,9 @@
                                                                         role="presentation"
                                                                         style="background-color:#f6f6f6;margin-top:15px;margin-bottom:15px;" width="100%">
                                                                         <tbody>
+                                                                            @php
+                                                                                $id = str_pad((string)$mailData['bill'][0]->id, 8, "0", STR_PAD_LEFT)
+                                                                            @endphp
                                                                             <tr>
                                                                                 <td align="left" class="receipt-table"
                                                                                     style="font-size:0px;padding:20px;word-break:break-word;">
@@ -267,7 +270,7 @@
                                                                                                 <th colspan="2"
                                                                                                     align="left"
                                                                                                     style="padding-bottom: 10px; color: #7e7e7e; font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase;">
-                                                                                                    Invoice: #{{$mailData['bill'][0]->id}}
+                                                                                                    Invoice: #{{$id}}
                                                                                                 </th>
                                                                                                 <th align="right"
                                                                                                     style="padding-bottom: 10px; color: #7e7e7e; font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase;">
@@ -402,7 +405,7 @@
                                                             {{-- @endif --}}
                                                             <tr>
                                                             @php
-                                                                $textWa = 'Saya sudah melakukan pembayaran '. $mailData['bill'][0]->type .' dengan nomer invoice %23'.$mailData['bill'][0]->id.' untuk '. $mailData['student']->name . ', dan beserta bukti transfer yang saya kirim melalui wa ini dengan nominal sebesar Rp. ' . number_format($total,0,',','.');
+                                                                $textWa = 'Saya sudah melakukan pembayaran '. $mailData['bill'][0]->type .' dengan nomer invoice %23'.$id.' untuk '. $mailData['student']->name . ', dan beserta bukti transfer yang saya kirim melalui wa ini dengan nominal sebesar Rp. ' . number_format($total,0,',','.');
                                                             @endphp
                                                                 <td align="center"
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">
