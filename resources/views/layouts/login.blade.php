@@ -53,14 +53,14 @@
               <!-- Email input -->
               <div class="form-outline mb-4">
                 <input type="text" id="form3Example3" class="form-control form-control-lg"
-                  placeholder="Enter a valid username" name="username" autocomplete="off"/>
+                  placeholder="Enter a valid username" name="username" autocomplete="off" value="{{old('username')}}"/>
                 <label class="form-label" for="form3Example3">Username</label>
               </div>
     
               <!-- Password input -->
               <div class="form-outline mb-3">
                 <input type="password" id="form3Example4" class="form-control form-control-lg"
-                  placeholder="Enter password" name="password" autocomplete="off"/>
+                  placeholder="Enter password" name="password" autocomplete="off" value="{{old('password')}}"/>
                 <label class="form-label" for="form3Example4">Password</label>
               </div>
     
@@ -105,18 +105,11 @@
     @if($errors->first('invalid'))
       <script>
 
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 8000
-        });
-      
-
-           Toast.fire({
-              icon: 'error',
-              title: 'Invalid username or password, make sure your input is correctly !!!',
-        });
+        Swal.fire({
+            icon: "error",
+            title: "Invalid username or password",
+            text: "Make sure your input is correctly !!!"
+      });
       
       </script>
     @endif
@@ -124,20 +117,33 @@
     @if($errors->first('credentials'))
       <script>
 
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 8000
-        });
-      
-
-           Toast.fire({
-              icon: 'error',
-              title: 'Invalid credentials, make sure you login first !!!',
-        });
-      
+      Swal.fire({
+            icon: "error",
+            title: "Invalid credentials",
+            text: "Make sure you login first !!!"
+      });
+                    
       </script>
+    @endif
+
+    @if ($errors->first('username'))
+    <script>
+
+        Swal.fire({
+          icon: "error",
+          title: "Username is required !!!",
+        });
+    
+    </script>
+    @elseif ($errors->first('password'))
+    <script>
+
+      Swal.fire({
+        icon: "error",
+        title: "Password is required !!!",
+      });
+  
+  </script>
     @endif
   @endif
 

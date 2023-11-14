@@ -47,14 +47,15 @@ class UserController extends Controller
 
          if($validator->fails())
          {
-            return response()->json(['error' => $validator->errors()]);
+            // return dd($validator->messages());
+            return redirect('/')->withErrors($validator->messages())->withInput($credentials);
          }
 
          $check = Auth::attempt($credentials);  
 
          if(!$check)
          {
-            return redirect()->back()->withErrors(['invalid' => 'invalid username/password']);
+            return redirect()->back()->withErrors(['invalid' => 'invalid username/password'])->withInput($credentials);
          }
          
 

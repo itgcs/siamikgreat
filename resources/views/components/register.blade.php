@@ -33,7 +33,7 @@
                                                    $arrGender = array('Female', 'Male');
                                                 @endphp
                                                 
-                                                <option selected {{ old('gender')? '' : 'disabled'}}> {{ old('gender')? old('gender') : '--- Please Select One ---'}}</option>
+                                                <option selected {{ old('gender')? '' : 'disabled'}}> {{ old('gender')? old('gender') : '--- SELECT GENDER ---'}}</option>
                                                 
                                                 @if (old('gender'))
                                                 
@@ -95,7 +95,7 @@
                                                    }
                                              @endphp
                                                
-                                               <option selected {{ old('grade_id')? '' : 'disabled'}} value="{{old('grade_id')? old('grade_id') : ''}}"> {{ old('grade_id')? $selectedName : '--- Please Select One ---'}}</option>
+                                               <option selected {{ old('grade_id')? '' : 'disabled'}} value="{{old('grade_id')? old('grade_id') : ''}}"> {{ old('grade_id')? $selectedName : '--- SELECT GRADE ---'}}</option>
                                                
                                                @if (old('grade_id'))
                                                
@@ -179,7 +179,7 @@
                                                    $arrReligion = array('Islam', 'Protestant Christianity', 'Catholic Christianity', 'Hinduism', 'Buddhism', 'Confucianism', 'Others');
                                                 @endphp
                                                 
-                                                <option selected {{ old('religion')? '' : 'disabled'}}> {{ old('religion')? old('religion') : '--- Please Select One ---'}}</option>
+                                                <option selected {{ old('religion')? '' : 'disabled'}}> {{ old('religion')? old('religion') : '--- SELECT RELIGION ---'}}</option>
                                                 
                                                 @if (old('religion'))
                                                 
@@ -272,7 +272,7 @@
                                                 $arrReligion = array('Islam', 'Protestant Christianity', 'Catholic Christianity', 'Hinduism', 'Buddhism', 'Confucianism', 'Others');
                                              @endphp
 
-                                             <option selected {{ old('father_religion')? '' : 'disabled'}}> {{ old('father_religion')? old('father_religion') : '--- Please Select One ---'}}</option>
+                                             <option selected {{ old('father_religion')? '' : 'disabled'}}> {{ old('father_religion')? old('father_religion') : '--- SELECT RELIGION ---'}}</option>
                                              
                                              @if (old('father_religion'))
                                              
@@ -467,7 +467,7 @@
                                           $arrReligion = array('Islam', 'Protestant Christianity', 'Catholic Christianity', 'Hinduism', 'Buddhism', 'Confucianism', 'Others');
                                        @endphp
 
-                                       <option selected {{ old('mother_religion')? '' : 'disabled'}}> {{ old('mother_religion')? old('mother_religion') : '--- Please Select One ---'}}</option>
+                                       <option selected {{ old('mother_religion')? '' : 'disabled'}}> {{ old('mother_religion')? old('mother_religion') : '--- SELECT RELIGION ---'}}</option>
                                        
                                        @if (old('mother_religion'))
                                        

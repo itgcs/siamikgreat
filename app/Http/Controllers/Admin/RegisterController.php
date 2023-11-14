@@ -234,7 +234,27 @@ class RegisterController extends Controller
          {
             DB::rollBack();
             return redirect('/admin/register')->withErrors([
-               'dp' => ['Done payment cannot be greater than the capital fee !!!'],
+               'dp' => ['Done payment cannot be greater than the capital fee.'],
+            ])->withInput($rules);
+         }
+
+         $fatherExist = Relationship::where('id_or_passport', $rules['father_id_or_passport'])->first(); 
+
+         if($fatherExist && $fatherExist->relation == 'mother')
+         {
+            DB::rollBack();
+            return redirect('/admin/register')->withErrors([
+               'father_id_or_passport' => ['This id or passport has been registered with mother relation.'],
+            ])->withInput($rules);
+         }
+
+         $motherExist = Relationship::where('id_or_passport', $rules['mother_id_or_passport'])->first(); 
+
+         if($motherExist && $motherExist->relation == 'father')
+         {
+            DB::rollBack();
+            return redirect('/admin/register')->withErrors([
+               'mother_id_or_passport' => ['This id or passport has been registered with father relation.'],
             ])->withInput($rules);
          }
 
@@ -365,6 +385,7 @@ class RegisterController extends Controller
 
 
          // return $checkIdFather->id;
+         if($checkIdFather->relation)
          $father = $checkIdFather? $this->updateRelation($checkIdFather->id, $credentialsFather) : Relationship::create($credentialsFather);
          $mother = $checkIdMother? $this->updateRelation($checkIdMother->id, $credentialsMother) : Relationship::create($credentialsMother);
 

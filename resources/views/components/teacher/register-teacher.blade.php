@@ -44,7 +44,7 @@
                                                 @endphp
 
                                                 <option selected {{ old('gender')? '' : 'disabled'}}>
-                                                    {{ old('gender')? old('gender') : '--- Please Select One ---'}}
+                                                    {{ old('gender')? old('gender') : '--- SELECT GENDER ---'}}
                                                 </option>
 
                                                 @if (old('gender'))
@@ -118,7 +118,7 @@
                                             @endphp
 
                                             <option selected {{ old('religion')? '' : 'disabled'}}>
-                                                  {{ old('religion')? old('religion') : '--- Please Select One ---'}}
+                                                  {{ old('religion')? old('religion') : '--- SELECT RELIGION ---'}}
                                             </option>
 
                                             @if (old('religion'))
@@ -154,7 +154,7 @@
                                                @endphp
 
                                                <option selected {{ old('last_education')? '' : 'disabled'}}>
-                                                     {{ old('last_education')? old('last_education') : '--- Please Select One ---'}}
+                                                     {{ old('last_education')? old('last_education') : '--- SELECT LAST EDUCATION ---'}}
                                                </option>
 
                                                @if (old('last_education'))
