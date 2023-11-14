@@ -163,6 +163,14 @@
           </a>
         </li>
       </ul>
+      <ul class="nav nav-treeview">
+        <li class="nav-item">
+          <a href="/admin/bills/status" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'status bills' ? 'active' : '') : ''}}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Status</p>
+          </a>
+        </li>
+      </ul>
     </li>
 
      <li class="nav-header">SUPER ADMIN ACCESS</li>

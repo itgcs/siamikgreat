@@ -154,7 +154,6 @@ class BillController extends Controller
                      
                      $data = $data->where('deadline_invoice', $operator, Carbon::now()->setTimezone('Asia/Jakarta')->format('y-m-d'));
                   }
-                  
                }
             }
 

@@ -3,51 +3,11 @@
 
 <!-- Content Wrapper. Contains page content -->
 <h2 class="text-center display-4">Bills Search</h2>
-<form class="my-5" action="/admin/bills">
+<form class="my-5" action="/admin/bills/status">
     <div class="row">
         <div class="col-md-10 offset-md-1">
             <div class="row mb-1">
-                <div class="col-lg-6">
-                    <div class="form-group">
-                        <label>Grade:</label>
-                        @php
-
-                        $selectedGrade = $form && $form->grade? $form->grade : null;
-
-                        @endphp
-                        <select name="grade" class="form-control" required>
-                            <option class="text-center" {{!$selectedGrade ? 'selected' : ''}} value="all">-- All Grades --</option>
-                            @foreach ($grade as $el)
-                                
-                                <option class="text-center" {{$selectedGrade == $el->id ? 'selected' : ''}} value="{{$el->id}}">{{$el->name . ' - '. $el->class}}</option>
-                            
-                            @endforeach
-                            </option>
-                        </select>
-
-                    </div>
-                </div>
-                <div class="col-lg-2">
-                    <div class="form-group">
-
-                        @php
-
-                        $selectedInvoice = $form && $form->invoice ? $form->invoice : 'all';
-
-                        @endphp
-
-                        <label>Invoice : <span style="color: red"></span></label>
-                        <select name="invoice" class="form-control text-center">
-                            <option {{$selectedInvoice === 'all'? 'selected' : ''}} value="all" >-- All Invoice --</option>
-                            <option {{$selectedInvoice === '30'? 'selected' : ''}} value="30" >30 Days</option>
-                            <option {{$selectedInvoice === '7'? 'selected' : ''}} value="7" >7 Days</option>
-                            <option {{$selectedInvoice === 'tommorow'? 'selected' : ''}} value="tommorow" >Tomorrow</option>
-                            <option {{$selectedInvoice === 'today'? 'selected' : ''}} value="today" >Today</option>
-                            <option {{$selectedInvoice === 'pastdue'? 'selected' : ''}} value="pastdue" >Past Due</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-lg-2">
+                <div class="col-lg-4">
                     <div class="form-group">
 
                         @php
@@ -59,19 +19,38 @@
                         <label>Type : </label>
                         <select name="type" class="form-control text-center">
                             <option class="bg-primary" {{$selectedType === 'all'? 'selected' : ''}} value="all">-- All Type --</option>
-                            <option {{$selectedType === 'Capital Fee'? 'selected' : ''}} value="Capital Fee">Capital Fee</option>
-                            <option {{$selectedType === 'Uniform'? 'selected' : ''}} value="Uniform">Uniform</option>
-                            <option {{$selectedType === 'Paket'? 'selected' : ''}} value="Paket">Paket</option>
-                            <option {{$selectedType === 'Book'? 'selected' : ''}} value="Book">Book</option>
-                            <option {{$selectedType === 'SPP'? 'selected' : ''}} value="SPP">SPP</option>
-                            <option {{$selectedType === 'Others'? 'selected' : ''}} value="Others">Others</option>
+                            <option {{$selectedType === 'Capital Fee'? 'selected' : ''}} value="capital fee">Capital Fee</option>
+                            <option {{$selectedType === 'Uniform'? 'selected' : ''}} value="uniform">Uniform</option>
+                            <option {{$selectedType === 'Paket'? 'selected' : ''}} value="paket">Paket</option>
+                            <option {{$selectedType === 'Book'? 'selected' : ''}} value="book">Book</option>
+                            <option {{$selectedType === 'SPP'? 'selected' : ''}} value="spp">SPP</option>
+                            <option {{$selectedType === 'Others'? 'selected' : ''}} value="others">Others</option>
                         </select>
 
                     </div>
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-4">
                     <div class="form-group">
-                        <label>Paid: <span style="color: red"></span></label>
+
+                        @php
+
+                        $selectedInvoice = $form && $form->invoice ? $form->invoice : 'all';
+
+                        @endphp
+
+                        <label>Invoice : <span style="color: red"></span></label>
+                        <select name="invoice" class="form-control text-center">
+                            <option {{$selectedInvoice === 'all'? 'selected' : ''}} value="all" >-- All Invoice --</option>
+                            <option {{$selectedInvoice === 'create'? 'selected' : ''}} value="create" >Bill created</option>
+                            <option {{$selectedInvoice === 'charge'? 'selected' : ''}} value="charge" >Bill charge</option>
+                            <option {{$selectedInvoice === 'past_due'? 'selected' : ''}} value="past_due" >Bill past due</option>
+                            <option {{$selectedInvoice === 'is_paid'? 'selected' : ''}} value="is_paid" >Bill payment success</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Status: <span style="color: red"></span></label>
 
                         @php
 
@@ -81,74 +60,16 @@
 
                         <select name="status" class="form-control text-center">
                             <option {{$selectedStatus == 'all'? 'selected' : ''}} value="all">-- All Status --</option>
-                            <option {{$selectedStatus == 'true'? 'selected' : ''}} value="true">Paid</option>
-                            <option {{$selectedStatus == 'false'? 'selected' : ''}} value="false">Not yet</option>
+                            <option {{$selectedStatus == 'true'? 'selected' : ''}} value="true">Success</option>
+                            <option {{$selectedStatus == 'false'? 'selected' : ''}} value="false">Failed</option>
                         </select>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-4">
-                <div class="col-6">
-                    @php
-                        $selectedFrom = $form->from_bill ? $form->from_bill : '';
-                    @endphp
-                    <div class="form-group">
-                        <label>From :</label>
-                        
-                        <div class="input-group date" id="reservationBillFrom"
-                         data-target-input="nearest">
-                            <input name="from_bill" type="text"
-                             class="form-control"
-                             data-target="#reservationBillFrom" 
-                             data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                             value="{{$selectedFrom}}"
-                             placeholder="DD/MM/YYYY"
-                             />
-                            <div class="input-group-append" data-target="#reservationBillFrom"
-                             data-toggle="datetimepicker">
-                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                            </div>
-
-                            @if($errors->any())
-                            <p style="color: red">{{$errors->first('from_bill')}}</p>
-                        @endif
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    @php
-                        $selectedTo = $form->to_bill ? $form->to_bill : '';
-                    @endphp
-                    <div class="form-group">
-                        <label>To :</label>
-                        <div class="input-group date" id="reservationBillTo"
-                        data-target-input="nearest">
-                           <input name="to_bill" type="text"
-                            class="form-control"
-                            data-target="#reservationBillTo" 
-                            data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                            value="{{$selectedTo}}"
-                            placeholder="DD/MM/YYYY"
-                            />
-                           <div class="input-group-append" data-target="#reservationBillTo"
-                            data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                           </div>
-
-                           @if($errors->any())
-                           <p style="color: red">{{$errors->first('to_bill')}}</p>
-                       @endif
-
-                       </div>
-
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="input-group input-group-lg">
-                    <input name="search" value="{{$form->search}}" type="search" class="form-control form-control-lg"
-                        placeholder="Type students name or invoice number here">
+                    <input name="search" value="{{$form->search}}" type="number" class="form-control form-control-lg"
+                        placeholder="Type invoice number here">
                     <div class="input-group-append">
                         <button type="submit" class="btn btn-lg btn-default">
                             <i class="fa fa-search"></i>
@@ -161,7 +82,7 @@
 </form>
 
 
-@if(sizeof($data) <= 0 && ($form->search || $form->type || $form->invoice || $form->grade || $form->status || $form->from_bill || $form->to_bill)) 
+@if(sizeof($data) <= 0 && ($form->search || $form->type || $form->invoice || $form->status)) 
     <div class="container-fluid mt-5">
         <div class="row h-100">
             <div class="col-sm-12 my-auto text-center">
@@ -195,7 +116,7 @@
 
 <div class="card mt-5 card-dark">
     <div class="card-header">
-        <h3 class="card-title">Bills</h3>
+        <h3 class="card-title">Status notification emails</h3>
 
         <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -211,26 +132,19 @@
                         #
                     </th>
                     <th class="text-center" style="width: 10%">
+                        Nomor Invoice
+                    </th>
+                    <th style="width: 10%" class="text-center">
                         Type
                     </th>
-                    <th style="width: 20%">
+                    <th>
                         Student
                     </th>
-                    <th>
-                        Amount
-                    </th>
-                    
-                    <th>
-                        Grade
-                    </th>
-                    <th class="text-center">
-                        Class
-                    </th>
-                    <th class="text-center">
-                        Paid of
+                    <th class="text-left">
+                        Description
                     </th>
                     <th style="width: 8%" class="text-center">
-                        Invoice
+                        Status
                     </th>
                     <th style="width: 25%">
                     </th>
@@ -244,46 +158,30 @@
                     </td>
                     <td class="text-center">
                         <a>
-                            {{$el->type}}
+                            #{{str_pad((string)$el->bill->id, 8, "0", STR_PAD_LEFT)}}
                         </a>
                     </td>
-                    <td >
-                        {{$el->student->name}}
+                    <td class="text-center">
+                        {{$el->bill->type}}
                     </td>
-                     @php
-                        if($el->type == 'SPP')
-                        {
-                            $amount  = $el->discount ? $el->amount - ($el->amount * $el->discount/100) : $el->amount;
-                        } else {
-                            
-                            $amount = $el->installment? $el->amount_installment : $el->amount;
-                        }
-
-                     @endphp
-                        <td>
-                        IDR. 
-                        {{number_format($amount, 0, ',', '.')}}
-                        @if($el->discount)
-                        <br><small class="text-muted">discount: {{$el->discount}}%</small>
-                        @elseif ($el->installment)
-                        <br><small class="text-muted">installment: {{$el->installment}}x</small>
-                        @endif   
-                     </td>
-                        <td>
-                           {{$el->student->grade->name}}
-                        </td>
-                        <td class="text-center">
-                           {{$el->student->grade->class}}
-                        </td>
+                    <td>
+                        {{$el->bill->student->name}}  
+                    </td>
+                    <td>
+                        @if ($el->charge)
+                            Send <b>charge past due</b> notification by email
+                        @elseif ($el->past_due)
+                            Send <b>past due</b> notification by email
+                        @else
+                            Send bill <b>created</b> notification by email
+                        @endif
+                    </td>
                         <td class="project-state text-center">
-                            @if($el->paidOf)
-                            <h1 class="badge badge-success">done</h1>
+                            @if($el->status)
+                            <h1 class="badge badge-success">success</h1>
                             @else
-                            <h1 class="badge badge-danger">not yet</h1>
+                            <h1 class="badge badge-danger">failed</h1>
                             @endif
-                        </td>
-                        <td class="text-center">
-                            {{date('d M Y', strtotime($el->deadline_invoice))}}
                         </td>
                         <td class="project-actions text-right toastsDefaultSuccess text-center">
                             <a class="btn btn-primary"
@@ -311,7 +209,7 @@
         <ul class="pagination" max-size="2">
             
             @php
-            $link= '/admin/bills?grade='.$selectedGrade.'&invoice='.$selectedInvoice.'&type='.$selectedType.'&status='.$selectedStatus.'&search='.$form->search.'&from_bill='.$selectedFrom.'&to_bill='.$selectedTo;
+            $link= '/admin/bills/status?invoice='.$selectedInvoice.'&type='.$selectedType.'&status='.$selectedStatus.'&search='.$form->search;
             $previousLink = $link . '&page='.$data->currentPage()-1;
             $nextLink = $link . '&page='.$data->currentPage()+1;
             $firstLink = $link . '&page=1';
@@ -456,7 +354,7 @@
 </div>
 
 
-@if(session('create_installment_bill')) 
+{{-- @if(session('create_installment_bill')) 
     <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
@@ -529,7 +427,7 @@
 
   </script>
     
-@endif
+@endif --}}
 
 
 @endsection

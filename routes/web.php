@@ -17,6 +17,7 @@ use App\Http\Controllers\MailController;
 use App\Http\Controllers\Notification\NotificationBillCreated;
 use App\Http\Controllers\Notification\NotificationPastDue;
 use App\Http\Controllers\Notification\NotificationPaymentSuccess;
+use App\Http\Controllers\Notification\StatusMailSend;
 use App\Http\Controllers\SuperAdmin\{
    SuperAdminController,
    StudentController as SuperStudentController
@@ -131,6 +132,8 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::get('/paid/pdf/{bill_id}', [BillController::class, 'pagePdf']);
       Route::get('/installment-pdf/{bill_id}', [BillController::class, 'reportInstallmentPdf']);
       Route::get('/edit-installment-paket/{bill_id}', [BillController::class, 'pageEditInstallment']);
+      Route::get('/status', [StatusMailSend::class, 'index']);
+      
       Route::post('/post-bill/{id}', [BillController::class, 'actionCreateBill'])->name('create.bill');
       Route::post('/post-intallment-paket/{bill_id}', [BillController::class, 'actionPaketInstallment'])->name('create.installment');
       Route::put('/change-paket/{bill_id}/{student_id}', [BillController::class, 'actionChangePaket'])->name('action.edit.paket');
