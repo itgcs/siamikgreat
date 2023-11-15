@@ -30,12 +30,36 @@ $(document).ready(() => {
                         _token: token,
                     },
                 })
-                    .then((res) => {
-                        console.log(res);
-
+                .then((res) => {
+                    
+                    console.log(res);
+                    if(res.code == 200){
                         
-                    })
-                    .catch((err) => {
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: res.msg,
+                            showConfirmButton: false,
+                            timer: 1500
+                          });
+                    } else if(res.code == 408) {
+                        Swal.fire({
+                            title: "The Internet?",
+                            text: "That thing is still around?",
+                            icon: "question"
+                          });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: res.code,
+                            text: res.msg,
+                            footer: 'Why do I have this issue?'
+                          });
+                    }
+                    
+                })
+                .catch((err) => {
+                        console.log(err);
                         Swal.fire({
                             icon: "error",
                             title: "Oops...",

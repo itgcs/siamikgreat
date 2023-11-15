@@ -49,7 +49,7 @@ class StudentController extends Controller
 
          $student = Student::where('id', $student_id)->first();
 
-         if($student)
+         if(!$student)
          {
             return (object) [
                'success' => false,
@@ -161,15 +161,8 @@ class StudentController extends Controller
             'installment' => null,
             'diskon' => null,
             'paidOf' => false,
-            'deadline_invoice' => Carbon::now()->setTimezone('Asia/Jakarta')->addDays(30)->format('y-m-d'),
+            'deadline_invoice' => Carbon::now()->setTimezone('Asia/Jakarta')->addMonth()->format('y-m-10'),
          ]);
-
-            
-            foreach ($student->relationship as $parent) {
-               
-
-               //lakulan disini push email to parent.
-            }
 
          DB::commit();
 

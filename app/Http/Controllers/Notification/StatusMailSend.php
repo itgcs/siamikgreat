@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Notification;
 
 use App\Http\Controllers\Controller;
+use App\Mail\BookMail;
 use App\Models\Bill;
 use App\Models\Grade;
 use App\Models\statusInvoiceMail;
@@ -10,6 +11,7 @@ use App\Models\Student;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class StatusMailSend extends Controller
 {
@@ -183,12 +185,13 @@ class StatusMailSend extends Controller
                     $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $billExist])->setPaper('a4', 'portrait'); 
             }
 
+
             $mailData = [
                 'student' => $billExist->student,
                 'bill' => $billExist->type == 'Book' ? $billExist : [$billExist],
                 'past_due' => $invoiceMailExist->past_due,
                 'charge' => $invoiceMailExist->charge,
-                'change' => false,
+                'change' => $invoiceMailExist->is_change,
             ];
 
             $sbjPaketChange = "Tagihan Paket " . $billExist->student->name.  " berhasil diubah, pada tanggal ". date('l, d F Y');
@@ -198,13 +201,15 @@ class StatusMailSend extends Controller
             $sbjPastDueOrCharge = $invoiceMailExist->charge? "Tagihan ". $billExist->type ." ". $billExist->student->name.  " terkena charge karena sudah melewati jatuh tempo" : "Tagihan ". $billExist->type ." ". $billExist->student->name.  " sudah melewati jatuh tempo";
             $sbjPaymentSuccess = "Payment " . $billExist->type . " ". $billExist->student->name ." has confirmed!";
 
-            
-
             foreach($billExist->student->relationship as $relationship) {
                 
                 try {
-                    
 
+                    $mailData['name'] = $relationship->name;
+                    
+                    if($billExist->type == 'book') {
+                        Mail::to($relationship->email)->send(new BookMail($mailData, $sbjAllCreated, $pdf));
+                    }
 
                 } catch (Exception) {
                     //internet laggy
@@ -218,9 +223,14 @@ class StatusMailSend extends Controller
             }
 
 
-            return $billExist;
+            return response()->json([
+                'code' => 200,
+                'msg' => 'Success sent email to parents ' . $billExist->name,
+            ],200);
 
-        } catch (Exception) {
+        } catch (Exception $err) {
+
+            // return dd($err);
             
             return response()->json([
                     'code' => 500,

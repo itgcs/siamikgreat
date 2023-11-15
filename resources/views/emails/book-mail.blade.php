@@ -310,12 +310,31 @@
                                                                                                 <td align="right"
                                                                                                     valign="top"
                                                                                                     style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;width:50%;">
-                                                                                                    Rp.
-                                                                                                    {{number_format($item->amount, 0, ',', '.')}}
+                                                                                                    Rp.{{number_format($item->amount, 0, ',', '.')}}
                                                                                                 </td>
                                                                                             </tr>
                                                                                             
                                                                                             @endforeach
+
+                                                                                            @if($mailData['bill']->charge > 0) 
+                                                                                            {
+                                                                                                <tr>
+                                                                                                    <td colspan="2"
+                                                                                                        style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;width:50%;">
+                                                                                                       
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                             Charge
+                                                                                                        </p>
+                                                                                                    </td>
+                                                                                                    <td align="right"
+                                                                                                        valign="top"
+                                                                                                        style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;width:50%;">
+                                                                                                        Rp.{{number_format($mailData['bill']->charge, 0, ',', '.')}}
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            }
+                                                                                            @endif
 
                                                                                             <tr>
                                                                                                 <td style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal; border-bottom-width: 1px; border-bottom-color: #EAEEEB; border-bottom-style: solid; padding: 5px 0;"

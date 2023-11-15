@@ -119,6 +119,7 @@ class NotificationBillCreated extends Controller
                  ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                  ->where('paidOf', false)
                  ->where('installment', null)
+                 ->where('date_change_bill', null)
                  ->get();
                 },
                 'relationship'
@@ -128,7 +129,8 @@ class NotificationBillCreated extends Controller
                     ->where('type', "Paket")
                     ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                     ->where('paidOf', false)
-                    ->where('installment', null);
+                    ->where('installment', null)
+                    ->where('date_change_bill', null);
            })
            ->get();
   
@@ -303,6 +305,8 @@ class NotificationBillCreated extends Controller
                  ->where('paidOf', false)
                  ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                  ->orWhere('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                 ->where('type', "Book")
+                 ->where('paidOf', false)
                  ->get();
            },
               'relationship'
@@ -312,10 +316,12 @@ class NotificationBillCreated extends Controller
                  ->where('type', "Book")
                  ->where('paidOf', false)
                  ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
-                 ->orWhere('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'));
+                 ->orWhere('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                 ->where('type', "Book")
+                 ->where('paidOf', false);
            })
            ->get();
-           
+   
            foreach ($data as $student) {
               
               foreach ($student->bill as $createBill) {
@@ -336,27 +342,28 @@ class NotificationBillCreated extends Controller
                   
                   $pdf = app('dompdf.wrapper');
                   $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
-  
-  
-                 
+                  $is_change = $pdfBill->date_change_bill? true : false;
+                  $mailData['change'] = $is_change;
                  try {
   
                     foreach($student->relationship as $parent)
                  {
                     $mailData['name'] = $parent->name;
-                    return view('emails.book-mail')->with('mailData', $mailData);
+                  //   return view('emails.book-mail')->with('mailData', $mailData);
                     Mail::to($parent->email)->send(new BookMail($mailData, "Tagihan Buku " . $student->name. " sudah dibuat.", $pdf));
                  }
   
                  statusInvoiceMail::create([
                     'status' =>true,
                     'bill_id' => $createBill->id,
+                    'is_change' => $is_change,
                  ]);
   
                  } catch (Exception $err) {
                     statusInvoiceMail::create([
                     'status' =>false,
                     'bill_id' => $createBill->id,
+                    'is_change' => $is_change,
                     ]);
                  }
                  
@@ -385,6 +392,8 @@ class NotificationBillCreated extends Controller
                  ->where('paidOf', false)
                  ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                  ->orWhere('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                 ->where('type', "Uniform")
+                 ->where('paidOf', false)
                  ->get();
            },
               'relationship'
@@ -394,7 +403,9 @@ class NotificationBillCreated extends Controller
                  ->where('type', "Uniform")
                  ->where('paidOf', false)
                  ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
-                 ->orWhere('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'));
+                 ->orWhere('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                 ->where('type', "Uniform")
+                 ->where('paidOf', false);
            })
            ->get();
   
@@ -420,7 +431,9 @@ class NotificationBillCreated extends Controller
                   
                   $pdf = app('dompdf.wrapper');
                   $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
-  
+
+                  $is_change = $pdfBill->date_change_bill? true : false;
+                  $mailData['change'] = $is_change;
                  try {
   
                   foreach($student->relationship as $parent)
@@ -434,6 +447,7 @@ class NotificationBillCreated extends Controller
                  statusInvoiceMail::create([
                     'status' =>true,
                     'bill_id' => $createBill->id,
+                    'is_change' => $is_change,
                  ]);
   
                  } catch (Exception $err) {
@@ -441,6 +455,7 @@ class NotificationBillCreated extends Controller
                     statusInvoiceMail::create([
                     'status' =>false,
                     'bill_id' => $createBill->id,
+                    'is_change' => $is_change,
                     ]);
                  }
                  
