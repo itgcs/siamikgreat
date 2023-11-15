@@ -82,7 +82,7 @@ class NotificationBillCreated extends Controller
                {
                      //code...
                      $mailData['name'] = $el->name;
-                     Mail::to($el->email)->send(new SppMail($mailData, "Tagihan SPP " . $data[$idx]->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf));
+                     Mail::to($el->email)->send(new SppMail($mailData, "Tagihan SPP " . $data[$idx]->name.  " bulan ini, ". date('F Y') ." sudah dibuat.", $pdf));
                
                }
                statusInvoiceMail::create([
@@ -156,10 +156,13 @@ class NotificationBillCreated extends Controller
                   $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
   
                   $pdfReport = null;
+
+                  $subject = "Tagihan Paket " . $student->name. " sudah dibuat.";
   
                  if($createBill->installment){
                     
                     $pdfReport = app('dompdf.wrapper');
+                    $subject = "Tagihan Paket " . $student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.";
                     $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
                  }
   
@@ -168,8 +171,8 @@ class NotificationBillCreated extends Controller
                 foreach($student->relationship as $parent)
                 {
                    $mailData['name'] = $parent->name;
-                   return view('emails.paket-mail')->with('mailData', $mailData);
-                   Mail::to($parent->email)->send(new PaketMail($mailData, "Tagihan Paket " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf, $pdfReport));
+                  //  return view('emails.paket-mail')->with('mailData', $mailData);
+                   Mail::to($parent->email)->send(new PaketMail($mailData, $subject, $pdf, $pdfReport));
                 }
   
                  statusInvoiceMail::create([
@@ -244,9 +247,11 @@ class NotificationBillCreated extends Controller
                   $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
   
                   $pdfReport = null;
+
+                  $subject = "Tagihan Capital Fee " . $student->name. " sudah dibuat.";
   
                  if($createBill->installment){
-                    
+                    $subject = "Tagihan Capital Fee " . $student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.";
                     $pdfReport = app('dompdf.wrapper');
                     $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
                  }
@@ -257,7 +262,7 @@ class NotificationBillCreated extends Controller
                 {
                    $mailData['name'] = $parent->name;
                    // return view('emails.fee-regis-mail')->with('mailData', $mailData);
-                   Mail::to($parent->email)->send(new FeeRegisMail($mailData, "Tagihan Capital Fee " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf, $pdfReport));
+                   Mail::to($parent->email)->send(new FeeRegisMail($mailData, $subject, $pdf, $pdfReport));
                 }
   
                  statusInvoiceMail::create([
@@ -337,7 +342,7 @@ class NotificationBillCreated extends Controller
                     foreach($student->relationship as $parent)
                  {
                     $mailData['name'] = $parent->name;
-                    Mail::to($parent->email)->send(new BookMail($mailData, "Tagihan Buku " . $student->name.  " ". date('l, d F Y') ." sudah dibuat.", $pdf));
+                    Mail::to($parent->email)->send(new BookMail($mailData, "Tagihan Buku " . $student->name. " sudah dibuat.", $pdf));
                  }
   
                  statusInvoiceMail::create([
@@ -417,7 +422,7 @@ class NotificationBillCreated extends Controller
                  {
                     $mailData['name'] = $parent->name;
                   //   return view('emails.spp-mail')->with('mailData', $mailData);
-                    Mail::to($parent->email)->send(new SppMail($mailData, "Tagihan Uniform " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf));
+                    Mail::to($parent->email)->send(new SppMail($mailData, "Tagihan Uniform " . $student->name. " sudah dibuat.", $pdf));
                     
                  }
   
@@ -514,7 +519,7 @@ class NotificationBillCreated extends Controller
                 {
                    $mailData['name'] = $parent->name;
                    return view('emails.paket-mail')->with('mailData', $mailData);
-                   Mail::to($parent->email)->send(new PaketMail($mailData, "Tagihan Paket " . $student->name.  " berhasil diubah, ". date('l, d F Y') ." sudah dibuat.", $pdf, $pdfReport));
+                   Mail::to($parent->email)->send(new PaketMail($mailData, "Tagihan Paket " . $student->name.  " berhasil diubah, pada tanggal ". date('l, d F Y'), $pdf, $pdfReport));
                 }
   
                  statusInvoiceMail::create([
@@ -592,7 +597,7 @@ class NotificationBillCreated extends Controller
                  {
                     $mailData['name'] = $parent->name;
                   //   return view('emails.spp-mail')->with('mailData', $mailData);
-                    Mail::to($parent->email)->send(new SppMail($mailData, "Tagihan Uniform " . $student->name.  " bulan ini, ". date('l, d F Y') ." sudah dibuat.", $pdf));
+                    Mail::to($parent->email)->send(new SppMail($mailData, "Tagihan ". $pdfBill->type ." " . $student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.", $pdf));
                     
                  }
   
@@ -613,12 +618,12 @@ class NotificationBillCreated extends Controller
            }
   
   
-           info('Cron notification Fee Register success at ' . now());
+           info('Cron notification etc success at ' . now());
            
         } catch (Exception $err) {
            
            return dd($err);
-           info('Cron notification Fee Register error at ' . now());
+           info('Cron notification etc error at ' . now());
         }
     }
 

@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Notification;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bill;
 use App\Models\Grade;
 use App\Models\statusInvoiceMail;
+use App\Models\Student;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StatusMailSend extends Controller
 {
@@ -124,6 +127,105 @@ class StatusMailSend extends Controller
 
         } catch (Exception $err) {
             return dd($err);
+        }
+    }
+
+
+    public function sendEmailNotification($status_id)
+    {
+        DB::beginTransaction();
+
+        session()->flash('page', (object)[
+            'page' => 'Bills',
+            'child' => 'status bills'
+        ]);
+
+        try {
+            //code...
+
+            $invoiceMailExist = statusInvoiceMail::where('id', $status_id)->first();
+
+            if(!$invoiceMailExist) {
+                return response()->json([
+                    'code' => 404,
+                    'msg' => 'Invoice mail not found.',
+                ],404);
+            }
+
+            if($invoiceMailExist->status) {
+                return response()->json([
+                    'code' => 400,
+                    'msg' => 'Invoice mail is already been sent so it can`t be resent.',
+                ],400);
+            }
+
+            $billExist = Bill::with(['student' => function ($query) {
+                $query->with(['relationship', 'grade']);
+            }, 'bill_collection', 'bill_installments'])
+            ->where('id', $invoiceMailExist->bill_id)
+            ->first();
+
+            if(!$billExist) {
+                return response()->json([
+                    'code' => 404,
+                    'msg' => 'Bill not found.',
+                ],404);
+            }
+
+            $pdf = app('dompdf.wrapper');
+                  $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $billExist])->setPaper('a4', 'portrait'); 
+  
+            $pdfReport = null;
+  
+                 if($billExist->installment){
+                    
+                    $pdfReport = app('dompdf.wrapper');
+                    $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $billExist])->setPaper('a4', 'portrait'); 
+            }
+
+            $mailData = [
+                'student' => $billExist->student,
+                'bill' => $billExist->type == 'Book' ? $billExist : [$billExist],
+                'past_due' => $invoiceMailExist->past_due,
+                'charge' => $invoiceMailExist->charge,
+                'change' => false,
+            ];
+
+            $sbjPaketChange = "Tagihan Paket " . $billExist->student->name.  " berhasil diubah, pada tanggal ". date('l, d F Y');
+            $sbjSppCreated = "Tagihan ". $billExist->type ." ". $billExist->student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.";
+            $sbjAllCreated = "Tagihan ". $billExist->type ." ". $$billExist->student->name. " sudah dibuat.";
+            $sbjAllCreatedInstallment = "Tagihan ". $billExist->type ." ". $billExist->student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.";
+            $sbjPastDueOrCharge = $invoiceMailExist->charge? "Tagihan ". $billExist->type ." ". $billExist->student->name.  " terkena charge karena sudah melewati jatuh tempo" : "Tagihan ". $billExist->type ." ". $billExist->student->name.  " sudah melewati jatuh tempo";
+            $sbjPaymentSuccess = "Payment " . $billExist->type . " ". $billExist->student->name ." has confirmed!";
+
+            
+
+            foreach($billExist->student->relationship as $relationship) {
+                
+                try {
+                    
+
+
+                } catch (Exception) {
+                    //internet laggy
+                    return response()->json([
+                        'code' => 408,
+                        'msg' => 'Internet',
+                    ],408);
+                }
+
+
+            }
+
+
+            return $billExist;
+
+        } catch (Exception) {
+            
+            return response()->json([
+                    'code' => 500,
+                    'msg' => 'Internal server error.',
+                ],500);
         }
     }
 }

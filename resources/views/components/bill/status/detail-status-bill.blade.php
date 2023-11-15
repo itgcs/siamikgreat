@@ -94,7 +94,7 @@
                 </div>
               </div>
               @if (!$data->status)
-                <button id="re-send-mail" class="btn btn-success btn-lg w-100"><i class="fa-solid fa-envelope fa-fade mr-3"></i>Send Email</button>
+                <button id="re-send-mail" href="javascript:void(0)" status-id="{{$data->id}}" class="btn btn-success btn-lg w-100"><i class="fa-solid fa-envelope fa-fade mr-3"></i>Send Email</button>
               @endif
             </div>
           </div>

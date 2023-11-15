@@ -107,7 +107,7 @@ class NotificationPastDue extends Controller
   
                  try {
                     //code...
-                     $subs = $charge? "Tagihan " . $type . " anda terkena charge karena sudah melewati jatuh tempo" : "Tagihan " . $type . " anda yang sudah jatuh tempo";
+                     $subs = $charge? "Tagihan " . $type . " ". $student->name ." terkena charge karena sudah melewati jatuh tempo" : "Tagihan " . $type . " " . $student->name ." sudah melewati jatuh tempo";
 
                     foreach ($student->relationship as $relationship) {
                        $mailData['name'] = $relationship->name;
