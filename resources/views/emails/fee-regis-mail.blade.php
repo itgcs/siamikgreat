@@ -116,7 +116,7 @@
                                                         <tr>
                                                             <td style="width:300px;">
                                                                 <img height="auto"
-                                                                    src="https://great.sch.id/wp-content/uploads/2022/04/logo-png-BARU-PAKAI-INI-e1650611861183.png"
+                                                                    src="https://iili.io/JBnPNVa.png"
                                                                     style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;"
                                                                     width="75" />
                                                             </td>

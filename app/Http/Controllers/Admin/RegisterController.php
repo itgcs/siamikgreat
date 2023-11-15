@@ -44,9 +44,9 @@ class RegisterController extends Controller
    public function register(Request $request)
    {
 
-      DB::beginTransaction();
-
+      
       try {
+         
          //code...
          session()->flash('preloader', true);
          session()->flash('page',  $page = (object)[
@@ -162,7 +162,7 @@ class RegisterController extends Controller
             'grade_id' => 'integer|required',
             'gender' => 'string|required',
             'religion' => 'string|required',
-            'nisn' => 'string|nullable|min:7|max:12',
+            'nisn' => 'string|nullable|min:7|max:12|unique:students',
             'place_birth' => 'string|required',
             'date_birth' => 'date|required',
             'id_or_passport' => 'string|required|min:9|max:16|unique:students',
@@ -225,14 +225,14 @@ class RegisterController extends Controller
          
          if($validator->fails())
          {
-            DB::rollBack();
+            // DB::rollBack();
             
             return redirect('/admin/register')->withErrors($validator->messages())->withInput($rules);
          }
          
          if($rules['amount'] < $rules['dp'])
          {
-            DB::rollBack();
+            // DB::rollBack();
             return redirect('/admin/register')->withErrors([
                'dp' => ['Done payment cannot be greater than the capital fee.'],
             ])->withInput($rules);
@@ -242,7 +242,7 @@ class RegisterController extends Controller
 
          if($fatherExist && $fatherExist->relation == 'mother')
          {
-            DB::rollBack();
+            // DB::rollBack();
             return redirect('/admin/register')->withErrors([
                'father_id_or_passport' => ['This id or passport has been registered with mother relation.'],
             ])->withInput($rules);
@@ -252,7 +252,7 @@ class RegisterController extends Controller
 
          if($motherExist && $motherExist->relation == 'father')
          {
-            DB::rollBack();
+            // DB::rollBack();
             return redirect('/admin/register')->withErrors([
                'mother_id_or_passport' => ['This id or passport has been registered with father relation.'],
             ])->withInput($rules);
@@ -266,9 +266,11 @@ class RegisterController extends Controller
             DB::rollBack();
                // return 'masuk';
                return redirect('/admin/register')->withErrors([
-                  'paket' => ['Paket grade is not found'], 
+                  'paket' => ['Paket grade is not found.'], 
                ])->withInput($rules);
          }
+
+         DB::beginTransaction();
 
          $student = Student::create($credentials);
          $relationship = $this->handleRelationship($request, $student);
@@ -277,10 +279,10 @@ class RegisterController extends Controller
          // return $relationship;
          if(!$relationship->success){
             DB::rollBack();
-            return abort(500);
+            return dd($relationship->error);
          } else if (!$brotherOrSister->success){
             DB::rollBack();
-            return abort(500);
+            return dd('error at brother or sisters');
          }
 
          // return 'post';
@@ -330,8 +332,8 @@ class RegisterController extends Controller
       } catch (Exception $err) {
          
          DB::rollBack();
-         abort(500);
-         // return dd($err);
+         // abort(500);
+         return dd($err);
       }
    }
 
@@ -384,10 +386,8 @@ class RegisterController extends Controller
          $checkIdMother = Relationship::where('id_or_passport', $credentialsMother['id_or_passport'])->first();
 
 
-         // return $checkIdFather->id;
-         if($checkIdFather->relation)
-         $father = $checkIdFather? $this->updateRelation($checkIdFather->id, $credentialsFather) : Relationship::create($credentialsFather);
-         $mother = $checkIdMother? $this->updateRelation($checkIdMother->id, $credentialsMother) : Relationship::create($credentialsMother);
+         $father = $checkIdFather && $checkIdFather->relation == 'father'? $this->updateRelation($checkIdFather->id, $credentialsFather) : Relationship::create($credentialsFather);
+         $mother = $checkIdMother && $checkIdMother->relation == 'mother'? $this->updateRelation($checkIdMother->id, $credentialsMother) : Relationship::create($credentialsMother);
 
          Student_relation::create(['student_id' => $student->id,'relation_id' => $father->id]);
          Student_relation::create(['student_id' => $student->id,'relation_id' => $mother->id]);
@@ -395,8 +395,8 @@ class RegisterController extends Controller
          return (object)['success' => true, 'dataRelation' => (object)['father' => $father, 'mother' => $mother]];
 
       } catch (Exception $err) {
-         DB::rollBack();
-         return (object) ['success' => false];
+         
+         return (object) ['success' => false, 'error' => $err];
       }
    }
 
@@ -433,8 +433,7 @@ class RegisterController extends Controller
 
          return (object)['success' => true, 'dataBrotherOrSister' => $credentialsBrotherOrSister];
       } catch (Exception $err) {
-         DB::rollBack();
-         return (object)['success' => false];
+         return (object)['success' => false, 'error' => $err];
       }
    }
 
@@ -447,7 +446,6 @@ class RegisterController extends Controller
                   
          return "$date[2]-$date[1]-$date[0]";
       } catch (Exception) {
-         DB::rollBack();
          return null;
       }
    }
@@ -461,13 +459,9 @@ class RegisterController extends Controller
          
          Relationship::where('id', $id)->update($credential);
 
-         
-         
-
          return Relationship::where('id', $id)->first();
 
       } catch (Exception $err) {
-         DB::rollBack();
          return dd($err);
       }
    }
@@ -559,7 +553,6 @@ class RegisterController extends Controller
          
          return (object)['success' => true, 'last_bill' => $bill];
       } catch (Exception $err) {
-         DB::rollBack();
          return (object)['success' => false, 'error' => dd($err)];
       }
    }

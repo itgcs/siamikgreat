@@ -583,14 +583,20 @@ class BillController extends Controller
             array_push($bookId, $book->id);
          }
 
+         $flagBookCreate = false;
 
-    
-         sizeof($bookName) > 0 ? Bill::where('id', $bill_id)
+         if(sizeof($bookName) > 0) {
+            
+            Bill::where('id', $bill_id)
             ->update([
                'type' => 'Book',
                'subject' => 'Book '.implode(",",$bookName),
-               'amount' => $totalAmountBook,
-            ]) : '' ;
+               'amount' => $totalAmountBook + $checkBill->charge,
+               'date_change_bill' => now(),
+            ]);   
+
+            $flagBookCreate = true;
+         }
 
 
          foreach($uniform as $el)
@@ -598,26 +604,37 @@ class BillController extends Controller
 
             $uniform = Payment_grade::where('id', (int)$el)->first();
 
-            if(!$uniform)
-            {
-               return redirect()->back()->withErrors([
+            if(!$uniform){
+            DB::rollBack();
+            return redirect()->back()->withErrors([
                   'bill' => 'Uniform id not found !!!',
                ]);
             }
 
-
-            
-
+            if($flagBookCreate) {
                Bill::create([
                   'student_id' => $student_id,
                   'type' => 'Uniform',
                   'subject' => 'Uniform '. date("Y"),
                   'amount' => $uniform->amount,
                   'paidOf' => false,
+                  'date_change_bill' => now(),
                   'discount' => null,
                   'installment' => null,
-                  'deadline_invoice' => $checkBill->deadline_invoice, 
+                  'deadline_invoice' => Carbon::now()->setTimezone('Asia/Jakarta')->addMonth()->format('y-m-10'), 
                ]);
+            } else {
+               
+               Bill::where('id', $bill_id)
+               ->update([
+                  'type' => 'Uniform',
+                  'subject' => 'Uniform '. date("Y"),
+                  'amount' => $uniform->amount + $checkBill->charge,
+                  'date_change_bill' => now(),
+            ]);  
+            }
+
+               
             }
 
          DB::commit();

@@ -262,8 +262,21 @@
                         </tr>
                         
                         @endforeach
+
+                        @if ($data->charge > 0)
+
+                        <tr>
+                           <td align="left" class="p-1" style="width:50%;">
+                              Charge:
+                           </td>
+                           <td align="right">
+                             + Rp. {{ number_format($data->charge,0,',','.') }}
+                           </td>
+
+                        </tr>
+                        @endif
                         
-                        @else
+                     @else
                         
                         <tr>
                            <td align="left" class="p-1" style="width:50%;">

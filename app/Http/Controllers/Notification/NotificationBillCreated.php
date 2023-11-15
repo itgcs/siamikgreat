@@ -300,8 +300,9 @@ class NotificationBillCreated extends Controller
                  $query
                  ->with('bill_collection')
                  ->where('type', "Book")
-                 ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                  ->where('paidOf', false)
+                 ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                 ->orWhere('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                  ->get();
            },
               'relationship'
@@ -309,8 +310,9 @@ class NotificationBillCreated extends Controller
            ->whereHas('bill', function($query) {
                  $query
                  ->where('type', "Book")
+                 ->where('paidOf', false)
                  ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
-                 ->where('paidOf', false);
+                 ->orWhere('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'));
            })
            ->get();
            
@@ -342,6 +344,7 @@ class NotificationBillCreated extends Controller
                     foreach($student->relationship as $parent)
                  {
                     $mailData['name'] = $parent->name;
+                    return view('emails.book-mail')->with('mailData', $mailData);
                     Mail::to($parent->email)->send(new BookMail($mailData, "Tagihan Buku " . $student->name. " sudah dibuat.", $pdf));
                  }
   
@@ -379,8 +382,9 @@ class NotificationBillCreated extends Controller
               'bill' => function($query)  {
                  $query
                  ->where('type', "Uniform")
-                 ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                  ->where('paidOf', false)
+                 ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                 ->orWhere('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                  ->get();
            },
               'relationship'
@@ -388,8 +392,9 @@ class NotificationBillCreated extends Controller
            ->whereHas('bill', function($query) {
                  $query
                  ->where('type', "Uniform")
+                 ->where('paidOf', false)
                  ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
-                 ->where('paidOf', false);
+                 ->orWhere('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'));
            })
            ->get();
   
@@ -460,8 +465,8 @@ class NotificationBillCreated extends Controller
               'bill' => function($query)  {
                  $query
                     ->where('type', "Paket")
-                    ->where('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                     ->where('paidOf', false)
+                    ->where('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                     ->get();
                 },
                 'relationship'
