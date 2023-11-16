@@ -513,7 +513,7 @@ class RegisterController extends Controller
                   'subject' => $subject, 
                ]);   
 
-               if($i>1)
+               if($installment>1)
                {
                   array_push($main_id, $bill->id);
                }

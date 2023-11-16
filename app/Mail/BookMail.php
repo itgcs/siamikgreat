@@ -2,6 +2,8 @@
 
 namespace App\Mail;
 
+use App\Http\Controllers\Notification\CreatePdfBil;
+use App\Http\Controllers\Notification\CreatePdfBill;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -54,9 +56,12 @@ class BookMail extends Mailable
      */
     public function attachments(): array
     {
+
+        // $pdfInvoice = new CreatePdfBill
+
         return [
-            Attachment::fromData(fn () => $this->pdf->output(), 'Tagihan buku '.date('F Y', strtotime($this->mailData['bill']->created_at)). ' ' . $this->mailData['student']->name)
-            ->withMime('application/pdf'),
+            // Attachment::fromData(fn () => $this->pdf->output(), 'Tagihan buku '.date('F Y', strtotime($this->mailData['bill']->created_at)). ' ' . $this->mailData['student']->name)
+            // ->withMime('application/pdf'),
         ];
     }
 }

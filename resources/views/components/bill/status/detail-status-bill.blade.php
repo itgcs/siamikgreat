@@ -77,7 +77,7 @@
                      @if($data->status)
                            <h1 class="badge badge-success">success</h1>
                      @else
-                           <h1 class="badge badge-danger">failed</h1>
+                           <h1 id="status-invoice" class="badge badge-danger">failed</h1>
                      @endif
                   </div>
                 </div>

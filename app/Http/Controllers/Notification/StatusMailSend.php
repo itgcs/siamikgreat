@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\Notification;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendEmailJob;
 use App\Mail\BookMail;
+use App\Mail\DemoMail;
+use App\Mail\FeeRegisMail;
+use App\Mail\PaketMail;
+use App\Mail\SppMail;
 use App\Models\Bill;
 use App\Models\Grade;
 use App\Models\statusInvoiceMail;
@@ -132,11 +137,8 @@ class StatusMailSend extends Controller
         }
     }
 
-
-    public function sendEmailNotification($status_id)
-    {
-        DB::beginTransaction();
-
+    public function send($id) {
+        
         session()->flash('page', (object)[
             'page' => 'Bills',
             'child' => 'status bills'
@@ -145,9 +147,10 @@ class StatusMailSend extends Controller
         try {
             //code...
 
-            $invoiceMailExist = statusInvoiceMail::where('id', $status_id)->first();
+            $invoiceMailExist = statusInvoiceMail::where('id', $id)->first();
 
             if(!$invoiceMailExist) {
+                DB::rollBack();
                 return response()->json([
                     'code' => 404,
                     'msg' => 'Invoice mail not found.',
@@ -155,6 +158,7 @@ class StatusMailSend extends Controller
             }
 
             if($invoiceMailExist->status) {
+                DB::rollBack();
                 return response()->json([
                     'code' => 400,
                     'msg' => 'Invoice mail is already been sent so it can`t be resent.',
@@ -167,7 +171,9 @@ class StatusMailSend extends Controller
             ->where('id', $invoiceMailExist->bill_id)
             ->first();
 
+
             if(!$billExist) {
+                DB::rollBack();
                 return response()->json([
                     'code' => 404,
                     'msg' => 'Bill not found.',
@@ -175,17 +181,16 @@ class StatusMailSend extends Controller
             }
 
             $pdf = app('dompdf.wrapper');
-                  $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $billExist])->setPaper('a4', 'portrait'); 
-  
+            $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $billExist])->setPaper('a4', 'portrait'); 
+            
             $pdfReport = null;
   
-                 if($billExist->installment){
-                    
-                    $pdfReport = app('dompdf.wrapper');
-                    $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $billExist])->setPaper('a4', 'portrait'); 
+            if($billExist->installment)
+            {        
+                $pdfReport = app('dompdf.wrapper');
+                $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $billExist])->setPaper('a4', 'portrait'); 
             }
-
-
+            
             $mailData = [
                 'student' => $billExist->student,
                 'bill' => $billExist->type == 'Book' ? $billExist : [$billExist],
@@ -196,32 +201,42 @@ class StatusMailSend extends Controller
 
             $sbjPaketChange = "Tagihan Paket " . $billExist->student->name.  " berhasil diubah, pada tanggal ". date('l, d F Y');
             $sbjSppCreated = "Tagihan ". $billExist->type ." ". $billExist->student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.";
-            $sbjAllCreated = "Tagihan ". $billExist->type ." ". $$billExist->student->name. " sudah dibuat.";
+            $sbjAllCreated = "Tagihan ". $billExist->type ." ". $billExist->student->name." sudah dibuat.";
             $sbjAllCreatedInstallment = "Tagihan ". $billExist->type ." ". $billExist->student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.";
             $sbjPastDueOrCharge = $invoiceMailExist->charge? "Tagihan ". $billExist->type ." ". $billExist->student->name.  " terkena charge karena sudah melewati jatuh tempo" : "Tagihan ". $billExist->type ." ". $billExist->student->name.  " sudah melewati jatuh tempo";
             $sbjPaymentSuccess = "Payment " . $billExist->type . " ". $billExist->student->name ." has confirmed!";
-
+           
             foreach($billExist->student->relationship as $relationship) {
+                
+                $mailData['name'] = $relationship->name;
                 
                 try {
 
-                    $mailData['name'] = $relationship->name;
-                    
-                    if($billExist->type == 'book') {
+                    if($billExist->type == 'Book') {
                         Mail::to($relationship->email)->send(new BookMail($mailData, $sbjAllCreated, $pdf));
+                    } else if($billExist->type == 'Paket') {
+                        Mail::to($relationship->email)->send(new PaketMail($mailData, $sbjAllCreated, $pdf, $pdfReport));
+                    } else if($billExist->type == 'Capital Fee') {
+                        Mail::to($relationship->email)->send(new FeeRegisMail($mailData, $sbjAllCreated, $pdf, $pdfReport));
+                    } else {
+                        Mail::to($relationship->email)->send(new SppMail($mailData, $sbjAllCreated, $pdf, $pdfReport));
                     }
-
-                } catch (Exception) {
+                    
+                } catch (Exception $err) {
                     //internet laggy
+                    DB::rollBack();
                     return response()->json([
                         'code' => 408,
                         'msg' => 'Internet',
                     ],408);
                 }
-
-
             }
+            
 
+            statusInvoiceMail::where('id', $id)->update(['status' => true]);
+
+
+            DB::commit();
 
             return response()->json([
                 'code' => 200,
@@ -229,13 +244,13 @@ class StatusMailSend extends Controller
             ],200);
 
         } catch (Exception $err) {
-
-            // return dd($err);
             
+            DB::rollBack();
             return response()->json([
                     'code' => 500,
                     'msg' => 'Internal server error.',
                 ],500);
         }
+        
     }
 }

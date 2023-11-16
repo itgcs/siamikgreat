@@ -13,5 +13,6 @@
 ~   fix installment capital fee                                         [v]
 ~   change installment paket manual by admin                            [v]
 ~   change installment capital fee manual by admin                      [v]
-~   create others type filter for bills                                 []
-~   fix bug register relation it can be two father or mother            []
+~   create others type filter for bills                                 [v]
+~   fix bug register relation it can be two father or mother            [v]
+~   add type book and uniform                                           [v]

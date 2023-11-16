@@ -101,7 +101,17 @@ class NotificationPaymentSuccess extends Controller
                   foreach ($student->relationship as $relationship) {
                     $mailData['name'] = $relationship->name;
                      // return view('emails.payment-success')->with('mailData', $mailData);
-                    Mail::to($relationship->email)->send(new PaymentSuccessMail($mailData, "Payment " . $type . " ". $student->name ." has confirmed!", $pdf, $pdfReport));
+                     try {
+                        //code...
+                        Mail::to($relationship->email)->send(new PaymentSuccessMail($mailData, "Payment " . $type . " ". $student->name ." has confirmed!", $pdf, $pdfReport));
+                     } catch (Exception) {
+                        
+                        statusInvoiceMail::create([
+                           'bill_id' => $pdfBill->id,
+                           'status' => false,
+                           'is_paid' => true,
+                        ]);
+                     }
                  }
               }
            } 

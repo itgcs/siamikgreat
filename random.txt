@@ -1,11 +1,10 @@
-08.00 - 09.00 = fix bug at sidebar javascript.
-09.00 - 10.00 = download icon using fontawesome css and javasript.
-10.00 - 11.00 = fix bug csrf token and jquery offline mode.
-11.00 - 13.25 = meeting with ms yuli and mr donny.
+07.00 - 09.00 = fix bug at status invoice.
+09.00 - 10.00 = create logic resend email to parent.
+10.00 - 11.00 = create loading ui for resent email.
+11.00 - 13.25 = trial and error resend email and fix bug resend email.
 13.25 - 14.25 = Ishoma.
-14.25 - 15.00 = add migration new field nisn for table student, nisb for table books, description for create custom bills, dp for table bills .
-15.00 - 16.00 = add feature nisn for student and done payments for bill capital fee.
-16.00 - 17.00 = testing error for register student with new field nisn and create bill capital fee and paket.
+14.25 - 15.00 = add migration new column is_paid and is_change for indetify tpye emails.
+15.00 - 16.00 = fix bug email type pakets, books, and uniform.
 
 
 https://www.billdu.com/invoice-template/profession-graphic-design-pdf/

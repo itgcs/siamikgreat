@@ -25,8 +25,13 @@ use App\Http\Controllers\SuperAdmin\{
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Jobs\SendEmailJob;
+use App\Jobs\SendMailReminder;
 use App\Livewire\Counter;
+use App\Mail\SendEmailTest;
 use Faker\Provider\ar_EG\Payment;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +49,14 @@ Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin
 Route::get('/counter', Counter::class);
 
 // Route::get('send-mail', [MailController::class, 'createNotificationUniform']);
-Route::get('/coba', [NotificationBillCreated::class, 'book']);
+Route::get('coba', [NotificationBillCreated::class, 'feeRegister']);
+
+// Route::get('email-test', function(){
+  
+//     dispatch(new App\Jobs\SendEmailJob('kirimkesofyanaja@gmail.com'));
+
+//    dd('done');
+// });
 
 Route::middleware(['admin'])->prefix('/admin')->group(function () {
    
@@ -137,7 +149,7 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::post('/post-bill/{id}', [BillController::class, 'actionCreateBill'])->name('create.bill');
       Route::post('/post-intallment-paket/{bill_id}', [BillController::class, 'actionPaketInstallment'])->name('create.installment');
       Route::put('/change-paket/{bill_id}/{student_id}', [BillController::class, 'actionChangePaket'])->name('action.edit.paket');
-      Route::patch('/status/{status_id}', [StatusMailSend::class, 'sendEmailNotification']);
+      Route::patch('/status/{id}', [StatusMailSend::class, 'send']);
       Route::patch('/update-paid/{bill_id}/{student_id}', [BillController::class, 'paidOfBook'])->name('action.book.payment');
       Route::patch('/update-paid/{id}', [BillController::class, 'paidOf']);
 

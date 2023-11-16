@@ -317,7 +317,7 @@
                                                                                             @endforeach
 
                                                                                             @if($mailData['bill']->charge > 0) 
-                                                                                            {
+                                                                                            
                                                                                                 <tr>
                                                                                                     <td colspan="2"
                                                                                                         style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;width:50%;">
@@ -333,7 +333,7 @@
                                                                                                         Rp.{{number_format($mailData['bill']->charge, 0, ',', '.')}}
                                                                                                     </td>
                                                                                                 </tr>
-                                                                                            }
+                                                                                            
                                                                                             @endif
 
                                                                                             <tr>

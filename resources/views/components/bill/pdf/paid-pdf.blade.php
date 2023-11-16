@@ -331,12 +331,12 @@
                      <table style="width:100%;">
                         <thead>
                             <tr>
-                                @if ($data->installment)
+                            @if ($data->installment)
                                 <td align="right" class="total">Total :</td>
                               <td align="right" class="total">Rp. {{number_format($data->amount_installment, 0, ',', '.')}}</td>
                            @else
                            <td align="right" class="total">Total :</td>
-                           <td align="right" class="total">Rp. {{number_format($data->amount, 0, ',', '.')}}</td>
+                           <td align="right" class="total">Rp. {{number_format($data->amount-$data->dp, 0, ',', '.')}}</td>
                            @endif
                         </tr>
                         </thead>

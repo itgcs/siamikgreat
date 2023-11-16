@@ -340,7 +340,7 @@
       setTimeout(() => {
          Toast.fire({
             icon: 'success',
-            title: 'Successfully registered the students in the database !!!',
+            title: 'Successfully update student in the database !!!',
       });
       }, 1500);
 
@@ -374,7 +374,7 @@
         
   @endif
 
-  @if(session('after_create_student')) 
+  {{-- @if(session('after_create_student')) 
     <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
@@ -398,7 +398,7 @@
 
     </script>
         
-  @endif
+  @endif --}}
 
 
 

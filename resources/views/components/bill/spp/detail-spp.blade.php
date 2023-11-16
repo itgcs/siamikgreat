@@ -384,7 +384,7 @@
                            $total = $data->discount ? $data->amount - $data->amount * $data->discount/100 : $data->amount;
                            $total = $total;
                         } else {
-                           $total = $data->installment ? $data->amount_installment : $data->amount;
+                           $total = $data->installment ? $data->amount_installment : $data->amount-$data->dp;
                            $total = $total;
                         }
                      @endphp

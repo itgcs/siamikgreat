@@ -213,6 +213,17 @@ class NotificationBillCreated extends Controller
                  ->where('type', "Capital Fee")
                  ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(9)->format('y-m-d'))
                  ->where('paidOf', false)
+                 ->where('subject', '!=', 'Capital Fee')
+                 ->where('subject', '!=', '1')
+                 ->orWhere('type', "Capital Fee")
+                 ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                 ->where('installment', null)
+                 ->where('subject', 'Capital Fee')
+                 ->where('paidOf', false)
+                 ->orWhere('type', "Capital Fee")
+                 ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                 ->where('subject', '1')
+                 ->where('paidOf', false)
                  ->get();
            },
               'relationship'
@@ -221,11 +232,20 @@ class NotificationBillCreated extends Controller
                  $query
                  ->where('type', "Capital Fee")
                  ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(9)->format('y-m-d'))
+                 ->where('subject', '!=', 'Capital Fee')
+                 ->where('subject', '!=', '1')
+                 ->where('paidOf', false)
+                 ->orWhere('type', "Capital Fee")
+                 ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                 ->where('installment', null)
+                 ->where('subject', 'Capital Fee')
+                 ->where('paidOf', false)
+                 ->orWhere('type', "Capital Fee")
+                 ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                 ->where('subject', '1')
                  ->where('paidOf', false);
            })
            ->get();
-  
-           
            foreach ($data as $student) {
               
               foreach ($student->bill as $createBill) {

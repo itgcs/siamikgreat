@@ -30,6 +30,6 @@ class SendMailReminder implements ShouldQueue
      */
     public function handle(): void
     {
-        Mail::to($this->email)->send(new SppMail('coba'));
+        // Mail::to($this->email)->send(new SppMail('coba'));
     }
 }
