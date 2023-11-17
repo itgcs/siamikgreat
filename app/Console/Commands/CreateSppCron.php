@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Http\Controllers\Admin\BillController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\Notification\NotificationBillCreated;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 use Illuminate\Bus\Queueable;
@@ -35,7 +36,7 @@ class CreateSppCron extends Command
     public function handle() : void
     {
        
-      info("Spp Job running at ". now());
+      info("Spp Job running at ". Carbon::now()->setTimezone('Asia/Jakarta'));
 
       $notification = new NotificationBillCreated;
       $notification->spp();

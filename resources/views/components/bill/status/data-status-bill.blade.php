@@ -171,9 +171,13 @@
                         @if ($el->charge)
                             Send <b>charge past due</b> notification by email
                         @elseif ($el->past_due)
-                            Send <b>past due</b> notification by email
+                            Send bill is <b>past due</b> notification by email
+                        @elseif ($el->is_change)
+                            Send bill has been <b>changed</b> notification by email
+                        @elseif ($el->is_paid)
+                            Send <b>payment received</b> notification by email
                         @else
-                            Send bill <b>created</b> notification by email
+                            Send bill has been <b>created</b> notification by email
                         @endif
                     </td>
                         <td class="project-state text-center">

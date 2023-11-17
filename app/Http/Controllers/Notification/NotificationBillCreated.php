@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Notification;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendEmailJob;
 use App\Mail\BookMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -21,6 +22,23 @@ use Illuminate\Support\Carbon;
 
 class NotificationBillCreated extends Controller
 {
+
+   
+   public function test() 
+   {
+      try {
+         //code...
+         $details['email'] = 'your_email@gmail.com';
+         
+         // dispatch(new SendEmailJob($details));
+         
+         info('cron test running at '. now());
+         
+      } catch (Exception $err) {
+         //throw $th;
+         info('cron error at '. $err->getMessage());
+      }
+   }
     
     public function spp()
     {
@@ -77,26 +95,25 @@ class NotificationBillCreated extends Controller
                 $pdf = app('dompdf.wrapper');
                 $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');         
                
-            try {
-               foreach($data[$idx]->relationship as $el)
-               {
-                     //code...
-                     $mailData['name'] = $el->name;
-                     Mail::to($el->email)->send(new SppMail($mailData, "Tagihan SPP " . $data[$idx]->name.  " bulan ini, ". date('F Y') ." sudah dibuat.", $pdf));
-               
-               }
-               statusInvoiceMail::create([
-                     'bill_id' => $pdfBill->id,
-                  ]);
-
-            } catch (Exception) {
+               try {
+                  $array_email = [];
+                  foreach($data[$idx]->relationship as $el)
+                  {
+                     $mailData['name'] = $data[$idx]->relationship[0]->name;
+                     array_push($array_email, $el->email);
+                     // Mail::to($el->email)->send(new SppMail($mailData, "Tagihan SPP " . $data[$idx]->name.  " bulan ini, ". date('F Y') ." sudah dibuat.", $pdf));
+                  }
+                  dispatch(new SendEmailJob($array_email, 'SPP', $mailData, "Tagihan SPP " . $data[$idx]->name.  " bulan ini, ". date('F Y') ." sudah dibuat.", $pdfBill->id));
+               } catch (Exception) {
                      
-               statusInvoiceMail::create([
-                  'bill_id' => $pdfBill->id,
-                  'status' => false,
-               ]);
+                  statusInvoiceMail::create([
+                     'bill_id' => $pdfBill->id,
+                     'status' => false,
+                  ]);
             }
          }
+
+         DB::commit();
 
          info("Cron Job create spp success at ". date('d-m-Y'));
       } catch (Exception $err) {
@@ -297,14 +314,14 @@ class NotificationBillCreated extends Controller
                    Mail::to($parent->email)->send(new FeeRegisMail($mailData, $subject, $pdf, $pdfReport));
                 }
   
-                 statusInvoiceMail::create([
+                  statusInvoiceMail::create([
                     'status' =>true,
                     'bill_id' => $createBill->id,
                  ]);
   
                  } catch (Exception $err) {
   
-                    statusInvoiceMail::create([
+                  statusInvoiceMail::create([
                     'status' =>false,
                     'bill_id' => $createBill->id,
                     ]);
