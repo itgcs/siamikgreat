@@ -12,6 +12,7 @@ use App\Mail\SendEmailTest;
 use App\Mail\SppMail;
 use App\Models\Bill;
 use App\Models\statusInvoiceMail;
+use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Mail;
   
@@ -20,6 +21,7 @@ class SendEmailJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     
     public $email, $type, $mailData, $subject, $bill_id;
+    public $tries = 5;
   
     /**
      * Create a new job instance.
@@ -62,5 +64,10 @@ class SendEmailJob implements ShouldQueue
             'status' => false,
         ]);
         // info('Email job spp failed at ' . $exception->getMessage());
+    }
+
+    public function retryUntil(): DateTime
+    {
+        return now()->addMinutes(10);
     }
 }
