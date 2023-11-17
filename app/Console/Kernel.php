@@ -10,14 +10,33 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      */
+
+
+
     protected function schedule(Schedule $schedule): void
     {
         date_default_timezone_set('Asia/Jakarta');
-        $schedule->command('spp:cron')->monthlyOn(16, '15:39')->timezone('Asia/Jakarta');
-        $schedule->command('chargePastDueSpp:cron')->monthlyOn(11, '13:10')->timezone('Asia/Jakarta');
-        $schedule->command('reminderPastDueMinusOneDays:cron')->monthlyOn(11, '15:00')->timezone('Asia/Jakarta');
-        // $schedule->command('reminderPastDueMinusSevenDays:cron')->dailyAt('10:40')->timezone('Asia/Jakarta');
-        // $schedule->command('reminderFeeRegister:cron')->dailyAt('16:00')->timezone('Asia/Jakarta');
+        $email_logging = env("EMAIL_CRON_LOGGING", "kirimkesofyanaja@gmail.com");
+
+        // create bill notification
+        $schedule->command('spp:cron')->monthlyOn(1, '06:00')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        $schedule->command('capital-fee:cron')->dailyAt('07:15')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        $schedule->command('book:cron')->dailyAt('07:30')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        $schedule->command('uniform:cron')->dailyAt('07:45')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        $schedule->command('paket:cron')->dailyAt('08:00')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        $schedule->command('change-paket:cron')->dailyAt('08:00')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        $schedule->command('other:cron')->dailyAt('08:15')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        
+        // every day at 11 th monthly
+        $schedule->command('charge_bill:cron')->monthlyOn(11, '08:20')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+
+        // every day at 18 & 25 monthly
+        $schedule->command('cronReminder:cron')->twiceMonthly(18, 25, '08:20')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+
+        // send email payment success eveyday
+        $schedule->command('payment:cron')->dailyAt('05:15')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+
+        
     }
 
     /**

@@ -2,16 +2,17 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\Notification\NotificationBillCreated;
 use Illuminate\Console\Command;
 
-class NotificationBookCreated extends Command
+class CreatePaketCron extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'notificationBookCreated:cron';
+    protected $signature = 'paket:cron';
 
     /**
      * The console command description.
@@ -25,6 +26,7 @@ class NotificationBookCreated extends Command
      */
     public function handle()
     {
-        //
+        $notification = new NotificationBillCreated;
+        $notification->paket();
     }
 }

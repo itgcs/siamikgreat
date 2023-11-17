@@ -905,7 +905,7 @@ class BillController extends Controller
             return abort(404);
          }
 
-         if(date('y-m-d',strtotime($data->created_at)) != date('y-m-d'))
+         if(date('y-m-d',strtotime($data->update_at)) != date('y-m-d'))
          {
             return abort(404);
          }

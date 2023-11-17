@@ -429,5 +429,13 @@
     
 @endif --}}
 
+<script>
+    // Listen for the browser's back button click
+    window.onpopstate = function (event) {
+        // Reload the page to force a new request to the server
+        alert('back ++++++++++++++++++++++++++++++++++++++++++++');
+    };
+</script>
+
 
 @endsection

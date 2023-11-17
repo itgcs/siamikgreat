@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\Notification\NotificationPastDue;
 use Illuminate\Console\Command;
 
 use Illuminate\Bus\Queueable;
@@ -36,10 +37,14 @@ class ReminderCron extends Command
     {
         info("Reminder h-1 Job running at ". now());
 
-        $bill = new MailController;
-        $bill->cronReminder('SPP');
-        // $bill->cronReminderMinusOneDay('Uang Gedung');
-        // $bill->cronReminderMinusOneDay('Book');
-        // $bill->cronReminderMinusOneDay('Uniform');
+        info("Reminder past due charge Job running at ". now());
+
+        $bill = new NotificationPastDue;
+        $bill->cronChargePastDue('SPP');
+        $bill->cronChargePastDue('Capital Fee');
+        $bill->cronChargePastDue('Paket');
+        $bill->cronChargePastDue('Book');
+        $bill->cronChargePastDue('Uniform');
+        $bill->cronChargePastDue('etc');
     }
 }

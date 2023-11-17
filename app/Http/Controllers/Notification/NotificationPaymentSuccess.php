@@ -98,12 +98,18 @@ class NotificationPaymentSuccess extends Controller
                      $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
                   }
   
-                  foreach ($student->relationship as $relationship) {
-                    $mailData['name'] = $relationship->name;
-                     // return view('emails.payment-success')->with('mailData', $mailData);
-                     try {
-                        //code...
+                  // return view('emails.payment-success')->with('mailData', $mailData);
+                  try {
+                     //code...
+                     foreach ($student->relationship as $relationship) {
+                        $mailData['name'] = $relationship->name;
                         Mail::to($relationship->email)->send(new PaymentSuccessMail($mailData, "Payment " . $type . " ". $student->name ." has confirmed!", $pdf, $pdfReport));
+                        statusInvoiceMail::create([
+                           'bill_id' => $pdfBill->id,
+                           'status' => false,
+                           'is_paid' => true,
+                        ]);
+                     }
                      } catch (Exception) {
                         
                         statusInvoiceMail::create([
@@ -112,7 +118,6 @@ class NotificationPaymentSuccess extends Controller
                            'is_paid' => true,
                         ]);
                      }
-                 }
               }
            } 
 

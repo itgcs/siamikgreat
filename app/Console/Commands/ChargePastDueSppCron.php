@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\Notification\NotificationPastDue;
 use Illuminate\Console\Command;
 use Exception;
 
@@ -22,23 +23,28 @@ class ChargePastDueSppCron extends Command
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $signature = 'chargePastDueSpp:cron';
+    protected $signature = 'charge_bill:cron';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Charge past due spp';
+    protected $description = 'Charge past due';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        info("Reminder past due Job running at ". now());
+        info("Reminder past due charge Job running at ". now());
 
-        $bill = new MailController;
-        $bill->cronChargePastDue();
+        $bill = new NotificationPastDue;
+        $bill->cronChargePastDue('SPP', true);
+        $bill->cronChargePastDue('Capital Fee', true);
+        $bill->cronChargePastDue('Paket');
+        $bill->cronChargePastDue('Book');
+        $bill->cronChargePastDue('Uniform');
+        $bill->cronChargePastDue('etc');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\Admin\BillController;
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\Notification\NotificationBillCreated;
 use Illuminate\Console\Command;
 
 use Illuminate\Bus\Queueable;
@@ -36,7 +37,7 @@ class CreateSppCron extends Command
        
       info("Spp Job running at ". now());
 
-      $create_spp = new MailController;
-      $create_spp->cronCreateSpp();
+      $notification = new NotificationBillCreated;
+      $notification->spp();
     }
 }

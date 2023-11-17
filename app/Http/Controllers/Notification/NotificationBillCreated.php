@@ -51,7 +51,7 @@ class NotificationBillCreated extends Controller
                'amount' => $student->spp_student? $student->spp_student->amount : $student->grade->spp->amount,
                'paidOf' => false,
                'discount' => $student->spp_student ? ($student->spp_student->discount? $student->spp_student->discount : null) : null,
-               'deadline_invoice' => Carbon::now()->setTimezone('Asia/Jakarta')->addDays(10)->format('Y-m-d'),
+               'deadline_invoice' => Carbon::now()->setTimezone('Asia/Jakarta')->format('Y-m-10'),
                'installment' => 0,
             ]);
             
@@ -116,21 +116,31 @@ class NotificationBillCreated extends Controller
               'bill' => function($query)  {
                  $query
                  ->where('type', "Paket")
-                 ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                 ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(9)->format('y-m-d'))
                  ->where('paidOf', false)
+                 ->where('subject', '!=', 'Paket')
+                 ->where('subject', '!=', '1')
+                 ->orWhere('type', "Paket")
+                 ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
                  ->where('installment', null)
-                 ->where('date_change_bill', null)
+                 ->where('subject', 'Paket')
+                 ->where('paidOf', false)
                  ->get();
                 },
                 'relationship'
                 ])
                 ->whereHas('bill', function($query) {
-                    $query
-                    ->where('type', "Paket")
-                    ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
-                    ->where('paidOf', false)
-                    ->where('installment', null)
-                    ->where('date_change_bill', null);
+                  $query
+                 ->where('type', "Paket")
+                 ->where('deadline_invoice', '=', Carbon::now()->setTimezone('Asia/Jakarta')->addDays(9)->format('y-m-d'))
+                 ->where('paidOf', false)
+                 ->where('subject', '!=', 'Paket')
+                 ->where('subject', '!=', '1')
+                 ->orWhere('type', "Paket")
+                 ->where('created_at', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                 ->where('installment', null)
+                 ->where('subject', 'Paket')
+                 ->where('paidOf', false);
            })
            ->get();
   
@@ -308,7 +318,7 @@ class NotificationBillCreated extends Controller
         } catch (Exception $err) {
 
            info('Cron notification Fee Register error at ' . now());
-            return $err;
+            return dd($err);
          }
     }
 
@@ -395,13 +405,13 @@ class NotificationBillCreated extends Controller
            
         } catch (Exception $err) {
             
-           return dd($err);
            info('Cron notification Books error at ' . now());
+           return dd($err);
         }
     }
 
     public function uniform() 
-    {
+    { 
         try {
            //sementara gabisa kirim email push array dulu
   
@@ -464,7 +474,7 @@ class NotificationBillCreated extends Controller
                     
                  }
   
-                 statusInvoiceMail::create([
+                  statusInvoiceMail::create([
                     'status' =>true,
                     'bill_id' => $createBill->id,
                     'is_change' => $is_change,
@@ -472,7 +482,7 @@ class NotificationBillCreated extends Controller
   
                  } catch (Exception $err) {
   
-                    statusInvoiceMail::create([
+                  statusInvoiceMail::create([
                     'status' =>false,
                     'bill_id' => $createBill->id,
                     'is_change' => $is_change,
@@ -487,8 +497,8 @@ class NotificationBillCreated extends Controller
            
         } catch (Exception $err) {
            
-           return dd($err);
            info('Cron notification Fee Register error at ' . now());
+           return dd($err);
         }
     }
 
@@ -502,6 +512,7 @@ class NotificationBillCreated extends Controller
                     ->where('type', "Paket")
                     ->where('paidOf', false)
                     ->where('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                    ->where('subject', '1')
                     ->get();
                 },
                 'relationship'
@@ -510,6 +521,7 @@ class NotificationBillCreated extends Controller
                     $query
                     ->where('type', "Paket")
                     ->where('date_change_bill', '>=', Carbon::now()->setTimezone('Asia/Jakarta')->subDay()->format('Y-m-d H:i:s'))
+                    ->where('subject', '1')
                     ->where('paidOf', false);
             })
             ->get();
@@ -554,25 +566,26 @@ class NotificationBillCreated extends Controller
                  }
   
                 try {
-  
                 foreach($student->relationship as $parent)
                 {
                    $mailData['name'] = $parent->name;
-                   return view('emails.paket-mail')->with('mailData', $mailData);
+                  //  return view('emails.paket-mail')->with('mailData', $mailData);
                    Mail::to($parent->email)->send(new PaketMail($mailData, "Tagihan Paket " . $student->name.  " berhasil diubah, pada tanggal ". date('l, d F Y'), $pdf, $pdfReport));
                 }
   
                  statusInvoiceMail::create([
                     'status' =>true,
                     'bill_id' => $createBill->id,
-                 ]);
+                    'is_change' => true,
+                  ]);
   
                  } catch (Exception $err) {
   
                     statusInvoiceMail::create([
                     'status' =>false,
                     'bill_id' => $createBill->id,
-                    ]);
+                    'is_change' => true,
+                  ]);
                  }
                  
               }
@@ -662,8 +675,8 @@ class NotificationBillCreated extends Controller
            
         } catch (Exception $err) {
            
-           return dd($err);
            info('Cron notification etc error at ' . now());
+           return dd($err);
         }
     }
 

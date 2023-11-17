@@ -21,7 +21,7 @@ use Illuminate\Support\Carbon;
 
 class NotificationPastDue extends Controller
 {
-    public function cronChargePastDue($type = 'etc', $charge = false)
+    public function cronChargePastDue($type = 'SPP', $charge = false)
     {
       DB::beginTransaction();
         try {
@@ -158,7 +158,7 @@ class NotificationPastDue extends Controller
 
            DB::commit();
 
-           info("Cron Job pastdue success at ". date('d-m-Y'));
+           info("Cron Job past due success at ". date('d-m-Y'));
            
        } catch (Exception $err) {
           DB::rollBack();

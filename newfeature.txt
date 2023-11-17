@@ -15,4 +15,7 @@
 ~   change installment capital fee manual by admin                      [v]
 ~   create others type filter for bills                                 [v]
 ~   fix bug register relation it can be two father or mother            [v]
-~   add type book and uniform                                           [v]
+~   add type book and uniform                                           []
+~   add field date register at landing page student register            []
+~   add field date deadline invoice for create custom bills            []
+~   

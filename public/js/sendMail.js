@@ -81,9 +81,9 @@ $(document).ready(() => {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",
-                                    text: "Something went wrong!",
-                                    // text: err,
-                                    footer: '<a href="">Why do I have this issue?</a>',
+                                    text: err.msg,
+                                    text: 'Make sure your internet remains stable!',
+                                    // footer: '<a href="">Why do I have this issue?</a>',
                                 });
 
                                 $('#re-send-mail').show();
