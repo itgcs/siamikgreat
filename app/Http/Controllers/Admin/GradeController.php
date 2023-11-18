@@ -395,7 +395,7 @@ class GradeController extends Controller
             Bill::create([
                'student_id' => $student->id,
                'type' => 'Paket',
-               'subject' => 'Paket '. $student->grade->name. ' ' .$student->grade->class,
+               'subject' => 'Paket',
                'amount' => $amount,
                'discount' => null,
                'installment' => null,

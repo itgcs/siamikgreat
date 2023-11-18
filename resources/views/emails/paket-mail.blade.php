@@ -205,7 +205,7 @@
 
                                                                             <p style="margin: 0;">
                                                                                 {{ 
-                                                                                'Dear '.$mailData['name'].', tagihan anda untuk '. $mailData['student']->name . ' sudah diubah dan melewati jatuh tempo.' }}
+                                                                                'Dear '.$mailData['name'].', tagihan anda untuk '. $mailData['student']->name . ' sudah diubah dengan cicilan '.$mailData['bill'][0]->installment.'x '. 'dan melewati jatuh tempo.' }}
 
                                                                             </p>
                                                                             

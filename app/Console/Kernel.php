@@ -20,11 +20,11 @@ class Kernel extends ConsoleKernel
 
         // create bill notification
         // $schedule->command('test:cron')->everyTwoMinutes()->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
-        $schedule->command('spp:cron')->monthlyOn(17, '15:55')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        $schedule->command('spp:cron')->monthlyOn(18, '13:01')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
         $schedule->command('capital-fee:cron')->dailyAt('07:15')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
         $schedule->command('book:cron')->dailyAt('07:30')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
         $schedule->command('uniform:cron')->dailyAt('07:45')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
-        $schedule->command('paket:cron')->dailyAt('08:00')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        $schedule->command('paket:cron')->dailyAt('10:05')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
         $schedule->command('change-paket:cron')->dailyAt('08:00')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
         $schedule->command('other:cron')->dailyAt('08:15')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
 

@@ -1,7 +1,10 @@
 <?php
   
 namespace App\Jobs;
-  
+
+use App\Mail\BookMail;
+use App\Mail\FeeRegisMail;
+use App\Mail\PaketMail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -48,22 +51,53 @@ class SendEmailJob implements ShouldQueue
           
         $pdf = app('dompdf.wrapper');
         $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
+
+        $pdfReport = null;
+
+        if($pdfBill->installment){
+            
+            $pdfReport = app('dompdf.wrapper');
+            $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
+        }
+
+
+
+        //check type
+
+        if(strtolower($this->type) === 'paket') {
+            $target = new PaketMail($this->mailData, $this->subject, $pdf, $pdfReport);
+        } else if (strtolower($this->type) === 'capital fee') {
+            $target = new FeeRegisMail($this->mailData, $this->subject, $pdf, $pdfReport);
+        } else if (strtolower($this->type) === 'book'){
+            $target = new BookMail($this->mailData, $this->subject, $pdf);
+        } else {
+            $target = new SppMail($this->mailData, $this->subject, $pdf);
+        }
         
-        Mail::to($this->email[0])->cc($this->email[1])->send(new SppMail($this->mailData, $this->subject, $pdf));
+        Mail::to($this->email[0])->cc($this->email[1])->send($target);
 
         statusInvoiceMail::create([
+            'status' => true,
             'bill_id' => $this->bill_id,
+            'past_due' => $this->mailData['past_due'],
+            'charge' => $this->mailData['charge'],
+            'is_change' => $this->mailData['change'],
+            'is_paid' => $this->mailData['is_paid'],
         ]);
-        // info('Email job spp success at '. now());
     }
 
     public function failed(\Exception $exception) :void
     {
         statusInvoiceMail::create([
-            'bill_id' => $this->bill_id,
             'status' => false,
+            'bill_id' => $this->bill_id,
+            'past_due' => $this->mailData['past_due'],
+            'charge' => $this->mailData['charge'],
+            'is_change' => $this->mailData['change'],
+            'is_paid' => $this->mailData['is_paid'],
         ]);
-        // info('Email job spp failed at ' . $exception->getMessage());
+        info('Queue job spp failed at ' . date('Y-m-d H:i:s'));
+        info('Queue error details : ' . $exception->getMessage());
     }
 
     public function retryUntil(): DateTime
