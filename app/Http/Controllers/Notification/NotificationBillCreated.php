@@ -504,6 +504,8 @@ class NotificationBillCreated extends Controller
                     ->where('paidOf', false);
             })
             ->get();
+
+            // return $data;
   
            
            foreach ($data as $student) {
@@ -523,40 +525,23 @@ class NotificationBillCreated extends Controller
                     'bill' => [$createBill],
                     'change' => true,
                     'past_due' => $past_due,
+                    'charge' => false,
+                    'is_paid' => false,
                 ];
   
-  
-                $pdfBill = Bill::with(['student' => function ($query) {
-                   $query->with('grade');
-                }, 'bill_installments'])
-                ->where('id', $createBill->id)
-                ->first();
-  
-                  
-                  $pdf = app('dompdf.wrapper');
-                  $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
-  
-                  $pdfReport = null;
-  
-                 if($createBill->installment){
-                    
-                    $pdfReport = app('dompdf.wrapper');
-                    $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
-                 }
-  
                 try {
-                foreach($student->relationship as $parent)
+
+               $array_email = [];
+
+                foreach($student->relationship as $key => $parent)
                 {
-                   $mailData['name'] = $parent->name;
+                  if($key == 0) $mailData['name'] = $parent->name;
+                  array_push($array_email, $parent->email);
                   //  return view('emails.paket-mail')->with('mailData', $mailData);
-                   Mail::to($parent->email)->send(new PaketMail($mailData, "Tagihan Paket " . $student->name.  " berhasil diubah, pada tanggal ". date('l, d F Y'), $pdf, $pdfReport));
+                  //  Mail::to($parent->email)->send(new PaketMail($mailData, "Tagihan Paket " . $student->name.  " berhasil diubah, pada tanggal ". date('l, d F Y'), $pdf, $pdfReport));
                 }
-  
-                 statusInvoiceMail::create([
-                    'status' =>true,
-                    'bill_id' => $createBill->id,
-                    'is_change' => true,
-                  ]);
+
+                dispatch(new SendEmailJob($array_email, 'paket', $mailData, "Tagihan Paket " . $student->name.  " berhasil diubah, pada tanggal ". date('l, d F Y'), $createBill->id));
   
                  } catch (Exception $err) {
   
@@ -610,28 +595,36 @@ class NotificationBillCreated extends Controller
                     'student' => $student,
                     'bill' => [$createBill],
                     'past_due' => false,
+                    'charge' => false,
+                    'change' => false,
+                    'is_paid' => false,
                  ];
   
   
-                 $pdfBill = Bill::with(['student' => function ($query) {
-                    $query->with('grade');
-                 }])
-                 ->where('id', $createBill->id)
-                 ->first();
+               //   $pdfBill = Bill::with(['student' => function ($query) {
+               //      $query->with('grade');
+               //   }])
+               //   ->where('id', $createBill->id)
+               //   ->first();
   
                   
-                  $pdf = app('dompdf.wrapper');
-                  $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
+               //    $pdf = app('dompdf.wrapper');
+               //    $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait'); 
   
-                 try {
-  
-                  foreach($student->relationship as $parent)
+               try {
+                  
+               $array_email = [];
+
+               foreach($student->relationship as $key => $parent)
                  {
-                    $mailData['name'] = $parent->name;
+                    if($key == 0) $mailData['name'] = $parent->name;
+
+                  array_push($array_email, $parent->email);
                   //   return view('emails.spp-mail')->with('mailData', $mailData);
-                    Mail::to($parent->email)->send(new SppMail($mailData, "Tagihan ". $pdfBill->type ." " . $student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.", $pdf));
-                    
+                  //   Mail::to($parent->email)->send(new SppMail($mailData, "Tagihan ". $pdfBill->type ." " . $student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.", $pdf));
                  }
+
+                 dispatch(new SendEmailJob($array_email, $createBill->type, $mailData, "Tagihan ". $createBill->type ." " . $student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.", $createBill->id));
   
                  statusInvoiceMail::create([
                     'status' =>true,

@@ -905,7 +905,7 @@ class BillController extends Controller
             return abort(404);
          }
 
-         if(date('y-m-d',strtotime($data->update_at)) != date('y-m-d'))
+         if(date('y-m-d',strtotime($data->updated_at)) != date('y-m-d'))
          {
             return abort(404);
          }
@@ -918,7 +918,7 @@ class BillController extends Controller
          return view('components.installment-register')->with('data', $data);
 
       } catch (Exception $err) {
-         return abort(500);
+            return abort(404);  
       }
    }
 }

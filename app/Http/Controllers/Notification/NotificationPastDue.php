@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Notification;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendEmailJob;
 use App\Mail\BookMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -77,7 +78,7 @@ class NotificationPastDue extends Controller
 
 
                
-           return $data;
+         //   return $data;
   
            foreach ($data as $student) {
   
@@ -85,62 +86,35 @@ class NotificationPastDue extends Controller
                  # code...
                  $mailData = [
                     'student' => $student,
-                    'bill' => [$bill],
+                    'bill' => strtolower($type) == 'book'? $bill : [$bill],
                     'past_due' => true,
+                    'charge' => $charge,
+                    'change' => false,
+                    'is_paid' => false,
                  ];
-  
-                 $pdfBill = Bill::with(['student' => function ($query) {
-                    $query->with('grade');
-                 }, 'bill_installments'])
-                 ->where('id', $bill->id)
-                 ->first();
-                  
-                 $pdf = app('dompdf.wrapper');
-                 $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
-                 $pdfReport = null;
-                 
-                 if($pdfBill->installment)
-                 {
-                    $pdfReport = app('dompdf.wrapper');
-                    $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $pdfBill])->setPaper('a4', 'portrait');
-                 }
   
                  try {
                     //code...
                      $subs = $charge? "Tagihan " . $type . " ". $student->name ." terkena charge karena sudah melewati jatuh tempo" : "Tagihan " . $type . " " . $student->name ." sudah melewati jatuh tempo";
 
-                    foreach ($student->relationship as $relationship) {
-                       $mailData['name'] = $relationship->name;
-  
-                       if($type == 'SPP' || $type == 'Uniform') {
-  
+                     $array_email = [];
+
+                    foreach ($student->relationship as $key => $parent) {
+                        
+                     if($key == 0) $mailData['name'] = $parent->name;
+                     
+                     array_push($array_email, $parent->email);
                         //   return view('emails.spp-mail')->with('mailData', $mailData);
-                          Mail::to($relationship->email)->send(new SppMail($mailData, $subs, $pdf, $pdfReport));
-                        } else if($type == 'Capital Fee') {
                            
                         //   return view('emails.fee-regis-mail')->with('mailData', $mailData);
-                        Mail::to($relationship->email)->send(new FeeRegisMail($mailData, $subs, $pdf, $pdfReport));
                         
-                        } else if($type == 'Paket') {
-                           $mailData['change'] = false;
                         //   return view('emails.paket-mail')->with('mailData', $mailData);
-                        Mail::to($relationship->email)->send(new PaketMail($mailData, $subs, $pdf, $pdfReport));
-                        
-                        } else if($type == 'Book'){
-                           $mailData['bill'] = $bill;
-                           // return view('emails.book-mail')->with('mailData', $mailData);
-                           Mail::to($relationship->email)->send(new BookMail($mailData, $subs, $pdf, $pdfReport));
-                        } else {
-                           
-                           Mail::to($relationship->email)->send(new SppMail($mailData, $subs, $pdf, $pdfReport));
-                        }
-                    }
+
+                        // return view('emails.book-mail')->with('mailData', $mailData);
+                     }
+
+                     dispatch(new SendEmailJob($array_email, strtolower($type), $mailData, $subs, $bill->id));
   
-                    statusInvoiceMail::create([
-                       'bill_id' => $bill->id,
-                       'charge' => $charge,
-                       'past_due' => true,
-                    ]);
   
                  } catch (Exception) {
   

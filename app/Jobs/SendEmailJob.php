@@ -96,12 +96,12 @@ class SendEmailJob implements ShouldQueue
             'is_change' => $this->mailData['change'],
             'is_paid' => $this->mailData['is_paid'],
         ]);
-        info('Queue job spp failed at ' . date('Y-m-d H:i:s'));
-        info('Queue error details : ' . $exception->getMessage());
+        info('Queue job '. $this->type .' failed at ' . date('Y-m-d H:i:s'));
+        info('Queue error '. $this->type .' details : ' . $exception->getMessage());
     }
 
-    public function retryUntil(): DateTime
-    {
-        return now()->addMinutes(10);
-    }
+    // public function retryUntil(): DateTime
+    // {
+    //     return now()->addMinutes(10);
+    // }
 }

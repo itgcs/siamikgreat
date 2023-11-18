@@ -208,5 +208,5 @@ Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
 
 Route::prefix('created')->group(function () {
 
-   Route::get('/paket', [NotificationBillCreated::class, 'spp']);
+   Route::get('/paket', [NotificationBillCreated::class, 'changePaket']);
 });
