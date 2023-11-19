@@ -95,7 +95,7 @@ class NotificationPastDue extends Controller
   
                  try {
                     //code...
-                     $subs = $charge? "Tagihan " . $type . " ". $student->name ." terkena charge karena sudah melewati jatuh tempo" : "Tagihan " . $type . " " . $student->name ." sudah melewati jatuh tempo";
+                     $subs = $charge? "Tagihan " . $bill->type . " ". $student->name ." terkena charge karena sudah melewati jatuh tempo" : "Tagihan " . $bill->type . " " . $student->name ." sudah melewati jatuh tempo";
 
                      $array_email = [];
 

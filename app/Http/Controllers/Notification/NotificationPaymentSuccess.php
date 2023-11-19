@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Notification;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendPaymentReceived;
 use App\Mail\BookMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -78,7 +79,6 @@ class NotificationPaymentSuccess extends Controller
                  $mailData = [
                     'student' => $student,
                     'bill' => [$bill],
-                    'past_due' => true,
                  ];
                  
                  $pdfBill = Bill::with(['student' => function ($query) {
@@ -129,5 +129,71 @@ class NotificationPaymentSuccess extends Controller
             DB::rollBack();
             info('Cron job send notification payment error at ' . $err);
         }
+    }
+
+
+   public function successClicked($bill_id = 1) {
+      DB::beginTransaction();
+      date_default_timezone_set('Asia/Jakarta');
+      info('payment clicked running 1');
+      try {
+         //code...
+         $student = Student::with(['bill', 'relationship'])
+         ->whereRelation('bill', 'id', $bill_id)
+         ->first();
+         
+  
+         foreach ($student->bill as $bill) {
+                 # code...
+                 $mailData = [
+                    'student' => $student,
+                    'bill' => [$bill],
+                  ];
+                 
+                 $pdfBill = Bill::with(['student' => function ($query) {
+                    $query->with('grade');
+                 }, 'bill_collection', 'bill_installments'])
+                 ->where('id', $bill->id)
+                 ->first();
+  
+                  // return view('emails.payment-success')->with('mailData', $mailData);
+                  try {
+                     //code...
+                     $array_email = [];
+                     foreach ($student->relationship as $idx => $parent) {
+                        
+
+                        if($idx == 0) $mailData['name'] = $parent->name;
+                        
+                        array_push($array_email, $parent->email);
+                        // Mail::to($relationship->email)->send(new PaymentSuccessMail($mailData, "Payment " . $bill->type . " ". $student->name ." has confirmed!", $pdf, $pdfReport));
+                     }
+                     return $student->name;
+                     dispatch(new SendPaymentReceived($array_email, $mailData, "Payment " . $bill->type . " ". $student->name ." has confirmed!", $pdfBill));
+
+                     } catch (Exception $err) {
+                        
+                        return dd($err);
+                        statusInvoiceMail::create([
+                           'bill_id' => $pdfBill->id,
+                           'status' => false,
+                           'is_paid' => true,
+                        ]);
+                     }
+              }
+
+            DB::commit();
+            return dd('success');
+
+      } catch (Exception $err) {
+         info('Error at sent email payment success was clicked');
+         info('Errors : ' . $err->getMessage());
+         return dd($err->getMessage());
+         // statusInvoiceMail::create([
+         //    'bill_id' => $bill_id,
+         //    'status' => false,
+         //    'is_paid' => true,
+         //  ]);
+      }
     }
 }

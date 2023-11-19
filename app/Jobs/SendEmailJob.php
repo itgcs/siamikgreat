@@ -88,6 +88,8 @@ class SendEmailJob implements ShouldQueue
 
     public function failed(\Exception $exception) :void
     {
+       info('Queue job '. $this->type .' failed at ' . date('Y-m-d H:i:s'));
+       info('Queue error '. $this->type .' details : ' . $exception->getMessage());
         statusInvoiceMail::create([
             'status' => false,
             'bill_id' => $this->bill_id,
@@ -96,8 +98,6 @@ class SendEmailJob implements ShouldQueue
             'is_change' => $this->mailData['change'],
             'is_paid' => $this->mailData['is_paid'],
         ]);
-        info('Queue job '. $this->type .' failed at ' . date('Y-m-d H:i:s'));
-        info('Queue error '. $this->type .' details : ' . $exception->getMessage());
     }
 
     // public function retryUntil(): DateTime

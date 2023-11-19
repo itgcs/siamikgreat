@@ -35,9 +35,8 @@ class ReminderCron extends Command
      */
     public function handle()
     {
-        info("Reminder h-1 Job running at ". now());
 
-        info("Reminder past due charge Job running at ". now());
+        info("Reminder past due Job running at ". now());
 
         $bill = new NotificationPastDue;
         $bill->cronChargePastDue('SPP');

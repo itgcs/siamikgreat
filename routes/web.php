@@ -206,7 +206,7 @@ Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
 });
 
 
-Route::prefix('created')->group(function () {
+Route::prefix('coba')->group(function () {
 
-   Route::get('/paket', [NotificationBillCreated::class, 'changePaket']);
+   Route::get('/state', [NotificationPaymentSuccess::class, 'successClicked']);
 });
