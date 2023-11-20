@@ -57,13 +57,13 @@
                     <div class="col-sm-8">
                       <p class="text-muted mb-0">
   
-                        @if ($el->charge)
+                        @if ($data->charge)
                             Send <b>charge past due</b> notification by email
-                        @elseif ($el->past_due)
+                        @elseif ($data->past_due)
                             Send <b>bill is past due</b> notification by email
-                        @elseif ($el->is_change)
+                        @elseif ($data->is_change)
                             Send <b>bill has been changed</b> notification by email
-                        @elseif ($el->is_paid)
+                        @elseif ($data->is_paid)
                             Send <b>payment received</b> notification by email
                         @else
                             Send bill <b>bill has been created</b> notification by email

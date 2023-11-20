@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Notification\NotificationPaymentSuccess;
+use App\Mail\PaymentSuccessMail;
 use App\Mail\SppMail;
 use App\Models\Bill;
 use App\Models\BillCollection;
@@ -11,6 +13,7 @@ use App\Models\Book_student;
 use App\Models\Grade;
 use App\Models\InstallmentPaket;
 use App\Models\Payment_grade;
+use App\Models\statusInvoiceMail;
 use App\Models\Student;
 use Carbon\Carbon;
 use Exception;
@@ -407,6 +410,9 @@ class BillController extends Controller
                'paid_date' => Carbon::now()->setTimezone('Asia/Jakarta'),
             ]);
 
+         $sendEmail = new NotificationPaymentSuccess;
+         $sendEmail->successClicked($id);
+
          DB::commit();
          
          return (object) [
@@ -415,10 +421,12 @@ class BillController extends Controller
 
       } catch (Exception $err) {
          //throw $th;
+
+         info('error paid of : ' . $err->getMessage());
          DB::rollBack();
          return (object) [
             'success' => false,
-            'text' => 'Internal server error !!!',
+            'text' => $err->getMessage(),
          ];
       }
    }
@@ -457,6 +465,10 @@ class BillController extends Controller
             'paidOf' => true,
             'paid_date' => Carbon::now()->setTimezone('Asia/Jakarta'),
          ]);
+
+
+         $sendEmail = new NotificationPaymentSuccess;
+         $sendEmail->successClicked((int)$bill_id);
          
          DB::commit();
          

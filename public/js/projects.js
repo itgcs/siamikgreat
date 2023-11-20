@@ -340,6 +340,7 @@ $(document).ready(function () {
 
                         if(!res.success)
                         {
+                            
                             Swal.fire({
                                 icon: "error",
                                 title: "Oops...",
@@ -362,7 +363,8 @@ $(document).ready(function () {
                             }, 2500);
                         }
                     })
-                    .catch((err) => {
+                    .catch(err => {
+                        console.log(err);
                         Swal.fire({
                             icon: "error",
                             title: "Oops...",

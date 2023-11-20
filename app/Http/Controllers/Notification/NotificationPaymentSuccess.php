@@ -132,17 +132,17 @@ class NotificationPaymentSuccess extends Controller
     }
 
 
-   public function successClicked($bill_id = 1) {
+   public function successClicked($bill_id) {
       DB::beginTransaction();
       date_default_timezone_set('Asia/Jakarta');
-      info('payment clicked running 1');
+      info('payment clicked running 1 with id ' . $bill_id);
       try {
          //code...
          $student = Student::with(['bill', 'relationship'])
          ->whereRelation('bill', 'id', $bill_id)
          ->first();
          
-  
+         
          foreach ($student->bill as $bill) {
                  # code...
                  $mailData = [
@@ -152,48 +152,44 @@ class NotificationPaymentSuccess extends Controller
                  
                  $pdfBill = Bill::with(['student' => function ($query) {
                     $query->with('grade');
-                 }, 'bill_collection', 'bill_installments'])
-                 ->where('id', $bill->id)
-                 ->first();
-  
-                  // return view('emails.payment-success')->with('mailData', $mailData);
+                  }, 'bill_collection', 'bill_installments'])
+                  ->where('id', $bill->id)
+                  ->first();
+                  
                   try {
                      //code...
-                     $array_email = [];
-                     foreach ($student->relationship as $idx => $parent) {
-                        
-
-                        if($idx == 0) $mailData['name'] = $parent->name;
-                        
-                        array_push($array_email, $parent->email);
-                        // Mail::to($relationship->email)->send(new PaymentSuccessMail($mailData, "Payment " . $bill->type . " ". $student->name ." has confirmed!", $pdf, $pdfReport));
+                    $array_email = [];
+                    foreach ($student->relationship as $idx => $parent) {
+                       
+                       
+                       if($idx == 0) $mailData['name'] = $parent->name;
+                       
+                       array_push($array_email, $parent->email);
+                       // Mail::to($relationship->email)->send(new PaymentSuccessMail($mailData, "Payment " . $bill->type . " ". $student->name ." has confirmed!", $pdf, $pdfReport));
                      }
-                     return $student->name;
+                     // return view('emails.payment-success')->with('mailData', $mailData);
                      dispatch(new SendPaymentReceived($array_email, $mailData, "Payment " . $bill->type . " ". $student->name ." has confirmed!", $pdfBill));
-
-                     } catch (Exception $err) {
-                        
-                        return dd($err);
-                        statusInvoiceMail::create([
-                           'bill_id' => $pdfBill->id,
-                           'status' => false,
-                           'is_paid' => true,
-                        ]);
-                     }
-              }
+                     
+                  } catch (Exception $err) {
+                     
+                     statusInvoiceMail::create([
+                        'bill_id' => $pdfBill->id,
+                        'status' => false,
+                        'is_paid' => true,
+                     ]);
+                  }
+               }
 
             DB::commit();
-            return dd('success');
 
       } catch (Exception $err) {
          info('Error at sent email payment success was clicked');
          info('Errors : ' . $err->getMessage());
-         return dd($err->getMessage());
-         // statusInvoiceMail::create([
-         //    'bill_id' => $bill_id,
-         //    'status' => false,
-         //    'is_paid' => true,
-         //  ]);
+         statusInvoiceMail::create([
+            'bill_id' => $bill_id,
+            'status' => false,
+            'is_paid' => true,
+          ]);
       }
-    }
+   }
 }

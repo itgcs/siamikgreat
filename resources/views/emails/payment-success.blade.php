@@ -364,7 +364,7 @@
                                                                             <th colspan="2"
                                                                                 align="left"
                                                                                 style="padding-bottom: 10px; color: #7e7e7e; font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase;">
-                                                                                Invoice: #1231232134
+                                                                                Invoice: {{$mailData['bill'][0]->id}}
                                                                             </th>
                                                                             <th align="right"
                                                                                 style="padding-bottom: 10px; color: #7e7e7e; font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase;">

@@ -15,7 +15,10 @@ class statusInvoiceMail extends Model
         'status',
         'charge',
         'past_due',
+        'is_paid',
+        'is_change',
         'created_at',
+        'updated_at',
     ];
 
 

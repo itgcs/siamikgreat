@@ -46,11 +46,14 @@ class SendPaymentReceived implements ShouldQueue
          }
 
          Mail::to($this->email[0])->cc($this->email[1])->send(new PaymentSuccessMail($this->mailData, $this->subject, $pdf, $pdfReport));
-         statusInvoiceMail::create([
+
+         $bill = statusInvoiceMail::create([
             'status' => true,
             'bill_id' => $this->pdfBill->id,
             'is_paid' => true,
          ]);
+
+         info('bill created ' . $bill);
    }
 
    public function failed(\Exception $exception) :void

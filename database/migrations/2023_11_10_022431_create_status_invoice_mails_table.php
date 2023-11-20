@@ -18,6 +18,8 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->boolean('past_due')->default(false);
             $table->boolean('charge')->default(false);
+            $table->boolean('is_paid')->default(false);
+            $table->boolean('is_change')->default(false);
             $table->timestamps();
         });
     }

@@ -32,7 +32,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('charge_bill:cron')->monthlyOn(11, '07:00')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
 
         // every day at 18 & 25 monthly
-        $schedule->command('cronReminder:cron')->twiceMonthly(19, 25, '22:33')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        $schedule->command('cronReminder:cron')->twiceMonthly(18, 20, '09:22')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
 
         // send email payment success eveyday
         $schedule->command('payment:cron')->dailyAt('05:15')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
