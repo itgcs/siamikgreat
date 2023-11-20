@@ -8,6 +8,7 @@ use App\Mail\BookMail;
 use App\Mail\DemoMail;
 use App\Mail\FeeRegisMail;
 use App\Mail\PaketMail;
+use App\Mail\PaymentSuccessMail;
 use App\Mail\SppMail;
 use App\Models\Bill;
 use App\Models\Grade;
@@ -193,35 +194,58 @@ class StatusMailSend extends Controller
             
             $mailData = [
                 'student' => $billExist->student,
-                'bill' => $billExist->type == 'Book' ? $billExist : [$billExist],
+                'bill' => $billExist->type && !$invoiceMailExist->is_paid == 'Book' ? $billExist : [$billExist],
                 'past_due' => $invoiceMailExist->past_due,
                 'charge' => $invoiceMailExist->charge,
                 'change' => $invoiceMailExist->is_change,
+                'is_paid' => $invoiceMailExist->is_paid
             ];
 
-            $sbjPaketChange = "Tagihan Paket " . $billExist->student->name.  " berhasil diubah, pada tanggal ". date('l, d F Y');
-            $sbjSppCreated = "Tagihan ". $billExist->type ." ". $billExist->student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.";
-            $sbjAllCreated = "Tagihan ". $billExist->type ." ". $billExist->student->name." sudah dibuat.";
-            $sbjAllCreatedInstallment = "Tagihan ". $billExist->type ." ". $billExist->student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.";
-            $sbjPastDueOrCharge = $invoiceMailExist->charge? "Tagihan ". $billExist->type ." ". $billExist->student->name.  " terkena charge karena sudah melewati jatuh tempo" : "Tagihan ". $billExist->type ." ". $billExist->student->name.  " sudah melewati jatuh tempo";
-            $sbjPaymentSuccess = "Payment " . $billExist->type . " ". $billExist->student->name ." has confirmed!";
-           
-            foreach($billExist->student->relationship as $relationship) {
-                
-                $mailData['name'] = $relationship->name;
-                
-                try {
 
-                    if($billExist->type == 'Book') {
-                        Mail::to($relationship->email)->send(new BookMail($mailData, $sbjAllCreated, $pdf));
-                    } else if($billExist->type == 'Paket') {
-                        Mail::to($relationship->email)->send(new PaketMail($mailData, $sbjAllCreated, $pdf, $pdfReport));
-                    } else if($billExist->type == 'Capital Fee') {
-                        Mail::to($relationship->email)->send(new FeeRegisMail($mailData, $sbjAllCreated, $pdf, $pdfReport));
-                    } else {
-                        Mail::to($relationship->email)->send(new SppMail($mailData, $sbjAllCreated, $pdf, $pdfReport));
-                    }
+            $subject = "Tagihan ". $billExist->type ." ". $billExist->student->name." sudah dibuat.";
+
+
+            if($invoiceMailExist->is_paid) {
+                $subject = "Payment " . $billExist->type . " ". $billExist->student->name ." has confirmed!";
+
+            }   else if($invoiceMailExist->is_change) {
+                
+                $subject = "Tagihan ".$billExist->type ." " . $billExist->student->name.  " berhasil diubah, pada tanggal ". date('l, d F Y', strtotime($billExist->created_at));
+            }   else if($invoiceMailExist->charge || $invoiceMailExist->past_due) {
+
+                $subject = $invoiceMailExist->charge? "Tagihan ". $billExist->type ." ". $billExist->student->name.  " terkena charge karena sudah melewati jatuh tempo" : "Tagihan ". $billExist->type ." ". $billExist->student->name.  " sudah melewati jatuh tempo";
+            }   else if($billExist->installment) {
+
+                $subject = "Tagihan cicilan". $billExist->type ." ". $billExist->student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.";
+            }   else if($billExist->type == 'SPP') {
+
+                $subject = "Tagihan ". $billExist->type ." ". $billExist->student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.";
+            }
+
+            
+            try {
+
+                $array_email = [];
+
+                foreach($billExist->student->relationship as $idx => $relationship) {
                     
+                    if($idx == 0) {
+                        $mailData['name'] = $relationship->name;
+                    }
+                    array_push($array_email, $relationship->email);
+                }
+                
+                if($invoiceMailExist->is_paid){
+                    Mail::to($array_email[0])->cc($array_email[1])->send(new PaymentSuccessMail($mailData, $subject, $pdf, $pdfReport));
+                } else if($billExist->type == 'Book') {
+                    Mail::to($array_email[0])->cc($array_email[1])->send(new BookMail($mailData, $subject, $pdf));
+                } else if($billExist->type == 'Paket') {
+                    Mail::to($array_email[0])->cc($array_email[1])->send(new PaketMail($mailData, $subject, $pdf, $pdfReport));
+                } else if($billExist->type == 'Capital Fee') {
+                    Mail::to($array_email[0])->cc($array_email[1])->send(new FeeRegisMail($mailData, $subject, $pdf, $pdfReport));
+                } else {
+                    Mail::to($array_email[0])->cc($array_email[1])->send(new SppMail($mailData, $subject, $pdf, $pdfReport));
+                }
                 } catch (Exception $err) {
                     //internet laggy
                     DB::rollBack();
@@ -230,7 +254,6 @@ class StatusMailSend extends Controller
                         'msg' => 'Internet',
                     ],408);
                 }
-            }
             
 
             statusInvoiceMail::where('id', $id)->update(['status' => true]);
