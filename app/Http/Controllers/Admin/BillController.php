@@ -445,6 +445,7 @@ class BillController extends Controller
          //code...
          $bill = Bill::with(['bill_collection'])
          ->where('id', $bill_id)
+         ->where('book_id', '!=', NULL)
          ->first();
          
          
@@ -554,7 +555,7 @@ class BillController extends Controller
       try {
 
          
-         $bookArray = $request->except(['_token', '_method', 'uniform', 'installment_book', 'installment_uniform']);
+         $bookArray = $request->except(['_token', '_method', 'installment_book', 'installment_uniform']);
          $uniform = $request->only('uniform');
 
          $totalAmountBook = 0;
@@ -575,12 +576,14 @@ class BillController extends Controller
             ]);
          }
 
-         $bookName = [];
-         $bookId = [];
+      $bookName = [];
+      $bookId = [];
 
-         foreach ($bookArray as $el) {
-            
-         $book = Book::where('id', (int)$el)->first();
+      foreach ($bookArray as $key => $el) {
+         
+         if($key != "uniform") {
+
+            $book = Book::where('id', (int)$el)->first();
 
             BillCollection::create([
                'bill_id' => $bill_id,
@@ -593,64 +596,57 @@ class BillController extends Controller
             $totalAmountBook += $book->amount;
             array_push($bookName, $book->name);
             array_push($bookId, $book->id);
+         } else {
+
+            $uniformGrade = Payment_grade::where('id', (int)$el)->first();
+            BillCollection::create([
+               'bill_id' => $bill_id,
+               'book_id' => NULL,
+               'type' => 'Uniform',
+               'name' => "Uniform",
+               'amount' => $uniformGrade->amount,
+            ]);
+            
+            $totalAmountBook += $uniformGrade->amount;
          }
 
-         $flagBookCreate = false;
+         
 
-         if(sizeof($bookName) > 0) {
-            
-            Bill::where('id', $bill_id)
-            ->update([
+         
+      }
+
+      $flagBookCreate = false;
+      
+      if(sizeof($bookName) > 0) {   
+         
+         
+         Bill::where('id', $bill_id)
+         ->update([
                'type' => 'Book',
-               'subject' => 'Book '.implode(",",$bookName),
+               'subject' => sizeof($uniform)<1? 'Book' : 'Book and uniform',
                'amount' => $totalAmountBook + $checkBill->charge,
                'date_change_bill' => now(),
-            ]);   
-
+            ]);
             $flagBookCreate = true;
          }
+         
 
-
-         foreach($uniform as $el)
-         {
-
-            $uniform = Payment_grade::where('id', (int)$el)->first();
-
-            if(!$uniform){
-            DB::rollBack();
-            return redirect()->back()->withErrors([
-                  'bill' => 'Uniform id not found !!!',
-               ]);
-            }
-
-            if($flagBookCreate) {
-               Bill::create([
-                  'student_id' => $student_id,
-                  'type' => 'Uniform',
-                  'subject' => 'Uniform '. date("Y"),
-                  'amount' => $uniform->amount,
-                  'paidOf' => false,
-                  'date_change_bill' => now(),
-                  'discount' => null,
-                  'installment' => null,
-                  'deadline_invoice' => Carbon::now()->setTimezone('Asia/Jakarta')->addMonth()->format('y-m-10'), 
-               ]);
-            } else {
-               
+         if(!$flagBookCreate) {
+            foreach($uniform as $el)
+            {
+               $uniform = Payment_grade::where('id', (int)$el)->first();
                Bill::where('id', $bill_id)
                ->update([
                   'type' => 'Uniform',
                   'subject' => 'Uniform '. date("Y"),
                   'amount' => $uniform->amount + $checkBill->charge,
                   'date_change_bill' => now(),
-            ]);  
-            }
-
-               
-            }
-
+               ]); 
+            }  
+         }
+         
          DB::commit();
-
+         
          session()->flash('change_type_paket');
 
          return redirect('/admin/bills');

@@ -190,12 +190,12 @@ class PaymentBookController extends Controller
             
             $collect = [
                 'type' => 'Book',
-                'subject' => implode(',', $bookName),
+                'subject' => 'Book',
                 'student_id' => (int)$student->id,
                 'amount' => $totalAmount,
                 'paidOf' => false,
                 'discount' => null,
-                'deadline_invoice' => Carbon::now()->addDay(30)->format('y-m-d'),
+                'deadline_invoice' => Carbon::now()->addMonth()->format('Y-m-10'),
                 'installment' => null,
             ];
             

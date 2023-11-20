@@ -251,7 +251,7 @@
         
         <table class="detail table_detail">
             <thead class="detail header_table">
-                <th class="detail" align="left">{{$data->type == 'Book' ? 'Book' : 'Description'}}</th>
+                <th class="detail" align="left">{{$data->type == 'Book' ? $data->subject : 'Description'}}</th>
                 <th class="detail" align="left">Price</th>
             </thead>
             
