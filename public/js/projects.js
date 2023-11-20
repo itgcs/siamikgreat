@@ -397,9 +397,6 @@ $(document).ready(function () {
             confirmButtonText: "Yes, update it!",
         }).then((result) => {
             if (result.isConfirmed) {
-                console.log("id bill" + value);
-                console.log("name students" + name);
-                console.log("students" + studentId);
                 $.ajax({
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
@@ -418,17 +415,31 @@ $(document).ready(function () {
                     },
                 })
                     .then((res) => {
-                        Swal.fire(
-                            "Updated!",
-                            `Paid invoice #${value} from ${name} has been successfully.`,
-                            "success"
-                        );
 
-                        setTimeout(() => {
-                            window.location.href = `/admin/bills/detail-payment/${value}`;
-                        }, 2500);
+                        if(res.success) {
+                            Swal.fire(
+                                "Updated!",
+                                `Paid invoice #${value} from ${name} has been successfully.`,
+                                "success"
+                            );
+    
+                            setTimeout(() => {
+                                window.location.href = `/admin/bills/detail-payment/${value}`;
+                            }, 2500);
+    
+                            $(`#update-status-book`).remove();
+                        } else {
+                            
+                            Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: "Something went wrong!",
+                                footer: '<a href="">Why do I have this issue?</a>',
+                            });
+                        }
 
-                        $(`#update-status-book`).remove();
+                        console.log(res)
+                        
                     })
                     .catch((err) => {
                         Swal.fire({

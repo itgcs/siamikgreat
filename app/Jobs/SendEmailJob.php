@@ -89,7 +89,6 @@ class SendEmailJob implements ShouldQueue
     public function failed(\Exception $exception) :void
     {
        info('Queue job '. $this->type .' failed at ' . date('Y-m-d H:i:s'));
-       info('Queue error '. $this->type .' details : ' . $exception->getMessage());
         statusInvoiceMail::create([
             'status' => false,
             'bill_id' => $this->bill_id,

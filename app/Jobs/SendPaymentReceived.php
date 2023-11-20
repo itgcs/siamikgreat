@@ -52,8 +52,6 @@ class SendPaymentReceived implements ShouldQueue
             'bill_id' => $this->pdfBill->id,
             'is_paid' => true,
          ]);
-
-         info('bill created ' . $bill);
    }
 
    public function failed(\Exception $exception) :void

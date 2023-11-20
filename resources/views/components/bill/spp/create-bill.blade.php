@@ -18,7 +18,7 @@
                             <!-- form start -->
                             <div class="card-body">
                                 <div class="form-group row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <label for="type">Type<span style="color: red">*</span> :</label>
                                         <input name="type" type="text" class="form-control" id="type"
                                         placeholder="Enter type" value="{{old('type')}}" 
@@ -26,6 +26,26 @@
                                         required>
                                         @if($errors->any())
                                         <p style="color: red">{{$errors->first('type')}}</p>
+                                        @endif
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Deadline Invoice<span style="color: red">*</span></label>
+                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                            <input name="deadline_invoice" type="text"
+                                                class="form-control " placeholder={{date("d/m/Y")}}
+                                                data-target="#reservationdate" 
+                                                data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
+                                                value="{{old('deadline_invoice') ? date("d/m/Y", strtotime(old('deadline_invoice'))) : $monthDefault}}"
+                                                required
+                                                />
+                                                
+                                            <div class="input-group-append" data-target="#reservationdate"
+                                                data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('date_birth')}}</p>
                                         @endif
                                     </div>
                                 </div>
@@ -73,7 +93,7 @@
                         </div>
 
                         <div class="row d-flex justify-content-center">
-                            <input role="button" type="submit" class="btn btn-success center col-11 m-3">
+                            <input role="button" type="submit" class="btn btn-success center col-12 mt-3">
                         </div>
                 </div>
                 </form>

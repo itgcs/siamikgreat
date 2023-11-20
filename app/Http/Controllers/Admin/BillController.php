@@ -273,8 +273,9 @@ class BillController extends Controller
       try {
          //code...
          $data = Student::with(['grade'])->where('unique_id', $id)->first();
+         $monthDefault = Carbon::now()->addMonth()->setTimezone('Asia/Jakarta')->format('d/m/Y');
          
-         return view('components.bill.spp.create-bill')->with('data', $data);
+         return view('components.bill.spp.create-bill')->with('data', $data)->with('monthDefault', $monthDefault);
       } catch (Exception $err) {
          return dd($err);
       }
@@ -296,22 +297,26 @@ class BillController extends Controller
          $student = Student::with('relationship')->where('id', $id)->first();
          date_default_timezone_set('Asia/Jakarta');
 
+         $dateFormat = new RegisterController;
+
          $rules = [
             'student_id' => $id,
             'subject' => $request->subject,
             'type' => $request->type,
             'description' => $request->description,
             'amount' => $request->amount ? (int)str_replace(".", "", $request->amount) : null,
-            'deadline_invoice' => date('Y-m-t'),
+            'deadline_invoice' => $request->deadline_invoice? $dateFormat->changeDateFormat($request->deadline_invoice) : null,
          ];
+
+         
 
          $validator = Validator::make($rules, [
             'type' => 'required|string|min:3',
             'subject' => 'required|string|min:3',
             'description' => 'nullable|string|min: 10',
             'amount' => 'required|integer|min:10000',
+            'deadline_invoice' => 'required:date',
          ]);
-
 
          if($validator->fails())
          {
@@ -445,20 +450,23 @@ class BillController extends Controller
          //code...
          $bill = Bill::with(['bill_collection'])
          ->where('id', $bill_id)
-         ->where('book_id', '!=', NULL)
          ->first();
+
+
          
          
          foreach($bill->bill_collection as $el)
          {   
-            $bookExist = Book_student::where('student_id', $student_id)->where('book_id', $el->book_id)->first();
-            
-            if(!$bookExist)
+            if($el->book_id)
             {
-               Book_student::create([
-                  'book_id' => $el->book_id,
-                  'student_id' => $student_id,
-               ]);
+               $bookExist = Book_student::where('student_id', $student_id)->where('book_id', $el->book_id)->first();
+               if(!$bookExist)
+               {
+                  Book_student::create([
+                     'book_id' => $el->book_id,
+                     'student_id' => $student_id,
+                  ]);
+               }
             }
          }
          
@@ -481,6 +489,7 @@ class BillController extends Controller
          DB::rollBack();
          return (object) [
             'success' => false,
+            'errors' => $err,
          ];
       }
    }

@@ -144,9 +144,8 @@
                         </td>
                           <td class="project-actions text-center toastsDefaultSuccess">
                            <a class="btn btn-success" href="/admin/bills/create-bills/{{$el->unique_id}}">
-                            <i class="fa-solid fa-file-invoice-dollar"></i>
-                              </i>
-                                Create bill
+                            <i class="fa-solid fa-square-plus mr-2"></i>
+                                       Create bill
                            </a>
                         </td>
                      </tr>

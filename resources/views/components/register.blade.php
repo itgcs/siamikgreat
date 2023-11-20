@@ -16,13 +16,25 @@
                             <!-- /.card-header -->
                             <!-- form start -->
                             <div class="card-body">
-                                <div class="form-group">
-                                    <label for="studentName">Name<span style="color: red">*</span></label>
-                                    <input name="studentName" type="text" class="form-control" id="studentName"
-                                        placeholder="Enter name" value="{{old('name')}}" required>
-                                        @if($errors->any())
-                                        <p style="color: red">{{$errors->first('name')}}</p>
-                                       @endif
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+
+                                        <label for="studentName">Name<span style="color: red">*</span></label>
+                                        <input name="studentName" type="text" class="form-control" id="studentName"
+                                            placeholder="Enter name" value="{{old('name')}}" required>
+                                            @if($errors->any())
+                                            <p style="color: red">{{$errors->first('name')}}</p>
+                                           @endif
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="studentId_or_passport">ID/Passport Number<span style="color: red">*</span></label>
+                                        <input name="studentId_or_passport" type="text" class="form-control"
+                                            id="studentId_or_passport" placeholder="Enter ID/Passport" value="{{old('id_or_passport')}}" required>
+                                            @if($errors->any())
+                                            <p style="color: red">{{$errors->first('id_or_passport')}}</p>
+                                           @endif
+                                       </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-3">
@@ -133,12 +145,24 @@
 
                                 <div class="form-group row">
                                     <div class="col-md-6">
-                                        <label for="studentPlace_birth">Place of Birth<span style="color: red">*</span></label>
-                                        <input name="studentPlace_birth" type="text" class="form-control"
-                                            id="studentPlace_birth" placeholder="Enter city" value="{{old('place_birth')}}" required>
-                                            @if($errors->any())
-                                            <p style="color: red">{{$errors->first('place_birth')}}</p>
-                                            @endif
+                                        <label>Date of Birth<span style="color: red">*</span></label>
+                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                            <input name="studentDate_birth" type="text"
+                                                class="form-control " placeholder={{date("d/m/Y")}}
+                                                data-target="#reservationdate" 
+                                                data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
+                                                value="{{old('date_birth') ? date("d/m/Y", strtotime(old('date_birth'))) : ''}}"
+                                                required
+                                                />
+                                                
+                                            <div class="input-group-append" data-target="#reservationdate"
+                                                data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('date_birth')}}</p>
+                                        @endif
                                     </div>
                                     <div class="col-md-6">
 
@@ -152,14 +176,14 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-6">
-                                        <label for="studentId_or_passport">ID/Passport Number<span style="color: red">*</span></label>
-                                        <input name="studentId_or_passport" type="text" class="form-control"
-                                            id="studentId_or_passport" placeholder="Enter ID/Passport" value="{{old('id_or_passport')}}" required>
+                                        <label for="studentPlace_birth">Place of Birth<span style="color: red">*</span></label>
+                                        <input name="studentPlace_birth" type="text" class="form-control"
+                                            id="studentPlace_birth" placeholder="Enter city" value="{{old('place_birth')}}" required>
                                             @if($errors->any())
-                                            <p style="color: red">{{$errors->first('id_or_passport')}}</p>
-                                           @endif
-                                       </div>
-                                    <div class="col-md-6">
+                                            <p style="color: red">{{$errors->first('place_birth')}}</p>
+                                            @endif
+                                    </div>
+                                <div class="col-md-6">
 
                                         <label for="studentPlace_of_issue">Place of issue</label>
                                         <input name="studentPlace_of_issue" type="text" class="form-control"
