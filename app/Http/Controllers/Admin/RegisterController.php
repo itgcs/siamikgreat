@@ -48,6 +48,7 @@ class RegisterController extends Controller
       try {
          
          //code...
+         
          session()->flash('preloader', true);
          session()->flash('page',  $page = (object)[
             'page' => 'students',
@@ -81,6 +82,7 @@ class RegisterController extends Controller
             'place_of_issue' => $request->studentPlace_of_issue,
             'date_exp' => $request->studentDate_exp ? $this->changeDateFormat($request->studentDate_exp) : null,
             'is_graduate' => false,
+            'created_at' => $request->created_at ? date('Y-m-d H:i:s', strtotime($this->changeDateFormat($request->created_at))) : date('Y-m-d H:i:s'),
          ];
          
          $rules = [
@@ -95,6 +97,7 @@ class RegisterController extends Controller
             'nationality' => $request->studentNationality,
             'place_of_issue' => $request->studentPlace_of_issue,
             'date_exp' => $request->studentDate_exp !== '' ? $this->changeDateFormat($request->studentDate_exp) : null,
+            'created_at' => $request->created_at ? date('Y-m-d H:i:s', strtotime($this->changeDateFormat($request->created_at))) : date('Y-m-d H:i:s'),
             // Father rules
             'father_relation' => 'father',
             'father_name' => $request->fatherName,

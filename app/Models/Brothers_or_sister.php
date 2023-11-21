@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+date_default_timezone_set('Asia/Jakarta');
 class Brothers_or_sister extends Model
 {
     use HasFactory;

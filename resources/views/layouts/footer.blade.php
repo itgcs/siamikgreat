@@ -89,6 +89,9 @@
      $('#reservationdateStudentDateExp').datetimepicker({
          format: 'DD/MM/YYYY'
      });
+     $('#reservationdateStudentDateReg').datetimepicker({
+         format: 'DD/MM/YYYY'
+     });
      $('#reservationFatherBirthDate').datetimepicker({
          format: 'DD/MM/YYYY'
      });

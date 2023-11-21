@@ -170,12 +170,14 @@ class StudentController extends Controller
             'grade_id' => $request->gradeId,
             'gender' => $request->studentGender,
             'religion' => $request->studentReligion,
+            'nisn' => $request->nisn,
             'place_birth' => $request->studentPlace_birth,
             'date_birth' => $request->studentDate_birth ? $date_format->changeDateFormat($request->studentDate_birth) : null,
             'id_or_passport' => $request->studentId_or_passport,
             'nationality' => $request->studentNationality,
             'place_of_issue' => $request->studentPlace_of_issue,
             'date_exp' => $request->studentDate_exp ? $date_format->changeDateFormat($request->studentDate_exp) : null,
+            // 'created_at' => $request->created_at ? date('Y-m-d H:i:s', strtotime($this->changeDateFormat($request->created_at))) : null,
          ];
 
          
@@ -184,12 +186,14 @@ class StudentController extends Controller
             'grade_id' => $request->gradeId,
             'gender' => $request->studentGender,
             'religion' => $request->studentReligion,
+            'nisn' => $request->nisn,
             'place_birth' => $request->studentPlace_birth,
             'date_birth' => $request->studentDate_birth ? $date_format->changeDateFormat($request->studentDate_birth) : null,
             'id_or_passport' => $request->studentId_or_passport,
             'nationality' => $request->studentNationality,
             'place_of_issue' => $request->studentPlace_of_issue,
             'date_exp' => $request->studentDate_exp !== '' ? $date_format->changeDateFormat($request->studentDate_exp) : null,
+            // 'created_at' => $request->created_at ? date('Y-m-d H:i:s', strtotime($this->changeDateFormat($request->created_at))) : null,
             // Father rules
             'father_relation' => 'father',
             'father_name' => $request->fatherName,
@@ -320,14 +324,22 @@ class StudentController extends Controller
             'brotherOrSisterGrade5' => 'nullable|string',
          ]);
 
-         $dataId = Student::where('id_or_passport', $rules['id_or_passport'])->first();
+         $dataId = Student::where('id_or_passport', $rules['id_or_passport'])->where('id', '<>', $id)->first();
          if($dataId)
          {
-            
-            if((int)$dataId->id !== (int)$id) 
-            {
                DB::rollBack();
                return redirect('/admin/update/' . $student_unique_id)->withErrors(['id_or_passport' => 'Id or passport has been registered'])->withInput($rules);
+         }
+
+         if($request->nisn) 
+         {
+
+            $dataNisn = Student::where('nisn', $rules['nisn'])->where('id', '<>', $id)->first();
+            
+            if($dataNisn) 
+            {
+               DB::rollBack();
+               return redirect('/admin/update/' . $student_unique_id)->withErrors(['nisn' => 'nisn has been registered'])->withInput($rules);
             }
          }
 

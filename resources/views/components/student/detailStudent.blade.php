@@ -96,6 +96,15 @@
                 <hr>
                 <div class="row">
                   <div class="col-sm-4">
+                    <p class="mb-0">NISN</p>
+                  </div>
+                  <div class="col-sm-8">
+                    <p class="text-muted mb-0">{{$data->student->nisn? $data->student->nisn : "-"}}</p>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
                     <p class="mb-0">Status</p>
                   </div>
                   <div class="col-sm-8">
@@ -167,6 +176,15 @@
                   </div>
                   <div class="col-sm-8">
                     <p class="text-muted mb-0">{{$data->student->id_or_passport}}</p>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <p class="mb-0">Register at</p>
+                  </div>
+                  <div class="col-sm-8">
+                    <p class="text-muted mb-0">{{date('d/m/Y', strtotime($data->student->created_at))}}</p>
                   </div>
                 </div>
                 <hr>

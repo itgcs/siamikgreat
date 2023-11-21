@@ -3,7 +3,7 @@
 <head>
   @include('layouts.header')
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class="hold-transition sidebar-mini layout-fixed sidebar-collapse layout-footer-fixed">
 <div class="wrapper">
 
   <!-- Preloader -->

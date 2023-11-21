@@ -7,10 +7,9 @@
             <div class="col-md-12">
                 <!-- general form elements -->
                 <div>
-                    <form method="POST"
-                        action={{ route('student.update', $data->student->id) }}
+                    <form method="POST" action={{ route('student.update', $data->student->id) }}
                         enctype="multipart/form-data">
-                        @csrf            
+                        @csrf
                         @method('PUT')
                         <div class="card card-dark">
                             <div class="card-header">
@@ -19,17 +18,30 @@
                             <!-- /.card-header -->
                             <!-- form start -->
                             <div class="card-body">
-                                <div class="form-group">
-                                    <label for="studentName">Name<span style="color: red">*</span></label>
-                                    <input name="studentName" type="text" class="form-control" id="studentName"
-                                        placeholder="Enter name"
-                                        value="{{old('name') ? old('name'):  $data->student->name }}" required>
-                                    @if($errors->any())
-                                    <p style="color: red">{{$errors->first('email')}}</p>
-                                    @endif
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label for="studentName">Name<span style="color: red">*</span></label>
+                                        <input name="studentName" type="text" class="form-control" id="studentName"
+                                            placeholder="Enter name"
+                                            value="{{old('name') ? old('name'):  $data->student->name }}" required>
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('email')}}</p>
+                                        @endif
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="studentId_or_passport">ID/Passport Number<span
+                                                style="color: red">*</span></label>
+                                        <input name="studentId_or_passport" type="text" class="form-control"
+                                            id="studentId_or_passport" placeholder="Enter ID/Passport"
+                                            value="{{old('id_or_passport')? old('id_or_passport') : $data->student->id_or_passport}}"
+                                            required>
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('id_or_passport')}}</p>
+                                        @endif
+                                    </div>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Gender<span style="color: red">*</span></label>
                                             <select name="studentGender" class="form-control" required>
@@ -60,128 +72,8 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
 
-                                        <label>Date of Birth<span style="color: red">*</span></label>
-                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                            <input name="studentDate_birth" type="text"
-                                                class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
-                                                data-target="#reservationdate" data-inputmask-alias="datetime"
-                                                data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                                value="{{old('date_birth') ? date("d/m/Y", strtotime(old('date_birth'))) : date("d/m/Y", strtotime($data->student->date_birth))}}"
-                                                required />
-
-                                            <div class="input-group-append" data-target="#reservationdate"
-                                                data-toggle="datetimepicker">
-                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                            </div>
-                                            @if($errors->any())
-                                            <p style="color: red">{{$errors->first('date_birth')}}</p>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Grade<span style="color: red">*</span></label>
-                                          
-                                          @php
-
-                                             
-                                             $selectedId = old('grade_id')? old('grade_id') : $data->student->grade_id;
-                                             $selectedName = '';
-                                             $option = [];
-
-                                             foreach($data->allGrade as $value) {
-                                                # code...
-                                                if( (int)$selectedId === (int)$value->id)
-                                                {
-                                                   $selectedName = $value->name .' - '. $value->class;
-                                                }
-
-                                                else {
-                                                   array_push($option, $value);
-                                                }
-                                             }
-                                          @endphp
-
-                                            <select name="gradeId" class="form-control" required>
-
-                                                <option selected value="{{$selectedId}}">{{$selectedName}}</option>
-
-                                                
-
-                                                @foreach($option as $value)
-
-                                                   <option value="{{$value->id}}">{{$value->name. ' - ' .$value->class}}</option>
-
-                                                @endforeach
-                                                
-                                            </select>
-                                            @if($errors->any())
-                                            <p style="color: red">{{$errors->first('gender')}}</p>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                <br>
-                                <br>
-                                <br>
-
-                                <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <label for="studentPlace_birth">Place of Birth<span
-                                                style="color: red">*</span></label>
-                                        <input name="studentPlace_birth" type="text" class="form-control"
-                                            id="studentPlace_birth" placeholder="Enter city"
-                                            value="{{old('place_birth')? old('place_birth') : $data->student->place_birth}}"
-                                            required>
-                                        @if($errors->any())
-                                        <p style="color: red">{{$errors->first('place_birth')}}</p>
-                                        @endif
-                                    </div>
-                                    <div class="col-md-6">
-
-                                        <label for="studentNationality">Nationality<span
-                                                style="color: red">*</span></label>
-                                        <input name="studentNationality" type="text" class="form-control"
-                                            id="studentNationality" placeholder="Enter nationality"
-                                            value="{{old('nationality')? old('nationality') : $data->student->nationality}}"
-                                            required>
-                                        @if($errors->any())
-                                        <p style="color: red">{{$errors->first('nationality')}}</p>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <label for="studentId_or_passport">ID/Passport Number<span
-                                                style="color: red">*</span></label>
-                                        <input name="studentId_or_passport" type="text" class="form-control"
-                                            id="studentId_or_passport" placeholder="Enter ID/Passport"
-                                            value="{{old('id_or_passport')? old('id_or_passport') : $data->student->id_or_passport}}"
-                                            required>
-                                        @if($errors->any())
-                                        <p style="color: red">{{$errors->first('id_or_passport')}}</p>
-                                        @endif
-                                    </div>
-                                    <div class="col-md-6">
-
-                                        <label for="studentPlace_of_issue">Place of issue</label>
-                                        <input name="studentPlace_of_issue" type="text" class="form-control" @php
-                                            $place_of_issue=$data->student->place_of_issue?
-                                        $data->student->place_of_issue : ''
-                                        @endphp
-
-                                        id="studentPlace_of_issue"
-                                        value="{{old('place_of_issue')? old('place_of_issue') : $place_of_issue}}"
-                                        placeholder="Enter place">
-                                        @if($errors->any())
-                                        <p style="color: red">{{$errors->first('place_of_issue')}}</p>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Religion<span style="color: red">*</span></label>
                                             <select name="studentReligion" class="form-control" required>
@@ -220,13 +112,151 @@
                                             @endif
                                         </div>
                                     </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Grade<span style="color: red">*</span></label>
+
+                                            @php
+
+
+                                            $selectedId = old('grade_id')? old('grade_id') : $data->student->grade_id;
+                                            $selectedName = '';
+                                            $option = [];
+
+                                            foreach($data->allGrade as $value) {
+                                            # code...
+                                            if( (int)$selectedId === (int)$value->id)
+                                            {
+                                            $selectedName = $value->name .' - '. $value->class;
+                                            }
+
+                                            else {
+                                            array_push($option, $value);
+                                            }
+                                            }
+                                            @endphp
+
+                                            <select name="gradeId" class="form-control" required>
+
+                                                <option selected value="{{$selectedId}}">{{$selectedName}}</option>
+
+
+
+                                                @foreach($option as $value)
+
+                                                <option value="{{$value->id}}">{{$value->name. ' - ' .$value->class}}
+                                                </option>
+
+                                                @endforeach
+
+                                            </select>
+                                            @if($errors->any())
+                                            <p style="color: red">{{$errors->first('gender')}}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="nisn">NISN</label>
+                                        <input name="nisn" type="text" class="form-control" id="nisn"
+                                            placeholder="Enter nisn"
+                                            value="{{old('nisn')? old('nisn') : $data->student->nisn}}">
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('nisn')}}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                <br>
+
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label>Date of Birth<span style="color: red">*</span></label>
+                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                            <input name="studentDate_birth" type="text"
+                                                class="form-control datetimepicker-input" placeholder="dd/mm/yyyy"
+                                                data-target="#reservationdate" data-inputmask-alias="datetime"
+                                                data-inputmask-inputformat="dd/mm/yyyy" data-mask
+                                                value="{{old('date_birth') ? date("d/m/Y", strtotime(old('date_birth'))) : date("d/m/Y", strtotime($data->student->date_birth))}}"
+                                                required />
+
+                                            <div class="input-group-append" data-target="#reservationdate"
+                                                data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                            @if($errors->any())
+                                            <p style="color: red">{{$errors->first('date_birth')}}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+
+                                        <label for="studentNationality">Nationality<span
+                                                style="color: red">*</span></label>
+                                        <input name="studentNationality" type="text" class="form-control"
+                                            id="studentNationality" placeholder="Enter nationality"
+                                            value="{{old('nationality')? old('nationality') : $data->student->nationality}}"
+                                            required>
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('nationality')}}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label for="studentPlace_birth">Place of Birth<span
+                                                style="color: red">*</span></label>
+                                        <input name="studentPlace_birth" type="text" class="form-control"
+                                            id="studentPlace_birth" placeholder="Enter city"
+                                            value="{{old('place_birth')? old('place_birth') : $data->student->place_birth}}"
+                                            required>
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('place_birth')}}</p>
+                                        @endif
+                                    </div>
+                                    <div class="col-md-6">
+
+                                        <label for="studentPlace_of_issue">Place of issue</label>
+                                        <input name="studentPlace_of_issue" type="text" class="form-control" @php
+                                            $place_of_issue=$data->student->place_of_issue?
+                                        $data->student->place_of_issue : ''
+                                        @endphp
+
+                                        id="studentPlace_of_issue"
+                                        value="{{old('place_of_issue')? old('place_of_issue') : $place_of_issue}}"
+                                        placeholder="Enter place">
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('place_of_issue')}}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Date of Register</label>
+                                            <div class="input-group date"
+                                                data-target-input="nearest">
+                                                <input name="created_at" type="text" class="form-control "
+                                                    placeholder="dd/mm/yyyy" data-mask readonly
+                                                    value="{{old('created_at') ? date("d/m/Y", strtotime(old('created_at'))) : date("d/m/Y", strtotime($data->student->created_at))}}" />
+                                                <div class="input-group-append"
+                                                    data-target="#reservationdateStudentDateExp"
+                                                    data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                </div>
+                                            </div>
+                                            @if($errors->any())
+                                            <p style="color: red">{{$errors->first('created_at')}}</p>
+                                            @endif
+                                        </div>
+                                    </div>
                                     <div class="col-md-6">
 
                                         <label>Date of Expiry</label>
                                         <div class="input-group date" id="reservationdateStudentDateExp"
                                             data-target-input="nearest">
                                             <input name="studentDate_exp" type="text"
-                                                class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                                class="form-control datetimepicker-input" placeholder="dd/mm/yyyy"
                                                 data-target="#reservationdateStudentDateExp"
                                                 data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy"
                                                 data-mask @php $date_exp=$data->student->date_exp ? date("d/m/Y",
@@ -362,7 +392,7 @@
                                             data-target-input="nearest">
 
                                             <input name="fatherBirth_date" type="text"
-                                                class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                                class="form-control datetimepicker-input" placeholder="dd/mm/yyyy"
                                                 data-target="#reservationFatherBirthDate"
                                                 data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy"
                                                 data-mask required
@@ -579,7 +609,7 @@
                                         <div class="input-group date" id="reservationMotherBirthDate"
                                             data-target-input="nearest">
                                             <input name="motherBirth_date" type="text"
-                                                class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                                class="form-control datetimepicker-input" placeholder="dd/mm/yyyy"
                                                 data-target="#reservationMotherBirthDate"
                                                 data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy"
                                                 data-mask
@@ -740,7 +770,7 @@
                                         <div class="input-group date" id="reservationBrotherOrSisterBirthDate1"
                                             data-target-input="nearest">
                                             <input name="brotherOrSisterBirth_date1" type="text"
-                                                class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                                class="form-control datetimepicker-input" placeholder="dd/mm/yyyy"
                                                 data-target="#reservationBrotherOrSisterBirthDate1"
                                                 data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy"
                                                 data-mask
@@ -752,7 +782,8 @@
                                             </div>
 
                                             @if($errors->any())
-                                            <p style="color: red">{{$errors->first('brotherOrSisterBirth_date1')}}</p>
+                                            <p style="color: red">{{$errors->first('brotherOrSisterBirth_date1')}}
+                                            </p>
                                             @endif
                                         </div>
                                     </div>
@@ -784,7 +815,7 @@
                                         <div class="input-group date" id="reservationBrotherOrSisterBirthDate2"
                                             data-target-input="nearest">
                                             <input name="brotherOrSisterBirth_date2" type="text"
-                                                class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                                class="form-control datetimepicker-input" placeholder="dd/mm/yyyy"
                                                 data-target="#reservationBrotherOrSisterBirthDate2"
                                                 data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy"
                                                 data-mask
@@ -795,7 +826,8 @@
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
                                             @if($errors->any())
-                                            <p style="color: red">{{$errors->first('brotherOrSisterBirth_date2')}}</p>
+                                            <p style="color: red">{{$errors->first('brotherOrSisterBirth_date2')}}
+                                            </p>
                                             @endif
                                         </div>
                                     </div>
@@ -825,7 +857,7 @@
                                         <div class="input-group date" id="reservationBrotherOrSisterBirthDate3"
                                             data-target-input="nearest">
                                             <input name="brotherOrSisterBirth_date3" type="text"
-                                                class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                                class="form-control datetimepicker-input" placeholder="dd/mm/yyyy"
                                                 data-target="#reservationBrotherOrSisterBirthDate3"
                                                 data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy"
                                                 data-mask
@@ -837,7 +869,8 @@
                                             </div>
 
                                             @if($errors->any())
-                                            <p style="color: red">{{$errors->first('brotherOrSisterBirth_date3')}}</p>
+                                            <p style="color: red">{{$errors->first('brotherOrSisterBirth_date3')}}
+                                            </p>
                                             @endif
                                         </div>
                                     </div>
@@ -867,7 +900,7 @@
                                         <div class="input-group date" id="reservationBrotherOrSisterBirthDate4"
                                             data-target-input="nearest">
                                             <input name="brotherOrSisterBirth_date4" type="text"
-                                                class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                                class="form-control datetimepicker-input" placeholder="dd/mm/yyyy"
                                                 data-target="#reservationBrotherOrSisterBirthDate4"
                                                 data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy"
                                                 data-mask
@@ -878,7 +911,8 @@
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
                                             @if($errors->any())
-                                            <p style="color: red">{{$errors->first('brotherOrSisterBirth_date4')}}</p>
+                                            <p style="color: red">{{$errors->first('brotherOrSisterBirth_date4')}}
+                                            </p>
                                             @endif
                                         </div>
                                     </div>
@@ -908,7 +942,7 @@
                                         <div class="input-group date" id="reservationBrotherOrSisterBirthDate5"
                                             data-target-input="nearest">
                                             <input name="brotherOrSisterBirth_date5" type="text"
-                                                class="form-control datetimepicker-input" placeholder={{date("d/m/Y")}}
+                                                class="form-control datetimepicker-input" placeholder="dd/mm/yyyy"
                                                 data-target="#reservationBrotherOrSisterBirthDate5"
                                                 data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy"
                                                 data-mask
@@ -919,7 +953,8 @@
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
                                             @if($errors->any())
-                                            <p style="color: red">{{$errors->first('brotherOrSisterBirth_date5')}}</p>
+                                            <p style="color: red">{{$errors->first('brotherOrSisterBirth_date5')}}
+                                            </p>
                                             @endif
                                         </div>
                                     </div>

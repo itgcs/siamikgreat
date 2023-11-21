@@ -68,24 +68,35 @@
                                     </div>
                                     <div class="col-md-3">
 
-                                        <label>Date of Birth<span style="color: red">*</span></label>
-                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                            <input name="studentDate_birth" type="text"
-                                                class="form-control " placeholder={{date("d/m/Y")}}
-                                                data-target="#reservationdate" 
-                                                data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                                value="{{old('date_birth') ? date("d/m/Y", strtotime(old('date_birth'))) : ''}}"
-                                                required
-                                                />
-                                                
-                                            <div class="input-group-append" data-target="#reservationdate"
-                                                data-toggle="datetimepicker">
-                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            <div class="form-group">
+                                                <label>Religion<span style="color: red">*</span></label>
+                                                <select name="studentReligion" class="form-control" required>
+    
+                                                    @php
+                                                       $arrReligion = array('Islam', 'Protestant Christianity', 'Catholic Christianity', 'Hinduism', 'Buddhism', 'Confucianism', 'Others');
+                                                    @endphp
+                                                    
+                                                    <option selected {{ old('religion')? '' : 'disabled'}}> {{ old('religion')? old('religion') : '--- SELECT RELIGION ---'}}</option>
+                                                    
+                                                    @if (old('religion'))
+                                                    
+                                                          @foreach($arrReligion  as $religion)
+                                                          
+                                                             @if (old('religion') !== $religion)
+                                                                <option >{{$religion}}</option>
+                                                             @endif
+                                                    
+                                                          @endforeach
+                                                       @else
+                                                          @foreach($arrReligion  as $religion)
+                                                                <option >{{$religion}}</option>
+                                                          @endforeach
+                                                    @endif
+                                                </select>
+                                                @if($errors->any())
+                                                <p style="color: red">{{$errors->first('religion')}}</p>
+                                               @endif
                                             </div>
-                                        </div>
-                                        @if($errors->any())
-                                        <p style="color: red">{{$errors->first('date_birth')}}</p>
-                                        @endif
                                         
                                     </div>
                                     <div class="col-md-3">
@@ -148,7 +159,7 @@
                                         <label>Date of Birth<span style="color: red">*</span></label>
                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
                                             <input name="studentDate_birth" type="text"
-                                                class="form-control " placeholder={{date("d/m/Y")}}
+                                                class="form-control " placeholder="dd/mm/yyyy"
                                                 data-target="#reservationdate" 
                                                 data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                                 value="{{old('date_birth') ? date("d/m/Y", strtotime(old('date_birth'))) : ''}}"
@@ -195,35 +206,23 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Religion<span style="color: red">*</span></label>
-                                            <select name="studentReligion" class="form-control" required>
-
-                                                @php
-                                                   $arrReligion = array('Islam', 'Protestant Christianity', 'Catholic Christianity', 'Hinduism', 'Buddhism', 'Confucianism', 'Others');
-                                                @endphp
-                                                
-                                                <option selected {{ old('religion')? '' : 'disabled'}}> {{ old('religion')? old('religion') : '--- SELECT RELIGION ---'}}</option>
-                                                
-                                                @if (old('religion'))
-                                                
-                                                      @foreach($arrReligion  as $religion)
-                                                      
-                                                         @if (old('religion') !== $religion)
-                                                            <option >{{$religion}}</option>
-                                                         @endif
-                                                
-                                                      @endforeach
-                                                   @else
-                                                      @foreach($arrReligion  as $religion)
-                                                            <option >{{$religion}}</option>
-                                                      @endforeach
-                                                @endif
-                                            </select>
-                                            @if($errors->any())
-                                            <p style="color: red">{{$errors->first('religion')}}</p>
-                                           @endif
+                                        <label>Date of Register</label>
+                                        <div class="input-group date" id="reservationdateStudentDateReg"
+                                            data-target-input="nearest">
+                                            <input name="created_at" type="text"
+                                                class="form-control " placeholder="dd/mm/yyyy"
+                                                data-target="#reservationdateStudentDateReg" 
+                                                data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
+                                                value="{{old('created_at') ? date("d/m/Y", strtotime(old('created_at'))) : date('d/m/Y')}}"
+                                                />
+                                            <div class="input-group-append" data-target="#reservationdateStudentDateReg"
+                                                data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
                                         </div>
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('created_at')}}</p>
+                                       @endif
                                     </div>
                                     <div class="col-md-6">
 
@@ -231,7 +230,7 @@
                                         <div class="input-group date" id="reservationdateStudentDateExp"
                                             data-target-input="nearest">
                                             <input name="studentDate_exp" type="text"
-                                                class="form-control " placeholder={{date("d/m/Y")}}
+                                                class="form-control " placeholder="dd/mm/yyyy"
                                                 data-target="#reservationdateStudentDateExp" 
                                                 data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                                 value="{{old('date_exp') ? date("d/m/Y", strtotime(old('date_exp'))) : ''}}"
@@ -322,7 +321,7 @@
                                <div class="form-group row">
 
 
-                                 <div class="col-md-4">
+                                <div class="col-md-4">
 
                                        
                                     <label for="fatherPlace_birth">Place of Birth<span style="color: red">*</span></label>
@@ -331,26 +330,26 @@
                                         @if($errors->any())
                                         <p style="color: red">{{$errors->first('father_place_birth')}}</p>
                                      @endif
-                                 </div>
+                                </div>
 
-                                 <div class="col-md-4">
-                                    <label>Date of Birth<span style="color: red">*</span></label>
-                                    <div class="input-group date" id="reservationFatherBirthDate"
-                                        data-target-input="nearest">
-                                        <input name="fatherBirth_date" type="text"
-                                            class="form-control " placeholder={{date("d/m/Y")}}
-                                            data-target="#reservationFatherBirthDate" 
-                                            data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                            required value="{{old('father_date_birth') ? date("d-m-Y", strtotime(old('father_date_birth'))) : ''}}"/>
-                                        <div class="input-group-append" data-target="#reservationFatherBirthDate"
-                                            data-toggle="datetimepicker">
-                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                <div class="col-md-4">
+                                        <label>Date of Birth<span style="color: red">*</span></label>
+                                        <div class="input-group date" id="reservationFatherBirthDate"
+                                            data-target-input="nearest">
+                                            <input name="fatherBirth_date" type="text"
+                                                class="form-control " placeholder="dd/mm/yyyy"
+                                                data-target="#reservationFatherBirthDate" 
+                                                data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
+                                                required value="{{old('father_date_birth') ? date("d-m-Y", strtotime(old('father_date_birth'))) : ''}}"/>
+                                            <div class="input-group-append" data-target="#reservationFatherBirthDate"
+                                                data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    @if($errors->any())
-                                      <p style="color: red">{{$errors->first('father_date_birth')}}</p>
-                                   @endif
-                                    </div>
+                                        @if($errors->any())
+                                          <p style="color: red">{{$errors->first('father_date_birth')}}</p>
+                                        @endif
+                                </div>
 
                                     <div class="col-md-4">
 
@@ -533,7 +532,7 @@
                                  <div class="input-group date" id="reservationMotherBirthDate"
                                      data-target-input="nearest">
                                      <input name="motherBirth_date" type="text"
-                                         class="form-control " placeholder={{date("d/m/Y")}}
+                                         class="form-control " placeholder="dd/mm/yyyy"
                                          data-target="#reservationMotherBirthDate" 
                                          data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                          value="{{old('mother_date_birth') ? date("d/m/Y", strtotime(old('mother_date_birth'))) : ''}}"
@@ -663,7 +662,7 @@
                               <div class="input-group date" id="reservationBrotherOrSisterBirthDate1"
                                   data-target-input="nearest">
                                   <input name="brotherOrSisterBirth_date1" type="text"
-                                  class="form-control " placeholder={{date("d/m/Y")}}
+                                  class="form-control " placeholder="dd/mm/yyyy"
                                   data-target="#reservationBrotherOrSisterBirthDate1" 
                                       data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                       value="{{old('brotherOrSisterBirth_date1') ? date("d/m/Y", strtotime(old('brotherOrSisterBirth_date1'))) : ''}}"
@@ -703,7 +702,7 @@
                                  <div class="input-group date" id="reservationBrotherOrSisterBirthDate2"
                                      data-target-input="nearest">
                                      <input name="brotherOrSisterBirth_date2" type="text"
-                                     class="form-control " placeholder={{date("d/m/Y")}}
+                                     class="form-control " placeholder="dd/mm/yyyy"
                                          data-target="#reservationBrotherOrSisterBirthDate2" 
                                          data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                          value="{{old('brotherOrSisterBirth_date2') ? date("d/m/Y", strtotime(old('brotherOrSisterBirth_date2'))) : ''}}"
@@ -741,7 +740,7 @@
                                     <div class="input-group date" id="reservationBrotherOrSisterBirthDate3"
                                         data-target-input="nearest">
                                         <input name="brotherOrSisterBirth_date3" type="text"
-                                        class="form-control " placeholder={{date("d/m/Y")}}
+                                        class="form-control " placeholder="dd/mm/yyyy"
                                             data-target="#reservationBrotherOrSisterBirthDate3" 
                                             data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                             value="{{old('brotherOrSisterBirth_date3') ? date("d/m/Y", strtotime(old('brotherOrSisterBirth_date3'))) : ''}}"
@@ -779,7 +778,7 @@
                                     <div class="input-group date" id="reservationBrotherOrSisterBirthDate4"
                                         data-target-input="nearest">
                                         <input name="brotherOrSisterBirth_date4" type="text"
-                                        class="form-control " placeholder={{date("d/m/Y")}}
+                                        class="form-control " placeholder="dd/mm/yyyy"
                                             data-target="#reservationBrotherOrSisterBirthDate4" 
                                             data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                             value="{{old('brotherOrSisterBirth_date4') ? date("d/m/Y", strtotime(old('brotherOrSisterBirth_date4'))) : ''}}"
@@ -817,7 +816,7 @@
                                     <div class="input-group date" id="reservationBrotherOrSisterBirthDate5"
                                         data-target-input="nearest">
                                         <input name="brotherOrSisterBirth_date5" type="text"
-                                        class="form-control " placeholder={{date("d/m/Y")}}
+                                        class="form-control " placeholder="dd/mm/yyyy"
                                             data-target="#reservationBrotherOrSisterBirthDate5" 
                                             data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                             value="{{old('brotherOrSisterBirth_date5') ? date("d/m/Y", strtotime(old('brotherOrSisterBirth_date5'))) : ''}}"

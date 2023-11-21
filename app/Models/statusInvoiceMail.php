@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+date_default_timezone_set('Asia/Jakarta');
 class statusInvoiceMail extends Model
 {
     use HasFactory;
