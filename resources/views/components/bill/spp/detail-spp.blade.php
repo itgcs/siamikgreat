@@ -404,8 +404,8 @@
             <a target="_blank" href="/admin/bills/paid/pdf/{{$data->id}}" class="btn btn-warning w-100 mb-2" id="change-paket"><i class="fa-solid fa-file-pdf fa-bounce" style="color: #000000; margin-right:2px;"></i>Print PDF</a>
             @if (!$data->paidOf)
                @if (strtolower($data->type) == 'paket' && !$data->installment)
-               <a href="/admin/bills/change-paket/{{$data->student->unique_id}}/{{$data->id}}" class="btn btn-info w-100 mb-2" id="change-paket">Change Paket</a>
-               <a href="/admin/bills/intallment-paket/{{$data->id}}" class="btn btn-secondary w-100 mb-2" id="change-paket">Installment Paket</a>
+               <a id="changes-paket" href="/admin/bills/change-paket/{{$data->student->unique_id}}/{{$data->id}}" class="btn btn-info w-100 mb-2">Change Paket</a>
+               <a id="paket-installment" href="/admin/bills/intallment-paket/{{$data->id}}" class="btn btn-secondary w-100 mb-2">Installment Paket</a>
                @endif
                @if(strtolower($data->type) == 'book')
                   <a href="javascript:void(0)" id="update-status-book" data-id="{{ $data->id }}" data-name="{{ $data->student->name }}" data-student-id="{{ $data->student->id }}" class="btn btn-success w-100 mb-2">Paid book success</a>

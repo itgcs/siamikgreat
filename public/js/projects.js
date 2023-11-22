@@ -376,6 +376,10 @@ $(document).ready(function () {
             confirmButtonText: "Yes, update it!",
         }).then((result) => {
             if (result.isConfirmed) {
+                
+                $(`#changes-paket`).remove();
+                $(`#paket-installment`).remove();
+                $(`#update-status`).remove();
                 console.log(value);
                 $.ajax({
                     headers: {
@@ -415,8 +419,6 @@ $(document).ready(function () {
                                 "success"
                             );
     
-                            $(`#change-paket`).remove();
-                            $(`#update-status`).remove();
     
                             setTimeout(() => {
                                 window.location.href = `/admin/bills/detail-payment/${value}`;
@@ -457,6 +459,7 @@ $(document).ready(function () {
             confirmButtonText: "Yes, update it!",
         }).then((result) => {
             if (result.isConfirmed) {
+                $(`#update-status-book`).remove();
                 $.ajax({
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
@@ -487,7 +490,6 @@ $(document).ready(function () {
                                 window.location.href = `/admin/bills/detail-payment/${value}`;
                             }, 2500);
     
-                            $(`#update-status-book`).remove();
                         } else {
                             
                             Swal.fire({

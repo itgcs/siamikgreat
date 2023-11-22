@@ -29,14 +29,24 @@
                 </div>
             </div>
             <div class="mt-3 row d-flex justify-content-around">
-                <a href="{{url('/admin/grades/promotions') . '/' . $data->gradeTeacher->id}}" role="button" class="w-100 btn btn-info col-5">
-                  <i class="fa-solid fa-graduation-cap fa-beat-fade" style="color: #ffffff;"></i><br>
-                  Promotion
-               </a>
-                <a target="_blank" href="{{url('/admin/grades/pdf') . '/' . $data->gradeTeacher->id}}" role="button" class="w-100 btn btn-warning col-5">
-                  <i class="fa-solid fa-file-pdf fa-bounce" style="color: #000000;"></i><br>
-                  PDF
-               </a>
+                @if (session('role') == 'superadmin')
+                    <a href="{{url('/admin/grades/promotions') . '/' . $data->gradeTeacher->id}}" role="button" class="w-100 btn btn-info col-5">
+                      <i class="fa-solid fa-graduation-cap fa-beat-fade" style="color: #ffffff;"></i><br>
+                      Promotion
+                    </a>
+                
+                    <a target="_blank" href="{{url('/admin/grades/pdf') . '/' . $data->gradeTeacher->id}}" role="button" class="w-100 btn btn-warning col-5">
+                        <i class="fa-solid fa-file-pdf fa-bounce" style="color: #000000;"></i><br>
+                        PDF
+                    </a>
+                @else
+                    
+                    <a target="_blank" href="{{url('/admin/grades/pdf') . '/' . $data->gradeTeacher->id}}" role="button" class="w-100 btn btn-warning col-11">
+                        <i class="fa-solid fa-file-pdf fa-bounce" style="color: #000000;"></i>
+                        PDF
+                    </a>
+                    
+                @endif
             </div>
         </div>
 

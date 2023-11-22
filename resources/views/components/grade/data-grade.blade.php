@@ -91,11 +91,10 @@
     </div>
 </div>
 
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
    @if(session('after_create_grade')) 
-
-      <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-      <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
       <script>
 
@@ -109,7 +108,7 @@
         setTimeout(() => {
            Toast.fire({
               icon: 'success',
-              title: 'Successfully created new grade in the database !!!',
+              title: 'Successfully created new grade in the database.',
         });
         }, 1500);
 
@@ -119,30 +118,55 @@
   @endif
 
 
-  @if(session('after_update_grade')) 
-   
-  <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-  <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-
-  <script>
-
-    var Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000
-    });
   
-    setTimeout(() => {
-       Toast.fire({
-          icon: 'success',
-          title: 'Successfully updated the grade in the database !!!',
-    });
-    }, 1500);
+  
+  @if(session('after_update_grade')) 
+      <script>
+     
+      var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+      });
+  
+      setTimeout(() => {
+         Toast.fire({
+            icon: 'success',
+            title: 'Successfully updated the grade in the database.',
+      });
+      }, 1500);
 
+    
+    </script>
+   @endif
 
-  </script>
+  @if(session('levelup'))
+  
+   @php
+      $gradePromotion = session('levelup')
+   @endphp
+      <script>
 
-@endif
+      var grade = "{{ $gradePromotion }}"
+     
+      var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+      });
+  
+      setTimeout(() => {
+         Toast.fire({
+            icon: 'success',
+            title: 'Successfully level up students from grade ' + grade,
+      });
+      }, 1500);
+
+    
+    </script>
+   @endif
+
 
 @endsection

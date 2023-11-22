@@ -24,7 +24,7 @@ class SendEmailJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     
     public $email, $type, $mailData, $subject, $bill_id;
-    public $tries = 5;
+    // public $tries = 5;
   
     /**
      * Create a new job instance.
@@ -99,8 +99,8 @@ class SendEmailJob implements ShouldQueue
         ]);
     }
 
-    // public function retryUntil(): DateTime
-    // {
-    //     return now()->addMinutes(10);
-    // }
+    public function retryUntil(): DateTime
+    {
+        return now()->addMinutes(10);
+    }
 }

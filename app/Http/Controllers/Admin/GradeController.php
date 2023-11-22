@@ -303,21 +303,25 @@ class GradeController extends Controller
                Student::where('id', $value)->update([
                   'grade_id' => (int)$grade->grade->id + 1,
                ]);
-
             }
+
+            session()->flash('levelup', $grade->grade->name . " " . $grade->grade->class);
          } else {
             foreach ($promoteId as $value) {
                
                Book_student::where('student_id', (int)$value)->delete();
-
+               
                Student::where('id', $value)->update([
                   'is_active' => 0,
                   'is_graduate' => 1,
                ]);
             }
+            
+            session()->flash('promote', 'graduate');
          }
 
 
+         session()->flash('preloader');
          $this->billPaketGraduate($promoteId);
 
 

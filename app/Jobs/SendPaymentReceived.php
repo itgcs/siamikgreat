@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Mail\PaymentSuccessMail;
 use App\Models\statusInvoiceMail;
+use DateTime;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,8 +18,8 @@ class SendPaymentReceived implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
 
+    // public $tries = 5;
     public $email, $mailData, $subject, $pdfBill;
-    public $tries = 5;
     /**
      * Create a new job instance.
      */
@@ -45,21 +46,26 @@ class SendPaymentReceived implements ShouldQueue
                $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $this->pdfBill])->setPaper('a4', 'portrait');
          }
 
-         Mail::to($this->email[0])->cc($this->email[1])->send(new PaymentSuccessMail($this->mailData, $this->subject, $pdf, $pdfReport));
+        Mail::to($this->email[0])->cc($this->email[1])->send(new PaymentSuccessMail($this->mailData, $this->subject, $pdf, $pdfReport));
 
-         $bill = statusInvoiceMail::create([
+        statusInvoiceMail::create([
             'status' => true,
             'bill_id' => $this->pdfBill->id,
             'is_paid' => true,
          ]);
    }
 
-   public function failed(\Exception $exception) :void
-   {
+    public function failed(\Exception $exception) :void
+    {
         statusInvoiceMail::create([
             'status' => false,
             'bill_id' => $this->pdfBill->id,
             'is_paid' => true,
         ]);
-   }
+    }
+
+    public function retryUntil(): DateTime
+    {
+        return now()->addMinutes(10);
+    }
 }

@@ -7,71 +7,171 @@
 
 
     <title>Print Pdf - {{ $data->name }} {{ $data->class }}</title>
+    
     <style>
-        a {
-            text-decoration: none !important;
-            color: black;
+
+
+
+        body{
+            font-family: 'Roboto', sans-serif;
         }
 
+        p {
+            margin: 2px;
+            font-size: 12px;
+        }
         table,
-        th,
-        td {
-            border: 1px solid black;
-            border-collapse: collapse;
-            font-size: 12pt;
+        thead,
+        td,
+        tr, {
             width: 100%;
+            height: 5%;
         }
+        
 
-        .text-center {
-            text-align: center;
-            margin: 10px 0px 100px 0px;
-        }
-
-        th,
-        td {
+        td  {
+            padding: 7px 5px;
             text-align: left;
-            padding: 5px;
+        }
+        .header,
+        .header1, 
+        .header2 {
+            width: 100%;
+            height: 5%;
+            /* border: 1px solid black; */
+        }
+        
+        .header2{
+            position: relative;
+            
+        }
+        
+        .invoice {
+            color: rgb(65, 57, 57)6);
+            margin: 0px 5px 0px 5px;
+        }
+        
+        .logo {
+            color: rgb(255, 115, 0);
+            top: absolute;
+            bottom: 0;
         }
 
-        .colspan {
-            width: 15px;
+        .main_text {
+            font-family: 'Roboto', sans-serif;
+            font-size: 20px;
+        }
+        
+        .child_text {
+            font-size: 20px;
+            font-weight: 
+        }
+        
+
+        .address {
+            font-size: 12px;
+            color: grey;
+            margin-bottom: 20px;
+            margin-top: 60px;
         }
 
+        .student {
+            font-size: 11px;
+            padding: 0;
+            margin: 30px,4px;
+        }
+        
+        .head_student {
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .date {
+            width: 100%;
+            bottom: 0;
+        }
+
+        .date_container {
+            vertical-align: bottom;
+        }
+
+        .detail {
+            width: 100%;
+            padding: .5em;
+        }
+
+        .header_table {
+            background-color: rgb(255, 115, 0);
+            color: white;
+        }
+
+        .body_table {
+            background-color: rgba(95, 95, 95, 0.243);
+        }
+
+        .table_detail {
+            margin-top: 20px;
+        }
+        .subtotal {
+          width: 50%;
+        }
+        .total {
+         width: 50%;
+         font-style: 'bold';
+         background-color: rgba(95, 95, 95, 0.012);
+        }
+
+        .paid {
+         color: rgb(2, 134, 2);
+        }
+        .unpaid {
+         color: rgb(145, 0, 0);
+        }
+        
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="text-center my-5">
-            <h2>Data on {{strtolower($data->name)}} {{$data->class}}</h2>
-            <h2><a target="_blank" href="https://great.sch.id/">GREAT CRYSTAL SCHOOL AND COURSE</a></h2>
-        </div>
-
-        <p class="mt-5">Print date: {{date('d/m/Y')}}</p>
         <table>
-            <thead>
+            {{-- <thead>
+                <td style="text-align: center;">
+                    <div class="logo">
+                        <h1 style="margin-bottom:0;">GREAT CRYSTAL</h1>
+                        <h2 style="margin-top:0;">SCHOOL AND COURSE CENTER</h2>
+                    </div>
+                </td>
+            </thead> --}}
+            <tbody>
+                <td style="text-align: center;" align="center">
+                    <h2 class="invoice">DATA STUDENTS</h2>
+                    <h2 class="invoice">GREAT CRYSTAL SCHOOL</h2>
+                    <h2 class="invoice">{{strtoupper($data->name)}} {{$data->class}}</h2>
+                </td>
+            </tbody>
+        </table>
+
+        <p class="address">Print date: {{date('d/m/Y')}}</p>
+        <table>
+            <thead class="header_table">
                 <tr>
-                    <th class="colspan">No</th>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Unique ID</th>
                     <th>Gender</th>
-                    <th>Religion</th>
-                    <th>Place birth</th>
                     <th>Date Birth</th>
-                    <th>Age</th>
+                    {{-- <th>Age</th> --}}
                     <th>Nationality</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="body_table">
                 @foreach ($data->student as $el)
 
                 <tr>
-                    <td>{{$loop->index + 1}}</td>
+                    <td style="width: 30%;" align="center">{{$loop->index + 1}}</td>
                     <td>{{$el->name}}</td>
                     <td>{{$el->unique_id}}</td>
                     <td>{{$el->gender}}</td>
-                    <td>{{$el->religion}}</td>
-                    <td>{{$el->place_birth}}</td>
                     @php
                     $explode = explode('-', $el->date_birth);
                     $date_birth = $explode[2].'-'.$explode[1].'-'.$explode[0];
@@ -81,7 +181,7 @@
 
                     @endphp
                     <td>{{$date_birth}}</td>
-                    <td>{{$age}}</td>
+                    {{-- <td>{{$age}}</td> --}}
                     <td>{{$el->nationality}}</td>
                 </tr>
 
