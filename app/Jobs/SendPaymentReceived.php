@@ -13,13 +13,13 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 
-class SendPaymentReceived implements ShouldQueue
+class SendPaymentReceived implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
 
-    // public $tries = 5;
     public $email, $mailData, $subject, $pdfBill;
+    public $tries = 5;
     /**
      * Create a new job instance.
      */

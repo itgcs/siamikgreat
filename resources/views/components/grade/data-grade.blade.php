@@ -168,5 +168,33 @@
     </script>
    @endif
 
+   @if(session('graduate'))
+  
+      @php
+         $gradePromotion = session('graduate')
+      @endphp
+
+      <script>
+
+      var grade = "{{ $gradePromotion }}"
+     
+      var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+      });
+  
+      setTimeout(() => {
+         Toast.fire({
+            icon: 'success',
+            title: 'Successfully graduate students from grade ' + grade,
+      });
+      }, 1500);
+
+    
+    </script>
+   @endif
+
 
 @endsection

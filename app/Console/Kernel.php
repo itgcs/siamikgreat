@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
 
         // create bill notification
         // $schedule->command('test:cron')->everyTwoMinutes()->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
-        $schedule->command('spp:cron')->monthlyOn(1, '07:00')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        $schedule->command('spp:cron')->monthlyOn(22, '15:29')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
         $schedule->command('capital-fee:cron')->dailyAt('07:15')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
         $schedule->command('book:cron')->dailyAt('07:30')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
         $schedule->command('uniform:cron')->dailyAt('07:45')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);

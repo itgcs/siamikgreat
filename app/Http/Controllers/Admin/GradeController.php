@@ -317,7 +317,7 @@ class GradeController extends Controller
                ]);
             }
             
-            session()->flash('promote', 'graduate');
+            session()->flash('graduate', $grade->grade->name . " " . $grade->grade->class);
          }
 
 

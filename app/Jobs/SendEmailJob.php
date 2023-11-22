@@ -18,13 +18,14 @@ use App\Models\statusInvoiceMail;
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
   
-class SendEmailJob implements ShouldQueue
+class SendEmailJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilProcessing
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     
-    public $email, $type, $mailData, $subject, $bill_id;
-    // public $tries = 5;
+    public $email, $type, $mailData, $subject, $bill_id, $product;
+    public $tries = 5;
   
     /**
      * Create a new job instance.
@@ -43,6 +44,7 @@ class SendEmailJob implements ShouldQueue
      */
     public function handle(): void
     {
+        info('queue email running');
         $pdfBill = Bill::with(['student' => function ($query) {
             $query->with('grade');
         }, 'bill_collection', 'bill_installments'])
@@ -102,5 +104,11 @@ class SendEmailJob implements ShouldQueue
     public function retryUntil(): DateTime
     {
         return now()->addMinutes(10);
+    }
+
+
+    public function uniqueId(): string
+    {
+        return $this->bill_id;
     }
 }

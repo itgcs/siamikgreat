@@ -397,8 +397,14 @@
                                                                             <td colspan="2"
                                                                                 style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
                                                                                 @php
-                                                                                $amount = $item->discount ? $item->amount - $item->amount * $item->discount/100 : $item->amount;
-                                                                                $total += $amount;
+                                                                                if($item->type === 'SPP'){
+
+                                                                                  $amount = $item->discount ? $item->amount - $item->amount * $item->discount/100 : $item->amount;
+                                                                                  $total += $amount;
+                                                                                } else {
+                                                                                  $amount = $item->installment ? $item->amount_installment : $item->amount - $item->dp;
+                                                                                  $total = $amount;
+                                                                                }
                                                                                 @endphp
                                                                                 <p
                                                                                     style="margin: 0;">
@@ -410,15 +416,19 @@
                                                                                         × 1 </span> --}}
 
                                                                                      {{-- {{$item->subject}} --}}
+                                                                                    
+                                                                                    @if ($item->type != 'Book' && $item->installment)
+                                                                                      {{$item->type .' '. $item->subject}}
+                                                                                    @else
+                                                                                      {{$mailData['bill'][0]->type == 'Book' ? $item->name : $item->type}}
+                                                                                    @endif
 
-
-                                                                                    {{$mailData['bill'][0]->type == 'Book' ? $item->name : $item->type}}
                                                                                 </p>
                                                                             </td>
                                                                             <td align="right"
                                                                                 valign="top"
                                                                                 style="color: #525f7f; font-size: 15px; line-height: 24px; word-break: normal;">
-                                                                                Rp. {{number_format($item->amount - $item->charge, 0, ',', '.')}}
+                                                                                Rp. {{number_format($amount - $item->charge, 0, ',', '.')}}
                                                                             </td>
                                                                         </tr>
                                                                         @if ($mailData['bill'][0]->type != 'Book' && $item->charge > 0) 
