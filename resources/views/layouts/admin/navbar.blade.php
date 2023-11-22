@@ -1,7 +1,7 @@
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
    <!-- Left navbar links -->
-   <ul class="navbar-nav">
+   <ul class="navbar-nav" id="btn-custom-suzyan">
      <li class="nav-item">
        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
      </li>
@@ -103,15 +103,39 @@
        </div>
      </li> --}}
      <li class="nav-item">
+      <button href="javascript:void(0)" id="log-out" type="button" class="btn btn-secondary">Log Out</button>
+     </li>
+     <li class="nav-item">
        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
          <i class="fas fa-expand-arrows-alt"></i>
        </a>
      </li>
-     <li class="nav-item">
+     {{-- <li class="nav-item">
        <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#" role="button">
          <i class="fas fa-th-large"></i>
        </a>
-     </li>
+     </li> --}}
    </ul>
  </nav>
  <!-- /.navbar -->
+
+ <script>
+
+  var element = document.body;
+
+  if(!localStorage.getItem("sidebar") || localStorage.getItem("sidebar") == 'close'){
+    element.classList.add('sidebar-collapse');
+  } else {
+    element.classList.remove('sidebar-collapse');
+  }
+
+  document.getElementById("btn-custom-suzyan").addEventListener("click", function () {
+  
+    if(localStorage.getItem("sidebar") == 'close'){
+      localStorage.setItem("sidebar", "open");
+    } else {
+      localStorage.setItem("sidebar", "close");
+    }
+  });
+
+</script>

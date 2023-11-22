@@ -90,8 +90,7 @@
                                             <label for="exampleInputPassword1">Password</label>
                                             <input name="password" type="password" class="form-control"
                                                 id="exampleInputPassword1" aria-describedby="emailHelp">
-                                            <small id="emailHelp" class="form-text text-muted">We'll never share your
-                                                email with anyone else.</small>
+                                            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword2">Reinput password</label>

@@ -301,7 +301,34 @@ class TeacherController extends Controller
       } catch (Exception $err) {
          //throw $th;
          return response()->json([
-            'error' => $err,
+            'success' => false,
+         ]);
+      }
+   }
+
+   public function activated($id)
+   {
+      try {
+         
+         if(!Teacher::where('id', $id)->first())
+         {
+            return response()->json([
+               'message' => 'Teacher with id ' . $id . ' not found!!!',
+            ], 404);
+         }
+
+         Teacher::where('id', $id)->update([
+            'is_active' => true,
+         ]);
+
+         return response()->json([
+            'success' => true,
+         ]);
+
+      } catch (Exception $err) {
+         //throw $th;
+         return response()->json([
+            'success' => false,
          ]);
       }
    }

@@ -1,4 +1,4 @@
-<footer class="main-footer">
+<footer class="main-footer text-sm">
    <strong>Copyright &copy; 2023 <a target="_blank" href="https://great.sch.id/">Great Crystal School</a>.</strong>
    All rights reserved.
    <div class="float-right d-none d-sm-inline-block">
@@ -282,3 +282,8 @@
     }
 
 </script>
+
+
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+<script src="{{ asset('js/logout.js') }}" defer></script>

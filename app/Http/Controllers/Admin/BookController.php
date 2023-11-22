@@ -149,6 +149,11 @@ class BookController extends Controller
     {
         try {
             //code...
+        
+            session()->flash('page', (object) [
+                'page' => 'books',
+                'child' => 'database book',
+            ]);
 
             $book = Book::where('id', $id)->first();
             $grade = Grade::orderBy('id', 'asc')->get();
@@ -224,6 +229,11 @@ class BookController extends Controller
     {
         try {
             //code...
+        
+            session()->flash('page', (object) [
+                'page' => 'books',
+                'child' => 'database book',
+            ]);
             $data = Book::with('grade')->where('id', $id)->first();
 
             // return $data;
@@ -239,7 +249,10 @@ class BookController extends Controller
     {
         try {
             //code...
-
+            session()->flash('page', (object) [
+                'page' => 'books',
+                'child' => 'database book',
+            ]);
 
             if(!Book::where('id', $id)->first())
             {

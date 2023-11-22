@@ -204,11 +204,18 @@
                          </i>
                          Edit
                       </a>
-                        @if(session('role') == 'superadmin' && $el->is_active)
-                              <a href="javascript:void(0)" id="delete-teacher" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-danger btn-sm">
-                                 <i class="fas fa fa-ban"></i>
-                                 Deactive
-                              </a>
+                        @if(session('role') == 'superadmin')
+                            @if (!$el->is_active)
+                                <a href="javascript:void(0)" id="active-teacher" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-success btn-sm">
+                                   <i class="fas fa fa-ban"></i>
+                                   Activate
+                                </a>
+                            @else
+                                <a href="javascript:void(0)" id="delete-teacher" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-danger btn-sm">
+                                   <i class="fas fa fa-ban"></i>
+                                   Deactive
+                                </a>
+                            @endif
                         @endif
                      </td>
                   </tr>

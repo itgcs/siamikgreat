@@ -3,7 +3,14 @@
 <head>
   @include('layouts.header')
 </head>
-<body class="hold-transition sidebar-mini layout-fixed sidebar-collapse layout-footer-fixed">
+
+{{-- @php
+  if(sideBarCollapse) {
+    
+  }
+@endphp --}}
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 <div class="wrapper">
 
   <!-- Preloader -->

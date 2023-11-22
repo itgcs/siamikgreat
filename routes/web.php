@@ -46,6 +46,7 @@ use Illuminate\Support\Facades\Mail;
 
 Route::get('/', [UserController::class, 'login']);
 Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin');
+Route::get('/logout', [UserController::class, 'logout']);
 Route::get('/counter', Counter::class);
 
 // Route::get('send-mail', [MailController::class, 'createNotificationUniform']);
@@ -201,6 +202,7 @@ Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
    Route::prefix('/teachers')->group(function () {
 
       Route::put('/deactivated/{id}', [TeacherController::class, 'deactivated']);
+      Route::put('/activated/{id}', [TeacherController::class, 'activated']);
    });
 
 });

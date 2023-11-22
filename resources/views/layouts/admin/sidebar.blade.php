@@ -15,7 +15,15 @@
         <img src="{{asset('images/admin.png')}}" class="img-circle elevation-2" alt="User Image">
       </div>
       <div class="info">
-        <a href="#" class="d-block brand-text" style="font-size: 1.2em;">Super Admin</a>
+        <a href="#" class="d-block brand-text" style="font-size: 1.2em;">
+          @if (session('role') == 'superadmin')
+              Super Admin
+            
+          @else
+              Admin
+
+          @endif
+        </a>
       </div>
     </div>
 
@@ -155,16 +163,12 @@
             <p>Create</p>
           </a>
         </li>
-      </ul>
-      <ul class="nav nav-treeview">
         <li class="nav-item">
           <a href="/admin/bills" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database bills' ? 'active' : '') : ''}}">
             <i class="far fa-circle nav-icon"></i>
             <p>Data</p>
           </a>
         </li>
-      </ul>
-      <ul class="nav nav-treeview">
         <li class="nav-item">
           <a href="/admin/bills/status" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'status bills' ? 'active' : '') : ''}}">
             <i class="far fa-circle nav-icon"></i>
@@ -174,6 +178,7 @@
       </ul>
     </li>
 
+    @if(session('role') == 'superadmin')
      <li class="nav-header">SUPER ADMIN ACCESS</li>
      <li class="nav-item">
        <a href="{{url('/admin/user')}}" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'user' ? 'active' : '') : ''}}">
@@ -187,16 +192,7 @@
          <p>Change my password</p>
        </a>
      </li>
-     
-     
-     <li class="nav-header">EXIT</li>
-     <li class="nav-item">
-         <a href="/" class="nav-link">
-            {{-- <i class="nav-icon far fa-circle text-warning"></i> --}}
-            <i class="nav-icon fa-solid fa-right-from-bracket text-danger"></i>
-            <p>Logout</p>
-         </a>
-     </li>
+     @endif
    </ul>
  </nav>
 

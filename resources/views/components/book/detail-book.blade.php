@@ -88,7 +88,7 @@
 
             
           </div>
-            <a role="button" class="col-lg-7 btn btn-danger btn-lg" href="javascript:void(0)" id="delete-book" data-id="{{ $data->id }}" data-name="{{ $data->name }}"> 
+            <a role="button" class="col-lg-8 btn btn-danger btn-lg" href="javascript:void(0)" id="delete-book" data-id="{{ $data->id }}" data-name="{{ $data->name }}"> 
                 {{-- <i class="fas fa-trash"> --}}
                 Delete
             </a>
