@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
 
         // create bill notification
         // $schedule->command('test:cron')->everyTwoMinutes()->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
-        $schedule->command('spp:cron')->monthlyOn(22, '15:29')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        $schedule->command('spp:cron')->monthlyOn(1, '06:30')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
         $schedule->command('capital-fee:cron')->dailyAt('07:15')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
         $schedule->command('book:cron')->dailyAt('07:30')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
         $schedule->command('uniform:cron')->dailyAt('07:45')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
@@ -32,7 +32,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('charge_bill:cron')->monthlyOn(11, '07:00')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
 
         // every day at 18 & 25 monthly
-        $schedule->command('cronReminder:cron')->twiceMonthly(18, 20, '09:22')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
+        $schedule->command('cronReminder:cron')->twiceMonthly(18, 25, '06:30')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);
 
         // send email payment success eveyday
         $schedule->command('payment:cron')->dailyAt('05:15')->timezone('Asia/Jakarta')->emailOutputOnFailure($email_logging);

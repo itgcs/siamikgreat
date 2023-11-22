@@ -206,6 +206,9 @@ class PaymentBookController extends Controller
                 $value['bill_id'] = $bill->id;
                 BillCollection::create($value);
             } 
+
+            session()->flash('preloader');
+            session()->flash('after_add_book', $student->name);
             
             DB::commit();
             return redirect('/admin/bills');

@@ -527,7 +527,36 @@
     }, 1500);
 
 
-  </script>
+</script>
+    
+@endif
+
+@if (session('after_add_book'))
+
+@php
+    $var = session('after_add_book');
+@endphp
+
+<script>
+
+    var name = "{{ $var }}"
+
+    var Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+    });
+  
+    setTimeout(() => {
+       Toast.fire({
+          icon: 'success',
+          title: 'Success create bill books for ' + name,
+    });
+    }, 1500);
+
+
+</script>
     
 @endif
 
