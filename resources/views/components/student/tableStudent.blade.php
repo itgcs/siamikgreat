@@ -249,18 +249,25 @@
                                  </i>
                                  Deactive
                               </a>
+                            @if ($el->is_graduate && (sizeof($grades) > $el->grade_id))
+                                <a href="/admin/student/re-registration/{{$el->unique_id}}" class="btn btn-dark btn-sm">
+                                    <i class="fas fa fa-register">
+                                    </i>
+                                    Re-registration
+                                </a>
+                            @elseif (!$el->is_graduate)
+                                    <a href="javascript:void(0)" id="active-student" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-success btn-sm">
+                                        <i class="fas fa fa-register">
+                                        </i>
+                                        Activate
+                                    </a>
+                                @endif
                             @else
                                 @if ($el->is_graduate && (sizeof($grades) > $el->grade_id))
                                     <a href="/admin/student/re-registration/{{$el->unique_id}}" class="btn btn-dark btn-sm">
                                         <i class="fas fa fa-register">
                                         </i>
                                         Re-registration
-                                    </a>
-                                @elseif (!$el->is_graduate)
-                                    <a href="javascript:void(0)" id="active-student" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-success btn-sm">
-                                        <i class="fas fa fa-register">
-                                        </i>
-                                        Activate
                                     </a>
                                 @endif
                            @endif

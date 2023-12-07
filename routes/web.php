@@ -173,17 +173,16 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::get('/{id}/add-books', [PaymentBookController::class, 'pageAddBook']);
       Route::post('/{id}/add-books-action', [PaymentBookController::class, 'actionAddBook'])->name('action.add.book');
    });
-});
 
-Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
-   
-   
    Route::prefix('/student')->group(function () {
       Route::get('/re-registration/{student_id}', [SuperStudentController::class, 'pageReRegis']);
       Route::patch('/{id}', [SuperStudentController::class, 'inactiveStudent']);
       Route::patch('/activate/{student_id}', [SuperStudentController::class, 'activateStudent']);
       Route::patch('/re-registration/{student_id}', [SuperStudentController::class, 'actionReRegis'])->name('action.re-regis');
    });
+});
+
+Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
    
    Route::prefix('/user')->group(function () {
       Route::get('/', [SuperAdminController::class, 'getUser']);

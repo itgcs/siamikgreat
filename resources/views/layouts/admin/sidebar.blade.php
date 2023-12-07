@@ -179,13 +179,21 @@
     </li>
 
     @if(session('role') == 'superadmin')
-     <li class="nav-header">SUPER ADMIN ACCESS</li>
+     <li class="nav-header">AUTHENTICATION</li>
      <li class="nav-item">
        <a href="{{url('/admin/user')}}" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'user' ? 'active' : '') : ''}}">
-         <i class="fa-solid fa-user-secret nav-icon"></i>
-         <p>User</p>
-       </a>
-     </li>
+        <i class="fa-solid fa-user-secret nav-icon"></i>
+        <p>User</p>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{{url('/admin/user/change-password')}}" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'admin' ? 'active' : '') : ''}}">
+        <i class="nav-icon fas fa-solid fa-lock"></i>
+        <p>Change my password</p>
+      </a>
+    </li>
+    @else
+    <li class="nav-header">AUTHENTICATION</li>
      <li class="nav-item">
        <a href="{{url('/admin/user/change-password')}}" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'admin' ? 'active' : '') : ''}}">
          <i class="nav-icon fas fa-solid fa-lock"></i>

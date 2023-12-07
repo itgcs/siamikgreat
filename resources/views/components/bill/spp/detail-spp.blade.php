@@ -60,7 +60,19 @@
                     <p class="mb-0">Subject</p>
                   </div>
                   <div class="col-sm-8">
-                    <p class="text-muted mb-0">{{$data->subject? $data->subject : '-'}}</p>
+                     
+                     @php
+
+                        $subject = '-';
+
+                        if($data->subject){
+                           
+                           $subject = $data->installment? $data->type. ' installment ' . '( '. $data->installment .' )' : 'Cash';
+
+                        }
+                     @endphp
+
+                    <p class="text-muted mb-0">{{$subject}}</p>
                   </div>
                 </div>
                 <hr>
