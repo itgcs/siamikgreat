@@ -210,5 +210,5 @@ Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
 
 Route::prefix('coba')->group(function () {
 
-   Route::get('/state', [NotificationPaymentSuccess::class, 'successClicked']);
+   Route::get('/state', [NotificationPastDue::class, 'cronChargePastDue']);
 });

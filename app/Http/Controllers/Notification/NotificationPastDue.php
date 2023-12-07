@@ -19,10 +19,11 @@ use App\Models\Student;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Carbon;
+use PDO;
 
 class NotificationPastDue extends Controller
 {
-    public function cronChargePastDue($type = 'SPP', $charge = false)
+    public function cronChargePastDue($type = 'Capital Fee', $charge = true)
     {
       DB::beginTransaction();
         try {
@@ -31,15 +32,25 @@ class NotificationPastDue extends Controller
   
            if($charge) 
            {
-                $billCharge = Bill::where('paidOf', false)->where('deadline_invoice', '<', date('Y-m-d'))->where('type', $type)->get(['id', 'amount', 'charge', 'installment', 'amount_installment']);
-            
+                $billCharge = Bill::with('bill_installments')->where('paidOf', false)->where('deadline_invoice', '<', date('Y-m-d'))->where('type', $type)->get(['id', 'amount', 'charge', 'installment', 'amount_installment']);
                 foreach ($billCharge as $bill) {
                    # code...
                    Bill::where('id', $bill->id)->update([
                       'amount'=> $bill->amount + 100_000,
                       'charge'=> $bill->charge + 100_000,
                       'amount_installment' => $bill->installment? $bill->amount_installment + 100_000 : $bill->amount_installment,
-                   ]);
+                     ]);
+                     
+                  foreach ($bill->bill_installments as $installment){
+                        
+                     if($installment->pivot->main_id != $installment->pivot->child_id) {
+
+                        Bill::where('id', $installment->pivot->child_id)->update([
+                           'amount'=> $bill->amount + 100_000,
+                        ]);
+                     }
+
+                   }
                 }
            }
 

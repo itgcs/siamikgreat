@@ -313,7 +313,7 @@
                           <thead>
                              <tr>
                              <td align="right" class="total">Total :</td>
-                             <td align="right" class="total">Rp. {{number_format(($data->amount-$totalCharge), 0, ',', '.')}}</td>
+                             <td align="right" class="total">Rp. {{number_format(($data->amount), 0, ',', '.')}}</td>
                           </tr>
                           </thead>
                        </table>
