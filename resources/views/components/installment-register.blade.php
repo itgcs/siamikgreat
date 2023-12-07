@@ -4,7 +4,8 @@
     <div class="container-fluid">
         <div class="row d-flex justify-content-center">
             <!-- left column -->
-            <div class="col-lg-6">
+            <div class="row col-10">
+            <div class="col-lg-7">
                 <!-- general form elements -->
                 <div>
                     {{-- <form method="POST" action={{route('actionRegister')}}> --}}
@@ -97,6 +98,63 @@
                         </div>
                     </form>
 
+                </div>
+                <div class="col-lg-3 p-1">
+                    <div class="card mb-4 p-4">
+                       <table>
+                          <thead>
+                             <th></th>
+                             <th></th>
+                          </thead>
+                          <tbody>
+                            
+                            @if( sizeof($data->bill_installments) > 0 )
+                                @foreach ($data->bill_installments as $idx => $item)
+                                    <tr>
+                                        <td align="left">{{$item->type}} ({{$idx+1}})</td>
+                                        <td align="right">Rp. {{number_format((string)$item->amount_installment, 0, ",", ".")}}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
+
+                            
+                        </tbody>
+                    </table>
+                    <hr>
+
+                    <table>
+                        <thead>
+                           <th></th>
+                           <th></th>
+                        </thead>
+                        <tbody>
+                                  <tr>
+                                      <td align="left"><b>Amount</b></td>
+                                      <td align="right"><b>Rp. {{number_format((string)$data->amount - $data->dp, 0, ",", ".")}}</b></td>
+                                  </tr>
+                                  <tr>
+                                      <td align="left">Done Payment</td>
+                                      <td align="right">Rp. {{number_format((string)$data->dp, 0, ",", ".")}}</td>
+                                  </tr>
+                      </tbody>
+                  </table>
+
+                    <hr>
+
+                    <table>
+                        <thead>
+                           <th></th>
+                           <th></th>
+                        </thead>
+                        <tbody>
+                                  <tr>
+                                      <td align="left">Total</td>
+                                      <td align="right">Rp. {{number_format((string)$data->amount, 0, ",", ".")}}</td>
+                                  </tr>
+                      </tbody>
+                  </table>
+        
+                  </div>
                 </div>
                 <!-- /.card -->
 

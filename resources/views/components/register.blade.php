@@ -28,9 +28,9 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="studentId_or_passport">ID/Passport Number<span style="color: red">*</span></label>
+                                        <label for="studentId_or_passport">ID/Passport Number</label>
                                         <input name="studentId_or_passport" type="text" class="form-control"
-                                            id="studentId_or_passport" placeholder="Enter ID/Passport" value="{{old('id_or_passport')}}" required>
+                                            id="studentId_or_passport" placeholder="Enter ID/Passport" value="{{old('id_or_passport')}}">
                                             @if($errors->any())
                                             <p style="color: red">{{$errors->first('id_or_passport')}}</p>
                                            @endif

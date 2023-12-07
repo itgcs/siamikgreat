@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('religion');
             $table->string('place_birth');
             $table->date('date_birth');
-            $table->string('id_or_passport');
+            $table->string('id_or_passport')->nullable()->default(null);
             $table->string('nationality');
             $table->string('place_of_issue')->nullable();
             $table->date('date_exp')->nullable();

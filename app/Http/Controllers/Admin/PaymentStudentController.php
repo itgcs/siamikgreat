@@ -168,7 +168,7 @@ class PaymentStudentController extends Controller
 
          session()->flash('after_create_spp_student');
          
-         return redirect('/admin/spp-students/detail/' . $spp->id);
+         return redirect('/admin/spp-students/detail/' . $student->unique_id);
          
       } catch (Exception $err) {
          return dd($err);

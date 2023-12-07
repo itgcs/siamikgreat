@@ -151,7 +151,7 @@
                            Gender
                      </th>
                      <th>
-                           Created at
+                           Register at
                      </th>
                      <th style="width: 8%;" class="text-center">
                            Status

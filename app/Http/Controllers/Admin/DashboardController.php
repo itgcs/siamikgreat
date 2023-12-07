@@ -22,7 +22,7 @@ class DashboardController extends Controller
             'child' => 'dashboard',
          ]);
          
-         $newStudent = Student::where('is_active', true)->get()->count('id');
+         $newStudent = Student::where('is_active', true)->orderBy('created_at', 'desc')->get()->count('id');
 
          $newTeacher = Teacher::where('is_active', true)->get()->count('id');
          

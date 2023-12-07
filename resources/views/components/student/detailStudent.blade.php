@@ -121,7 +121,7 @@
                     <p class="mb-0">Grade</p>
                   </div>
                   <div class="col-sm-8">
-                    <p class="text-muted mb-0">{{$data->student->grade->name}}</p>
+                    <p class="text-muted mb-0">{{$data->student->grade->name}} {{$data->student->grade->class}}</p>
                   </div>
                 </div>
                 <hr>
@@ -358,7 +358,7 @@
       setTimeout(() => {
          Toast.fire({
             icon: 'success',
-            title: 'Successfully update student in the database !!!',
+            title: 'Successfully register student in the database !!!',
       });
       }, 1500);
 
@@ -383,7 +383,7 @@
       setTimeout(() => {
          Toast.fire({
             icon: 'success',
-            title: 'Successfully updated the students in the database !!!',
+            title: 'Successfully update the students in the database !!!',
       });
       }, 1500);
 
