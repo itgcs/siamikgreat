@@ -28,6 +28,7 @@
                     <p class="text-muted mb-4">{{$data->gradeTeacher->name . ' - ' . $data->gradeTeacher->class}}</p>
                 </div>
             </div>
+            @if(sizeof($data->gradeStudent)>0)
             <div class="mt-3 row d-flex justify-content-around">
                 @if (session('role') == 'superadmin')
                     <a href="{{url('/admin/grades/promotions') . '/' . $data->gradeTeacher->id}}" role="button" class="w-100 btn btn-info col-5">
@@ -48,6 +49,7 @@
                     
                 @endif
             </div>
+            @endif
         </div>
 
 

@@ -15,22 +15,88 @@ class GradeSeeder extends Seeder
    {
       DB::table('grades')->insert([
          [
-            'name' => 'Junior High School',
+            'name' => 'Toddler',
+            'class' => ' ',
+            'teacher_id' => null,
+            'created_at' => now(),
+         ],
+         [
+            'name' => 'Nursery',
+            'class' => ' ',
+            'teacher_id' => null,
+            'created_at' => now(),
+         ],
+         [
+            'name' => 'Kindergarten',
             'class' => 'A',
-            'teacher_id' => 1,
-            'created_at' => date("Y-m-d"),
+            'teacher_id' => null,
+            'created_at' => now(),
          ],
          [
-            'name' => 'Junior High School',
+            'name' => 'Kindergarten',
             'class' => 'B',
-            'teacher_id' => 2,
-            'created_at' => date("Y-m-d"),
+            'teacher_id' => null,
+            'created_at' => now(),
          ],
          [
-            'name' => 'Junior High School',
-            'class' => 'C',
-            'teacher_id' => 3,
-            'created_at' => date("Y-m-d"),
+            'name' => 'Primary',
+            'class' => '1',
+            'teacher_id' => null,
+            'created_at' => now(),
+         ],
+         [
+            'name' => 'Primary',
+            'class' => '2',
+            'teacher_id' => null,
+            'created_at' => now(),
+         ],
+         [
+            'name' => 'Primary',
+            'class' => '3',
+            'teacher_id' => null,
+            'created_at' => now(),
+         ],
+         [
+            'name' => 'Primary',
+            'class' => '4',
+            'teacher_id' => null,
+            'created_at' => now(),
+         ],
+         [
+            'name' => 'Primary',
+            'class' => '5',
+            'teacher_id' => null,
+            'created_at' => now(),
+         ],
+         [
+            'name' => 'Primary',
+            'class' => '6',
+            'teacher_id' => null,
+            'created_at' => now(),
+         ],
+         [
+            'name' => 'Secondary',
+            'class' => '1',
+            'teacher_id' => null,
+            'created_at' => now(),
+         ],
+         [
+            'name' => 'Secondary',
+            'class' => '2',
+            'teacher_id' => null,
+            'created_at' => now(),
+         ],
+         [
+            'name' => 'Secondary',
+            'class' => '3',
+            'teacher_id' => null,
+            'created_at' => now(),
+         ],
+         [
+            'name' => 'IGCSE',
+            'class' => '3',
+            'teacher_id' => null,
+            'created_at' => now(),
          ],
       ]);
    }

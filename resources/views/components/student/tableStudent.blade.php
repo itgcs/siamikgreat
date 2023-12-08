@@ -236,7 +236,7 @@
                                 </i>
                                 View
                             </a>
-                           @if($el->is_active)
+                    @if($el->is_active)
                            <a class="btn btn-info {{session('role') == 'admin'? 'btn' : 'btn-sm'}}" href="update/{{$el->unique_id}}">
                               <i class="fas fa-pencil-alt">
                               </i>
@@ -249,28 +249,19 @@
                                  </i>
                                  Deactive
                               </a>
-                            @if ($el->is_graduate && (sizeof($grades) > $el->grade_id))
+                            @elseif ($el->is_graduate && (sizeof($grades) > $el->grade_id))
                                 <a href="/admin/student/re-registration/{{$el->unique_id}}" class="btn btn-dark btn-sm">
                                     <i class="fas fa fa-register">
                                     </i>
                                     Re-registration
                                 </a>
-                            @elseif (!$el->is_graduate)
+                            @elseif (session('role') == 'superadmin' && !$el->is_graduate )
                                     <a href="javascript:void(0)" id="active-student" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-success btn-sm">
                                         <i class="fas fa fa-register">
                                         </i>
                                         Activate
-                                    </a>
-                                @endif
-                            @else
-                                @if ($el->is_graduate && (sizeof($grades) > $el->grade_id))
-                                    <a href="/admin/student/re-registration/{{$el->unique_id}}" class="btn btn-dark btn-sm">
-                                        <i class="fas fa fa-register">
-                                        </i>
-                                        Re-registration
-                                    </a>
-                                @endif
-                           @endif
+                            </a>
+                        @endif
                         </td>
                      </tr>
                      
