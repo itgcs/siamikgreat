@@ -20,9 +20,11 @@ $(document).ready(function () {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
                             "content"
                         ),
+                        "Access-Control-Allow-Origin": "*",
                     },
                     accepts: {
                         mycustomtype: "application/x-some-custom-type",
+                        "Access-Control-Allow-Origin": "*",
                     },
                     url: `/admin/student/${value}`,
                     type: "PATCH",
@@ -47,6 +49,7 @@ $(document).ready(function () {
                         $(`#index_student_${value}`).remove();
                     })
                     .catch((err) => {
+                        console.log(err);
                         Swal.fire({
                             icon: "error",
                             title: "Oops...",

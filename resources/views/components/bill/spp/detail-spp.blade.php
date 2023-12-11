@@ -67,7 +67,7 @@
 
                         if($data->subject){
                            
-                           $subject = $data->installment? $data->type. ' installment ' . '( '. $data->installment .' )' : 'Cash';
+                           $subject = $data->installment? $data->type. ' installment ' . '( '. $data->subject .' )' : 'Cash';
 
                         }
                      @endphp

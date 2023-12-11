@@ -16,13 +16,13 @@ class GradeSeeder extends Seeder
       DB::table('grades')->insert([
          [
             'name' => 'Toddler',
-            'class' => ' ',
+            'class' => '1',
             'teacher_id' => null,
             'created_at' => now(),
          ],
          [
             'name' => 'Nursery',
-            'class' => ' ',
+            'class' => '1',
             'teacher_id' => null,
             'created_at' => now(),
          ],
@@ -94,7 +94,7 @@ class GradeSeeder extends Seeder
          ],
          [
             'name' => 'IGCSE',
-            'class' => '3',
+            'class' => '4',
             'teacher_id' => null,
             'created_at' => now(),
          ],
