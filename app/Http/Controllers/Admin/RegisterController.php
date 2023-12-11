@@ -168,7 +168,7 @@ class RegisterController extends Controller
             'nisn' => 'string|nullable|min:7|max:12|unique:students',
             'place_birth' => 'string|required',
             'date_birth' => 'date|required',
-            'id_or_passport' => 'string|required|min:9|max:16|unique:students',
+            'id_or_passport' => 'nullable|string|min:9|max:16|unique:students',
             'nationality' => 'string|required|min:3',
             'place_of_issue' => 'nullable|string',
             'date_exp' => 'nullable|date',
@@ -292,22 +292,24 @@ class RegisterController extends Controller
             
          $student = Student::with('relationship')->where('id', $student->id)->first();
          $brotherOrSister = Student::find($student->id);
-         $feeRegister = $this->handleFeeRegister($rules['amount'], $request->installment, $student, $rules['dp']);
-         // $paket = $this->handlePaketPayment($student);
-         
-
-         $currentDate = date('Y-m-d');
-
-         $newDate = date('Y-m-10', strtotime('+1 month', strtotime($currentDate)));
-
-         Bill::create([
-            'student_id' => $student->id,
-            'type' => 'Paket',
-            'amount' => $paket->amount,
-            'paidOf' => false,
-            'deadline_invoice' => $newDate,
-            'subject' => 'Paket', 
-         ]);  
+         if($rules['amount'] > 0){
+            $feeRegister = $this->handleFeeRegister($rules['amount'], $request->installment, $student, $rules['dp']);
+            // $paket = $this->handlePaketPayment($student);
+            
+   
+            $currentDate = date('Y-m-d');
+   
+            $newDate = date('Y-m-10', strtotime('+1 month', strtotime($currentDate)));
+   
+            Bill::create([
+               'student_id' => $student->id,
+               'type' => 'Paket',
+               'amount' => $paket->amount,
+               'paidOf' => false,
+               'deadline_invoice' => $newDate,
+               'subject' => 'Paket', 
+            ]);  
+         }
          
          $data = (object) [
             'student' => $student,
