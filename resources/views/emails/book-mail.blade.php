@@ -414,14 +414,14 @@
                                                                        style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:15px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
                                                                        Untuk melakukan pembayaran silahkan kirim ke rekening <span id="copy-text" style="color:#f08922;">12312312312</span> dengan nama rekening 
                                                                        <span id="copy-text" style="color:#f08922;">Great Crystal School</span>. kirim dengan nominal yang sesuai kemudian kirim bukti pembayaran ke 
-                                                                       <a style="text-decoration:none;color:#f08922;" href="/wa.me/+6281388284488?text={{str_replace(' ', '%20', $textWa)}}">+62 813 8828 4488</a></div>
+                                                                       <a style="text-decoration:none;color:#f08922;" href="/wa.me/+628113115984?text={{str_replace(' ', '%20', $textWa)}}">+62 811 3115 984</a></div>
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                     <td align="center"
                                                                         style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                                         <div>
-                                                                           <a href="/wa.me/+6281388284488?text={{str_replace(' ', '%20', $textWa)}}" style="
+                                                                           <a href="/wa.me/+628113115984?text={{str_replace(' ', '%20', $textWa)}}" style="
                                                                             background-color: #ca6800;
                                                                             border: none;
                                                                             color: white;
