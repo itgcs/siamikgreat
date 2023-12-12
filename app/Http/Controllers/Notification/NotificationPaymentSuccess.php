@@ -69,8 +69,6 @@ class NotificationPaymentSuccess extends Controller
             })->get();
 
          }
-
-         //   return $students;
   
            foreach ($students as $student) {
   
@@ -132,17 +130,23 @@ class NotificationPaymentSuccess extends Controller
     }
 
 
-   public function successClicked($bill_id) {
+   public function successClicked($bill_id = 12) {
       DB::beginTransaction();
       date_default_timezone_set('Asia/Jakarta');
       info('payment clicked running 1 with id ' . $bill_id);
       try {
          //code...
-         $student = Student::with(['bill', 'relationship'])
-         ->whereRelation('bill', 'id', $bill_id)
+         $student = Student::with(['bill' => function($query) use ($bill_id){
+            $query->where('id', $bill_id);
+         }, 'relationship'])
+         ->whereHas('bill', function ($query) use ($bill_id){
+            $query->where('id', $bill_id);
+         })
          ->first();
          
          
+         // return $student;
+
          foreach ($student->bill as $bill) {
                  # code...
                  $mailData = [
