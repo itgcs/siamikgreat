@@ -34,7 +34,7 @@
                                     <div class="col-md-6">
                                        <label for="class">Class<span style="color: red">*</span></label>
                                        <input name="class" type="text" class="form-control" id="class"
-                                          placeholder="Enter class" value="{{old('class')}}" required>
+                                          placeholder="Enter class" value="{{old('class')}}" autocomplete="off" required>
                                        @if($errors->any())
                                        <p style="color: red">{{$errors->first('class')}}</p>
                                        @endif

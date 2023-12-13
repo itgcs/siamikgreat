@@ -21,7 +21,7 @@
                                     <div class="col-md-6">
                                         <label for="name">Book name<span style="color: red">*</span> :</label>
                                         <input name="name" type="text" class="form-control" id="name"
-                                            placeholder="Enter book name" value="{{old('name')}}" required>
+                                            placeholder="Enter book name" value="{{old('name')}}" autocomplete="off" required>
 
                                         @if($errors->any())
                                         <p style="color: red">{{$errors->first('name')}}</p>
@@ -33,7 +33,8 @@
                                         
                                             <input name="nisb" type="text" class="form-control" id="nisb"
                                                 placeholder="Enter nisb"
-                                                value="{{ old('nisb') }}">
+                                                value="{{ old('nisb') }}"
+                                                autocomplete="off">
     
                                         @if($errors->any())
                                         <p style="color: red">{{$errors->first('nisb')}}</p>
@@ -67,9 +68,6 @@
                                             <input name="amount" type="text" class="form-control" id="amount"
                                                 placeholder="Enter amount"
                                                 value="{{old('amount') ? number_format(old('amount'), 0, ',', '.') : ''}}" required>
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">.00</span>
-                                            </div>
                                         </div>
     
                                         @if($errors->any())

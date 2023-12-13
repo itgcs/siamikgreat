@@ -21,7 +21,7 @@
                             <div class="card-body">
                                 
                                 <div class="form-group row">
-                                    <div class="col-md-9">
+                                    <div class="col-md-12">
 
                                         <label for="amount">Amount<span style="color: red">*</span></label>
                                         <div class="input-group">
@@ -34,10 +34,8 @@
                                             @endphp
                                             <input name="amount" type="text" class="form-control" id="amount"
                                                 placeholder="Enter amount"
-                                                value="{{$amount ? number_format($amount, 0, ',', '.') : ''}}" required>
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">.00</span>
-                                            </div>
+                                                value="{{$amount ? number_format($amount, 0, ',', '.') : ''}}" autocomplete="off" required>
+                                            
                                         </div>
 
                                         @if($errors->any())
@@ -45,7 +43,7 @@
                                         @endif
                                     </div>
 
-                                    <div class="col-md-3">
+                                    {{-- <div class="col-md-3">
 
                                         <label for="discount">Discount</label>
 
@@ -61,7 +59,7 @@
                                             </div>
 
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     @if ($amount)   
                                     <small class="text-muted ml-3">Amount auto input from spp {{$data->grade->name}}-{{$data->grade->class}}</small>
                                     @endif

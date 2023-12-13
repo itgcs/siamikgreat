@@ -43,9 +43,6 @@
                                         </div>
                                         <input name="amount" type="text" class="form-control" id="amount"
                                             placeholder="Enter amount" value="{{old('amount')}}" required>
-                                        <div class="input-group-append">
-                                           <span class="input-group-text">.00</span>
-                                          </div>
                                        </div>
                           
                                         @if($errors->any())
