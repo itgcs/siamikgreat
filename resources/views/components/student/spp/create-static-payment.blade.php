@@ -20,7 +20,7 @@
                             <div class="card-body">
                                 
                                 <div class="form-group row">
-                                    <div class="col-md-9">
+                                    <div class="col-md-12">
 
                                         <label for="amount">Amount<span style="color: red">*</span></label>
                                         <div class="input-group">
