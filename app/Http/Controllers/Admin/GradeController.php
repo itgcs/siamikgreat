@@ -9,6 +9,7 @@ use App\Models\Book;
 use App\Models\Book_student;
 use App\Models\Grade;
 use App\Models\Payment_grade;
+use App\Models\Payment_student;
 use App\Models\Student;
 use App\Models\Teacher;
 use Barryvdh\DomPDF\PDF;
@@ -299,6 +300,7 @@ class GradeController extends Controller
             foreach ($promoteId as $value) {
                
                Book_student::where('student_id', (int)$value)->delete();
+               Payment_student::where('student_id', (int)$value)->where('type', "SPP")->delete();
 
                Student::where('id', $value)->update([
                   'grade_id' => (int)$grade->grade->id + 1,
