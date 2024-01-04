@@ -29,8 +29,8 @@ class UserSeeder extends Seeder
             
          ],
          [
-            'username' => 'Human_resource',
-            'password' => Hash::make('admin'),
+            'username' => 'accounting',
+            'password' => Hash::make('accounting'),
             'role' => 'HR',
             
          ],

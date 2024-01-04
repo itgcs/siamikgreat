@@ -156,7 +156,7 @@ class SuperAdminController extends Controller
          $validator = Validator::make($credentials, [
             'username' => 'required|unique:users|string',
             'password' => 'required|min:5|string',
-            'role' => 'required|string|in:superadmin,admin'
+            'role' => 'required|string|in:superadmin,admin,accounting'
          ]);
          
          if($validator->fails())

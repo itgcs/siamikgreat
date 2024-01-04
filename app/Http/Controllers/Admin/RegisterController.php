@@ -11,6 +11,7 @@ use App\Models\Grade;
 use App\Models\Installment_Paket;
 use App\Models\InstallmentPaket;
 use App\Models\Payment_grade;
+use App\Models\Payment_student;
 use App\Models\Relationship;
 use App\Models\Student;
 use App\Models\Student_relation;
@@ -156,6 +157,11 @@ class RegisterController extends Controller
             'dp' => $request->dp && $request->dp > 0? (int)str_replace(".", "", $request->dp) : 0,
             'installment' => $request->installment && $request->installment > 0 ? $request->installment : null,
             'sendEmail' => $request->sendEmail? true : false,
+
+
+            // monthly fee
+
+            "amount_monthly_fee" => $request->amount_monthly_fee && $request->amount_monthly_fee > 0? (int)str_replace(".", "", $request->amount_monthly_fee) : null,
          ];     
          
          // return $rules;
@@ -223,6 +229,10 @@ class RegisterController extends Controller
             'dp' => 'nullable|integer',
             'installment' => 'nullable|integer',
             'sendEmail' => 'required|boolean',
+
+            //monthly fee 
+
+            'amount_monthly_fee' => 'nullable|integer|min:50000'
          ]);
 
          
@@ -309,6 +319,15 @@ class RegisterController extends Controller
                'deadline_invoice' => $newDate,
                'subject' => 'Paket', 
             ]);  
+         }
+
+         if($rules['amount_monthly_fee']){
+
+            Payment_student::create([
+               'student_id' => $student->id,
+               'type' => 'SPP',
+               'amount' => $rules['amount_monthly_fee'],
+            ]);
          }
          
          $data = (object) [

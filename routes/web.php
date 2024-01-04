@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\{
    StudentController,
    TeacherController,
 };
+use App\Http\Controllers\Excel\Report;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\Notification\NotificationBillCreated;
 use App\Http\Controllers\Notification\NotificationPastDue;
@@ -50,17 +51,9 @@ Route::get('/logout', [UserController::class, 'logout']);
 Route::get('/counter', Counter::class);
 
 // Route::get('send-mail', [MailController::class, 'createNotificationUniform']);
-Route::get('coba', [NotificationBillCreated::class, 'feeRegister']);
 
-// Route::get('email-test', function(){
-  
-//     dispatch(new App\Jobs\SendEmailJob('kirimkesofyanaja@gmail.com'));
+Route::middleware(['auth.login'])->prefix('/admin')->group(function () {
 
-//    dd('done');
-// });
-
-Route::middleware(['admin'])->prefix('/admin')->group(function () {
-   
    Route::prefix('/dashboard')->group(function () {
       Route::get('/', [DashboardController::class, 'index']);
    });
@@ -91,6 +84,9 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::put('/change-password', [AdminController::class, 'actionChangeMyPassword']);
    });
 
+});
+
+Route::middleware(['admin'])->prefix('/admin')->group(function () {
 
    Route::prefix('/teachers')->group(function () {
 
@@ -110,9 +106,38 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::get('/pdf/{id}', [GradeController::class, 'pagePDF']);
       Route::post('/', [GradeController::class, 'actionPost'])->name('actionCreateGrade');
       Route::put('/{id}', [GradeController::class, 'actionPut'])->name('actionUpdateGrade');
-      
+   });
    
+
+   Route::prefix('/books')->group(function() {
+      Route::get('/', [BookController::class, 'index']);
+      Route::get('/create', [BookController::class, 'pageCreate']);
+      Route::get('/edit/{id}', [BookController::class, 'pageEdit']);
+      Route::get('/detail/{id}', [BookController::class, 'detail']);
+      Route::post('/post', [BookController::class, 'postCreate'])->name('action.create.book');
+      Route::patch('/post/{id}', [BookController::class, 'actionUpdate'])->name('action.update.book');
+      Route::delete('/{id}', [BookController::class, 'destroy']);
+   });
+
+   Route::prefix('/student')->group(function () {
+      Route::get('/re-registration/{student_id}', [SuperStudentController::class, 'pageReRegis']);
+      Route::patch('/{id}', [SuperStudentController::class, 'inactiveStudent']);
+      Route::patch('/activate/{student_id}', [SuperStudentController::class, 'activateStudent']);
+      Route::patch('/re-registration/{student_id}', [SuperStudentController::class, 'actionReRegis'])->name('action.re-regis');
+   });
 });
+
+Route::middleware(['accounting'])->prefix('admin')->group(function () {
+
+   Route::prefix('/spp-students')->group(function() {
+      Route::get('/', [PaymentStudentController::class, 'index']);
+      Route::get('/create/{id}', [PaymentStudentController::class, 'createPage']);
+      Route::get('/detail/{id}', [PaymentStudentController::class, 'pageDetailSpp']);
+      Route::get('/edit/{id}/', [PaymentStudentController::class, 'pageEditSpp']);
+      Route::post('/create/{id}', [PaymentStudentController::class, 'actionCreatePayment'])->name('create.static.student');
+      Route::put('/actionEdit/{id}/{id_student_payment}', [PaymentStudentController::class, 'actionEditStaticPayment'])->name('update.payment.student-static');
+   });
+
    Route::prefix('/payment-grades')->group(function() {
       Route::get('/', [PaymentGradeController::class, 'index']);
       Route::get('/{id}', [PaymentGradeController::class, 'pageById']);
@@ -123,17 +148,14 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::put('/{id}/edit', [PaymentGradeController::class, 'actionEdit'])->name('edit.payment-grades');
       Route::delete('/{id}', [PaymentGradeController::class, 'deletePayment']);
    });
-   
-   Route::prefix('/spp-students')->group(function() {
-      Route::get('/', [PaymentStudentController::class, 'index']);
-      Route::get('/create/{id}', [PaymentStudentController::class, 'createPage']);
-      Route::get('/detail/{id}', [PaymentStudentController::class, 'pageDetailSpp']);
-      Route::get('/edit/{id}/', [PaymentStudentController::class, 'pageEditSpp']);
-      Route::post('/create/{id}', [PaymentStudentController::class, 'actionCreatePayment'])->name('create.static.student');
-      Route::put('/actionEdit/{id}/{id_student_payment}', [PaymentStudentController::class, 'actionEditStaticPayment'])->name('update.payment.student-static');
+
+   Route::prefix('payment-books')->group(function(){
+      Route::get('/', [PaymentBookController::class, 'index']);
+      Route::get('/{id}', [PaymentBookController::class, 'studentBook']);
+      Route::get('/{id}/add-books', [PaymentBookController::class, 'pageAddBook']);
+      Route::post('/{id}/add-books-action', [PaymentBookController::class, 'actionAddBook'])->name('action.add.book');
    });
-
-
+   
    Route::prefix('/bills')->group(function() {
       Route::get('/', [BillController::class, 'index']);
       Route::get('/create', [BillController::class, 'chooseStudent']);
@@ -153,36 +175,12 @@ Route::middleware(['admin'])->prefix('/admin')->group(function () {
       Route::patch('/status/{id}', [StatusMailSend::class, 'send']);
       Route::patch('/update-paid/{bill_id}/{student_id}', [BillController::class, 'paidOfBook'])->name('action.book.payment');
       Route::patch('/update-paid/{id}', [BillController::class, 'paidOf']);
-
-   });
-
-
-   Route::prefix('/books')->group(function() {
-      Route::get('/', [BookController::class, 'index']);
-      Route::get('/create', [BookController::class, 'pageCreate']);
-      Route::get('/edit/{id}', [BookController::class, 'pageEdit']);
-      Route::get('/detail/{id}', [BookController::class, 'detail']);
-      Route::post('/post', [BookController::class, 'postCreate'])->name('action.create.book');
-      Route::patch('/post/{id}', [BookController::class, 'actionUpdate'])->name('action.update.book');
-      Route::delete('/{id}', [BookController::class, 'destroy']);
-   });
-
-   Route::prefix('payment-books')->group(function(){
-      Route::get('/', [PaymentBookController::class, 'index']);
-      Route::get('/{id}', [PaymentBookController::class, 'studentBook']);
-      Route::get('/{id}/add-books', [PaymentBookController::class, 'pageAddBook']);
-      Route::post('/{id}/add-books-action', [PaymentBookController::class, 'actionAddBook'])->name('action.add.book');
-   });
-
-   Route::prefix('/student')->group(function () {
-      Route::get('/re-registration/{student_id}', [SuperStudentController::class, 'pageReRegis']);
-      Route::patch('/{id}', [SuperStudentController::class, 'inactiveStudent']);
-      Route::patch('/activate/{student_id}', [SuperStudentController::class, 'activateStudent']);
-      Route::patch('/re-registration/{student_id}', [SuperStudentController::class, 'actionReRegis'])->name('action.re-regis');
+      Route::get('/reports', [Report::class, 'index']);
+      Route::get('/reports/exports', [Report::class, 'export']);
    });
 });
 
-Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
+Route::middleware(['superadmin'])->prefix('admin')->group(function () {
    
    Route::prefix('/user')->group(function () {
       Route::get('/', [SuperAdminController::class, 'getUser']);
@@ -206,8 +204,3 @@ Route::middleware(['check.superadmin'])->prefix('admin')->group(function () {
 
 });
 
-
-Route::prefix('coba')->group(function () {
-
-   Route::get('/state', [NotificationPaymentSuccess::class, 'successClicked']);
-});

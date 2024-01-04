@@ -52,7 +52,7 @@
       @endif
 
       @php
-         $allRole = ['superadmin', 'admin'];
+         $allRole = ['superadmin', 'admin', 'accounting'];
       @endphp
       <div class="input-group mb-3">
          <select name="role" class="form-control form-control">

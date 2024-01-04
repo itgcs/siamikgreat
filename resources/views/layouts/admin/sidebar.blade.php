@@ -20,7 +20,7 @@
               Super Admin
             
           @else
-              Admin
+              {{ucwords(session('role'))}}
 
           @endif
         </a>
@@ -65,6 +65,11 @@
          </li>
        </ul>
      </li>
+
+     @if (session('role') !== 'accounting')
+       
+     
+
      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'teachers' ? 'menu-open' : '') : ''}}">
        <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'teachers' ? 'active' : '') : ''}}">
          <i class="nav-icon fa-solid fa-person-chalkboard"></i>
@@ -117,6 +122,12 @@
          </li>
        </ul>
      </li>
+
+     @endif
+
+     @if (session('role') !== 'admin')
+       
+     
      
      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'payments' ? 'menu-open' : '') : ''}}">
        <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'payments' ? 'active' : '') : ''}}">
@@ -150,7 +161,7 @@
 
      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'Bills' ? 'menu-open' : '') : ''}}">
       <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'Bills' ? 'active' : '') : ''}}">
-        <i class="nav-icon fa-solid fa-file-invoice"></i>
+        <i class="nav-icon fa-solid fa-cash-register"></i>
         <p>
           Bill
           <i class="right fas fa-angle-left"></i>
@@ -175,9 +186,35 @@
             <p>Status</p>
           </a>
         </li>
+        <li class="nav-item">
+          <a href="/admin/bills/reports" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report' ? 'active' : '') : ''}}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Report</p>
+          </a>
+        </li>
       </ul>
     </li>
 
+
+     <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'Report' ? 'menu-open' : '') : ''}}">
+      <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'Report' ? 'active' : '') : ''}}">
+        <i class="nav-icon fa-solid fa-receipt"></i>
+        <p>
+          Report
+          <i class="right fas fa-angle-left"></i>
+        </p>
+      </a>
+      <ul class="nav nav-treeview">
+        <li class="nav-item">
+          <a href="/admin/bills/reports" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report bills' ? 'active' : '') : ''}}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Bills</p>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    @endif
     @if(session('role') == 'superadmin')
      <li class="nav-header">AUTHENTICATION</li>
      <li class="nav-item">

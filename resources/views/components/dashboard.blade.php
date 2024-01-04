@@ -38,7 +38,11 @@
                {{-- <i class="ion ion-stats-bars"></i> --}}
                <i class="fa-solid fa-chalkboard-user"></i>
              </div>
-             <a href="/admin/teachers" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @if (session('role') !== 'accounting')
+              <a href="/admin/teachers" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @else 
+              <div class="small-box-footer" style="padding: 0.93rem"></div>
+            @endif
            </div>
          </div>
          <!-- ./col -->
@@ -47,14 +51,19 @@
            <div class="small-box bg-warning">
              <div class="inner">
                <h3>{{$data->bill}}</h3>
-
+               
                <p>Bills last 30 days</p>
-             </div>
-             <div class="icon">
-               {{-- <i class="ion ion-person-add"></i> --}}
-               <i class="fa-solid fa-receipt"></i>
-             </div>
-             <a href="/admin/bills" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+              <div class="icon">
+                {{-- <i class="ion ion-person-add"></i> --}}
+                <i class="fa-solid fa-receipt"></i>
+              </div>
+              @if (session('role') !== 'admin')
+              <a href="/admin/bills" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              @else
+              <div class="small-box-footer" style="padding:0.93rem;"></div>
+              
+             @endif
            </div>
          </div>
          <!-- ./col -->
@@ -70,7 +79,11 @@
                {{-- <i class="ion ion-pie-graph"></i> --}}
                <i class="fa-solid fa-calendar-xmark"></i>
              </div>
+             @if (session('role') != 'admin')
              <a href="/admin/bills?grade=all&invoice=pastdue&type=all&status=false&search=" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+             @else
+             <div class="small-box-footer" style="padding:0.93rem;"></div>
+             @endif
            </div>
          </div>
          <!-- ./col -->
@@ -161,11 +174,13 @@
                               }}</small>
                             @endif
                             <!-- General tools such as edit or delete-->
+                            @if(session('role') !== 'admin')
                             <div class="tools">
                               <a href="/admin/bills/detail-payment/{{$el->id}}" target="_blank">
                                 <i class="fas fa-search"></i>
                               </a>
                             </div>
+                            @endif
                           </li>
                           
                           @endforeach
@@ -235,11 +250,13 @@
                             }}</small>
                           @endif
                           <!-- General tools such as edit or delete-->
+                          @if (session('role') !== 'admin')
                           <div class="tools">
                             <a href="/admin/bills/detail-payment/{{$el->id}}" target="_blank">
                               <i class="fas fa-search"></i>
                             </a>
                           </div>
+                          @endif
                         </li>
                         
                         @endforeach

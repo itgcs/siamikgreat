@@ -22,9 +22,10 @@ class checkSuperAdmin
       } else {
          $user = Auth::user();
          
-         if($user->role === 'admin')
+         if($user->role != 'superadmin')
          {
-            session()->flash('role', 'admin');
+            
+            session()->flash('role', $user->role);
             return redirect('/admin/dashboard');
          } 
       }

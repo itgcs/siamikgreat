@@ -843,12 +843,20 @@
                      </div>
 
                     <div class="card card-dark">
-                     <div class="card-header">
+                     <div class="card-header" style="background-color: #e85500">
                          <h3 class="card-title">Capital Fee
                          </h3>
                      </div>
                      <!-- /.card-header -->
                      <!-- form start -->
+                     @php  
+                        $className = "d-none";
+                        if($errors->any()){
+                           if($errors->first('amount_monthly_fee')){
+                               $className = '';
+                           }
+                        }
+                    @endphp
                      <div class="card-body">
                          <div class="form-group row">
 
@@ -888,17 +896,34 @@
                            </div>
 
                            
-                           <div class="row">
-                            <div class="col-12 ml-2">
-                              <div class="icheck-primary">
-                                <input type="checkbox" id="sendEmail" name="sendEmail" value="{{true}}" required>
-                                <label for="sendEmail">
-                                   I agree with the term.
-                                </label>
-                              </div>
+                           <span role="button" onclick="MonthlyFee()" class="text-primary {{$className? '' : 'd-none'}}" id="btnMonthlyFee">Add monthly fee</span>
+                        </div>
+                     </div>
+                     
+                    <div class="card card-dark {{$className}}" id="monthlyfee">
+                     <div class="card-header">
+                         <h3 class="card-title">Monthly Fee
+                         </h3>
+                     </div>
+                     <!-- /.card-header -->
+                     <!-- form start -->
+                     <div class="card-body">
+                         <div class="form-group row">
+
+                            <div class="col-md-12">
+                                <label for="amount_monthly_fee">Amount</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Rp.</span>
+                                    </div>
+                                    <input name="amount_monthly_fee" type="text" class="form-control"
+                                    id="amount_monthly_fee" placeholder="Enter amount monthly fee" value="{{old('amount_monthly_fee') ? number_format(old('amount_monthly_fee'), 0, ',', '.') : ''}}">
+                                </div>
+                                @if($errors->any())
+                                         <p style="color: red">{{$errors->first('amount_monthly_fee')}}</p>
+                                @endif
                             </div>
-                            <!-- /.col -->
-                          </div>
+                           </div>
                         </div>
                      </div>
                  </div>
@@ -981,4 +1006,14 @@
     
     @endif
     @endif
+
+
+<script>
+
+    function MonthlyFee() {
+        document.getElementById("monthlyfee").classList.remove('d-none')
+        document.getElementById("btnMonthlyFee").classList.add('d-none')
+    }
+
+</script>
 @endsection

@@ -260,6 +260,24 @@
     function addThousandSeparator(value) {
         return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
+    const inputM = document.getElementById("amount_monthly_fee");
+
+    // Menambahkan event listener pada input saat pengguna mengetik
+    inputM.addEventListener("input", function () {
+        // Mengambil nilai input tanpa tanda titik dan karakter non-angka
+        const rawValue = inputM.value.replace(/[^0-9]/g, '');
+
+        // Mengubah nilai input dengan menambahkan tanda titik setiap 3 digit
+        const formattedValue = addThousandSeparator(rawValue);
+
+        // Memasukkan nilai yang telah diformat kembali ke dalam input
+        inputM.value = formattedValue;
+    });
+
+    // Fungsi untuk menambahkan tanda titik sebagai pemisah ribuan
+    function addThousandSeparator(value) {
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
 
     // Mendapatkan elemen input
     const inputdp = document.getElementById("dp");

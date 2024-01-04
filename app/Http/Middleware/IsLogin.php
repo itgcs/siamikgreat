@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class checkAdmin
+class IsLogin
 {
     /**
      * Handle an incoming request.
@@ -16,22 +16,15 @@ class checkAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-         
-         if(!Auth::check()){
+        if(!Auth::check()){
             session()->flash('errors', 'Invalid Credentials');
             return redirect('/')->withErrors([
                'credentials' => 'Invalid credentials, please login first !!!'
             ]);
-         } else {
-            $user = Auth::user();
-            if($user->role === 'accounting')
-            {
-               session()->flash('role', 'accounting');
-               return redirect('/admin/dashboard');
-            } 
-         }
-         $user = Auth::user();
-         session()->flash('role', $user->role);
-         return $next($request);
+        }
+
+        $user = Auth::user();
+        session()->flash('role', $user->role);
+        return $next($request);
     }
 }
