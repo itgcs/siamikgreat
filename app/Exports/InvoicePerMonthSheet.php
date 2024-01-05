@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Bill;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithTitle;
 
@@ -11,7 +12,7 @@ class InvoicePerMonthSheet implements FromQuery, WithTitle
     private $month;
     private $year;
 
-    public function __construct(int $year, int $month)
+    public function __construct(int $year, $month)
     {
         $this->month = $month;
         $this->year  = $year;
@@ -22,11 +23,19 @@ class InvoicePerMonthSheet implements FromQuery, WithTitle
      */
     public function query()
     {
-        return Bill
-            ::query()
-            ->where('type', 'SPP')
-            ->whereYear('created_at', $this->year)
-            ->whereMonth('created_at', $this->month);
+
+        if($this->month == "Capital Fee") {
+            return Bill
+                ::query()
+                ->where('type', 'Capital Fee');
+        } else {
+            return Bill
+                ::query()
+                ->where('type', 'SPP')
+                ->whereYear('created_at', $this->year)
+                ->whereMonth('created_at', $this->month);
+        }
+
     }
 
     /**
@@ -34,12 +43,17 @@ class InvoicePerMonthSheet implements FromQuery, WithTitle
      */
     public function title(): string
     {
-        if($this->month >= 10){
+        
+        if($this->month === "Capital Fee"){
 
-            return '>=10 ' . $this->month;
+            return "Capital Fee";
+        } else if($this->month === "Material Fee") {
+
+            return "Material Fee";
         } else {
-
-            return '<10 ' . (int)"0".$this->month;
+            $date = Carbon::create($this->year, $this->month);
+            return "Monthly Fee " . date("F Y", strtotime($date));
         }
+
     }
 }

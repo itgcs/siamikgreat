@@ -34,9 +34,9 @@ class Report extends Controller
 
             $formatedName = time().rand(10000, 99999). '_'. date("dmY") . '_report_bill' . '.xlsx'; 
 
-            return Excel::download(new ReportExport(2023), $formatedName, \Maatwebsite\Excel\Excel::XLSX);
+            return Excel::download(new ReportExport(2023), $formatedName);
         } catch (Exception $err) {
-            return abort(500);
+            return dd($err);
         }
     }
 }
