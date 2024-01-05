@@ -186,12 +186,6 @@
             <p>Status</p>
           </a>
         </li>
-        <li class="nav-item">
-          <a href="/admin/bills/reports" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report' ? 'active' : '') : ''}}">
-            <i class="far fa-circle nav-icon"></i>
-            <p>Report</p>
-          </a>
-        </li>
       </ul>
     </li>
 
@@ -206,7 +200,7 @@
       </a>
       <ul class="nav nav-treeview">
         <li class="nav-item">
-          <a href="/admin/bills/reports" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report bills' ? 'active' : '') : ''}}">
+          <a href="/admin/reports" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report bills' ? 'active' : '') : ''}}">
             <i class="far fa-circle nav-icon"></i>
             <p>Bills</p>
           </a>

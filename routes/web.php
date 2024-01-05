@@ -175,8 +175,11 @@ Route::middleware(['accounting'])->prefix('admin')->group(function () {
       Route::patch('/status/{id}', [StatusMailSend::class, 'send']);
       Route::patch('/update-paid/{bill_id}/{student_id}', [BillController::class, 'paidOfBook'])->name('action.book.payment');
       Route::patch('/update-paid/{id}', [BillController::class, 'paidOf']);
-      Route::get('/reports', [Report::class, 'index']);
-      Route::get('/reports/exports', [Report::class, 'export']);
+   });
+   
+   Route::prefix('/reports')->group(function() {
+      Route::get('/', [Report::class, 'index']);
+      Route::get('/exports', [Report::class, 'export']);
    });
 });
 

@@ -285,7 +285,7 @@
                         <td class="text-center">
                             {{date('d M Y', strtotime($el->deadline_invoice))}}
                         </td>
-                        <td class="project-actions text-right toastsDefaultSuccess text-center">
+                        <td class="project-actions toastsDefaultSuccess text-center">
                             <a class="btn btn-primary"
                                 href="/admin/bills/detail-payment/{{$el->id}}">
                                 <i class="fas fa-folder">
