@@ -77,6 +77,7 @@
  
      //Datemask dd/mm/yyyy
      $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+     $('#datemaskMonth').inputmask('mm/yyyy', { 'placeholder': 'mm/yyyy' })
      //Datemask2 mm/dd/yyyy
      $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
      //Money Euro
@@ -124,6 +125,12 @@
      });
      $('#reservationBillTo').datetimepicker({
          format: 'DD/MM/YYYY'
+     });
+     $('#reservationReportBillFrom').datetimepicker({
+         format: 'MM/YYYY'
+     });
+     $('#reservationReportBillTo').datetimepicker({
+         format: 'MM/YYYY'
      });
      
      //Date and time picker

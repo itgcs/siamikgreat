@@ -179,7 +179,7 @@ Route::middleware(['accounting'])->prefix('admin')->group(function () {
    
    Route::prefix('/reports')->group(function() {
       Route::get('/', [Report::class, 'index']);
-      Route::get('/exports', [Report::class, 'export']);
+      Route::post('/exports', [Report::class, 'export']);
    });
 });
 
