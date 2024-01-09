@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Http\Controllers\Excel\CapFeeExcelController;
 use App\Models\Bill;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
@@ -32,17 +33,8 @@ class ReportExport implements WithMultipleSheets, WithProperties
         $getMonthTo = (int)$dateTo[0];
         $getYearTo = (int)$dateTo[1];
 
-        $result = [];
-
-        $data = DB::table('students')->select('bills.id', 'grades.name as grade_name', 'grades.class as grade_class','students.name','bills.type','bills.installment','bills.created_at'
-        ,'bills.deadline_invoice','bills.amount','bills.dp','bills.charge', 'bills.amount','bills.paid_date','bills.paidOf', 
-        'bills.amount_installment')
-        ->join('bills', 'bills.student_id', '=', 'students.id')
-        ->join('grades', 'grades.id', '=', 'students.grade_id')
-        ->where('bills.type', 'Capital Fee')
-        ->orderBy('students.grade_id', 'asc')
-        ->orderBy('students.name', 'asc')
-        ->get();
+        $capFee = new CapFeeExcelController($getYearFrom);
+        $capFee = $capFee->index();
 
         if($getYearFrom === $getYearTo) {
 
@@ -53,55 +45,13 @@ class ReportExport implements WithMultipleSheets, WithProperties
             //     if($month === $getMonthTo) array_push($sheets, new InvoicePerMonthSheet($getYearFrom, "Material Fee"));
             // }
 
-            foreach($data as $bill){
-
-                $obj = (object) [
-                    'no_invoice' => '#' . str_pad((string)$bill->id,8,"0", STR_PAD_LEFT),
-                    'grades' => $bill->grade_name . ' ' . $bill->grade_class,
-                    'name' => $bill->name,
-                    'type' => $bill->type,
-                    'installment' => $bill->installment? $bill->installment . ' Installment/Month' : "Cash",
-                    'created_at' => date('Y-m-d', strtotime($bill->created_at)),
-                    'deadline_invoice' => $bill->deadline_invoice,
-                    'amount'=> $bill->installment? $this->currencyToIdr($bill->amount_installment) : $this->currencyToIdr($bill->amount),
-                    'dp' => $bill->dp? $this->currencyToIdr($bill->dp) : "",
-                    'charge' => $bill->charge? $this->currencyToIdr($bill->charge) : "",
-                    'total' => $this->currencyToIdr($bill->amount),
-                    'paid_date' => $bill->paid_date,
-                    'status' => $bill->paidOf? "Lunas": "Belum lunas",
-                ];
-
-                array_push($result, $obj);
-
-            }
             
-            array_push($sheets, new InvoicePerMonthSheet(array_values($result), $getYearFrom, "Capital Fee"));
+            
+            array_push($sheets, new InvoicePerMonthSheet(array_values($capFee->data), $getYearFrom, "Capital Fee", $capFee->student_id, $capFee->grade_id));
             
         } else {
 
-            foreach($data as $bill){
-
-                $obj = (object) [
-                    'no_invoice' => '#' . str_pad((string)$bill->id,8,"0", STR_PAD_LEFT),
-                    'grades' => $bill->grade_name . ' ' . $bill->grade_class,
-                    'name' => $bill->name,
-                    'type' => $bill->type,
-                    'installment' => $bill->installment? $bill->installment . ' Installment/Month' : "Cash",
-                    'created_at' => date('Y-m-d', strtotime($bill->created_at)),
-                    'deadline_invoice' => $bill->deadline_invoice,
-                    'amount'=> $bill->installment? $this->currencyToIdr($bill->amount_installment) : $this->currencyToIdr($bill->amount),
-                    'dp' => $bill->dp? $this->currencyToIdr($bill->dp) : "",
-                    'charge' => $bill->charge? $this->currencyToIdr($bill->charge) : "",
-                    'total' => $this->currencyToIdr($bill->amount),
-                    'paid_date' => $bill->paid_date,
-                    'status' => $bill->paidOf? "Lunas": "Belum lunas",
-                ];
-
-                array_push($result, $obj);
-
-            }
-
-            array_push($sheets, new InvoicePerMonthSheet(array_values($result), $getYearFrom, "Capital Fee"));
+            array_push($sheets, new InvoicePerMonthSheet(array_values($capFee->data), $getYearFrom, "Capital Fee", $capFee->student_id, $capFee->grade_id));
 
             // for ($month = $getMonthFrom; $month <= 12; $month++) {
             //     if($month === $getMonthFrom) array_push($sheets, new InvoicePerMonthSheet($getYearFrom, "Capital Fee"));
@@ -131,10 +81,5 @@ class ReportExport implements WithMultipleSheets, WithProperties
             'manager'        => 'Donny Prasetya',
             'company'        => 'Great crystal',
         ];
-    }
-
-    public function currencyToIdr(int $currency){
-
-        return 'Rp.' . number_format($currency, 0, '', ',');
     }
 }

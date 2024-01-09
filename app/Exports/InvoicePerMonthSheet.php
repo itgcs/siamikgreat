@@ -12,19 +12,21 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class InvoicePerMonthSheet implements WithTitle, WithHeadings, ShouldAutoSize, FromArray, WithStyles
 {
-    private $month;
-    private $year;
-    private $array;
+    private $array, $month, $year, $map_student, $map_grade;
 
-    public function __construct($array, int $year, $month)
+    public function __construct(array $array, int $year, $month, array $map_student, array $map_grade)
     {
         $this->array = $array;
         $this->month = $month;
-        $this->array  = $array;
+        $this->year  = $year;
+        $this->map_student = $map_student;
+        $this->map_grade = $map_grade;
     }
 
     /**
@@ -33,108 +35,7 @@ class InvoicePerMonthSheet implements WithTitle, WithHeadings, ShouldAutoSize, F
     public function array(): array
     {
         return $this->array;
-    }
-
-    //  public function collection()
-    //  {
-    //     return $this->array;
-    //  }
-
-    // public function query()
-    // { 
-    //     if($this->month == "Capital Fee") {
-    //         $result = [];
-    //         $db = Bill::with('student')->where('type', 'Capital Fee')->get();
-    //         foreach($db as $bill){
-
-    //             $obj = (object) [
-    //                 'id' => '#' . str_pad((string)$bill->id,8,"0", STR_PAD_LEFT),
-    //                 'name' => $bill->name,
-    //                 'type' => $bill->type,
-    //                 'installment' => $bill->installment? $bill->installment . ' Installment / month' : "Cash",
-    //                 'created_at' => $bill->created_at,
-    //                 'deadline_invoice' => $bill->deadline_invoice,
-    //                 'amount'=> $bill->installment? $bill->amount_installment : $bill->amount,
-    //                 'dp' => $bill->dp? "Rp." . $bill->dp : "0",
-    //                 'charge' => $bill->charge,
-    //                 'total' => $bill->amount,
-    //                 'paid_date' => $bill->paid_date,
-    //                 'status' => $bill->paidOf? "Lunas": "Belum lunas",
-    //             ];
-
-    //             array_push($result, $obj);
-    //         }
-
-    //         // return $this($result);
-    //         $this->array($result);
-        
-    //     } 
-    //     else if($this->month == "Material Fee") {
-            
-    //         return Bill
-    //             ::query()
-    //             ->where('type', 'Book')
-    //             ->whereYear('created_at', $this->year)
-    //             ->orWhere('type', 'Uniform')
-    //             ->whereYear('created_at', '>=', $this->year);
-
-    //     } else if($this->month == 'Package') {
-    //         return Bill
-    //             ::query()
-    //             ->where('type', 'Paket')
-    //             ->whereYear('created_at', '>=', $this->year);
-    //     } else {
-    //         $bill = Bill
-    //             ::query()
-    //             ->where('type', 'SPP')
-    //             ->whereYear('created_at', $this->year)
-    //             ->whereMonth('created_at', $this->month);
-    //         info('month'. $this->month . json_encode($bill));
-    //         return $bill;
-    //     }
-
-    // }
-
-    // public function map($bill): array
-    // {
-
-    //     if($this->month == 'Capital Fee') {
-
-    //         return [
-    //             $bill->id,
-    //             $bill->name,
-    //             $bill->type,
-    //             $bill->installment,
-    //             $bill->created_at,
-    //             $bill->deadline_invoice,
-    //             $bill->amount,
-    //             $bill->dp,
-    //             $bill->charge,
-    //             $bill->total,
-    //             $bill->paid_date,
-    //             $bill->status,
-    //         ];
-    //     } else {
-    //         return [
-    //             $bill->id,
-    //             $bill->name,
-    //             $bill->type,
-    //             $bill->installment,
-    //             $bill->created_at,
-    //             $bill->deadline_invoice,
-    //             $bill->amount,
-    //             $bill->dp,
-    //             $bill->charge,
-    //             $bill->paid_date,
-    //             $bill->status,
-    //         ];
-    //     }
-
-    // }
-                                                                               
-    /**
-     * @return string
-     */
+    }                                                
 
     public function headings(): array
     {
@@ -146,10 +47,10 @@ class InvoicePerMonthSheet implements WithTitle, WithHeadings, ShouldAutoSize, F
             'Installment/Month',
             'Date created',
             'Date past due',
-            'Amount',
+            'Total',
             'Done Payment',
             'Charge',
-            'Total',
+            'Amount',
             'Paid date',
             'Status',
         ];
@@ -157,15 +58,54 @@ class InvoicePerMonthSheet implements WithTitle, WithHeadings, ShouldAutoSize, F
 
     public function styles(Worksheet $sheet)
     {
+        if($this->month == 'Capital Fee') {
 
-        // $sheet->mergeCells([2,2,2,4]);
-        // $sheet->mergeCells([2,5,2,7]);
+            $max = 'A1:M'.sizeof($this->array)+1;
 
-        return [
-            // Style the first row as bold text.
-            1    => ['font' => ['bold' => true]],
-            'M'  => ['font' => ['bold' => true]],
-        ];
+            //font size
+            $sheet->getStyle($max)->getFont()->setSize(12);
+
+            //merge student
+            foreach($this->map_student as $student) {
+                
+                $sheet->mergeCells('C'.$student[0].':'.'C'.$student[1]);
+                $sheet->mergeCells('E'.$student[0].':'.'E'.$student[1]);
+                $sheet->mergeCells('F'.$student[0].':'.'F'.$student[1]);
+                $sheet->mergeCells('H'.$student[0].':'.'H'.$student[1]);
+                $sheet->mergeCells('I'.$student[0].':'.'I'.$student[1]);
+            }
+
+            //merge grade 
+            foreach($this->map_grade as $grade) {
+                
+                $sheet->mergeCells('B'.$grade[0].':'.'B'.$grade[1]);
+            }
+
+            //styles
+            $styleArray = [
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                        'color' => ['argb' => '00000000'],
+                    ],
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+            ];
+            
+            $sheet->getStyle($max)->applyFromArray($styleArray);
+
+            return [
+                // Style the first row as bold text.
+                1    => ['font' => ['bold' => true, 'name' => 'Arial']],
+                'B'  => ['font' => ['bold' => true ]],
+                'M'  => ['font' => ['bold' => true ]],
+            ];
+        }
+
     }
 
     public function title(): string
@@ -177,4 +117,8 @@ class InvoicePerMonthSheet implements WithTitle, WithHeadings, ShouldAutoSize, F
             return $this->month;
         }
     }
+
+    /**
+     * @return string
+     */
 }
