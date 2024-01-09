@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Http\Controllers\Excel\CapFeeExcelController;
+use App\Http\Controllers\Excel\MonthFeeController;
 use App\Models\Bill;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
@@ -36,34 +37,26 @@ class ReportExport implements WithMultipleSheets, WithProperties
         $capFee = new CapFeeExcelController($getYearFrom);
         $capFee = $capFee->index();
 
-        if($getYearFrom === $getYearTo) {
+        array_push($sheets, new InvoicePerMonthSheet(array_values($capFee->data), $getYearFrom, "Capital Fee", $capFee->student_id, $capFee->grade_id));
 
-            // for ($month = $getMonthFrom; $month <= $getMonthTo; $month++) {
-            //     if($month === $getMonthFrom) array_push($sheets, new InvoicePerMonthSheet($getYearFrom, "Capital Fee"));
-            //     array_push($sheets, new InvoicePerMonthSheet($getYearFrom, $month));
-            //     if($month === $getMonthTo) array_push($sheets, new InvoicePerMonthSheet($getYearFrom, "Package"));
-            //     if($month === $getMonthTo) array_push($sheets, new InvoicePerMonthSheet($getYearFrom, "Material Fee"));
-            // }
-
+        for($year=$getYearFrom; $year<=$getYearTo; $year++){
             
-            
-            array_push($sheets, new InvoicePerMonthSheet(array_values($capFee->data), $getYearFrom, "Capital Fee", $capFee->student_id, $capFee->grade_id));
-            
-        } else {
+            for ($month = $getMonthFrom; ($year == $getYearTo? $month<=$getMonthTo : $month <= 12); $month++) {
+                    
+                $monthFee = new MonthFeeController($getYearFrom);
+                $indexMonth = $monthFee->index($month);
+                $data = $indexMonth->data;
+                $map_grade = $indexMonth->grade_id;
 
-            array_push($sheets, new InvoicePerMonthSheet(array_values($capFee->data), $getYearFrom, "Capital Fee", $capFee->student_id, $capFee->grade_id));
+                array_push($sheets, new InvoicePerMonthSheet(array_values($data), $year, $month, [], $map_grade));
 
-            // for ($month = $getMonthFrom; $month <= 12; $month++) {
-            //     if($month === $getMonthFrom) array_push($sheets, new InvoicePerMonthSheet($getYearFrom, "Capital Fee"));
-            //     array_push($sheets, new InvoicePerMonthSheet($getYearFrom, $month));
-            // }
+            }
 
-            // for ($month = 1; $month <= $getMonthTo; $month++) {
-            //     array_push($sheets, new InvoicePerMonthSheet($getYearFrom, $month));
-            //     if($month === $getMonthTo) array_push($sheets, new InvoicePerMonthSheet($getYearFrom, "Package"));
-            //     if($month === $getMonthTo) array_push($sheets, new InvoicePerMonthSheet($getYearFrom, "Material Fee"));
-            // }
+            $getMonthFrom = 1;
         }
+            
+        // array_push($sheets, new InvoicePerMonthSheet($getYearFrom, "Package"));
+        // array_push($sheets, new InvoicePerMonthSheet($getYearFrom, "Material Fee"));
         
         return $sheets;
     }

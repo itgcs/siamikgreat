@@ -90,8 +90,6 @@ class CapFeeExcelController extends Controller
             array_push($capFeeFormated, $obj);
         }
 
-        info(json_encode($student_id));
-
         return (object) [
             'data' => $capFeeFormated,
             'grade_id' => $grade_id,
@@ -100,7 +98,7 @@ class CapFeeExcelController extends Controller
     }
     
 
-    public function currencyToIdr(int $currency){
+    private function currencyToIdr(int $currency){
 
         return 'Rp.' . number_format($currency, 0, '', ',');
     }
