@@ -27,11 +27,14 @@
       </div>
     </div>
 
-<!-- Sidebar Menu -->
+    <!-- Sidebar Menu -->
 <nav class="mt-2">
    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="true">
      <!-- Add icons to the links using the .nav-icon class
-          with font-awesome or any other icon font library -->
+      with font-awesome or any other icon font library -->
+      
+      
+    @if (session('role') !== 'accounting')
      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'students' ? 'menu-open' : '') : ''}}">
        <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'students' ? 'active' : '') : ''}}">
          {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
@@ -72,7 +75,6 @@
        </ul>
      </li>
 
-     @if (session('role') !== 'accounting')
        
      
 
@@ -131,41 +133,40 @@
 
      @endif
 
-     @if (session('role') !== 'admin')
-       
-     
+     @if (session('role') !== 'admin')     
      
      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'payments' ? 'menu-open' : '') : ''}}">
-       <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'payments' ? 'active' : '') : ''}}">
-         <i class="nav-icon fa-regular fa-credit-card"></i>
-         <p>
-           Payment
-           <i class="right fas fa-angle-left"></i>
-         </p>
-       </a>
-       <ul class="nav nav-treeview">
-         <li class="nav-item">
-           <a href="/admin/spp-students" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'spp-students' ? 'active' : '') : ''}}">
-             <i class="far fa-circle nav-icon"></i>
-             <p>Students</p>
-           </a>
-         </li>
-         <li class="nav-item">
-           <a href="/admin/payment-grades" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'payment-grades' ? 'active' : '') : ''}}">
-             <i class="far fa-circle nav-icon"></i>
-             <p>Grades</p>
-           </a>
-         </li>
-         <li class="nav-item">
-           <a href="/admin/payment-books" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'payment-books' ? 'active' : '') : ''}}">
-             <i class="far fa-circle nav-icon"></i>
-             <p>Book</p>
-           </a>
-         </li>
-       </ul>
-     </li>
-
-     <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'Bills' ? 'menu-open' : '') : ''}}">
+      <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'payments' ? 'active' : '') : ''}}">
+        <i class="nav-icon fa-regular fa-credit-card"></i>
+        <p>
+          Payment
+          <i class="right fas fa-angle-left"></i>
+        </p>
+      </a>
+      <ul class="nav nav-treeview">
+        <li class="nav-item">
+          <a href="/admin/spp-students" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'spp-students' ? 'active' : '') : ''}}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Students</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/admin/payment-grades" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'payment-grades' ? 'active' : '') : ''}}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Grades</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/admin/payment-books" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'payment-books' ? 'active' : '') : ''}}">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Book</p>
+          </a>
+        </li>
+      </ul>
+    </li>
+    @endif
+    
+    <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'Bills' ? 'menu-open' : '') : ''}}">
       <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'Bills' ? 'active' : '') : ''}}">
         <i class="nav-icon fa-solid fa-cash-register"></i>
         <p>
@@ -194,9 +195,10 @@
         </li>
       </ul>
     </li>
-
-
-     <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'Report' ? 'menu-open' : '') : ''}}">
+    
+    
+    @if (session('role') !== 'admin')
+    <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'Report' ? 'menu-open' : '') : ''}}">
       <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'Report' ? 'active' : '') : ''}}">
         <i class="nav-icon fa-solid fa-receipt"></i>
         <p>
@@ -213,7 +215,7 @@
         </li>
       </ul>
     </li>
-
+    
     @endif
     @if(session('role') == 'superadmin')
      <li class="nav-header">AUTHENTICATION</li>

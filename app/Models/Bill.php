@@ -24,6 +24,7 @@ class Bill extends Model
       'date_change_bill',
       'installment',
       'amount_installment',
+      'created_by',
       'created_at',	
       'updated_at'	
     ]; 

@@ -15,9 +15,11 @@ use App\Models\InstallmentPaket;
 use App\Models\Payment_grade;
 use App\Models\statusInvoiceMail;
 use App\Models\Student;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -30,7 +32,7 @@ class BillController extends Controller
    {
       try {
 
-
+         $user = Auth::user();
 
          session()->flash('page', (object)[
             'page' => 'Bills',
@@ -159,7 +161,12 @@ class BillController extends Controller
                   }
                }
             }
-
+            
+            
+            if($user->role == 'admin') {
+               $data = $data->where('created_by', 'admin');
+            }
+            
             if ($form->search) {
                
                if(is_numeric($form->search)) {
@@ -175,12 +182,21 @@ class BillController extends Controller
             $data = $data->orderBy('id', 'desc')->paginate(15);
          }
          else {
-            $data = Bill::with(['student' => function ($query) {
-               $query->with('grade')->get();
-            }])
-            ->orderBy('updated_at', 'desc')
-            ->paginate(15);
-            
+            if($user->role == 'admin') {
+               $data = Bill::with(['student' => function ($query) {
+                  $query->with('grade')->get();
+               }])
+               ->where('created_by', 'admin')
+               ->orderBy('updated_at', 'desc')
+               ->paginate(15);
+            } else {
+               $data = Bill::with(['student' => function ($query) {
+                  $query->with('grade')->get();
+               }])
+               ->orderBy('updated_at', 'desc')
+               ->paginate(15);
+            }
+
          }
          
          
@@ -296,7 +312,7 @@ class BillController extends Controller
 
          $student = Student::with('relationship')->where('id', $id)->first();
          date_default_timezone_set('Asia/Jakarta');
-
+         $user = Auth::user();
          $dateFormat = new RegisterController;
 
          $rules = [
@@ -305,10 +321,11 @@ class BillController extends Controller
             'type' => $request->type,
             'description' => $request->description,
             'amount' => $request->amount ? (int)str_replace(".", "", $request->amount) : null,
+            'created_by' => $user->role == 'admin' ? 'admin' : 'accounting', 
             'deadline_invoice' => $request->deadline_invoice? $dateFormat->changeDateFormat($request->deadline_invoice) : null,
          ];
 
-         
+         info($rules);
 
          $validator = Validator::make($rules, [
             'type' => 'required|string|min:3',

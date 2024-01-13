@@ -59,6 +59,45 @@ Route::middleware(['auth.login'])->prefix('/admin')->group(function () {
       Route::get('/', [DashboardController::class, 'index']);
    });
 
+   Route::prefix('/user')->group(function () {
+
+      Route::get('/change-password', [AdminController::class, 'changeMyPassword']);
+      Route::put('/change-password', [AdminController::class, 'actionChangeMyPassword']);
+   });
+   
+   Route::prefix('/detail')->group(function () {
+      Route::get('/{id}', [StudentController::class, 'detail']);
+   });
+
+   Route::prefix('/bills')->group(function() {
+      Route::get('/', [BillController::class, 'index']);
+      Route::get('/create', [BillController::class, 'chooseStudent']);
+      Route::get('/create-bills/{id}', [BillController::class, 'pageCreateBill']);
+      Route::get('/detail-payment/{id}', [BillController::class, 'detailPayment']);
+      Route::get('/create-payment/{id}', [BillController::class, 'pagePayment']);
+      Route::get('/change-paket/{student_id}/{bill_id}', [BillController::class, 'pageChangePaket']);
+      Route::get('/intallment-paket/{bill_id}', [BillController::class, 'pagePaketInstallment']);
+      Route::get('/paid/pdf/{bill_id}', [BillController::class, 'pagePdf']);
+      Route::get('/installment-pdf/{bill_id}', [BillController::class, 'reportInstallmentPdf']);
+      Route::get('/edit-installment-paket/{bill_id}', [BillController::class, 'pageEditInstallment']);
+      Route::get('/status', [StatusMailSend::class, 'index']);
+      Route::get('/status/{status_id}', [StatusMailSend::class, 'view']);
+      Route::post('/post-bill/{id}', [BillController::class, 'actionCreateBill'])->name('create.bill');
+      Route::post('/post-intallment-paket/{bill_id}', [BillController::class, 'actionPaketInstallment'])->name('create.installment');
+      Route::put('/change-paket/{bill_id}/{student_id}', [BillController::class, 'actionChangePaket'])->name('action.edit.paket');
+      Route::patch('/status/{id}', [StatusMailSend::class, 'send']);
+      Route::patch('/update-paid/{bill_id}/{student_id}', [BillController::class, 'paidOfBook'])->name('action.book.payment');
+      Route::patch('/update-paid/{id}', [BillController::class, 'paidOf']);
+   });
+   
+   Route::prefix('/reports')->group(function() {
+      Route::get('/', [Report::class, 'index']);
+      Route::post('/exports', [Report::class, 'export']);
+   });
+});
+
+Route::middleware(['admin'])->prefix('/admin')->group(function () {
+
    Route::prefix('/register')->group(function () {
       Route::get('/', [RegisterController::class, 'index']);
       Route::post('/post', [RegisterController::class, 'register'])->name('actionRegister');
@@ -73,24 +112,11 @@ Route::middleware(['auth.login'])->prefix('/admin')->group(function () {
       Route::get('/', [StudentController::class, 'index']);
    });
 
-   Route::prefix('/detail')->group(function () {
-      Route::get('/{id}', [StudentController::class, 'detail']);
-   });
    
    Route::prefix('/update')->group(function () {
       Route::put('/{id}', [StudentController::class, 'actionEdit'])->name('student.update');
       Route::get('/{id}', [StudentController::class, 'edit']);
    });
-
-   Route::prefix('/user')->group(function () {
-
-      Route::get('/change-password', [AdminController::class, 'changeMyPassword']);
-      Route::put('/change-password', [AdminController::class, 'actionChangeMyPassword']);
-   });
-
-});
-
-Route::middleware(['admin'])->prefix('/admin')->group(function () {
 
    Route::prefix('/teachers')->group(function () {
 
@@ -158,32 +184,6 @@ Route::middleware(['accounting'])->prefix('admin')->group(function () {
       Route::get('/{id}', [PaymentBookController::class, 'studentBook']);
       Route::get('/{id}/add-books', [PaymentBookController::class, 'pageAddBook']);
       Route::post('/{id}/add-books-action', [PaymentBookController::class, 'actionAddBook'])->name('action.add.book');
-   });
-   
-   Route::prefix('/bills')->group(function() {
-      Route::get('/', [BillController::class, 'index']);
-      Route::get('/create', [BillController::class, 'chooseStudent']);
-      Route::get('/create-bills/{id}', [BillController::class, 'pageCreateBill']);
-      Route::get('/detail-payment/{id}', [BillController::class, 'detailPayment']);
-      Route::get('/create-payment/{id}', [BillController::class, 'pagePayment']);
-      Route::get('/change-paket/{student_id}/{bill_id}', [BillController::class, 'pageChangePaket']);
-      Route::get('/intallment-paket/{bill_id}', [BillController::class, 'pagePaketInstallment']);
-      Route::get('/paid/pdf/{bill_id}', [BillController::class, 'pagePdf']);
-      Route::get('/installment-pdf/{bill_id}', [BillController::class, 'reportInstallmentPdf']);
-      Route::get('/edit-installment-paket/{bill_id}', [BillController::class, 'pageEditInstallment']);
-      Route::get('/status', [StatusMailSend::class, 'index']);
-      Route::get('/status/{status_id}', [StatusMailSend::class, 'view']);
-      Route::post('/post-bill/{id}', [BillController::class, 'actionCreateBill'])->name('create.bill');
-      Route::post('/post-intallment-paket/{bill_id}', [BillController::class, 'actionPaketInstallment'])->name('create.installment');
-      Route::put('/change-paket/{bill_id}/{student_id}', [BillController::class, 'actionChangePaket'])->name('action.edit.paket');
-      Route::patch('/status/{id}', [StatusMailSend::class, 'send']);
-      Route::patch('/update-paid/{bill_id}/{student_id}', [BillController::class, 'paidOfBook'])->name('action.book.payment');
-      Route::patch('/update-paid/{id}', [BillController::class, 'paidOf']);
-   });
-   
-   Route::prefix('/reports')->group(function() {
-      Route::get('/', [Report::class, 'index']);
-      Route::post('/exports', [Report::class, 'export']);
    });
 });
 

@@ -15,9 +15,11 @@ use App\Models\Payment_student;
 use App\Models\Relationship;
 use App\Models\Student;
 use App\Models\Student_relation;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -497,9 +499,8 @@ class RegisterController extends Controller
       try {
 
 
-      $installment  = $installment && $installment > 1 ? $installment : 1;
-      
-         
+      $installment  = $installment && $installment > 1 ? $installment : 1;   
+      $user = Auth::user();
          $amountTotal = (int)$amount - (int)$dp;
 
          if (($amountTotal/$installment) % 1_000 === 0) {
@@ -535,6 +536,7 @@ class RegisterController extends Controller
                   'installment' => $installment == 1? null : $installment,
                   'amount_installment' => $installment > 1 ? $lastBillPerMonth : 0,
                   'subject' => $subject, 
+                  'created_by' => $user->role == 'admin'? 'admin' : 'accounting',
                ]);   
 
                if($installment>1)
@@ -555,6 +557,7 @@ class RegisterController extends Controller
                'deadline_invoice' =>$newDate,
                'installment' => $installment == 1? null : $installment,
                'amount_installment' => $installment > 1 ? $billPerMonth : 0,
+               'created_by' => $user->role == 'admin'? 'admin' : 'accounting',
                'subject' => $subject, 
             ]);   
 
