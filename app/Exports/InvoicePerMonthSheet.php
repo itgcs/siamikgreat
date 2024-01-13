@@ -18,15 +18,16 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class InvoicePerMonthSheet implements WithTitle, WithHeadings, ShouldAutoSize, FromArray, WithStyles
 {
-    private $array, $month, $year, $map_student, $map_grade;
+    private $array, $month, $year, $map_student, $map_grade, $map_installment;
 
-    public function __construct(array $array, int $year, $month, array $map_student, array $map_grade)
+    public function __construct(array $array, int $year, $month, array $map_student, array $map_grade, array $map_installment = [])
     {
         $this->array = $array;
         $this->month = $month;
         $this->year  = $year;
         $this->map_student = $map_student;
         $this->map_grade = $map_grade;
+        $this->map_installment = $map_installment;
     }
 
     /**
@@ -64,6 +65,22 @@ class InvoicePerMonthSheet implements WithTitle, WithHeadings, ShouldAutoSize, F
             ];
         }
 
+        if($this->month === 'Package') {
+            return [
+                'No Invoice',
+                'Grades',
+                'Student name',
+                'Type',
+                'Installment/Month',
+                'Date created',
+                'Date past due',
+                'Total',
+                'Amount',
+                'Paid date',
+                'Status',
+            ];
+        }
+
 
         return [
             'No Invoice',
@@ -95,6 +112,10 @@ class InvoicePerMonthSheet implements WithTitle, WithHeadings, ShouldAutoSize, F
 
             //font size
             
+        } else if($this->month == 'Package') {
+
+            $max = 'A1:K'.sizeof($this->array)+1;
+
         } else {
             
             $max = 'A1:J'.sizeof($this->array)+1;
@@ -103,12 +124,26 @@ class InvoicePerMonthSheet implements WithTitle, WithHeadings, ShouldAutoSize, F
         $sheet->getStyle($max)->getFont()->setSize(12);
         //merge student
         foreach($this->map_student as $student) {
-            
             $sheet->mergeCells('C'.$student[0].':'.'C'.$student[1]);
-            $sheet->mergeCells('E'.$student[0].':'.'E'.$student[1]);
-            $sheet->mergeCells('F'.$student[0].':'.'F'.$student[1]);
-            $sheet->mergeCells('H'.$student[0].':'.'H'.$student[1]);
-            $sheet->mergeCells('I'.$student[0].':'.'I'.$student[1]);
+        }
+        
+
+        //merge installments
+        foreach($this->map_installment as $installment) {
+            
+            if($this->month === 'Capital Fee') {
+                
+                $sheet->mergeCells('E'.$installment[0].':'.'E'.$installment[1]);
+                $sheet->mergeCells('F'.$installment[0].':'.'F'.$installment[1]);
+                $sheet->mergeCells('H'.$installment[0].':'.'H'.$installment[1]);
+                $sheet->mergeCells('I'.$installment[0].':'.'I'.$installment[1]);
+
+            } else {
+                $sheet->mergeCells('E'.$installment[0].':'.'E'.$installment[1]);
+                $sheet->mergeCells('H'.$installment[0].':'.'H'.$installment[1]);
+            }
+            
+
         }
 
         //merge grade 

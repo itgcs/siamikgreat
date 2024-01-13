@@ -57,6 +57,12 @@
            </a>
          </li>
          <li class="nav-item">
+           <a href="/admin/register/imports" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'imports' ? 'active' : '') : ''}}">
+             <i class="far fa-circle nav-icon"></i>
+             <p>Import</p>
+           </a>
+         </li>
+         <li class="nav-item">
            <a href="/admin/list" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database students' ? 'active' : '') : ''}}">
              <i class="far fa-circle nav-icon"></i>  
              {{-- <i class="fa-regular fa-database"></i> --}}

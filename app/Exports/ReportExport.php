@@ -2,13 +2,13 @@
 
 namespace App\Exports;
 
+use Carbon\Carbon;
 use App\Http\Controllers\Excel\CapFeeExcelController;
+use App\Http\Controllers\Excel\MaterialFeeController;
 use App\Http\Controllers\Excel\MonthFeeController;
-use App\Models\Bill;
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Excel\PackageController;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithProperties;
-use PDO;
 
 class ReportExport implements WithMultipleSheets, WithProperties
 {
@@ -27,17 +27,27 @@ class ReportExport implements WithMultipleSheets, WithProperties
 
         $dateFrom = explode('/', $this->from);
         $dateTo = explode('/', $this->to);
-
         $getMonthFrom = (int)$dateFrom[0];
         $getYearFrom = (int)$dateFrom[1];
-        
         $getMonthTo = (int)$dateTo[0];
         $getYearTo = (int)$dateTo[1];
 
-        $capFee = new CapFeeExcelController($getYearFrom);
-        $capFee = $capFee->index();
+        // yyyy-mm-dd from date
+        $date_start = $this->startDateFormat($getMonthFrom, $getYearFrom);
+        // yyyy-mm-dd to date
+        $date_end = $this->endDateFormat($getMonthTo, $getYearTo);
 
-        array_push($sheets, new InvoicePerMonthSheet(array_values($capFee->data), $getYearFrom, "Capital Fee", $capFee->student_id, $capFee->grade_id));
+
+        $capFee = new CapFeeExcelController($date_start, $date_end);
+        $capFee = $capFee->index();
+        $matFee = new MaterialFeeController($getYearFrom);
+        $matFee = $matFee->index();
+        $package = new PackageController($getYearFrom);
+        $package = $package->index();
+
+        array_push($sheets, new InvoicePerMonthSheet(array_values($capFee->data), $getYearFrom, "Capital Fee", $capFee->student_id, $capFee->grade_id, $capFee->installment_id));
+        array_push($sheets, new InvoicePerMonthSheet(array_values($matFee->data), $getYearFrom, "Material Fee", $matFee->student_id, $matFee->grade_id));
+        array_push($sheets, new InvoicePerMonthSheet(array_values($package->data), $getYearFrom, "Package", $package->student_id, $package->grade_id, $package->installment_id));
 
         for($year=$getYearFrom; $year<=$getYearTo; $year++){
             
@@ -54,9 +64,6 @@ class ReportExport implements WithMultipleSheets, WithProperties
 
             $getMonthFrom = 1;
         }
-            
-        // array_push($sheets, new InvoicePerMonthSheet($getYearFrom, "Package"));
-        // array_push($sheets, new InvoicePerMonthSheet($getYearFrom, "Material Fee"));
         
         return $sheets;
     }
@@ -74,5 +81,17 @@ class ReportExport implements WithMultipleSheets, WithProperties
             'manager'        => 'Donny Prasetya',
             'company'        => 'Great crystal',
         ];
+    }
+
+    public function startDateFormat(int $month, int $year) {
+            
+        $dateFormated = Carbon::create($year, $month, 1);
+        info('start ' . $dateFormated);
+        return $dateFormated->startOfMonth()->format('Y-m-d h:i:s');
+    } 
+    
+    public function endDateFormat(int $month, int $year) {
+        $dateFormated = Carbon::create($year, $month, 1);
+        return $dateFormated->endOfMonth()->format('Y-m-d h:i:s');
     }
 }

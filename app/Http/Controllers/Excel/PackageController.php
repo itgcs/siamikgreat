@@ -7,30 +7,27 @@ use App\Models\Bill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class CapFeeExcelController extends Controller
+class PackageController extends Controller
 {
+    protected $year;
 
-    protected $start, $end;
-
-    public function __construct(string $start, string $end) {
-        $this->start = $start;
-        $this->end = $end;
+    public function __construct(int $year) {
+        $this->year = $year;
     }
 
     public function index(): object {
 
-        $capFeeFormated = [];
+        $packageFormated = [];
         $grade_id = [];
         $student_id = [];
         $installment_id = [];
 
-        $capFee = DB::table('students')->select('bills.id', 'grades.name as grade_name', 'grades.class as grade_class','students.name','bills.type','bills.installment','bills.created_at'
+        $package = DB::table('students')->select('bills.id', 'grades.name as grade_name', 'grades.class as grade_class','students.name','bills.type','bills.installment','bills.created_at'
         ,'bills.deadline_invoice','bills.amount','bills.dp','bills.charge', 'bills.amount','bills.paid_date','bills.paidOf', 
         'bills.amount_installment', 'students.id as student_id', 'grades.id as grade_id')
         ->join('bills', 'bills.student_id', '=', 'students.id')
         ->join('grades', 'grades.id', '=', 'students.grade_id')
-        ->where('bills.type', 'Capital Fee')
-        ->whereBetween('bills.created_at', [$this->start, $this->end])
+        ->where('bills.type', 'Paket')
         ->orderBy('students.grade_id', 'asc')
         ->orderBy('students.name', 'asc')
         ->get();
@@ -41,13 +38,12 @@ class CapFeeExcelController extends Controller
         $g_id = null;
         $start_g = 2;
 
-        $b_start = null;
         $unique_b = [];
+        $b_start = null;
 
-        foreach($capFee as $idx => $bill){
-    
+        foreach($package as $idx => $bill){
 
-            if (count($capFee) === $idx+1) {
+            if (count($package) === $idx+1) {
 
                 $bill->student_id == $s_id ?
                     array_push($student_id, [$start_col, $idx+2]) :
@@ -61,7 +57,7 @@ class CapFeeExcelController extends Controller
                 $start_col=$idx+2;
             }
 
-            if(count($capFee) === $idx+1) {
+            if(count($package) === $idx+1) {
                 $bill->grade_id == $g_id ?
                     array_push($grade_id, [$start_g, $idx+2]) :
                    ( 
@@ -77,31 +73,27 @@ class CapFeeExcelController extends Controller
             $g_id = (int)$bill->grade_id;
             $s_id = (int)$bill->student_id;
 
-            if(!in_array($bill->id, $unique_b)){
 
+        if(!in_array($bill->id, $unique_b)){
+                
             $obj = (object) [
                 'no_invoice' => '#' . str_pad((string)$bill->id,8,"0", STR_PAD_LEFT),
                 'grades' => $bill->grade_name . ' ' . $bill->grade_class,
                 'name' => $bill->name,
-                'type' => $bill->type,
+                'type' => 'Package',
                 'installment' => $bill->installment? $bill->installment . ' Installments/Month' : "Cash",
                 'created_at' => date('Y-m-d', strtotime($bill->created_at)),
                 'deadline_invoice' => $bill->deadline_invoice,
                 'total' => $this->currencyToIdr($bill->amount),
-                'dp' => $bill->dp? $this->currencyToIdr($bill->dp) : "",
-                'charge' => $bill->charge? $this->currencyToIdr($bill->charge) : "",
                 'amount'=> $bill->installment? $this->currencyToIdr($bill->amount_installment) : $this->currencyToIdr($bill->amount),
                 'paid_date' => $bill->paid_date,
                 'status' => $bill->paidOf? "Lunas": "Belum lunas",
             ];
-
-            $start = $this->start;
-            $end = $this->end;
-
-            $bill_relation = Bill::with(['bill_installments'])
-            ->where('id', $bill->id)->first();
             
-            if($bill_relation->installment) {
+            
+            $bill_relation = Bill::with('bill_installments')->where('id', $bill->id)->first();
+            
+            if(sizeof($bill_relation->bill_installments)>0) {
 
                 $b_start = $idx+2;
                 foreach($bill_relation->bill_installments as $key => $installment) {
@@ -110,19 +102,17 @@ class CapFeeExcelController extends Controller
                         'no_invoice' => '#' . str_pad((string)$installment->id,8,"0", STR_PAD_LEFT),
                         'grades' => $bill->grade_name . ' ' . $bill->grade_class,
                         'name' => $bill->name,
-                        'type' => $installment->type,
+                        'type' => 'Package',
                         'installment' => $installment->installment? $installment->installment . ' Installments/Month' : "Cash",
                         'created_at' => date('Y-m-d', strtotime($installment->created_at)),
                         'deadline_invoice' => $installment->deadline_invoice,
                         'total' => $this->currencyToIdr($installment->amount),
-                        'dp' => $installment->dp? $this->currencyToIdr($installment->dp) : "",
-                        'charge' => $installment->charge? $this->currencyToIdr($installment->charge) : "",
                         'amount'=> $installment->installment? $this->currencyToIdr($installment->amount_installment) : $this->currencyToIdr($installment->amount),
                         'paid_date' => $installment->paid_date,
                         'status' => $installment->paidOf? "Lunas": "Belum lunas",
                     ];
                     
-                    array_push($capFeeFormated, $obj);
+                    array_push($packageFormated, $obj);
                     array_push($unique_b, $installment->id);
                 }
                 
@@ -130,21 +120,16 @@ class CapFeeExcelController extends Controller
                 
             } else {
 
-                array_push($capFeeFormated, $obj);
+                array_push($packageFormated, $obj);
                 array_push($unique_b, $bill->id);
 
             }
+
             }
         }
 
-        
-        info('capFee - ' . json_encode(sizeof($capFee)));
-        info('grade_id - ' . json_encode($grade_id));
-        info('student_id - ' . json_encode($student_id));
-        info('installment_id - ' . json_encode($installment_id));
-
         return (object) [
-            'data' => $capFeeFormated,
+            'data' => $packageFormated,
             'grade_id' => $grade_id,
             'student_id' => $student_id,
             'installment_id' => $installment_id,

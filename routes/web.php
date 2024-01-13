@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\{
    TeacherController,
 };
 use App\Http\Controllers\Excel\Report;
+use App\Http\Controllers\Excel\Import;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\Notification\NotificationBillCreated;
 use App\Http\Controllers\Notification\NotificationPastDue;
@@ -23,7 +24,6 @@ use App\Http\Controllers\SuperAdmin\{
    SuperAdminController,
    StudentController as SuperStudentController
 };
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Jobs\SendEmailJob;
@@ -32,6 +32,7 @@ use App\Livewire\Counter;
 use App\Mail\SendEmailTest;
 use Faker\Provider\ar_EG\Payment;
 use Illuminate\Notifications\Notification;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Mail;
 
 /*
@@ -63,6 +64,9 @@ Route::middleware(['auth.login'])->prefix('/admin')->group(function () {
       Route::post('/post', [RegisterController::class, 'register'])->name('actionRegister');
       Route::get('/edit-installment-capital/{bill_id}', [RegisterController::class, 'pageEditInstallment']);
       Route::put('/edit-installment-capital/{bill_id}', [RegisterController::class, 'actionEditInstallment'])->name('action.edit.installment');
+      Route::get('/imports', [Import::class, 'index']);
+      Route::post('/imports', [Import::class, 'upload'])->name('import.register');
+      Route::get('/templates/students', [Import::class, 'downloadTemplate']);
    });
 
    Route::prefix('/list')->group(function () {
