@@ -33,6 +33,13 @@
      <!-- Add icons to the links using the .nav-icon class
       with font-awesome or any other icon font library -->
       
+     <li class="ml-1 nav-item">
+       <a href="{{url('/admin/dashboard')}}" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'dashboard' ? 'active' : '') : ''}}">
+        {{-- <i class="fa-solid fa-user-secret nav-icon"></i> --}}
+        <i class="mr-2 fa-regular fa-folder-open"></i>
+        <p>Dashboard</p>
+      </a>
+    </li>
       
     @if (session('role') !== 'accounting')
      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'students' ? 'menu-open' : '') : ''}}">
@@ -47,12 +54,12 @@
          </p>
        </a>
        <ul class="nav nav-treeview">
-         <li class="nav-item">
+         {{-- <li class="nav-item">
            <a href="/admin/dashboard" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'dashboard' ? 'active' : '') : ''}}">
              <i class="far fa-circle nav-icon"></i>
              <p>Dashboard</p>
            </a>
-         </li>
+         </li> --}}
          <li class="nav-item">
            <a href="/admin/register" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'register students' ? 'active' : '') : ''}}">
              <i class="far fa-circle nav-icon"></i>

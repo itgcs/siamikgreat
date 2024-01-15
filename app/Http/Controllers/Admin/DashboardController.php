@@ -18,7 +18,7 @@ class DashboardController extends Controller
       try {
          //code...
          session()->flash('page',  $page = (object)[
-            'page' => 'students',
+            'page' => 'dashboard',
             'child' => 'dashboard',
          ]);
          

@@ -128,6 +128,102 @@
          <section class="col-lg-7 connectedSortable">
            
 
+          
+
+          <!-- Custom tabs (Charts with tabs)-->
+          <div class="{{$listBill}} card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fa-solid fa-hourglass-end mr-1"></i>
+                Past due  bills
+              </h3>
+            </div><!-- /.card-header -->
+            <div class="card-body">
+              <div class="tab-content p-0">
+                <!-- Morris chart - Sales -->
+                <div class="chart tab-pane active" id="revenue-chart"
+                     style="position: relative; height: 310px;">
+
+                     @if (sizeof($data->dataPastDue) == 0)
+                     <div class="d-flex justify-content-center">
+    
+                       <h2>Data past due does not exist !!!</h2>
+                     
+                     </div>
+                     @else
+    
+                      {{-- <canvas id="sales-chart-canvas" height="300" style="height: 300px;"></canvas> --}}
+                      <div>
+                       <!-- /.card-header -->
+                       <div>
+                         <ul class="todo-list" data-widget="todo-list">
+    
+                         @php
+                           $currentDate = date('y-m-d');
+                        @endphp 
+    
+                           @foreach ($data->dataPastDue as $el)
+                             
+                           
+                           <li>
+                             <!-- drag handle -->
+                             <span class="handle">
+                               <i class="fas fa-ellipsis-v"></i>
+                               <i class="fas fa-ellipsis-v"></i>
+                             </span>
+                             <!-- checkbox -->
+                             <div  class="icheck-primary d-inline ml-2">
+                               <span class="text-muted">[ {{date( 'd F Y',strtotime($el->deadline_invoice))}} ]</span>
+                             </div>
+                             <!-- todo text -->
+                             <span class="text">( {{$el->type}} ) {{$el->student->name}}</span>
+                             <!-- Emphasis label -->
+                             
+    
+                             @if ($el->paidOf)
+                               
+                               <small class="badge badge-success"><i class="far fa-checklist"></i> Success</small>
+    
+                             @elseif (strtotime($el->deadline_invoice) < strtotime($currentDate))
+    
+                               <small class="badge badge-danger"><i class="far fa-clock"></i> Past Due</small>
+                             @else
+                               @php
+                                   $date1 = date_create($currentDate);
+                                   $date2 = date_create(date('y-m-d', strtotime($el->deadline_invoice)));
+                                   $dateWarning = date_diff($date1, $date2);
+                                   $dateDiff = $dateWarning->format('%a days');
+                               @endphp
+                               <small class="badge badge-warning"><i class="far fa-clock"></i> {{
+    
+                                   $dateDiff
+                               
+                               }}</small>
+                             @endif
+                             <!-- General tools such as edit or delete-->
+                             @if (session('role') !== 'admin')
+                             <div class="tools">
+                               <a href="/admin/bills/detail-payment/{{$el->id}}" target="_blank">
+                                 <i class="fas fa-search"></i>
+                               </a>
+                             </div>
+                             @endif
+                           </li>
+                           
+                           @endforeach
+                         </ul>
+                       </div>
+                     </div>
+    
+                     @endif
+                 
+
+                 </div>
+              </div>
+            </div><!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+
           <!-- Map card -->
           <div class="{{$listStudent}} card bg-gradient-info">
             <div class="card-header border-0">
@@ -167,7 +263,6 @@
                </tbody>
              </table>
             </div>
-            <!-- /.card-body-->
             <div class="card-footer bg-transparent">
               <div class="d-none row">
                 <div class="col-4 text-center">
@@ -190,33 +285,6 @@
             </div>
           </div>
           <!-- /.card -->
-
-           
-
-           <!-- Calendar -->
-          <div class="{{$listPastDue}} card bg-gradient-secondary">
-            <div class="card-header border-0">
-
-              <h3 class="card-title">
-                <i class="far fa-calendar-alt"></i>
-                Calendar
-              </h3>
-              <!-- tools card -->
-              <div class="card-tools">
-                <!-- button with a dropdown -->
-                <button type="button" class="btn btn-secondary btn-sm" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
-              </div>
-              <!-- /. tools -->
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body pt-0">
-              <!--The calendar -->
-              <div id="calendar" style="width: 100%"></div>
-            </div>
-            <!-- /.card-body -->
-          </div>
             
            
          </section>
@@ -224,59 +292,13 @@
          <!-- right col (We are only adding the ID to make the widgets sortable)-->
          <section class="col-lg-5 connectedSortable">
 
-          <!-- Teacher List -->
-          <div class="{{$listTeacher}} card bg-gradient-success">
-            <div class="card-header">
-              <h3 class="card-title">
-                <i class="ion ion-clipboard mr-1"></i>
-                Teacher's
-              </h3>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body">
-             <table class="table table-borderless">
-               <thead>
-                 <tr>
-                   <th scope="col">#</th>
-                   <th scope="col">Name</th>
-                   <th scope="col">Place Birth</th>
-                   <th scope="col">Register Date</th>
-                 </tr>
-               </thead>
-               <tbody>
-
-               @foreach ($data->dataTeacher as $el)
-                 <tr>
-                   <td scope="row">{{$loop->index+1}}</td>
-                   <td>{{$el->name}}</td>
-                   <td>{{$el->place_birth}}</td>
-                   <td>{{date('d/m/Y', strtotime($el->created_at))}}</td>
-                 </tr>
-               @endforeach  
-                 
-               </tbody>
-             </table>
-            </div>
-          </div>
-          <!-- /.card -->
-
           <!-- Custom tabs (Charts with tabs)-->
           <div class="{{$listBill}} card">
             <div class="card-header">
               <h3 class="card-title">
                 <i class="fas fa-chart-pie mr-1"></i>
-                Bills
+                New bills
               </h3>
-              <div class="card-tools">
-                <ul class="nav nav-pills ml-auto">
-                  <li class="nav-item">
-                    <a class="nav-link active" href="#revenue-chart" data-toggle="tab">New</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#sales-chart" data-toggle="tab">Past Due</a>
-                  </li>
-                </ul>
-              </div>
             </div><!-- /.card-header -->
             <div class="card-body">
               <div class="tab-content p-0">
@@ -358,88 +380,46 @@
                    @endif
 
                  </div>
-                <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 310px;">
-
-                 @if (sizeof($data->dataPastDue) == 0)
-                 <div class="d-flex justify-content-center">
-
-                   <h2>Data past due does not exist !!!</h2>
-                 
-                 </div>
-                 @else
-
-                  {{-- <canvas id="sales-chart-canvas" height="300" style="height: 300px;"></canvas> --}}
-                  <div>
-                   <!-- /.card-header -->
-                   <div>
-                     <ul class="todo-list" data-widget="todo-list">
-
-                     @php
-                       $currentDate = date('y-m-d');
-                    @endphp 
-
-                       @foreach ($data->dataPastDue as $el)
-                         
-                       
-                       <li>
-                         <!-- drag handle -->
-                         <span class="handle">
-                           <i class="fas fa-ellipsis-v"></i>
-                           <i class="fas fa-ellipsis-v"></i>
-                         </span>
-                         <!-- checkbox -->
-                         <div  class="icheck-primary d-inline ml-2">
-                           <span class="text-muted">[ {{date( 'd F Y',strtotime($el->deadline_invoice))}} ]</span>
-                         </div>
-                         <!-- todo text -->
-                         <span class="text">( {{$el->type}} ) {{$el->student->name}}</span>
-                         <!-- Emphasis label -->
-                         
-
-                         @if ($el->paidOf)
-                           
-                           <small class="badge badge-success"><i class="far fa-checklist"></i> Success</small>
-
-                         @elseif (strtotime($el->deadline_invoice) < strtotime($currentDate))
-
-                           <small class="badge badge-danger"><i class="far fa-clock"></i> Past Due</small>
-                         @else
-                           @php
-                               $date1 = date_create($currentDate);
-                               $date2 = date_create(date('y-m-d', strtotime($el->deadline_invoice)));
-                               $dateWarning = date_diff($date1, $date2);
-                               $dateDiff = $dateWarning->format('%a days');
-                           @endphp
-                           <small class="badge badge-warning"><i class="far fa-clock"></i> {{
-
-                               $dateDiff
-                           
-                           }}</small>
-                         @endif
-                         <!-- General tools such as edit or delete-->
-                         @if (session('role') !== 'admin')
-                         <div class="tools">
-                           <a href="/admin/bills/detail-payment/{{$el->id}}" target="_blank">
-                             <i class="fas fa-search"></i>
-                           </a>
-                         </div>
-                         @endif
-                       </li>
-                       
-                       @endforeach
-                     </ul>
-                   </div>
-                 </div>
-
-                 @endif
-                </div>
               </div>
             </div><!-- /.card-body -->
           </div>
           <!-- /.card -->
           
-
-           <!-- /.card -->
+          <!-- Teacher List -->
+          <div class="{{$listTeacher}} card bg-gradient-success">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="ion ion-clipboard mr-1"></i>
+                Teacher's
+              </h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+             <table class="table table-borderless">
+               <thead>
+                 <tr>
+                   <th scope="col">#</th>
+                   <th scope="col">Name</th>
+                   <th scope="col">Place Birth</th>
+                   <th scope="col">Register Date</th>
+                 </tr>
+               </thead>
+               <tbody>
+              
+               @foreach ($data->dataTeacher as $el)
+                 <tr>
+                   <td scope="row">{{$loop->index+1}}</td>
+                   <td>{{$el->name}}</td>
+                   <td>{{$el->place_birth}}</td>
+                   <td>{{date('d/m/Y', strtotime($el->created_at))}}</td>
+                 </tr>
+               @endforeach  
+                 
+               </tbody>
+             </table>
+            </div>
+          </div>
+          <!-- /.card -->
          </section>
          <!-- right col -->
        </div>
