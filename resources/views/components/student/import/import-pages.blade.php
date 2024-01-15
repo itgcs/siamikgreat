@@ -31,7 +31,7 @@
                                         <h4 class="file-upload-image"></h4>
                                         <div class="image-title-wrap">
                                           <button type="button" onclick="removeUpload()" class="remove-image"><i class="fa-solid fa-trash fa-2xl" style="margin-bottom: 1em;"></i> <br> Remove <span class="image-title">Excel</span></button>
-                                          <button type="submit" role="button" onclick="upload()" class="upload-image"><i class="fa-solid fa-cloud-arrow-up fa-2xl fa-bounce" style="margin-bottom: 1em;"></i> <br> Post <span class="image-title">Excel</span></button>
+                                          <button type="submit" role="button" class="upload-image"><i class="fa-solid fa-cloud-arrow-up fa-2xl fa-bounce" style="margin-bottom: 1em;"></i> <br> Post <span class="image-title">Excel</span></button>
                                         </div>
                                       </div>
 
@@ -59,70 +59,6 @@
 
 
     <script>
-
-      function downloadTemplate() {
-        
-        Swal.fire({
-                    title: "Downloading Template",
-                    text: "This will close when the download is complete.",
-                    allowEscapeKey: false,
-                    allowOutsideClick: false,
-                    timerProgressBar: true,
-                    didOpen: () => {
-                        Swal.showLoading();
-                        window.location = `/admin/register/templates/students`;
-                        $.ajax({
-                                headers: {
-                                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
-                                        "content"
-                                    ),
-                                },
-                                accepts: {
-                                    mycustomtype: "application/x-some-custom-type",
-                                },
-                                url: `/admin/register/templates/students`,
-                                type: "GET",
-                                cache: false,
-                            })
-                            .then((res) => {
-
-                              Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: "Your file has been saved",
-                                showConfirmButton: false,
-                                timer: 1500
-                              });
-
-
-                              console.log(res);
-
-                               
-
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Oops...",
-                                    text: err.msg,
-                                    text: 'Make sure your internet remains stable!',
-                                    // footer: '<a href="">Why do I have this issue?</a>',
-                                });
-
-                                $('#re-send-mail').show();
-
-                            });
-                    },
-                })
-        
-
-      };
-
-
-      function upload() {
-
-      }
 
       function readURL(input) {
         
@@ -158,39 +94,45 @@
 
 
     </script>
-    <script src="{{asset("/js/file-upload.js")}}"></script>
 
-    @if (session('import_status') && session('import_status')['code'] == 200)
-        <script>
-          function succcessImport () {
-            console.log('success');
-            Swal.fire({
-              position: "top-end",
-              icon: "success",
-              title: "Your data has been saved",
-              showConfirmButton: false,
-              timer: 1500
-            });
-            
-            succcessImport();
-          }
-        </script>
-    @elseif (session('import_status'))
-        <script>
 
-          const msg = echo"session('import_status')['msg'];";
+    @php
+      $code = null;
+      $msg = null;
+      $session = session('import_status');
+      if($session){
 
-          function failedImport () {
-            console.log('failed');
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: msg,
-              footer: '<a href="#">Why do I have this issue?</a>'
-            });
-          }
-          failedImport();
-        </script>
+        $code = $session['code'];
+        $msg = $session['msg'];
+
+      }
+    @endphp
+
+    @if (session('import_status'))
+    
+    <script>
+      const code = "<?php echo $code; ?>";
+      const msg = "<?php echo $msg; ?>";
+      
+      if(code > 200) {
+        Swal.fire({
+          icon: "error",
+          title: "Validation errors",
+          text: msg,
+          footer: '<a href="#">Why do I have this issue?</a>'
+        });console.log('errors ' + msg);
+      } else {
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Your work has been saved",
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
+
+    </script>
+
     @endif
 </section>
 

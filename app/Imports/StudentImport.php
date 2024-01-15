@@ -125,14 +125,13 @@ class StudentImport implements ToCollection
                     if($validator->fails()){
 
                         info('masuk errors');
-                        info($validator->errors()->first());
+                        info('At line ' . $idx+1 .' '.$validator->errors()->first());
                         session()->flash('import_status', [ 
                             'code' => 400,
-                            'msg' => $validator->errors()->first(),
+                            'msg' => 'At line ' . $idx+1 .' '.$validator->errors()->first(),
                         ]);
                         DB::rollBack();
                         return;
-
                     }
 
                     $var = Student::orderBy('id', 'desc')->first();
@@ -213,15 +212,15 @@ class StudentImport implements ToCollection
                     }
                 }
                 
+                DB::commit();
+    
+                info("success");
+    
+                session()->flash('import_status', [ 
+                    'code' => 200,
+                    'msg' => 'success',
+                ]);
             }
-            DB::commit();
-
-            info("success");
-
-            session()->flash('import_status', [ 
-                'code' => 200,
-                'msg' => 'success',
-            ]);
 
         } catch (Exception $th) {
 

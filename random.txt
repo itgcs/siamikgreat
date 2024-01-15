@@ -1,12 +1,36 @@
-07.00 - 09.00 = fix bug at status invoice.
-09.00 - 10.00 = create logic resend email to parent.
-10.00 - 11.00 = create loading ui for resent email.
-11.00 - 13.25 = trial and error resend email and fix bug resend email.
-13.25 - 14.25 = Ishoma.
-14.25 - 15.00 = add migration new column is_paid and is_change for indetify tpye emails.
-15.00 - 16.00 = fix bug email type pakets, books, and uniform.
+Daily Report 08/01/2024
+- create ui export bill
+- handle query laravel excel
+- handle array json encode to excel format in collection
+- handle collection array export bill
+- handle xampp dev pendencies excel
 
 
-https://www.billdu.com/invoice-template/profession-graphic-design-pdf/
-logo past due https://freeimage.host/i/JBn6n2V
-logo sekolah https://freeimage.host/i/JBnPNVa
+Daily Report 09/01/2024
+- create model & controller export bill
+- handle error laravel excel query and try use query orm laravel.
+- redirect value array to class excel report
+- handle styling excel
+
+
+Daily Report 10/01/2024
+- handle styleing border,font size, font family, font colour, border
+- handle merge for grade, student, and bill
+- trial and error value
+
+Daily Report 11/01/2024
+- create model & controller import student
+- create ui import student 
+- handle data validation for excel
+
+Daily Report 12/01/2024
+- create template excel
+- try upload data.
+- try data with validation error.
+- trial and error import excel.
+
+Daily Report 13/01/2024
+- fix bug when import data undifined
+- create migration for rules between accouting and admin
+- create rules bill databse between accounting and admin
+- trial and error routing and user interface

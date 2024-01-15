@@ -44,9 +44,7 @@ class Import extends Controller
                 return dd($validator->errors());
             }
 
-            $file = $request->file('import_student');
-
-            Excel::import(new StudentImport, $request->file('import_student'));
+            $event = Excel::import(new StudentImport, $request->file('import_student'));
 
             return redirect('/admin/register/imports')->with('status', 'success');
 
