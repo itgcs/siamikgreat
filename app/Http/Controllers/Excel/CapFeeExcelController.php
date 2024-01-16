@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\NullableType;
 
 class CapFeeExcelController extends Controller
 {
@@ -30,54 +31,26 @@ class CapFeeExcelController extends Controller
         ->join('bills', 'bills.student_id', '=', 'students.id')
         ->join('grades', 'grades.id', '=', 'students.grade_id')
         ->where('bills.type', 'Capital Fee')
-        ->whereBetween('bills.created_at', [$this->start, $this->end])
+        ->whereBetween('bills.deadline_invoice', [$this->start, $this->end])
         ->orderBy('students.grade_id', 'asc')
         ->orderBy('students.name', 'asc')
+        ->orderBy('bills.id', 'asc')
         ->get();
 
         $s_id = null;
         $start_col = 2;
+        $end_student = 0;
         
         $g_id = null;
         $start_g = 2;
+        $end_grade = 0;
 
-        $b_start = null;
-        $unique_b = [];
+        $start_installment = null;
+        $end_installment = 0;
+        $unique_installment = [];
 
         foreach($capFee as $idx => $bill){
     
-
-            if (count($capFee) === $idx+1) {
-
-                $bill->student_id == $s_id ?
-                    array_push($student_id, [$start_col, $idx+2]) :
-                   ( 
-                    array_push($student_id, [$start_col, $idx+1]) &&
-                    array_push($student_id, [$idx+2, $idx+2])
-                   );
-
-            } else if($s_id && $bill->student_id != $s_id) {
-                array_push($student_id, [$start_col, $idx+1]);
-                $start_col=$idx+2;
-            }
-
-            if(count($capFee) === $idx+1) {
-                $bill->grade_id == $g_id ?
-                    array_push($grade_id, [$start_g, $idx+2]) :
-                   ( 
-                    array_push($grade_id, [$start_g, $idx+1]) &&
-                    array_push($grade_id, [$idx+2, $idx+2])
-                   );
-
-            } else if($g_id && $bill->grade_id != $g_id) {
-                array_push($grade_id, [$start_g, $idx+1]);
-                $start_g=$idx+2;
-            }
-
-            $g_id = (int)$bill->grade_id;
-            $s_id = (int)$bill->student_id;
-
-            if(!in_array($bill->id, $unique_b)){
 
             $obj = (object) [
                 'no_invoice' => '#' . str_pad((string)$bill->id,8,"0", STR_PAD_LEFT),
@@ -95,46 +68,129 @@ class CapFeeExcelController extends Controller
                 'status' => $bill->paidOf? "Lunas": "Belum lunas",
             ];
 
-            $start = $this->start;
-            $end = $this->end;
-
-            $bill_relation = Bill::with(['bill_installments'])
-            ->where('id', $bill->id)->first();
             
-            if($bill_relation->installment) {
+            if(!in_array($bill->id, $unique_installment)) {
 
-                $b_start = $idx+2;
-                foreach($bill_relation->bill_installments as $key => $installment) {
-                    
-                    $obj = (object) [
-                        'no_invoice' => '#' . str_pad((string)$installment->id,8,"0", STR_PAD_LEFT),
-                        'grades' => $bill->grade_name . ' ' . $bill->grade_class,
-                        'name' => $bill->name,
-                        'type' => $installment->type,
-                        'installment' => $installment->installment? $installment->installment . ' Installments/Month' : "Cash",
-                        'created_at' => date('Y-m-d', strtotime($installment->created_at)),
-                        'deadline_invoice' => $installment->deadline_invoice,
-                        'total' => $this->currencyToIdr($installment->amount),
-                        'dp' => $installment->dp? $this->currencyToIdr($installment->dp) : "",
-                        'charge' => $installment->charge? $this->currencyToIdr($installment->charge) : "",
-                        'amount'=> $installment->installment? $this->currencyToIdr($installment->amount_installment) : $this->currencyToIdr($installment->amount),
-                        'paid_date' => $installment->paid_date,
-                        'status' => $installment->paidOf? "Lunas": "Belum lunas",
-                    ];
-                    
+                $start_date = $this->start;
+                $end_date = $this->end;
+                
+                $installment = Bill::with(['bill_installments' => function ($query) use($start_date, $end_date) {
+                    $query->whereDate('deadline_invoice', '>=', $start_date)->whereDate('deadline_invoice', '<=', $end_date)->get();
+                 }])->where('id', $bill->id)->first();
+
+                if(sizeof($installment->bill_installments) > 0) {
+
+                    foreach($installment->bill_installments as $val) {
+
+                        $start_installment = $idx+2;
+
+                        if (count($capFee) === $end_student+1) {
+
+                            $bill->student_id == $s_id ?
+                                array_push($student_id, [$start_col, $end_student+2]) :
+                               ( 
+                                array_push($student_id, [$start_col, $end_student+1]) &&
+                                array_push($student_id, [$end_student+2, $end_student+2])
+                               );
+            
+                        } else if($s_id && $bill->student_id != $s_id) {
+                            array_push($student_id, [$start_col, $end_student+1]);
+                            $start_col=$end_student+2;
+                        }
+            
+                        if(count($capFee) === $end_grade+1) {
+                            $bill->grade_id == $g_id ?
+                                array_push($grade_id, [$start_g, $end_grade+2]) :
+                               ( 
+                                array_push($grade_id, [$start_g, $end_grade+1]) &&
+                                array_push($grade_id, [$end_grade+2, $end_grade+2])
+                               );
+            
+                        } else if($g_id && $bill->grade_id != $g_id) {
+                            array_push($grade_id, [$start_g, $end_grade+1]);
+                            $start_g=$end_grade+2;
+                        }
+            
+                        $g_id = (int)$bill->grade_id;
+                        $s_id = (int)$bill->student_id;
+        
+                        
+                        $obj = (object) [
+                            'no_invoice' => '#' . str_pad((string)$val->id,8,"0", STR_PAD_LEFT),
+                            'grades' => $bill->grade_name . ' ' . $bill->grade_class,
+                            'name' => $bill->name,
+                            'type' => $val->type,
+                            'installment' => $val->installment? $val->installment . ' Installments/Month' : "Cash",
+                            'created_at' => date('Y-m-d', strtotime($val->created_at)),
+                            'deadline_invoice' => $val->deadline_invoice,
+                            'total' => $this->currencyToIdr($val->amount),
+                            'dp' => $val->dp? $this->currencyToIdr($val->dp) : "",
+                            'charge' => $val->charge? $this->currencyToIdr($val->charge) : "",
+                            'amount'=> $val->installment? $this->currencyToIdr($val->amount_installment) : $this->currencyToIdr($val->amount),
+                            'paid_date' => $val->paid_date,
+                            'status' => $val->paidOf? "Lunas": "Belum lunas",
+                        ];
+                        
+                        
+                        array_push($capFeeFormated, $obj);
+                        array_push($unique_installment, $val->id);
+                        
+                        $end_student++;
+                        $end_grade++;
+                        $end_installment++;
+                    }
+
+
+                    array_push($installment_id, [$start_installment, $end_installment+1]);
+
+
+                } else {
+
+                    if (count($capFee) === $end_student+1) {
+
+                        $bill->student_id == $s_id ?
+                            array_push($student_id, [$start_col, $end_student+2]) :
+                           ( 
+                            array_push($student_id, [$start_col, $end_student+1]) &&
+                            array_push($student_id, [$end_student+2, $end_student+2])
+                           );
+        
+                    } else if($s_id && $bill->student_id != $s_id) {
+                        array_push($student_id, [$start_col, $end_student+1]);
+                        $start_col=$end_student+2;
+                    }
+        
+                    if(count($capFee) === $end_grade+1) {
+                        $bill->grade_id == $g_id ?
+                            array_push($grade_id, [$start_g, $end_grade+2]) :
+                           ( 
+                            array_push($grade_id, [$start_g, $end_grade+1]) &&
+                            array_push($grade_id, [$end_grade+2, $end_grade+2])
+                           );
+        
+                    } else if($g_id && $bill->grade_id != $g_id) {
+                        array_push($grade_id, [$start_g, $end_grade+1]);
+                        $start_g=$end_grade+2;
+                    }
+        
+                    $g_id = (int)$bill->grade_id;
+                    $s_id = (int)$bill->student_id;
+
                     array_push($capFeeFormated, $obj);
-                    array_push($unique_b, $installment->id);
+                    array_push($unique_installment, $bill->id);
+
+                    $end_student++;
+                    $end_grade++;
+                    $end_installment++;
+                
+                    
+                
                 }
-                
-                array_push($installment_id, [$b_start, $b_start+$key]);
-                
-            } else {
-
-                array_push($capFeeFormated, $obj);
-                array_push($unique_b, $bill->id);
 
             }
-            }
+            
+            
+            
         }
 
         

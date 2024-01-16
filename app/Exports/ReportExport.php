@@ -42,7 +42,7 @@ class ReportExport implements WithMultipleSheets, WithProperties
         $capFee = $capFee->index();
         $matFee = new MaterialFeeController($getYearFrom);
         $matFee = $matFee->index();
-        $package = new PackageController($getYearFrom);
+        $package = new PackageController($date_start, $date_end);
         $package = $package->index();
 
         array_push($sheets, new InvoicePerMonthSheet(array_values($capFee->data), $getYearFrom, "Capital Fee", $capFee->student_id, $capFee->grade_id, $capFee->installment_id));
@@ -87,11 +87,11 @@ class ReportExport implements WithMultipleSheets, WithProperties
             
         $dateFormated = Carbon::create($year, $month, 1);
         info('start ' . $dateFormated);
-        return $dateFormated->startOfMonth()->format('Y-m-d h:i:s');
+        return $dateFormated->startOfMonth()->format('Y-m-d');
     } 
     
     public function endDateFormat(int $month, int $year) {
         $dateFormated = Carbon::create($year, $month, 1);
-        return $dateFormated->endOfMonth()->format('Y-m-d h:i:s');
+        return $dateFormated->endOfMonth()->format('Y-m-d');
     }
 }
