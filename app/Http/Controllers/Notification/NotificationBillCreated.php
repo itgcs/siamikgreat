@@ -314,6 +314,7 @@ class NotificationBillCreated extends Controller
     {
         try {
            //sementara gabisa kirim email push array dulu
+           
   
            $data = Student::with([
               'bill' => function($query)  {
@@ -339,6 +340,7 @@ class NotificationBillCreated extends Controller
                  ->where('paidOf', false);
            })
            ->get();
+
    
            foreach ($data as $student) {
               

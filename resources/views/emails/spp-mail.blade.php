@@ -415,12 +415,11 @@
                                                                 $textWa = 'Saya sudah melakukan pembayaran '. $mailData['bill'][0]->type .' dengan nomer invoice %23'.$id.' untuk '. $mailData['student']->name . ', dan beserta bukti transfer yang saya kirim melalui wa ini dengan nominal sebesar Rp. ' . number_format($total,0,',','.');
                                                             @endphp
                                                                 <td align="center"
-                                                                    style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                                                    <div
-                                                                       style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:15px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
-                                                                       Untuk melakukan pembayaran silahkan kirim ke rekening <span id="copy-text" style="color:#f08922;">12312312312</span> dengan nama rekening 
-                                                                       <span id="copy-text" style="color:#f08922;">Great Crystal School</span>. kirim dengan nominal yang sesuai kemudian kirim bukti pembayaran ke 
-                                                                       <a style="text-decoration:none;color:#f08922;" href="/wa.me/+628113115984?text={{str_replace(' ', '%20', $textWa)}}">+62 811 3115 984</a></div>
+                                                                style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                                <div
+                                                                   style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:15px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
+                                                                   Untuk pembayaran bisa di transfer ke <b>Rek BCA <span id="copy-text" style="color:#f08922;">5190878998</span> an <span id="copy-text" style="color:#f08922;">YP Sumber Daya Sukses Makmur</span></b>. Mohon memberikan bukti transfer jika sudah  melakukan pembayaran ke 
+                                                                   <a style="text-decoration:none;color:#f08922;" href="/wa.me/+628113115984?text={{str_replace(' ', '%20', $textWa)}}">+62 811 3115 984</a>, Terima kasih</div>
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -476,7 +475,6 @@
                                             <td align="center"
                                                 style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                         
-                                                <img align="center" border="0" src="https://iili.io/JBnPNVa.png" alt="Logo" title="Logo" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 134px;" width="134"/>
                                                         
 
                                                 <div         
