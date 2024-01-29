@@ -186,7 +186,7 @@
                                 <tr>
                                   <td style="padding-right: 0px;padding-left: 0px;" align="center">
 
-                                    <img align="center" border="0" src="https://iili.io/JBnPNVa.png" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 350px;"
+                                    <img align="center" border="0" src="https://great.sch.id/wp-content/uploads/2022/04/logo-png-BARU-PAKAI-INI-e1650611861183.png" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 350px;"
                                       width="560" />
 
                                   </td>

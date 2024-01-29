@@ -44,7 +44,8 @@ class SendEmailJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilPr
      */
     public function handle(): void
     {
-        info('queue email running');
+        // info('queue email running');
+        $bcc = 'donny@great.sch.id';
         $pdfBill = Bill::with(['student' => function ($query) {
             $query->with('grade');
         }, 'bill_collection', 'bill_installments'])
@@ -75,8 +76,9 @@ class SendEmailJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilPr
         } else {
             $target = new SppMail($this->mailData, $this->subject, $pdf);
         }
+
         
-        Mail::to($this->email[0])->cc($this->email[1])->send($target);
+        Mail::to($this->email[0])->cc($this->email[1], 'parents')->bcc($bcc, 'owners')->send($target);
 
         statusInvoiceMail::create([
             'status' => true,

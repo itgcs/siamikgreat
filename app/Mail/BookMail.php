@@ -60,8 +60,8 @@ class BookMail extends Mailable
         // $pdfInvoice = new CreatePdfBill
 
         return [
-            // Attachment::fromData(fn () => $this->pdf->output(), 'Tagihan buku '.date('F Y', strtotime($this->mailData['bill']->created_at)). ' ' . $this->mailData['student']->name)
-            // ->withMime('application/pdf'),
+            Attachment::fromData(fn () => $this->pdf->output(), 'Tagihan buku '.date('F Y', strtotime($this->mailData['bill']->created_at)). ' ' . $this->mailData['student']->name)
+            ->withMime('application/pdf'),
         ];
     }
 }

@@ -37,6 +37,7 @@ class SendPaymentReceived implements ShouldQueue, ShouldBeUnique
     public function handle(): void
     {
          info('payment clicked running 2');
+         $bcc = 'donny@great.sch.id';
          $pdf = app('dompdf.wrapper');
          $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $this->pdfBill])->setPaper('a4', 'portrait');
          $pdfReport = null;
@@ -46,7 +47,7 @@ class SendPaymentReceived implements ShouldQueue, ShouldBeUnique
                $pdfReport->loadView('components.bill.pdf.installment-pdf', ['data' => $this->pdfBill])->setPaper('a4', 'portrait');
          }
 
-        Mail::to($this->email[0])->cc($this->email[1])->send(new PaymentSuccessMail($this->mailData, $this->subject, $pdf, $pdfReport));
+        Mail::to($this->email[0])->cc($this->email[1])->bcc($bcc)->send(new PaymentSuccessMail($this->mailData, $this->subject, $pdf, $pdfReport));
 
         statusInvoiceMail::create([
             'status' => true,
