@@ -16,7 +16,7 @@
                                 @csrf
                                 @method('POST')
                                     <div class="file-upload">
-                                      <button class="download-template-btn" type="button" onclick="downloadTemplate()">
+                                      <button class="download-template-btn" type="button" id="download-template">
                                         Download Template
                                       </button>
 
@@ -60,6 +60,36 @@
 
     <script>
 
+
+         $("body").on("click", "#download-template", function (event) {
+        event.preventDefault();
+        console.log("terklik");
+        window.location.href='/admin/register/templates/students';
+        
+               //  $.ajax({
+               //      headers: {
+               //          "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+               //              "content"
+               //          ),
+               //      },
+               //      accepts: {
+               //          mycustomtype: "application/x-some-custom-type",
+               //      },
+               //      url: `/admin/register/templates/students`,
+               //      type: "GET",
+               //      cache: false,
+               //  })
+               //      .then((res) => {
+               //          console.log('terdonwload!');
+               //      })
+               //      .catch((err) => {
+               //          Swal.fire({
+               //              icon: "error",
+               //              title: "Oops...",
+               //              text: "Something went wrong!",
+               //          });
+               //      });
+            });
       function readURL(input) {
         
           if (input.files && input.files[0]) {

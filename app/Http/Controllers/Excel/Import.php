@@ -58,7 +58,7 @@ class Import extends Controller
     public function downloadTemplate() : BinaryFileResponse {
         try {
             //code...
-            return response()->download(public_path('downloads/Register_students.xlsx'));
+            return response()->download(public_path('downloads/import_student.xlsx'));
 
         } catch (Exception $err) {
             return dd($err);

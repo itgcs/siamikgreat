@@ -19,20 +19,33 @@ class StudentImport implements ToCollection
 
     public function collection(Collection $row)
     {
-        
-        try {
-            //code...
-            DB::beginTransaction();
-
-            if($row[0][0] !== 'Male') {
+       
+       try {
+          //code...
+          
+          if($row[0][0] !== 'Male') {
+               DB::beginTransaction();
                 
-                foreach($row as $idx => $reg) {
+               foreach($row as $idx => $reg) {
 
                 if($idx >= 1 && $reg[0]) {
 
-                        $grade = explode(" - ",$reg[4]);
+                     $grade = explode(" - ",$reg[4]);
+                     
+                     
+                     $grade_id = Grade::where('name', $grade[0])->where('class', $grade[1])->first('id');
+                     //Lakukan validasi 
 
-                        $grade_id = Grade::where('name', $grade[0])->where('class', $grade[1])->first('id')->id;
+                     if(!$grade_id) {
+                        info('At line ' . $idx+1 .' grade not found!');
+                        session()->flash('import_status', [ 
+                            'code' => 400,
+                            'msg' => 'At line ' . $idx+1 .' grade not found!',
+                        ]);
+                        return;
+                     }
+
+                     $grade_id = $grade_id->id;
                         
                         $data = [
                             'name' => $reg[0],
