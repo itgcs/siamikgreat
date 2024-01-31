@@ -62,33 +62,9 @@
 
 
          $("body").on("click", "#download-template", function (event) {
-        event.preventDefault();
-        console.log("terklik");
-        window.location.href='/admin/register/templates/students';
-        
-               //  $.ajax({
-               //      headers: {
-               //          "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
-               //              "content"
-               //          ),
-               //      },
-               //      accepts: {
-               //          mycustomtype: "application/x-some-custom-type",
-               //      },
-               //      url: `/admin/register/templates/students`,
-               //      type: "GET",
-               //      cache: false,
-               //  })
-               //      .then((res) => {
-               //          console.log('terdonwload!');
-               //      })
-               //      .catch((err) => {
-               //          Swal.fire({
-               //              icon: "error",
-               //              title: "Oops...",
-               //              text: "Something went wrong!",
-               //          });
-               //      });
+            event.preventDefault();
+            console.log("terklik");
+            window.location.href='/admin/register/templates/students';
             });
       function readURL(input) {
         

@@ -186,7 +186,7 @@
                                 <tr>
                                   <td style="padding-right: 0px;padding-left: 0px;" align="center">
 
-                                    <img align="center" border="0" src="https://great.sch.id/wp-content/uploads/2022/04/logo-png-BARU-PAKAI-INI-e1650611861183.png" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 350px;"
+                                    <img align="center" border="0" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fteachin.id%2Fcontent%2Fuploads%2Fphotos%2F2019%2F08%2Fa088874ec8d5dcbb729d2175e47fb08a.png&f=1&nofb=1&ipt=c3ae2572ac061d92b772c8affe4b6abd499e0b203461f80ff06ea1b1f69cf1d1&ipo=images" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 350px;"
                                       width="560" />
 
                                   </td>
