@@ -97,7 +97,7 @@ class NotificationBillCreated extends Controller
                      array_push($array_email, $el->email);
                      // Mail::to($el->email)->send(new SppMail($mailData, "Tagihan SPP " . $data[$idx]->name.  " bulan ini, ". date('F Y') ." sudah dibuat.", $pdf));
                   }
-                  dispatch(new SendEmailJob($array_email, 'SPP', $mailData, "Tagihan SPP " . $data[$idx]->name.  " bulan ini, ". date('F Y') ." sudah dibuat.", $mailData['bill'][0]->id));
+                  dispatch(new SendEmailJob($array_email, 'SPP', $mailData, "Pemberitahuan Tagihan Monthly Fee " .  " ". date('F Y') .".", $mailData['bill'][0]->id));
 
                } catch (Exception) {
                      
@@ -587,6 +587,8 @@ class NotificationBillCreated extends Controller
                  ->where('paidOf', false);
            })
            ->get();
+
+         //   return $data;
            
            foreach ($data as $student) {
               
@@ -626,7 +628,7 @@ class NotificationBillCreated extends Controller
                   //   Mail::to($parent->email)->send(new SppMail($mailData, "Tagihan ". $pdfBill->type ." " . $student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.", $pdf));
                  }
 
-                 dispatch(new SendEmailJob($array_email, $createBill->type, $mailData, "Tagihan ". $createBill->type ." " . $student->name.  " bulan ini, ". date('F Y') ." sudah dibuat.", $createBill->id));
+                 dispatch(new SendEmailJob($array_email, $createBill->type, $mailData, "Pemberitahuan Tagihan ". $createBill->type . " ". date('F Y') .".", $createBill->id));
   
                  statusInvoiceMail::create([
                     'status' =>true,

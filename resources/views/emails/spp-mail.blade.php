@@ -116,7 +116,7 @@
                                                         <tr>
                                                             <td style="width:300px;">
                                                                 <img height="auto"
-                                                                    src="https://great.sch.id/wp-content/uploads/2022/04/logo-png-BARU-PAKAI-INI-e1650611861183.png"
+                                                                    src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fteachin.id%2Fcontent%2Fuploads%2Fphotos%2F2019%2F08%2Fa088874ec8d5dcbb729d2175e47fb08a.png&f=1&nofb=1&ipt=c3ae2572ac061d92b772c8affe4b6abd499e0b203461f80ff06ea1b1f69cf1d1&ipo=images"
                                                                     style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;"
                                                                     width="75" />
                                                             </td>
@@ -133,6 +133,11 @@
                 </tbody>
             </table>
         </div>
+
+        @php
+           $checkType = $mailData['bill'][0]->type == "SPP" || strtolower($mailData['bill'][0]->type) == 'shadow teacher'? true : false;
+           $type = $mailData['bill'][0]->type == "SPP"? "Monthly Fee" : $mailData['bill'][0]->type;
+        @endphp
 
         <div style="background:#fbfbfb;background-color:#fbfbfb;margin:0px auto;max-width:600px;">
             <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
@@ -171,7 +176,8 @@
                                                                         style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:20px;font-weight:400;line-height:30px;text-align:left;color:#333333;">
                                                                         <h1
                                                                             style="margin: 0; font-size: 24px; line-height: normal; font-weight: 700;">
-                                                                            Tagihan {{$mailData['bill'][0]->type}}</h1>
+                                                                            Pemberitahuan Tagihan {{$checkType ? 
+                                                                            $type . ' ' . date('F Y', strtotime($mailData['bill'][0]->deadline_invoice)): $mailData['bill'][0]->type}}</h1>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -188,43 +194,45 @@
                                                             <tr>
                                                                 @php
                                                                 date_default_timezone_set('Asia/Jakarta');
-                                                                $dateString = date('l, d F Y, H:i:s');
+                                                                $dateString = date('F Y', strtotime($mailData['bill'][0]->deadline_invoice));
                                                                 $date = date('d/m/Y');
-                                                                $dateInvoice = date('t/m/Y');
                                                                 @endphp
 
                                                                 <td align="left"
                                                                     style="font-size:0px;padding:10px 25px;word-break:break-word;">
-
-
+                                                                    <div
+                                                                    style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
+                                                                        <p>Dear Great Parents,</p>
+                                                                    </div>
                                                                     @if ($mailData['past_due'])
                                                                     <div
                                                                         style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
                                                                         <p style="margin: 0;">
                                                                             {{ 
-                                                                            'Dear '.$mailData['name'].', tagihan anda untuk '. $mailData['student']->name . ' sudah lewat jatuh tempo' }}
-                                                                        </p>
+                                                                            'Kami informasikan tagihan '.$type.' untuk ' .
+                                                                            $mailData['student']->name . ' ' .
+                                                                            $dateString . ' sudah lewat jatuh tempo:' }}</p>
                                                                     </div>
+                                                                    
                                                                     @else
                                                                     <div
                                                                         style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
+                                                                        @if ($checkType)
                                                                         <p style="margin: 0;">
                                                                             {{ 
-                                                                            'Dear '.$mailData['name'].', tagihan '.$mailData['bill'][0]->type.' untuk ' .
-                                                                            $mailData['student']->name . ' pada ' .
-                                                                            $dateString . ' telah
-                                                                            berhasil dibuat.' }}</p>
+                                                                            'Kami informasikan tagihan '.$type.' untuk ' .
+                                                                            $mailData['student']->name . ' ' .
+                                                                            $dateString . ' adalah sebagai berikut:' }}</p>
+                                                                        @else
+                                                                        <p style="margin: 0;">
+                                                                            {{ 
+                                                                            'Kami informasikan tagihan untuk '. $mailData['bill'][0]->name . ' ' .
+                                                                            $dateString . ' adalah sebagai berikut:' }}</p>
+                                                                        @endif
+
                                                                     </div>
 
                                                                     @endif
-
-                                                                    <div
-                                                                    style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:16px;font-weight:400;line-height:20px;text-align:left;color:#333333;">
-                                                                        <p>Mohon selesaikan pembayaran untuk tagihan Anda.</p>
-                                                                    </div>
-
-
-
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -306,7 +314,7 @@
                                                                                                             style="color: #a7a7a7;font-size: 14px;line-height: 14px;">
                                                                                                             × 1 </span> --}}
 
-                                                                                                         {{$item->subject}}
+                                                                                                         {{$type}}
                                                                                                     </p>
                                                                                                 </td>
                                                                                                 <td align="right"
@@ -410,6 +418,18 @@
                                                                     </td>
                                                                 </tr>
                                                             {{-- @endif --}}
+                                                            @if ($mailData['bill'][0]->type == 'SPP')
+                                                                
+                                                            <tr>
+                                                                <td align="center"
+                                                                style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                                <div
+                                                                style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:15px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
+                                                                <b>Pembayaran setelah tanggal 10 setiap bulannya akan dikenakan denda sebesar Rp.100.000</b>   
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            @endif
                                                             <tr>
                                                             @php
                                                                 $textWa = 'Saya sudah melakukan pembayaran '. $mailData['bill'][0]->type .' dengan nomer invoice %23'.$id.' untuk '. $mailData['student']->name . ', dan beserta bukti transfer yang saya kirim melalui wa ini dengan nominal sebesar Rp. ' . number_format($total,0,',','.');
@@ -418,8 +438,21 @@
                                                                 style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                                                 <div
                                                                    style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:15px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
-                                                                   Untuk pembayaran bisa di transfer ke <b>Rek BCA <span id="copy-text" style="color:#f08922;">5190878998</span> an <span id="copy-text" style="color:#f08922;">YP Sumber Daya Sukses Makmur</span></b>. Mohon memberikan bukti transfer jika sudah  melakukan pembayaran ke 
-                                                                   <a style="text-decoration:none;color:#f08922;" href="/wa.me/+628113115984?text={{str_replace(' ', '%20', $textWa)}}">+62 811 3115 984</a>, Terima kasih</div>
+                                                                   Pembayaran bisa dilakukan melalui transfer ke Rekening <b>BCA <span id="copy-text" style="color:#f08922;">5190878998</span></div>
+                                                                <div
+                                                                   style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:15px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
+                                                                   an <span id="copy-text" style="color:#f08922;">YP Sumber Daya Sukses Makmur</span></b>.</div>
+                                                                </td>
+                                                            </tr>
+                                                            @php
+                                                                $textWa = 'Saya sudah melakukan pembayaran '. $mailData['bill'][0]->type .' dengan nomer invoice %23'.$id.' untuk '. $mailData['student']->name . ', dan beserta bukti transfer yang saya kirim melalui wa ini dengan nominal sebesar Rp. ' . number_format($total,0,',','.');
+                                                            @endphp
+                                                            <tr>
+                                                                <td align="center"
+                                                                style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                                <div
+                                                                   style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:15px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
+                                                                   Mohon mengirimkan bukti pembayaran dengan click link dibawah ini.</div>
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -442,6 +475,14 @@
                                                                             cursor: pointer;
                                                                             " >Kirim Bukti Transfer</a>
                                                                         </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td align="center"
+                                                                    style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                                    <div
+                                                                       style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:15px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
+                                                                       Terimakasih.</div>
                                                                     </td>
                                                                 </tr>
                                                         </tbody>

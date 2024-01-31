@@ -23,7 +23,7 @@ use PDO;
 
 class NotificationPastDue extends Controller
 {
-    public function cronChargePastDue($type = 'Capital Fee', $charge = true)
+    public function cronChargePastDue($type = 'SPP', $charge = false)
     {
       DB::beginTransaction();
         try {
@@ -106,7 +106,16 @@ class NotificationPastDue extends Controller
   
                  try {
                     //code...
-                     $subs = $charge? "Tagihan " . $bill->type . " ". $student->name ." terkena charge karena sudah melewati jatuh tempo" : "Tagihan " . $bill->type . " " . $student->name ." sudah melewati jatuh tempo";
+
+                    $bill_type = $bill->type;
+
+                    if($bill->type == "SPP") {
+                     $bill_type = "Monthly Fee";
+                    } else if($bill->type == "Book") {
+                     $bill_type = "Material Fee";
+                    }
+
+                     $subs = $charge? "Pemberitahuan Tagihan " . $bill->type . " terkena charge karena sudah melewati jatuh tempo" : "Tagihan " . $bill->type . " " . $student->name ." sudah melewati jatuh tempo";
 
                      $array_email = [];
 
