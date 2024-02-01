@@ -51,7 +51,7 @@ Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin
 Route::get('/logout', [UserController::class, 'logout']);
 Route::get('/counter', Counter::class);
 
-Route::get('send-mail', [NotificationBillCreated::class, 'feeRegister']);
+Route::get('send-mail', [NotificationBillCreated::class, 'book']);
 
 Route::middleware(['auth.login'])->prefix('/admin')->group(function () {
 

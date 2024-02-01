@@ -285,7 +285,7 @@ class NotificationBillCreated extends Controller
                         $mailData['name'] = $parent->name;
                      }
                      array_push($array_email, $parent->email);
-                      return view('emails.fee-regis-mail')->with('mailData', $mailData);
+                     //  return view('emails.fee-regis-mail')->with('mailData', $mailData);
                   }
 
                dispatch(new SendEmailJob($array_email, 'capital fee', $mailData, $subject, $createBill->id));
@@ -340,7 +340,6 @@ class NotificationBillCreated extends Controller
                  ->where('paidOf', false);
            })
            ->get();
-
    
            foreach ($data as $student) {
               
@@ -371,7 +370,7 @@ class NotificationBillCreated extends Controller
                      }
 
                      array_push($array_email, $parent->email);
-                  //   return view('emails.book-mail')->with('mailData', $mailData);
+                    return view('emails.book-mail')->with('mailData', $mailData);
                   //   Mail::to($parent->email)->send(new BookMail($mailData, "Tagihan Buku " . $student->name. " sudah dibuat.", $pdf));
                   }
 
