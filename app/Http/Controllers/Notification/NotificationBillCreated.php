@@ -172,7 +172,7 @@ class NotificationBillCreated extends Controller
                 ];
                  
                     
-               $subject = $createBill->installment? "Tagihan Paket " . $student->name.  " bulan ini, ". date('F Y') ." sudah dibuat." : "Tagihan Paket " . $student->name. " sudah dibuat.";
+               $subject = $createBill->installment? "Pemberitahuan Tagihan Package " . $student->name.  " ". date('F Y') ."." : "Pemberitahuan Tagihan Package " . $student->name. ".";
                  
                try {
 
@@ -185,7 +185,7 @@ class NotificationBillCreated extends Controller
                         $mailData['name'] = $parent->name;
                      }
                      array_push($array_email, $parent->email);
-                     //  return view('emails.paket-mail')->with('mailData', $mailData);
+                      return view('emails.paket-mail')->with('mailData', $mailData);
                   }
 
                dispatch(new SendEmailJob($array_email, 'paket', $mailData, $subject, $mailData['bill'][0]->id));
