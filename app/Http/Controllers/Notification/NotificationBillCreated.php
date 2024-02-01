@@ -185,7 +185,7 @@ class NotificationBillCreated extends Controller
                         $mailData['name'] = $parent->name;
                      }
                      array_push($array_email, $parent->email);
-                      return view('emails.paket-mail')->with('mailData', $mailData);
+                     //  return view('emails.paket-mail')->with('mailData', $mailData);
                   }
 
                dispatch(new SendEmailJob($array_email, 'paket', $mailData, $subject, $mailData['bill'][0]->id));
@@ -272,7 +272,7 @@ class NotificationBillCreated extends Controller
                     'is_paid' => false,
                  ];
   
-               $subject = $createBill->installment? "Tagihan Capital Fee " . $student->name.  " bulan ini, ". date('F Y') ." sudah dibuat." : "Tagihan Capital Fee " . $student->name. " sudah dibuat.";
+               $subject = $createBill->installment? "Pemeberitahuan Tagihan Capital Fee " . $student->name.  " ". date('F Y') ."." : "Tagihan Capital Fee " . $student->name. ".";
   
                try {
                   
@@ -285,7 +285,7 @@ class NotificationBillCreated extends Controller
                         $mailData['name'] = $parent->name;
                      }
                      array_push($array_email, $parent->email);
-                     //  return view('emails.fee-regis-mail')->with('mailData', $mailData);
+                      return view('emails.fee-regis-mail')->with('mailData', $mailData);
                   }
 
                dispatch(new SendEmailJob($array_email, 'capital fee', $mailData, $subject, $createBill->id));

@@ -504,6 +504,14 @@
                                                                         </div>
                                                                     </td>
                                                                 </tr>
+                                                                <tr>
+                                                                    <td align="center"
+                                                                    style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                                                    <div
+                                                                    style="font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:15px;font-weight:400;line-height:20px;text-align:center;color:#616161;">
+                                                                    Terimakasih.</div>
+                                                                    </td>
+                                                                </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
