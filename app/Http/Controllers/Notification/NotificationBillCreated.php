@@ -370,7 +370,7 @@ class NotificationBillCreated extends Controller
                      }
 
                      array_push($array_email, $parent->email);
-                    return view('emails.book-mail')->with('mailData', $mailData);
+                  //   return view('emails.book-mail')->with('mailData', $mailData);
                   //   Mail::to($parent->email)->send(new BookMail($mailData, "Tagihan Buku " . $student->name. " sudah dibuat.", $pdf));
                   }
 
