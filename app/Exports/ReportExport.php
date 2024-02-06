@@ -40,7 +40,7 @@ class ReportExport implements WithMultipleSheets, WithProperties
 
         $capFee = new CapFeeExcelController($date_start, $date_end);
         $capFee = $capFee->index();
-        $matFee = new MaterialFeeController($getYearFrom);
+        $matFee = new MaterialFeeController($date_start, $date_end);
         $matFee = $matFee->index();
         $package = new PackageController($date_start, $date_end);
         $package = $package->index();
@@ -53,7 +53,7 @@ class ReportExport implements WithMultipleSheets, WithProperties
             
             for ($month = $getMonthFrom; ($year == $getYearTo? $month<=$getMonthTo : $month <= 12); $month++) {
                     
-                $monthFee = new MonthFeeController($getYearFrom);
+                $monthFee = new MonthFeeController($date_start, $date_end);
                 $indexMonth = $monthFee->index($month);
                 $data = $indexMonth->data;
                 $map_grade = $indexMonth->grade_id;

@@ -10,11 +10,12 @@ use Illuminate\Support\Facades\DB;
 class MonthFeeController extends Controller
 {
 
-    private $year;
+    private $date_start, $date_end;
 
-    public function __construct(int $year)
+    public function __construct(string $date_start, string $date_end)
     {
-        $this->year = $year;
+        $this->date_start = $date_start;
+        $this->date_end = $date_end;
     }
 
     public function index($month) {
@@ -23,12 +24,11 @@ class MonthFeeController extends Controller
         $grade_id = [];
 
         $monthFee = DB::table('students')->select('bills.id', 'grades.name as grade_name', 'grades.class as grade_class','students.name','bills.type','bills.created_at'
-        ,'bills.deadline_invoice','bills.amount','bills.charge', 'bills.amount','bills.paid_date','bills.paidOf', 'students.id as student_id', 'grades.id as grade_id')
+        ,'bills.deadline_invoice','bills.amount','bills.charge', 'bills.amount','bills.paid_date','bills.paidOf', 'students.id as student_id', 'grades.id as grade_id', 'bills.number_invoice')
         ->join('bills', 'bills.student_id', '=', 'students.id')
         ->join('grades', 'grades.id', '=', 'students.grade_id')
         ->where('bills.type', 'SPP')
-        ->whereMonth('bills.created_at', $month)
-        ->whereYear('bills.created_at', $this->year)
+        ->whereBetween('bills.deadline_invoice', [$this->date_start, $this->date_end])
         ->orderBy('students.grade_id', 'asc')
         ->orderBy('students.name', 'asc')
         ->get();
@@ -55,7 +55,7 @@ class MonthFeeController extends Controller
             $g_id = (int)$bill->grade_id;
 
             $obj = (object) [
-                'no_invoice' => '#' . str_pad((string)$bill->id,8,"0", STR_PAD_LEFT),
+                'no_invoice' => '#' . $bill->number_invoice,
                 'grades' => $bill->grade_name . ' ' . $bill->grade_class,
                 'name' => $bill->name,
                 'type' => "Monthly Fee",

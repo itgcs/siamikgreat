@@ -261,7 +261,7 @@
                                                                                         style="color:#333333;font-family:Roboto,Mulish, Muli, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;">
                                                                                         <tbody>
                                                                                             @php
-                                                                                                $id = str_pad((string)$mailData['bill']->id, 8, "0", STR_PAD_LEFT)
+                                                                                                $id = $mailData['bill']->number_invoice;
                                                                                             @endphp
 
                                                                                             <tr>

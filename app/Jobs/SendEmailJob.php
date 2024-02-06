@@ -45,7 +45,7 @@ class SendEmailJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilPr
     public function handle(): void
     {
         // info('queue email running');
-        $bcc = 'donny@great.sch.id';
+        $bcc = 'achmad.sofyan@great.sch.id';
         $pdfBill = Bill::with(['student' => function ($query) {
             $query->with('grade');
         }, 'bill_collection', 'bill_installments'])

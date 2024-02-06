@@ -26,8 +26,27 @@ class Bill extends Model
       'amount_installment',
       'created_by',
       'created_at',	
-      'updated_at'	
+      'updated_at',
+      'number_invoice',	
     ]; 
+
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            // Perform actions before creating
+            date_default_timezone_set('Asia/Jakarta');
+            $year = date('Y');
+            $month = date('m');
+            $number = Bill::where('number_invoice', "LIKE", '%'.$year.'%')->count();
+
+            $model->number_invoice = $year."/".$month."/".str_pad($number+1, 4, '0', STR_PAD_LEFT);
+
+        });
+    }
+
     
    public function student()
    {

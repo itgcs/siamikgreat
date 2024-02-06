@@ -27,7 +27,7 @@ class CapFeeExcelController extends Controller
 
         $capFee = DB::table('students')->select('bills.id', 'grades.name as grade_name', 'grades.class as grade_class','students.name','bills.type','bills.installment','bills.created_at'
         ,'bills.deadline_invoice','bills.amount','bills.dp','bills.charge', 'bills.amount','bills.paid_date','bills.paidOf', 
-        'bills.amount_installment', 'students.id as student_id', 'grades.id as grade_id')
+        'bills.amount_installment', 'students.id as student_id', 'grades.id as grade_id', 'bills.number_invoice')
         ->join('bills', 'bills.student_id', '=', 'students.id')
         ->join('grades', 'grades.id', '=', 'students.grade_id')
         ->where('bills.type', 'Capital Fee')
@@ -53,7 +53,7 @@ class CapFeeExcelController extends Controller
     
 
             $obj = (object) [
-                'no_invoice' => '#' . str_pad((string)$bill->id,8,"0", STR_PAD_LEFT),
+                'no_invoice' => '#' . $bill->number_invoice,
                 'grades' => $bill->grade_name . ' ' . $bill->grade_class,
                 'name' => $bill->name,
                 'type' => $bill->type,
@@ -116,7 +116,7 @@ class CapFeeExcelController extends Controller
         
                         
                         $obj = (object) [
-                            'no_invoice' => '#' . str_pad((string)$val->id,8,"0", STR_PAD_LEFT),
+                            'no_invoice' => '#' . $val->number_invoice,
                             'grades' => $bill->grade_name . ' ' . $bill->grade_class,
                             'name' => $bill->name,
                             'type' => $val->type,

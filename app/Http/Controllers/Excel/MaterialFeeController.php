@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\DB;
 
 class MaterialFeeController extends Controller
 {
-    protected $year;
+    protected $start, $end;
 
-    public function __construct(int $year) {
-        $this->year = $year;
+    public function __construct(string $start, string $end) {
+        $this->start = $start;
+        $this->end = $end;
     }
 
     public function index(): object {
@@ -21,10 +22,11 @@ class MaterialFeeController extends Controller
 
         $materialFee = DB::table('students')->select('bills.id', 'grades.name as grade_name', 'grades.class as grade_class','students.name','bills.type','bills.installment','bills.created_at'
         ,'bills.deadline_invoice','bills.amount','bills.dp','bills.charge', 'bills.amount','bills.paid_date','bills.paidOf', 
-        'bills.amount_installment', 'students.id as student_id', 'grades.id as grade_id')
+        'bills.amount_installment', 'students.id as student_id', 'grades.id as grade_id', 'bills.number_invoice')
         ->join('bills', 'bills.student_id', '=', 'students.id')
         ->join('grades', 'grades.id', '=', 'students.grade_id')
         ->where('bills.type', 'Book')
+        ->whereBetween('bills.deadline_invoice', [$this->start, $this->end])
         ->orderBy('students.grade_id', 'asc')
         ->orderBy('students.name', 'asc')
         ->get();
@@ -51,7 +53,7 @@ class MaterialFeeController extends Controller
 
 
             $obj = (object) [
-                'no_invoice' => '#' . str_pad((string)$bill->id,8,"0", STR_PAD_LEFT),
+                'no_invoice' => '#' . $bill->number_invoice,
                 'grades' => $bill->grade_name . ' ' . $bill->grade_class,
                 'name' => $bill->name,
                 'type' => 'Material Fee',

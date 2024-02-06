@@ -1,36 +1,5 @@
-Daily Report 08/01/2024
-- create ui export bill
-- handle query laravel excel
-- handle array json encode to excel format in collection
-- handle collection array export bill
-- handle xampp dev pendencies excel
-
-
-Daily Report 09/01/2024
-- create model & controller export bill
-- handle error laravel excel query and try use query orm laravel.
-- redirect value array to class excel report
-- handle styling excel
-
-
-Daily Report 10/01/2024
-- handle styleing border,font size, font family, font colour, border
-- handle merge for grade, student, and bill
-- trial and error value
-
-Daily Report 11/01/2024
-- create model & controller import student
-- create ui import student 
-- handle data validation for excel
-
-Daily Report 12/01/2024
-- create template excel
-- try upload data.
-- try data with validation error.
-- trial and error import excel.
-
-Daily Report 13/01/2024
-- fix bug when import data undifined
-- create migration for rules between accouting and admin
-- create rules bill databse between accounting and admin
-- trial and error routing and user interface
+Adding seeder number invoice
+adding migration number invoice
+replace all invoice numbers in all fields that display billing
+added auto-generate invoice number in the model.
+update production server.

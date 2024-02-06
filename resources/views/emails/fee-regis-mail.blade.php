@@ -294,7 +294,7 @@
                                                                         style="background-color:#f6f6f6;margin-top:15px;margin-bottom:15px;" width="100%">
                                                                         <tbody>
                                                                             @php
-                                                                                $id = str_pad((string)$mailData['bill'][0]->id, 8, "0", STR_PAD_LEFT)
+                                                                                $id = $mailData['bill'][0]->number_invoice;
                                                                             @endphp
                                                                             <tr>
                                                                                 <td align="left" class="receipt-table"

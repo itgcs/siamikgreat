@@ -364,7 +364,7 @@
                                                                             <th colspan="2"
                                                                                 align="left"
                                                                                 style="padding-bottom: 10px; color: #7e7e7e; font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase;">
-                                                                                Invoice: {{$mailData['bill'][0]->id}}
+                                                                                Invoice: {{$mailData['bill'][0]->number_invoice}}
                                                                             </th>
                                                                             <th align="right"
                                                                                 style="padding-bottom: 10px; color: #7e7e7e; font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase;">
@@ -376,7 +376,7 @@
                                                                             <th colspan="2"
                                                                                 align="left"
                                                                                 style="padding-bottom: 10px; color: #7e7e7e; font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase;">
-                                                                                Date : {{date('d/m/Y');}}
+                                                                                Date : {{date('d/m/Y', strtotime($mailData['bill'][0]->paid_date));}}
                                                                             </th>
                                                                             <th align="right"
                                                                                 style="padding-bottom: 10px; color: #7e7e7e; font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase;">
