@@ -193,7 +193,7 @@
                             </td>
                             <td align="right" style="padding: 0">
     
-                                <p><b>#{{str_pad((string)$data->id,8,"0", STR_PAD_LEFT)}}</b></p>
+                                <p><b>{{$data->number_invoice}}</b></p>
     
                             </td>
                         </tr>

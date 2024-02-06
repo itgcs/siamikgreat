@@ -26,7 +26,7 @@
                     <p class="mb-0">Nomor Invoice</p>
                   </div>
                   <div class="col-sm-8">
-                    <p class="text-muted mb-0">#{{str_pad((string)$data->id, 8, "0", STR_PAD_LEFT)}}</p>
+                    <p class="text-muted mb-0">{{$data->number_invoice}}</p>
                   </div>
                </div>
                <hr>

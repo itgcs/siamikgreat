@@ -168,14 +168,9 @@ class BillController extends Controller
             }
             
             if ($form->search) {
-               
-               if(is_numeric($form->search)) {
-                  $data = $data->orWhere('id', (int)$form->search);
-               } else {
                   $data = $data->whereHas('student', function($query) use ($form) {
-                     $query->where('name', 'LIKE' ,'%'.$form->search.'%');
+                     $query->where('name', 'LIKE' ,'%'.$form->search.'%')->orWhere('number_invoice', 'LIKE' ,'%'.$form->search.'%')->orderBy('id');
                   });
-               }
             }
             
             

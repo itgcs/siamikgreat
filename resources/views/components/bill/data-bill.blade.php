@@ -240,7 +240,7 @@
                 @foreach ($data as $el)
                 <tr id={{'index_student_' . $el->id}}>
                     <td>
-                        {{ $loop->index+1 }}
+                        {{ $el->number_invoice }}
                     </td>
                     <td class="text-center">
                         <a>

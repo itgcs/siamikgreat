@@ -158,7 +158,7 @@
                     </td>
                     <td class="text-center">
                         <a>
-                            #{{str_pad((string)$el->bill->id, 8, "0", STR_PAD_LEFT)}}
+                            {{$el->bill->number_invoice}}
                         </a>
                     </td>
                     <td class="text-center">

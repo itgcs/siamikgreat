@@ -28,7 +28,7 @@
                     <p class="mb-0">Number Invoice</p>
                   </div>
                   <div class="col-sm-8">
-                    <a target="_blank" href="/admin/bills/detail-payment/{{$data->bill->id}}" class="text-muted mb-0">#{{str_pad($data->bill->id, 8, '0', STR_PAD_LEFT)}}</a>
+                    <a target="_blank" href="/admin/bills/detail-payment/{{$data->bill->id}}" class="text-muted mb-0">#{{$data->bill->number_invoice}}</a>
                   </div>
                 </div>
                 <hr>
