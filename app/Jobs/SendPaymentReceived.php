@@ -37,7 +37,7 @@ class SendPaymentReceived implements ShouldQueue, ShouldBeUnique
     public function handle(): void
     {
          info('payment clicked running 2');
-         $bcc = 'achmad.sofyan@great.sch.id';
+         $bcc = 'donny@great.sch.id';
          $pdf = app('dompdf.wrapper');
          $pdf->loadView('components.bill.pdf.paid-pdf', ['data' => $this->pdfBill])->setPaper('a4', 'portrait');
          $pdfReport = null;
