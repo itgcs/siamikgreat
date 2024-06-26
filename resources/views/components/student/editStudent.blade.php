@@ -7,7 +7,11 @@
             <div class="col-md-12">
                 <!-- general form elements -->
                 <div>
-                    <form method="POST" action={{ route('student.update', $data->student->id) }}
+                    @if (session('role') == 'superadmin')
+                    <form method="POST" action={{ route('student.update_super', $data->student->id) }}
+                    @elseif (session('role') == 'admin')    
+                    <form method="POST" action={{ route('student.update_admin', $data->student->id) }}
+                    @endif
                         enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
@@ -292,6 +296,7 @@
                         }
                         @endphp
 
+                        @if(empty($data->student->relationship))
                         <div class="card card-dark">
                             <div class="card-header">
                                 <h3 class="card-title">Father's</h3>
@@ -731,6 +736,8 @@
                             </div>
                         </div>
                         <!-- /.card-body Mother -->
+                        @else
+                        @endif
 
                         <div class="card card-dark">
                             <div class="card-header">

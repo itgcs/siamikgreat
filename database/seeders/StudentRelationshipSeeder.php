@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Brothers_or_sister;
 use App\Models\Relationship;
 use App\Models\Student;
-use App\Models\Student_relation;
+use App\Models\Student_relationship;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
 class StudentRelationshipSeeder extends Seeder
@@ -23,6 +23,7 @@ class StudentRelationshipSeeder extends Seeder
         foreach ($data as $value) {
             $student = Student::create([
                "is_active"=> $value->student->is_active,
+               "user_id"=> $value->student->user_id,
                "unique_id"=> $value->student->unique_id,
                "name"=> $value->student->name,
                "grade_id"=> $value->student->grade_id,
@@ -41,6 +42,7 @@ class StudentRelationshipSeeder extends Seeder
             foreach ($value->student->relationship as $el)
             {
                $relationship = Relationship::create([
+                  "user_id"=> 4,
                   "name"=> $el->name,
                   "relation"=> $el->relation,
                   "place_birth"=> $el->place_birth,
@@ -54,30 +56,16 @@ class StudentRelationshipSeeder extends Seeder
                   "mobilephone"=> $el->mobilephone,
                   "id_or_passport"=> $el->id_or_passport,
                   "nationality"=> $el->nationality,
-                  "phone"=> $el->phone,
                   "email"=> $el->email,
                   "created_at"=> now(),
                   "updated_at"=> now(),
                ]);
 
-               Student_relation::create([
+               student_relationship::create([
                   'student_id' => $student->id,
                   'relation_id' => $relationship->id,
                ]);
             }
         }
-
-
-        foreach ($value->brother_or_sisters as $el) {
-               
-               Brothers_or_sister::create([
-                  "name"=> $el->name,
-                  "date_birth"=> $el->date_birth,
-                  "grade"=> $el->grade,
-                  "student_id"=> $el->student_id,
-                  "created_at"=> now(),
-                  "updated_at"=> now()
-            ]);
-         }
     }
 }

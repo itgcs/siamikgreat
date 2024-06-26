@@ -12,7 +12,11 @@
                               </div>
                               <!-- /.card-header -->
                               <!-- form start -->
-                              <form action="{{route('import.register')}}" method="post" enctype="multipart/form-data">
+                              @if (session('role') == 'superadmin')
+                                <form action="{{route('import.register_super')}}" method="post" enctype="multipart/form-data">
+                              @elseif (session('role') == 'admin')
+                                <form action="{{route('import.register_admin')}}" method="post" enctype="multipart/form-data">
+                              @endif
                                 @csrf
                                 @method('POST')
                                     <div class="file-upload">
@@ -59,13 +63,11 @@
 
 
     <script>
-
-
-         $("body").on("click", "#download-template", function (event) {
-            event.preventDefault();
-            console.log("terklik");
-            window.location.href='/admin/register/templates/students';
-            });
+      $("body").on("click", "#download-template", function (event) {
+        event.preventDefault();
+        console.log("terklik");
+        window.location.href='/superadmin/register/templates/students';
+        });
       function readURL(input) {
         
           if (input.files && input.files[0]) {

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
+use App\Models\Roles;
+
 class IsLogin
 {
     /**
@@ -24,7 +26,9 @@ class IsLogin
         }
 
         $user = Auth::user();
-        session()->flash('role', $user->role);
+        $nameRoles = Roles::where('id',$user->role_id)->first();
+        session()->put('role', $nameRoles->name);
+
         return $next($request);
     }
 }

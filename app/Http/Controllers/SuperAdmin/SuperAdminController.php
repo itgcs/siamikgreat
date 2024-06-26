@@ -4,12 +4,18 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Roles;
+use App\Models\Teacher;
+use App\Models\Student;
+use App\Models\Relationship;
+
 use Illuminate\Http\Request;
-use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
+use Exception;
 
 
 
@@ -45,10 +51,9 @@ class SuperAdminController extends Controller
          $user = Auth::user();
 
          $data = User::where('id', '!=', '1')->where('id', '!=', $user->id)->get();
+
          return view('components.super.data-user')->with('data', $data);
-
-         
-
+      
       } catch (Exception $err) {
          
          return dd($err);
@@ -134,8 +139,22 @@ class SuperAdminController extends Controller
             'page' => 'user',
             'child' => 'database user',
          ]);
+
+         $dataRole = DB::table('roles')->select('id', 'name')->get()->toArray();
+         $dataTeacher = DB::table('teachers')->select('id', 'name', 'user_id')->get()->toArray();
+         $dataStudent = Student::get();
+         $dataParent = Relationship::get();
+
+         $data = [
+            'dataRole' => $dataRole,
+            'dataTeacher' => $dataTeacher,
+            'dataStudent' => $dataStudent,
+            'dataParent' => $dataParent,
+         ];
+
+         // dd($data);
          
-         return view('components.super.register-user');
+         return view('components.super.register-user')->with('data', $data);
       } catch (Exception $err) {
          return dd($err);
       }
@@ -150,36 +169,49 @@ class SuperAdminController extends Controller
             'page' => 'user',
             'child' => 'database user',
          ]);
-         $credentials = $request->only(['username', 'password', 'role']);
 
+         $credentials = [
+            'username' => $request->username,
+            'password' => $request->password,
+            'role_id' => $request->role,
+            'created_at' => now(),
+         ];
+            
+         // dd($credentials);
 
          $validator = Validator::make($credentials, [
             'username' => 'required|unique:users|string',
             'password' => 'required|min:5|string',
-            'role' => 'required|string|in:superadmin,admin,accounting'
          ]);
          
          if($validator->fails())
          {
-            return redirect('/admin/user/register-user')->withErrors($validator->messages())->withInput($credentials);
+            return redirect('/superadmin/users/register-user')->withErrors($validator->messages())->withInput($credentials);
          }
 
          if($request->password !== $request->reinputPassword)
          {
-            
-
             $error = [
                'password' => ['password does not match'],
                'reinputPassword' => ['password does not match']
             ];
-
-            return redirect('/admin/user/register-user')->withErrors($error)->withInput($credentials);
+            return redirect('/superadmin/users/register-user')->withErrors($error)->withInput($credentials);
          }
 
          User::create($credentials);
+         $idLastUser = DB::table('users')->latest('id')->first()->id;
+         // dd($idLastUser);
+
+         if($request->teacher != null){
+            Teacher::where('id', $request->teacher)->update(['user_id' => $idLastUser]);
+         }else if($request->student != null){
+            Student::where('id', $request->student)->update(['user_id' => $idLastUser]);
+         }else if($request->parent != null){
+            Relationship::where('id', $request->parent)->update(['user_id' => $idLastUser]);
+         }
          
          session()->flash('register.success');
-         return redirect('/admin/user');
+         return redirect('/superadmin/users');
       } catch (Exception $err) {
          return dd($err);
       }

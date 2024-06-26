@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Brothers_or_sister;
 use App\Models\Grade;
 use App\Models\Relationship;
 use App\Models\Student;
 use App\Models\Student_relation;
+use App\Models\Brother_or_sister;
+use App\Models\Roles;
+
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +22,7 @@ class StudentController extends Controller
 
       try {
          //code...
+
          session()->flash('page',  $page = (object)[
             'page' => 'students',
             'child' => 'database students',
@@ -48,8 +51,7 @@ class StudentController extends Controller
             $dataModel = new Student();
             
             $data = $dataModel->with('grade')
-            ->where('is_active', $status)
-            ->where('is_graduate', $is_graduate);
+            ->where('is_active', $status);
             
             if($form->search){
 
@@ -78,11 +80,10 @@ class StudentController extends Controller
          
          return view('components.student.tableStudent')->with('data', $data)->with('form', $form)->with('grades', $grades);
       } catch (Exception $err) {
-         //throw $th;
+         dd($err);
          return abort(500, 'Internal server error');
       }
    }
-
 
    public function detail($id){
       try {
@@ -91,32 +92,82 @@ class StudentController extends Controller
             'page' => 'students',
             'child' => 'database students',
          ]);
+
          //code...
-         $student = Student::with(['relationship', 'grade'])->where('unique_id', $id)->first();
-         
-         if(!DB::table('students')->where('unique_id', $id)->first())
+
+         if(session('role') == 'parent')
          {
-            return abort(404);
+            $idRelationship = Relationship::where('user_id', $id)->value('id');
+
+            $student = Student::join('student_relationships', 'students.id', '=', 'student_relationships.student_id')
+               ->join('users', 'users.id', '=', 'students.user_id')
+               ->where('student_relationships.relationship_id', $idRelationship) 
+               ->select('students.*', 'students.name as student_name', 'users.*')
+               ->first();
+
+            // dd($student);
+
+            $roleName = Roles::find($student->user->role_id)->name;
+            $brotherOrSister = Student::find($student->id);
+            
+            if($brotherOrSister != null){
+               $data = (object) [
+                  'student' => $student,
+                  'brother_or_sisters' => $brotherOrSister->brotherOrSister()->get(),
+                  'after_create' => false,
+                  'roleName' => $roleName,
+               ];
+            } else {
+               $data = (object) [
+                  'student' => $student,
+                  'brother_or_sisters' => [],
+                  'after_create' => false,
+                  'roleName' => $roleName,
+               ];
+            }
+
+            
+            // dd($data);
+         } 
+         else 
+         {
+            $student = Student::with(['relationship', 'grade', 'user'])->where('unique_id', $id)->first();
+         
+            if(!DB::table('students')->where('unique_id', $id)->first())
+            {
+               return abort(404);
+            }
+   
+            if($student->user != null){
+               $roleName = Roles::find($student->user->role_id)->name;
+            }
+            else{
+               $roleName = "";
+            }
+
+            $brotherOrSister = Student::find($student->id);
+   
+            $data = (object) [
+               'student' => $student,
+               'brother_or_sisters' => $brotherOrSister->brotherOrSister()->get(),
+               'after_create' => false,
+               'roleName' => $roleName,
+            ];
          }
-
-         $brotherOrSister = Student::find($student->id);
-         $data = (object) [
-            'student' => $student,
-            'brother_or_sisters' => $brotherOrSister->brotherOrSister()->get(),
-            'after_create' => false,
-         ];
-
+         
+      
          // return $data;
+         // dd($data);
          
          return view('components.student.detailStudent')->with('data', $data);
 
          
       } catch (Exception $err) {
          
-         return abort(500);
+         dd($err);
+         // return abort(500);
       }
    }
-
 
    public function edit($id)
    {
@@ -130,6 +181,7 @@ class StudentController extends Controller
          $student = Student::with(['relationship', 'grade'])->where('unique_id', $id)->first();
          $brotherOrSister = Student::find($student->id);
          $allGrade = Grade::orderBy('id', 'asc')->get();
+        
          
          $data = (object) [
             'student' => $student,
@@ -146,12 +198,10 @@ class StudentController extends Controller
       }
    }
 
-
    public function actionEdit(Request $request, $id)
    {
 
       DB::beginTransaction();
-
 
       session()->flash('preloader', true);
       session()->flash('page',  $page = (object)[
@@ -179,7 +229,6 @@ class StudentController extends Controller
             'date_exp' => $request->studentDate_exp ? $date_format->changeDateFormat($request->studentDate_exp) : null,
             // 'created_at' => $request->created_at ? date('Y-m-d H:i:s', strtotime($this->changeDateFormat($request->created_at))) : null,
          ];
-
          
          $rules = [
             'name' => $request->studentName,
@@ -245,9 +294,6 @@ class StudentController extends Controller
             'brotherOrSisterBirth_date5' => $request->brotherOrSisterBirth_date5? $date_format->changeDateFormat($request->brotherOrSisterBirth_date5) : null,
             'brotherOrSisterGrade5' => $request->brotherOrSisterGrade5,
          ];     
-
-         
-
 
          $credentialBrotherSister = [
             'brotherOrSisterName1' => $request->brotherOrSisterName1, 
@@ -328,7 +374,7 @@ class StudentController extends Controller
          if($dataId)
          {
                DB::rollBack();
-               return redirect('/admin/update/' . $student_unique_id)->withErrors(['id_or_passport' => 'Id or passport has been registered'])->withInput($rules);
+               return redirect('/superadmin/update/' . $student_unique_id)->withErrors(['id_or_passport' => 'Id or passport has been registered'])->withInput($rules);
          }
 
          if($request->nisn) 
@@ -339,7 +385,7 @@ class StudentController extends Controller
             if($dataNisn) 
             {
                DB::rollBack();
-               return redirect('/admin/update/' . $student_unique_id)->withErrors(['nisn' => 'nisn has been registered'])->withInput($rules);
+               return redirect('/superadmin/update/' . $student_unique_id)->withErrors(['nisn' => 'nisn has been registered'])->withInput($rules);
             }
          }
 
@@ -347,28 +393,103 @@ class StudentController extends Controller
          {
             DB::rollBack();
             // return $validator->messages();
-            return redirect('/admin/update/' . $student_unique_id)->withErrors($validator->messages())->withInput($rules);
+            return redirect('/superadmin/update/' . $student_unique_id)->withErrors($validator->messages())->withInput($rules);
          }
 
+         if($credentialBrotherSister)
+         {
+            if($request->brotherOrSisterName1)
+            {
+               $validatorBrotherOrSister1= Validator::make($rules, [
+                  'brotherOrSisterName1' => 'required|string',
+                  'brotherOrSisterBirth_date1' => 'required|string',
+                  'brotherOrSisterGrade1' => 'required|string',
+               ]);
+               if($validatorBrotherOrSister1->fails())
+               {
+                  DB::rollBack();
+                  return redirect('/superadmin/update/' . $student_unique_id)->withErrors($validator->messages())->withInput($rules);
+               }
+               if($request->brotherOrSisterName2)
+               {
+                  $validatorBrotherOrSister2= Validator::make($rules, [
+                     'brotherOrSisterName2' => 'required|string',
+                     'brotherOrSisterBirth_date2' => 'required|string',
+                     'brotherOrSisterGrade2' => 'required|string',
+                  ]);
+                  if($validatorBrotherOrSister2->fails())
+                  {
+                     DB::rollBack();
+                     return redirect('/superadmin/update/' . $student_unique_id)->withErrors($validator->messages())->withInput($rules);
+                  }
+                  if($request->brotherOrSisterName3)
+                  {
+                     $validatorBrotherOrSister3= Validator::make($rules, [
+                        'brotherOrSisterName3' => 'required|string',
+                        'brotherOrSisterBirth_date3' => 'required|string',
+                        'brotherOrSisterGrade3' => 'required|string',
+                     ]);
+                     if($validatorBrotherOrSister3->fails())
+                     {
+                        DB::rollBack();
+                        return redirect('/superadmin/update/' . $student_unique_id)->withErrors($validator->messages())->withInput($rules);
+                     }
+                     if($request->brotherOrSisterName4)
+                     {
+                        $validatorBrotherOrSister4= Validator::make($rules, [
+                           'brotherOrSisterName4' => 'required|string',
+                           'brotherOrSisterBirth_date4' => 'required|string',
+                           'brotherOrSisterGrade4' => 'required|string',
+                        ]);
+                        if($validatorBrotherOrSister4->fails())
+                        {
+                           DB::rollBack();
+                           return redirect('/superadmin/update/' . $student_unique_id)->withErrors($validator->messages())->withInput($rules);
+                        }
+                        if($request->brotherOrSisterName5)
+                        {
+                           $validatorBrotherOrSister5= Validator::make($rules, [
+                              'brotherOrSisterName5' => 'required|string',
+                              'brotherOrSisterBirth_date5' => 'required|string',
+                              'brotherOrSisterGrade5' => 'required|string',
+                           ]);
+                           if($validatorBrotherOrSister5->fails())
+                           {
+                              DB::rollBack();
+                              return redirect('/superadmin/update/' . $student_unique_id)->withErrors($validator->messages())->withInput($rules);
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
 
+         // dd($credentialBrotherSister);
          Student::where('id', $id)->update($credentials);
          $relationshipPost = $this->handleRelationship($request, $id);
-         $brotherOrSisterPost = $this->handleBrotherOrSister($request, $id);
-
-
-         if(!$relationshipPost->status || !$brotherOrSisterPost->status) return $brotherOrSisterPost->error;
-
+         $brotherOrSisterPost = $this->handleBrotherOrSister($credentialBrotherSister, $id);
+         
+         // dd($brotherOrSisterPost);
+         // if(!$relationshipPost->status || !$brotherOrSisterPost->status) return $brotherOrSisterPost->error;
 
          DB::commit();
          
-         $student = Student::with('relationship')->where('id', $id)->first();
+         $student = Student::with(['relationship', 'grade', 'user'])->where('id', $id)->first();
          $brotherOrSister = Student::find($id);
 
+         if($student->user != null){
+            $roleName = Roles::find($student->user->role_id)->name;
+         }
+         else{
+            $roleName = "";
+         }
 
          $data = (object) [
             'student' => $student,
             'brother_or_sisters' => $brotherOrSister->brotherOrSister()->get(),
             'after_create' => true,
+            'roleName' => $roleName,
          ];
 
 
@@ -377,11 +498,11 @@ class StudentController extends Controller
          return view('components.student.detailStudent')->with('data', $data);
          
       } catch (Exception $err) {
+         dd($err);
          DB::rollBack();
          return abort(500, 'Internal server error !!!');
       }
    }
-
 
    private function handleRelationship($request, $id)
    {
@@ -453,40 +574,39 @@ class StudentController extends Controller
       }
    }
 
-
    private function handleBrotherOrSister($credentials, $id)
    {
       try {
 
-         Brothers_or_sister::where('student_id', $id)->delete();
-         $date_format = new RegisterController();
+         // dd($credentials);
+         Brother_or_sister::where('student_id', $id)->delete();
 
          $credentialsBrotherOrSister = [];
+         
+         if($credentials['brotherOrSisterName1'] && $credentials['brotherOrSisterBirth_date1'] && $credentials['brotherOrSisterGrade1'] !== null) 
+         {
+            array_push($credentialsBrotherOrSister, (array)['name' => $credentials['brotherOrSisterName1'], 'date_birth' => $this->changeDateFormat($credentials['brotherOrSisterBirth_date1']), 'grade' => $credentials['brotherOrSisterGrade1'], 'student_id' => $id]);
+         }
+         if($credentials['brotherOrSisterName2'] && $credentials['brotherOrSisterBirth_date2'] && $credentials['brotherOrSisterGrade2'] !== null)
+         {
+            array_push($credentialsBrotherOrSister, (array)['name' => $credentials['brotherOrSisterName2'], 'date_birth' => $this->changeDateFormat($credentials['brotherOrSisterBirth_date2']), 'grade' => $credentials['brotherOrSisterGrade2'], 'student_id' => $id]);
+         }
+         if($credentials['brotherOrSisterName3'] && $credentials['brotherOrSisterBirth_date3'] && $credentials['brotherOrSisterGrade3'] !== null)
+         {
+            array_push($credentialsBrotherOrSister, (array)['name' => $credentials['brotherOrSisterName3'], 'date_birth' => $this->changeDateFormat($credentials['brotherOrSisterBirth_date3']), 'grade' => $credentials['brotherOrSisterGrade3'], 'student_id' => $id]);
+         }
+         if($credentials['brotherOrSisterName4'] && $credentials['brotherOrSisterBirth_date4'] && $credentials['brotherOrSisterGrade4'] !== null)
+         {
+            array_push($credentialsBrotherOrSister, (array)['name' => $credentials['brotherOrSisterName4'], 'date_birth' => $this->changeDateFormat($credentials['brotherOrSisterBirth_date4']), 'grade' => $credentials['brotherOrSisterGrade4'], 'student_id' => $id]);
+         }
+         if($credentials['brotherOrSisterName5'] && $credentials['brotherOrSisterBirth_date5'] && $credentials['brotherOrSisterGrade5'] !== null)
+         {
+            array_push($credentialsBrotherOrSister, (array)['name' => $credentials['brotherOrSisterName5'], 'date_birth' => $this->changeDateFormat($credentials['brotherOrSisterBirth_date5']), 'grade' => $credentials['brotherOrSisterGrade5'], 'student_id' => $id]);
+         }
 
-         if($credentials->brotherOrSisterName1 && $credentials->brotherOrSisterBirth_date1 && $credentials->brotherOrSisterGrade1)
-         {
-            array_push($credentialsBrotherOrSister, (array)['name' => $credentials->brotherOrSisterName1, 'date_birth' => $date_format->changeDateFormat($credentials->brotherOrSisterBirth_date1), 'grade' => $credentials->brotherOrSisterGrade1, 'student_id' => $id]);
-         }
-         if($credentials->brotherOrSisterName2 && $credentials->brotherOrSisterBirth_date2 && $credentials->brotherOrSisterGrade2)
-         {
-            array_push($credentialsBrotherOrSister, (array)['name' => $credentials->brotherOrSisterName2, 'date_birth' => $date_format->changeDateFormat($credentials->brotherOrSisterBirth_date2), 'grade' => $credentials->brotherOrSisterGrade2, 'student_id' => $id]);
-         }
-         if($credentials->brotherOrSisterName3 && $credentials->brotherOrSisterBirth_date3 && $credentials->brotherOrSisterGrade3)
-         {
-            array_push($credentialsBrotherOrSister, (array)['name' => $credentials->brotherOrSisterName3, 'date_birth' => $date_format->changeDateFormat($credentials->brotherOrSisterBirth_date3), 'grade' => $credentials->brotherOrSisterGrade3, 'student_id' => $id]);
-         }
-         if($credentials->brotherOrSisterName4 && $credentials->brotherOrSisterBirth_date4 && $credentials->brotherOrSisterGrade4)
-         {
-            array_push($credentialsBrotherOrSister, (array)['name' => $credentials->brotherOrSisterName4, 'date_birth' => $date_format->changeDateFormat($credentials->brotherOrSisterBirth_date4), 'grade' => $credentials->brotherOrSisterGrade4, 'student_id' => $id]);
-         }
-         if($credentials->brotherOrSisterName5 && $credentials->brotherOrSisterBirth_date5 && $credentials->brotherOrSisterGrade5)
-         {
-            array_push($credentialsBrotherOrSister, (array)['name' => $credentials->brotherOrSisterName5, 'date_birth' => $date_format->changeDateFormat($credentials->brotherOrSisterBirth_date5), 'grade' => $credentials->brotherOrSisterGrade5, 'student_id' => $id]);
-         }
+         // dd($credentialsBrotherOrSister);
 
-         Brothers_or_sister::insert($credentialsBrotherOrSister);
-
-
+         Brother_or_sister::insert($credentialsBrotherOrSister);
 
          return (object)[
             'status' => true,
@@ -502,5 +622,9 @@ class StudentController extends Controller
       }
    }
 
+   public function changeDateFormat($date)
+   {
+      return \Carbon\Carbon::createFromFormat('Y-m-d', $date)->format('Y-m-d'); // Change the format according to your needs
+   }
                                       
 }

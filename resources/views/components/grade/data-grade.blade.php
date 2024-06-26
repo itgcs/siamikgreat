@@ -5,13 +5,12 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
 
-   <a type="button" href="{{url('/admin/grades/create')}}" class="btn btn-success btn mt-5 mx-2">
-         <i class="fa-solid fa-user-plus"></i>
-         </i>   
-         Add grade
-      </a>
+   <a type="button" href="{{ url('/' . session('role') . '/grades/create') }}" class="btn btn-success btn mt-5 mx-2">   <i class="fa-solid fa-user-plus"></i>
+      </i>   
+      Add grade
+   </a>
 
-    <div class="card card-dark mt-5">
+    <div class="card card-dark mt-2">
         <div class="card-header">
             <h3 class="card-title">Grades</h3>
 
@@ -28,16 +27,22 @@
                         <th style="width: 10%">
                            #
                         </th>
-                        <th style="width: 25%">
+                        <th style="width: 20%">
                            Grades
                         </th>
                         <th>
-                           Class teacher
+                           Total student
                         </th>
-                        <th style="width: 20%">
-                           Total students
+                        <th>
+                           Teacher Class
                         </th>
-                        <th style="width: 25%">
+                        <th>
+                           Total subject
+                        </th>
+                        <th>
+                           Total exam
+                        </th>
+                        <th style="width: 30%">
                         </th>
                     </tr>
                 </thead>
@@ -53,33 +58,46 @@
                            </a>
                         </td>
                         <td>
-                           @if ($el->teacher)
-                              
-                              <a  a href="/admin/teachers/detail/{{$el->teacher->unique_id}}">
-                                 {{$el->teacher->name}}
-                              </a>
-                           @else 
-                              <h6 style="color: red;">{{'Unknown'}}</h6>
-                           @endif
+                           <a>
+                                 {{$el->active_student_count}}
+                           </a>
                         </td>
                         <td>
-                           {{$el->active_student_count}}
+                           <a>
+                                 {{$el->active_teacher_count}}
+                           </a>
+                        </td>
+                        <td>
+                           <a>
+                                 {{$el->active_subject_count}}
+                           </a>
+                        </td>
+                        <td>
+                           {{$el->active_exam_count}}
                         </td>
                         
                         <td class="project-actions text-right toastsDefaultSuccess">
                            <a class="btn btn-primary btn"
-                              href="{{url('/admin/grades') . '/' . $el->id}}">
+                              href="{{url('/' . session('role') .'/grades') . '/' . $el->id}}">
                               <i class="fas fa-folder">
                               </i>
                               View
                            </a>
                            <a class="btn btn-info btn"
-                              href="{{url('/admin/grades') . '/edit/' . $el->id}}">
+                              href="{{url('/' . session('role') .'/grades') . '/edit/' . $el->id}}">
                               {{-- <i class="fa-solid fa-user-graduate"></i> --}}
                               <i class="fas fa-pencil-alt">
                               </i>
                               Edit
                            </a>
+                           @if (session('role') == 'superadmin')
+                           <a class="btn btn-danger btn"
+                              href="{{url('/' . session('role') .'/grades') . '/delete/' . $el->id}}">
+                              <i class="fas fa-trash">
+                              </i>
+                              Hapus
+                           </a>
+                           @endif
                         </td>
                     </tr>
 
@@ -115,12 +133,9 @@
 
       </script>
 
-  @endif
+   @endif
 
-
-  
-  
-  @if(session('after_update_grade')) 
+   @if(session('after_update_grade')) 
       <script>
      
       var Toast = Swal.mixin({
@@ -138,63 +153,7 @@
       }, 1500);
 
     
-    </script>
+      </script>
    @endif
-
-  @if(session('levelup'))
-  
-   @php
-      $gradePromotion = session('levelup')
-   @endphp
-      <script>
-
-      var grade = "{{ $gradePromotion }}"
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully level up students from grade ' + grade,
-      });
-      }, 1500);
-
-    
-    </script>
-   @endif
-
-   @if(session('graduate'))
-  
-      @php
-         $gradePromotion = session('graduate')
-      @endphp
-
-      <script>
-
-      var grade = "{{ $gradePromotion }}"
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully graduate students from grade ' + grade,
-      });
-      }, 1500);
-
-    
-    </script>
-   @endif
-
 
 @endsection

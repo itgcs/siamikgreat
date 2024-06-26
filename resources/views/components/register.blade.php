@@ -7,7 +7,11 @@
             <div class="col-md-12">
                 <!-- general form elements -->
                 <div>
-                    <form method="POST" action={{route('actionRegister')}}>
+                @if (session('role') == 'superadmin')
+                    <form method="POST" action={{route('actionRegisterSuper')}}>
+                @elseif (session('role') == 'admin')
+                    <form method="POST" action={{route('actionRegisterAdmin')}}>
+                @endif
                         @csrf
                         <div class="card card-secondary">
                             <div class="card-header">
@@ -26,6 +30,12 @@
                                             <p style="color: red">{{$errors->first('name')}}</p>
                                            @endif
                                     </div>
+
+                                    <input name="user_id" type="text" class="form-control d-none"
+                                        id="user_id" value="">
+                                        @if($errors->any())
+                                        <p style="color: red">{{$errors->first('user_id')}}</p>
+                                        @endif
 
                                     <div class="col-md-6">
                                         <label for="studentId_or_passport">ID/Passport Number</label>
@@ -841,91 +851,6 @@
                                  </div>
                         </div>
                      </div>
-
-                    <div class="card card-dark">
-                     <div class="card-header" style="background-color: #e85500">
-                         <h3 class="card-title">Capital Fee
-                         </h3>
-                     </div>
-                     <!-- /.card-header -->
-                     <!-- form start -->
-                     @php  
-                        $className = "d-none";
-                        if($errors->any()){
-                           if($errors->first('amount_monthly_fee')){
-                               $className = '';
-                           }
-                        }
-                    @endphp
-                     <div class="card-body">
-                         <div class="form-group row">
-
-                            <div class="col-md-4">
-                                <label for="amount">Amount <span style="color: red;">*</span></label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Rp.</span>
-                                    </div>
-                                    <input name="amount" type="text" class="form-control"
-                                    id="amount" placeholder="Enter amount capital fee" value="{{old('amount') ? number_format(old('amount'), 0, ',', '.') : ''}}" required>
-                                </div>
-                                @if($errors->any())
-                                         <p style="color: red">{{$errors->first('amount')}}</p>
-                                @endif
-                            </div>
-
-                            <div class="col-md-4">
-                                <label for="dp">DP</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Rp.</span>
-                                        </div>
-                                        <input name="dp" type="text" class="form-control"
-                                        id="dp" placeholder="Enter done payment" value="{{old('dp') ? number_format(old('dp'), 0, ',', '.') : ''}}">
-                                    </div>
-                                    @if($errors->any())
-                                        <p style="color: red">{{$errors->first('dp')}}</p>
-                                    @endif
-                            </div>
-
-                            <div class="col-md-4">
-                               <label for="installment">Installment / Month</label>
-                               <input name="installment" type="number" class="form-control"
-                               id="installment" placeholder="(Cicilan)" value="{{old('installment')}}" max="12" min="2">
-                            </div>
-                           </div>
-
-                           
-                           <span role="button" onclick="MonthlyFee()" class="text-primary {{$className? '' : 'd-none'}}" id="btnMonthlyFee">Add monthly fee</span>
-                        </div>
-                     </div>
-                     
-                    <div class="card card-dark {{$className}}" id="monthlyfee">
-                     <div class="card-header">
-                         <h3 class="card-title">Monthly Fee
-                         </h3>
-                     </div>
-                     <!-- /.card-header -->
-                     <!-- form start -->
-                     <div class="card-body">
-                         <div class="form-group row">
-
-                            <div class="col-md-12">
-                                <label for="amount_monthly_fee">Amount</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Rp.</span>
-                                    </div>
-                                    <input name="amount_monthly_fee" type="text" class="form-control"
-                                    id="amount_monthly_fee" placeholder="Enter amount monthly fee" value="{{old('amount_monthly_fee') ? number_format(old('amount_monthly_fee'), 0, ',', '.') : ''}}">
-                                </div>
-                                @if($errors->any())
-                                         <p style="color: red">{{$errors->first('amount_monthly_fee')}}</p>
-                                @endif
-                            </div>
-                           </div>
-                        </div>
-                     </div>
                  </div>
                  <!-- /.card-body Brother or sisters -->
                         
@@ -935,33 +860,11 @@
 
                         <!-- Button trigger modal -->
                         <div class="d-flex justify-content-end m-5">
-                        <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#exampleModalCenter">
+                        <button type="submit" class="btn btn-success btn-lg">
                             Register now
                         </button>
                     </div>
-                        
-                        <!-- Modal -->
-                        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLongTitle">Register student</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure want to register new students?
-                                    Make sure your paket grade has been updated !!!
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
-                                <button type="submit" class="btn btn-success">Yes register</button>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-                    </form>
+                </form>
 
                 </div>
                 <!-- /.card -->
@@ -980,40 +883,4 @@
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
-  @if ($errors->any())
-
-    @if($errors->first('paket'))
-
-    <script>
-
-
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 8000
-        });
-      
-
-           Toast.fire({
-              icon: 'error',
-              title: 'Invalid amount paket, please check the grade data payment first !!!',
-        });
-      
-    </script>
-
-    
-    @endif
-    @endif
-
-
-<script>
-
-    function MonthlyFee() {
-        document.getElementById("monthlyfee").classList.remove('d-none')
-        document.getElementById("btnMonthlyFee").classList.add('d-none')
-    }
-
-</script>
 @endsection

@@ -1,0 +1,302 @@
+@extends('layouts.admin.master')
+@section('content')
+
+<!-- Content Wrapper. Contains page content -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 mb-4">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    @if (session('role') == 'superadmin')
+                        <li class="breadcrumb-item"><a href="{{url('/superadmin/reports')}}">Reports</a></li>
+                    @elseif (session('role') == 'admin')
+                        <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
+                    @endif
+                    <li class="breadcrumb-item active" aria-current="page">Detail Acar</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <p class="text-xs text-bold">Academic Assessment Report</p>
+            <p class="text-xs">Semester : {{ session('semester') }}</p>
+            <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
+            <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</p>
+            <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
+        </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+        @if (session('role') == 'superadmin')
+            <form id="confirmForm" method="POST" action={{route('actionPostScoringAcarPrimary')}}>
+        @elseif (session('role') == 'admin')
+            <form id="confirmForm" method="POST" action={{route('actionAdminPostScoringAcarPrimary')}}>
+        @elseif (session('role') == 'teacher')
+            <form id="confirmForm" method="POST" action={{route('actionTeacherPostScoringAcarPrimary')}}>
+        @endif
+        @csrf
+
+        @if ($data['status'] == null)
+            <div class="row my-2">
+                <div class="input-group-append mx-2">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit ACAR</button>
+                </div>
+            </div>
+        @elseif ($data['status']->status != null && $data['status']->status == 1)       
+            <div class="row my-2">
+                <div class="input-group-append mx-2">
+                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
+                </div>
+            </div>  
+        @endif
+
+        <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
+            <thead>
+                <tr>
+                    <th rowspan="3" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
+                    <th rowspan="3" class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
+                    <th colspan="9" class="text-center" style="vertical-align : middle;text-align:center;">Major Subjects</th>
+                    <th colspan="7" class="text-center" style="vertical-align : middle;text-align:center;">Minor Subjects</th>
+                    <th colspan="13" class="text-center" style="vertical-align : middle;text-align:center;">Supplementary Subjects</th>
+                    <th class="text-center">Academic</th>
+                    <th rowspan="3" class="text-center" style="width: 25%;vertical-align : middle;text-align:center;">Comment</th>
+                </tr>
+                <tr>
+                    <!-- Major Subjects -->
+                    <td class="text-center" colspan="2">English</td>
+                    <td class="text-center" colspan="2">Chinese</td>
+                    <td class="text-center" colspan="2">Math</td>
+                    <td class="text-center" colspan="2">Science</td>
+                    <td class="text-center">Avg</td>
+                    <!-- END MAJOR SUBJECTS -->
+                    
+                    <!-- MINOR SUBJECTS -->
+                    <td class="text-center" colspan="2">PPKN</td>
+                    <td class="text-center" colspan="2">Religion</td>
+                    <td class="text-center" colspan="2">BI</td>
+                    <td class="text-center">Avg</td>
+                    <!-- END MINOR SUBJECTS -->
+                    
+                    <!-- SUPPLEMENTARY SUBJECTS -->
+                    <td class="text-center" colspan="2">PE</td>
+                    <td class="text-center" colspan="2">IT</td>
+                    <td class="text-center" colspan="2">GK</td>
+                    <td class="text-center" colspan="2">A/C</td>
+                    <td class="text-center" colspan="2">CB</td>
+                    <td class="text-center" colspan="2">HE</td>
+                    <td class="text-center">Avg</td>
+                    <!-- END SUPPLEMENTARY SUBJECTS -->
+
+                    <td class="text-center">Total</td>
+                </tr>
+
+                <tr>
+                    <!-- Major Subjects -->
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">70%</td>
+                    <!-- END MAJOR SUBJECTS -->
+                    
+                    <!-- MINOR SUBJECTS -->
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">20%</td>
+                    <!-- END MINOR SUBJECTS -->
+                    
+                    <!-- SUPPLEMENTARY SUBJECTS -->
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">10%</td>
+                    <!-- END SUPPLEMENTARY SUBJECTS -->
+
+                    <td class="text-center">100%</td>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (!empty($data['students']))
+                    @foreach ($data['students'] as $dt)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>  <!-- nomer -->
+                            <td>{{ $dt['student_name'] }}</td> <!-- name -->
+
+                            @php
+                                $subjects = [
+                                    3 => ['mks' => null, 'grs' => null], // English
+                                    1 => ['mks' => null, 'grs' => null], // Chinese
+                                    2 => ['mks' => null, 'grs' => null], // Math
+                                    5 => ['mks' => null, 'grs' => null], // Science
+                                    7 => ['mks' => null, 'grs' => null], // PPKN
+                                    20 => ['mks' => null, 'grs' => null], // Religion
+                                    4 => ['mks' => null, 'grs' => null], // Bhs.Indonesia
+                                    18 => ['mks' => null, 'grs' => null], // PE
+                                    6 => ['mks' => null, 'grs' => null], // IT
+                                    17 => ['mks' => null, 'grs' => null], // GK
+                                    15 => ['mks' => null, 'grs' => null], // A/C
+                                    16 => ['mks' => null, 'grs' => null], // CB
+                                    19 => ['mks' => null, 'grs' => null], // HE
+                                ];
+                            @endphp
+
+                            @foreach ($dt['scores'] as $score)
+                                @if (array_key_exists($score['subject_id'], $subjects))
+                                    @php
+                                        $subjects[$score['subject_id']]['mks'] = $score['final_score'];
+                                        $subjects[$score['subject_id']]['grs'] = $score['grades'];
+                                    @endphp
+                                @endif
+                            @endforeach
+
+                            @foreach ([3, 1, 2, 5] as $subject_id)
+                                <td class="text-center">{{ $subjects[$subject_id]['mks'] }}</td>
+                                <td class="text-center">{{ $subjects[$subject_id]['grs'] }}</td>
+                            @endforeach
+
+                            <td class="text-center">{{ $dt['percent_majorSubjects'] }}</td>
+
+                            @foreach ([7, 20, 4] as $subject_id)
+                                <td class="text-center">{{ $subjects[$subject_id]['mks'] }}</td>
+                                <td class="text-center">{{ $subjects[$subject_id]['grs'] }}</td>
+                            @endforeach
+
+                            <td class="text-center">{{ $dt['percent_minorSubjects'] }}</td>
+
+                            @foreach ([18, 6, 17, 15, 16, 19] as $subject_id)
+                                <td class="text-center">{{ $subjects[$subject_id]['mks'] }}</td>
+                                <td class="text-center">{{ $subjects[$subject_id]['grs'] }}</td>
+                            @endforeach
+
+                            <td class="text-center">{{ $dt['percent_supplementarySubjects'] }}</td>
+                            <td class="text-center">{{ $dt['total_score'] }}</td>
+                            <td class="project-actions text-right">
+                                <div class="input-group">
+                                    @if ($data['status'] == null)
+                                        <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $dt['comment'] ? '' : 'Write your comment' }}" value="{{ $dt['comment'] ?: '' }}" autocomplete="off" required>
+                                    @else 
+                                        {{ $dt['comment'] }}
+                                    @endif
+                                    <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $dt['student_id'] }}">
+                                    <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $dt['total_score'] }}">
+
+                                    @if ($data['status'] == null)
+                                    <div class="input-group-append">
+                                        <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
+                                            <i class="fas fa-pen"></i>
+                                            Edit
+                                        </a>
+                                    </div>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
+            </tbody>
+        </table>
+        <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">  
+        <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
+        <input name="class_teacher" type="number" class="form-control d-none" id="class_teacher" value="{{ $data['classTeacher']->teacher_id }}">  
+    </form>
+</div>
+</div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Acc ACAR</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to acc ACAR?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmAcarScoring">Yes, Acc ACAR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('confirmAcarScoring').addEventListener('click', function() {
+        // Mengambil semua input komentar
+        var comments = document.querySelectorAll('input[name="comment[]"]');
+        var allFilled = true;
+        
+        // Memeriksa setiap komentar apakah kosong atau tidak
+        comments.forEach(function(comment) {
+            if (comment.value.trim() === '') {
+                allFilled = false;
+                // Menambahkan kelas untuk memberikan highlight pada input yang kosong
+                comment.classList.add('is-invalid');
+            } else {
+                // Menghapus kelas jika input tidak kosong
+                comment.classList.remove('is-invalid');
+            }
+        });
+        
+        // Jika semua komentar terisi, submit form
+        if (allFilled) {
+            document.getElementById('confirmForm').submit();
+        } else {
+            // Menampilkan pesan peringatan
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'All comments must be filled before submitting the form!',
+            });
+        }
+    });
+</script>
+
+
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+@if(session('after_post_final_score'))
+<script>
+    var Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
+    setTimeout(() => {
+        Toast.fire({
+            icon: 'success',
+            title: 'Successfully post score academic assessment secondary report in the database.',
+        });
+    }, 1500);
+</script>
+@endif
+
+@endsection

@@ -7,12 +7,18 @@
             <div class="col-md-12">
                 <!-- general form elements -->
                 <div>
-                    <form method="POST" action={{route('actionUpdateTeacher', $data->id)}}>
+                    @if(session('role') == 'superadmin')
+                        <form method="POST" action={{route('actionSuperUpdateTeacher', $data->id)}}>
+                    @elseif(session('role') == 'admin')
+                        <form method="POST" action={{route('actionAdminUpdateTeacher', $data->id)}}>
+                    @elseif (session('role') == 'teacher')
+                        <form method="POST" action={{route('actionUpdateSelfTeacher', $data->id)}}>
+                    @endif
                         @csrf
                         @method('PUT')
                         <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Student</h3>
+                                <h3 class="card-title">Teacher</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
@@ -163,8 +169,6 @@
                                                    {{$last_education}}
                                              </option>
 
-                              
-
                                              @foreach($arrLast_education as $value)
 
                                              @if ($last_education !== $value)
@@ -218,11 +222,11 @@
                                 </div>
 
 
-                                 <div class="form-group row">
+                                <div class="form-group row">
                                     <div class="col-md-6">
                                         <label for="home_address">Home Address<span style="color: red">*</span></label>
 
-                                            <textarea required name="home_address" class="form-control" id="" cols="10" rows="3">{{old('home_address') ? old('home_address') : $data->home_address}}</textarea>
+                                        <textarea required name="home_address" class="form-control" id="" cols="10" rows="3">{{old('home_address') ? old('home_address') : $data->home_address}}</textarea>
                                         @if($errors->any())
                                         <p style="color: red">{{$errors->first('home_address')}}</p>
                                         @endif
@@ -235,14 +239,107 @@
                                         <p style="color: red">{{$errors->first('temporary_address')}}</p>
                                         @endif
                                     </div>
-                                 </div>
+                                </div>
+
+                                
+                                <div class="edit_teacher_grade_subject">
+                                    @if(count($teacherGrade) != 0)
+                                        @for ($i=0;$i < count($teacherGrade);$i++)
+                                            <div class="form-group row row-status{{ $i }}">
+                                                <!-- SELECT GRADE -->
+                                                <div class="col-md-5">
+                                                    <label for="grade_id_{{ $i }}">Teacher Grade</label>
+                                                    <select name="grade_id[{{ $i }}][]" class="form-control" id="grade_id_{{ $i }}">
+                                                        @foreach($grade as $el)
+                                                            <option value="{{ $el->id }}" {{ $el->id == $teacherGrade[$i] ? 'selected' : '' }}>
+                                                                {{ $el->name }} - {{ $el->class }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <!-- END SELECT GRADE -->
+
+                                                <!-- SELECT SUBJECT -->
+                                                <div class="col-md-5">
+                                                    <label for="subject_id_{{ $i }}">Subject Class</label>
+                                                    <select name="subject_id[{{ $i }}][]" class="js-select2 form-control" id="subject_id_{{ $i }}" multiple="multiple">
+                                                        @foreach ($subject as $se)
+                                                            <option value="{{ $se->id }}"
+                                                                @foreach ($teacherSubject as $ts)
+                                                                    @if ($ts['grade_id'] == $teacherGrade[$i] && $se->id == $ts['subject_id'])
+                                                                        selected
+                                                                    @endif
+                                                                @endforeach
+                                                            >
+                                                                {{ $se->name_subject }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+
+                                                    @if($errors->any())
+                                                        <p style="color: red">{{ $errors->first('subject_id') }}</p>
+                                                    @endif
+                                                </div>
+                                                <!-- END SELECT SUBJECT -->
+
+                                                    <!-- BUTTON ADD  -->
+                                                <div class="col-md-2">
+                                                        <label style="color:white;">Action</label>
+                                                        <div class="form-group">
+                                                            <button type="button" class="btn btn-success btn-sm btn-tambah mt-1" title="Tambah Data" id="add_{{ $i }}"><i class="fa fa-plus"></i></button>
+                                                            <button type="button" class="btn btn-danger btn-sm btn-hapus mt-1 delete-button" title="Hapus Baris" data-teacher-id="{{ $data->id }}" data-grade-id="{{ $teacherGrade[$i] }}" data-subject-id="{{ $ts['subject_id'] }}" id="delete_{{ $i }}"><i class="fa fa-times"></i></button>
+                                                        </div>
+                                                </div>
+                                                <!-- END BUTTON ADD -->
+                                            </div>
+                                        @endfor
+                                    @else
+                                        <div class="form-group row row-status">
+                                            <!-- SELECT GRADE -->
+                                            <div class="col-md-5">
+                                                <label for="grade_id">Teacher Grade</label>
+                                                <select name="grade_id[0][]" class="js-select2 form-control" id="grade_id" multiple="multiple">
+                                                <option value=""> -- SELECTED TEACHER GRADE --</option>
+                                                    @foreach($grade as $el)
+                                                        <option value="{{ $el->id }}">{{ $el->name }} - {{ $el->class }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <!-- END SELECT GRADE -->
+    
+                                            <!-- SELECT SUBJECT -->
+                                            <div class="col-md-5">
+                                                <label for="subject_id">Subject Class</label>
+                                                <select name="subject_id[0][]" class="js-select2 form-control" id="subject_id" multiple="multiple">
+                                                    @foreach ($subject as $es)
+                                                        <option value="{{$es->id}}">{{$es->name_subject}}</option> 
+                                                    @endforeach
+                                                </select>
+
+                                                @if($errors->any())
+                                                    <p style="color: red">{{ $errors->first('subject_id') }}</p>
+                                                @endif
+                                            </div>
+                                            <!-- END SELECT SUBJECT -->
+    
+                                            <!-- BUTTON ADD  -->
+                                            <div class="col-md-2">
+                                                    <label style="color:white;">Action</label>
+                                                    <div class="form-group">
+                                                        <button type="button" class="btn btn-success btn-sm btn-tambah mt-1" title="Tambah Data" id="add"><i class="fa fa-plus"></i></button>
+                                                        <button type="button" class="btn btn-danger btn-sm btn-hapus mt-1 delete-button" title="Hapus Baris"  id="delete"><i class="fa fa-times"></i></button>
+                                                    </div>
+                                            </div>
+                                            <!-- END BUTTON ADD -->
+                                        </div>
+                                    @endif
+                                </div>
+   
                               </div>
+
                               </div>
                         </div>
-                        <!-- /.card-body students -->
-
-
-                        <!-- /.card-body Brother or sisters -->
+                        <!-- /.card-body Teacher -->
 
                         <div class="d-flex justify-content-center my-5">
                             <button type="submit" class="col-11 btn btn-success">Submit</button>
@@ -260,4 +357,173 @@
         <!-- /.row -->
     </div><!-- /.container-fluid -->
 </section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    let index = 1;
+
+    function updateAddButtonVisibility() {
+        // Sembunyikan semua tombol tambah kecuali tombol tambah pada baris terakhir
+        $('.btn-tambah').hide();
+        $('.btn-tambah').last().show();
+    }
+
+    function initializeSelect2() {
+        $('.js-select-2-2').select2({
+            closeOnSelect: false,
+            placeholder: "Click to select an option",
+            theme: 'bootstrap4',
+            allowHtml: true,
+            allowClear: true
+        });
+    }
+
+    $(document).on('click', '.btn-tambah', function() {
+        let row = `<div class="form-group row" id="row_${index}">
+            <div class="col-md-5">
+                <label for="grade_id_${index}">Teacher Grade</label>
+                <select name="grade_id[${index}][]" class="js-select-2-2 form-control" id="grade_id_${index}" multiple="multiple">
+                    <option value=""> -- SELECTED TEACHER GRADE --</option>
+                    @foreach($grade as $el)
+                        <option value="{{ $el->id }}">{{ $el->name }} - {{ $el->class }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-5">
+                <label for="subject_id_${index}">Subject Class</label>
+                <select name="subject_id[${index}][]" class="js-select-2-2 form-control" id="subject_id_${index}" multiple="multiple">
+                    <option value=""> -- SELECTED SUBJECT --</option>
+                    @foreach ($subject as $se)
+                        <option value="{{ $se->id }}">{{ $se->name_subject }}</option>
+                    @endforeach
+                </select>
+                @if($errors->any())
+                    <p style="color: red">{{ $errors->first('subject_id') }}</p>
+                @endif
+            </div>
+            <div class="col-md-2">
+                <label style="color:white;">Action</label>
+                <div class="form-group">
+                    <button type="button" class="btn btn-success btn-sm btn-tambah mt-1" id="add_${index}"><i class="fa fa-plus"></i></button>
+                    <button type="button" class="btn btn-danger btn-sm btn-hapus mt-1" id="delete_${index}" data-teacher-id="{{ $data->id }}" data-grade-id="{{ $el->id }}" data-subject-id=""><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+        </div>`;
+        $('.edit_teacher_grade_subject').append(row);
+        index++;
+        updateAddButtonVisibility();
+        initializeSelect2(); // Reinitialize Select2 for the new elements
+    });
+
+    $(document).on('click', '.btn-hapus', function() {
+        const teacherId = $(this).data('teacher-id');
+        const gradeId = $(this).data('grade-id');
+        const subjectId = $(this).data('subject-id');
+
+        console.log("teacher_ID : ", teacherId);
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Delete data teacher grade & subject!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `teachers/${teacherId}/${gradeId}/${subjectId}`,
+                    type: 'GET',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire(
+                            'Deleted!',
+                            'Successfully deleted grade and subject teacher in the database !!!',
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function(xhr) {
+                        console.error(xhr);
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while deleting the data.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+
+    initializeSelect2();
+    updateAddButtonVisibility();
+});
+
+</script>
+
+<script>
+$(document).ready(function(){
+
+    $("#teacher_grade_subject").on("change", "#teacher_grade_id_0", function() {
+      loadSubjectOptions2(this.value);
+    });
+
+    $("#teacher_grade_subject").on("change", "#teacher_subject_id_0", function() {
+      loadSubjectOptions2(this.value);
+    });
+
+    function loadSubjectOptions2(gradeId) {
+      // Hapus semua opsi yang ada di select subject
+  
+      // Buat request AJAX untuk mengambil data subject berdasarkan grade
+      fetch(`/get-subjects/${gradeId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Tambahkan opsi baru ke select subject
+            data.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.id;
+                option.text = subject.name_subject;
+                subjectSelect.add(option);
+            });
+        })
+        .catch(error => console.error(error));
+      }
+});
+
+</script>
+
+@if (session('after_delete_update_teacher'))
+      
+    <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+    <script>
+      var Toast = Swal.mixin({
+         toast: true,
+         position: 'top-end',
+         showConfirmButton: false,
+         timer: 3000
+      });
+    
+      setTimeout(() => {
+      Toast.fire({
+         icon: 'success',
+         title: 'Successfully deleted grade & subject teacher in the database !!!',
+      });
+      }, 1500);
+
+
+    </script>
+
+    @endif
+
 @endsection

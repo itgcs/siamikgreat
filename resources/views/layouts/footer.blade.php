@@ -1,5 +1,5 @@
 <footer class="main-footer text-sm">
-   <strong>Copyright &copy; 2023 <a target="_blank" href="https://great.sch.id/">Great Crystal School</a>.</strong>
+  <strong>Copyright &copy; {{ date('Y') }} <a target="_blank" href="https://great.sch.id/">Great Crystal School</a>.</strong>
    All rights reserved.
    <div class="float-right d-none d-sm-inline-block">
      <b>Version</b> 1.0
@@ -49,6 +49,8 @@
 
 <!-- Select2 -->
 <script src="{{asset('template')}}/plugins/select2/js/select2.full.min.js"></script>
+
+
 <!-- Bootstrap4 Duallistbox -->
 <script src="{{asset('template')}}/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
 
@@ -67,11 +69,29 @@
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('template')}}/dist/js/demo.js"></script>
 
+<!-- FullCalendar JS -->
+<script src="{{ asset('template/plugins/fullcalendar/main.min.js') }}"></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.13/index.global.min.js'></script>
+
+
+<!-- SweetAlert -->
+<script src="{{ asset('template/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+
+
 
 <script>
-   $(function () {
-    
- 
+  $('.js-select2').select2({
+      closeOnSelect : false,
+      placeholder : "Click to select an option",
+      theme: 'bootstrap4',
+      allowHtml: true,
+      allowClear: true,
+      tags: true,
+      searchInputPlaceholder: 'Search options'
+  });
+
+    $(function () {
+
      //Datemask dd/mm/yyyy
      $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
      $('#datemaskMonth').inputmask('mm/yyyy', { 'placeholder': 'mm/yyyy' })
@@ -242,69 +262,65 @@
    }
  </script>
 
+  <script>
+      // Mendapatkan elemen input
+      const input = document.getElementById("amount");
 
+      // Menambahkan event listener pada input saat pengguna mengetik
+      input.addEventListener("input", function () {
+          // Mengambil nilai input tanpa tanda titik dan karakter non-angka
+          const rawValue = input.value.replace(/[^0-9]/g, '');
 
-<script>
-    // Mendapatkan elemen input
-    const input = document.getElementById("amount");
+          // Mengubah nilai input dengan menambahkan tanda titik setiap 3 digit
+          const formattedValue = addThousandSeparator(rawValue);
 
-    // Menambahkan event listener pada input saat pengguna mengetik
-    input.addEventListener("input", function () {
-        // Mengambil nilai input tanpa tanda titik dan karakter non-angka
-        const rawValue = input.value.replace(/[^0-9]/g, '');
+          // Memasukkan nilai yang telah diformat kembali ke dalam input
+          input.value = formattedValue;
+      });
 
-        // Mengubah nilai input dengan menambahkan tanda titik setiap 3 digit
-        const formattedValue = addThousandSeparator(rawValue);
+      // Fungsi untuk menambahkan tanda titik sebagai pemisah ribuan
+      function addThousandSeparator(value) {
+          return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
+      const inputM = document.getElementById("amount_monthly_fee");
 
-        // Memasukkan nilai yang telah diformat kembali ke dalam input
-        input.value = formattedValue;
-    });
+      // Menambahkan event listener pada input saat pengguna mengetik
+      inputM.addEventListener("input", function () {
+          // Mengambil nilai input tanpa tanda titik dan karakter non-angka
+          const rawValue = inputM.value.replace(/[^0-9]/g, '');
 
-    // Fungsi untuk menambahkan tanda titik sebagai pemisah ribuan
-    function addThousandSeparator(value) {
-        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
-    const inputM = document.getElementById("amount_monthly_fee");
+          // Mengubah nilai input dengan menambahkan tanda titik setiap 3 digit
+          const formattedValue = addThousandSeparator(rawValue);
 
-    // Menambahkan event listener pada input saat pengguna mengetik
-    inputM.addEventListener("input", function () {
-        // Mengambil nilai input tanpa tanda titik dan karakter non-angka
-        const rawValue = inputM.value.replace(/[^0-9]/g, '');
+          // Memasukkan nilai yang telah diformat kembali ke dalam input
+          inputM.value = formattedValue;
+      });
 
-        // Mengubah nilai input dengan menambahkan tanda titik setiap 3 digit
-        const formattedValue = addThousandSeparator(rawValue);
+      // Fungsi untuk menambahkan tanda titik sebagai pemisah ribuan
+      function addThousandSeparator(value) {
+          return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
 
-        // Memasukkan nilai yang telah diformat kembali ke dalam input
-        inputM.value = formattedValue;
-    });
+      // Mendapatkan elemen input
+      const inputdp = document.getElementById("dp");
 
-    // Fungsi untuk menambahkan tanda titik sebagai pemisah ribuan
-    function addThousandSeparator(value) {
-        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
+      // Menambahkan event listener pada input saat pengguna mengetik
+      inputdp.addEventListener("input", function () {
+          // Mengambil nilai input tanpa tanda titik dan karakter non-angka
+          const rawValue = inputdp.value.replace(/[^0-9]/g, '');
 
-    // Mendapatkan elemen input
-    const inputdp = document.getElementById("dp");
+          // Mengubah nilai input dengan menambahkan tanda titik setiap 3 digit
+          const formattedValue = addThousandSeparator(rawValue);
 
-    // Menambahkan event listener pada input saat pengguna mengetik
-    inputdp.addEventListener("input", function () {
-        // Mengambil nilai input tanpa tanda titik dan karakter non-angka
-        const rawValue = inputdp.value.replace(/[^0-9]/g, '');
+          // Memasukkan nilai yang telah diformat kembali ke dalam input
+          inputdp.value = formattedValue;
+      });
 
-        // Mengubah nilai input dengan menambahkan tanda titik setiap 3 digit
-        const formattedValue = addThousandSeparator(rawValue);
-
-        // Memasukkan nilai yang telah diformat kembali ke dalam input
-        inputdp.value = formattedValue;
-    });
-
-    // Fungsi untuk menambahkan tanda titik sebagai pemisah ribuan
-    function addThousandSeparator(value) {
-        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
-
-</script>
-
+      // Fungsi untuk menambahkan tanda titik sebagai pemisah ribuan
+      function addThousandSeparator(value) {
+          return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
+  </script>
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>

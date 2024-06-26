@@ -9,7 +9,11 @@
             <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item">Home</li>
-                <li class="breadcrumb-item"><a href="{{url('/admin/list')}}">Student</a></li>
+                @if (session('role') == 'superadmin')
+                  <li class="breadcrumb-item"><a href="{{url('/superadmin/list')}}">Student</a></li>
+                @elseif (session('role') == 'admin')
+                  <li class="breadcrumb-item"><a href="{{url('/admin/list')}}">Student</a></li>
+                @endif
                 <li class="breadcrumb-item active" aria-current="page">Student Profile</li>
               </ol>
             </nav>
@@ -32,16 +36,43 @@
                      ? ((date("Y")-explode("-", $data->student->date_birth)[0])-1)
                      :(date("Y")-explode("-", $data->student->date_birth)[0]))
                      }} years old
-
                 </p>
                 <p class="text-muted mb-4">{{$data->student->place_birth}}</p>
+
+                @if (!$data->student->user)
+                  <div class="col-lg">
+                    <h1 class="badge badge-danger">Don't Have an Account</h1>
+                    <a href="{{url('/superadmin/users/register-user')}}" class="badge badge-primary">Create Account</a>
+                   
+                  </div>
+                @else
+                  <div class="col-lg">
+                  <div class="row">
+                    <div class="col-sm-4">
+                      <p class="mb-0">Username</p>
+                    </div>
+                    <div class="col-sm-4">
+                      <p class="text-muted">{{$data->student->user->username}}</p>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-4">
+                      <p class="mb-0">Role</p>
+                    </div>
+                    <div class="col-sm-4">
+                      <p class="text-muted">{{$data->roleName}}</p>
+                    </div>
+                  </div>
+                  </div> 
+                @endif
                 {{-- <div class="d-flex justify-content-center mb-2">
                   <button type="button" class="btn btn-primary">Follow</button>
                   <button type="button" class="btn btn-outline-primary ms-1">Message</button>
                 </div> --}}
               </div>
             </div>
-            @if(sizeof($data->brother_or_sisters)>0)
+
+            @if(empty($data->brother_or_sisters))
             <div class="card mb-4 mb-lg-0">
               <div class="card-body p-0">
                <p style="font-size: 1.4em;" class="mb-4 m-4"><span class="text-secondary font-italic me-1">Brothers Or Sisters</span>
@@ -79,6 +110,7 @@
               </div>
             </div>
             @endif
+
           </div>
 
 

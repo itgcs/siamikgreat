@@ -1,12 +1,19 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\User;
 use Exception;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+
+use App\Models\Roles;
+use App\Models\Teacher;
+use App\Models\Student;
+use App\Models\Relationship;
 
 class UserController extends Controller
 {
@@ -34,6 +41,7 @@ class UserController extends Controller
             'page' => 'students',
             'child' => 'dashboard',
          ]);
+
          $credentials = $request->only('username', 'password');
 
          $validator = Validator::make($credentials, [
@@ -51,23 +59,72 @@ class UserController extends Controller
             return redirect('/')->withErrors($validator->messages())->withInput($credentials);
          }
 
-         $check = Auth::attempt($credentials);  
+         $check = Auth::attempt($credentials);
+         
+         // dd($check);
 
          if(!$check)
          {
             return redirect()->back()->withErrors(['invalid' => 'invalid username/password'])->withInput($credentials);
          }
-         
 
-         return redirect('admin/dashboard/');
+         // SET ROLE & ID USE
+         $user = Auth::user();
+         $nameRoles = Roles::where('id',$user->role_id)->first();
+         
+         if ($user->role_id == 1) 
+         {
+            $nameUser = "superadmin";
+         }
+         elseif ($user->role_id == 2) 
+         {
+            $nameUser = "admin";
+         }
+         elseif ($user->role_id == 3) 
+         {
+            $nameUser = Teacher::where('user_id',$user->id)->value('name');
+         }
+         elseif ($user->role_id == 4) 
+         {
+            $nameUser = Student::where('user_id',$user->id)->value('name');
+         }
+         elseif ($user->role_id == 5) 
+         {
+            $nameUser = Relationship::where('user_id',$user->id)->value('name');
+         }
+
+         session()->put([
+            'role' => $nameRoles->name,
+            'id_user' => $user['id'],
+            'name_user' => $nameUser,
+         ]);        
+
+         $checkRole = session('role');
+         // dd($checkRole);
+
+
+         if($checkRole == 'superadmin'){
+            return redirect('superadmin/dashboard/');
+         } 
+         if($checkRole == 'admin'){
+            return redirect('admin/dashboard/');
+         } 
+         if($checkRole == 'teacher') {
+            return redirect('teacher/dashboard/');
+         }
+         if($checkRole == 'student') {
+            return redirect('student/dashboard/');
+         }
+         if($checkRole == 'parent') {
+            return redirect('parent/dashboard/');
+         }
+
+         // return redirect('admin/dashboard/');
 
       } catch (Exception $err) {
-         
          return dd($err);
       }
    }
-
-   
 
    public function logout()
    {
@@ -87,4 +144,10 @@ class UserController extends Controller
       }
    }
 
+   public function saveSemesterToSession(Request $request)
+   {
+      $semester = $request->input('semester');
+      session()->put('semester', $semester);
+      return response()->json(['semester' => $semester]);
+   }
 }

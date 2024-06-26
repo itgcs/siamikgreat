@@ -19,23 +19,35 @@ class UserSeeder extends Seeder
          [
             'username' => 'superadmin',
             'password' => Hash::make('superadmin'),
-            'role' => 'superadmin',
-            
+            'role_id' => '1',
+            'created_at' => now(),
          ],
          [
             'username' => 'admin',
             'password' => Hash::make('admin'),
-            'role' => 'admin',
-            
+            'role_id' => '2',
+            'created_at' => now(),
          ],
          [
-            'username' => 'accounting',
-            'password' => Hash::make('accounting'),
-            'role' => 'HR',
-            
+            'username' => 'teacher',
+            'password' => Hash::make('teacher'),
+            'role_id' => '3',
+            'created_at' => now(),
+         ],
+         [
+            'username' => 'student',
+            'password' => Hash::make('student'),
+            'role_id' => '4',
+            'created_at' => now(),
+         ],
+         [
+            'username' => 'parent',
+            'password' => Hash::make('parent'),
+            'role_id' => '5',
+            'created_at' => now(),
          ],
       ];
 
       DB::table('users')->insert($data);
-    }
+   }
 }

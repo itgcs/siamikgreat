@@ -9,7 +9,6 @@ class Grade extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
       'id',
       'name',
@@ -19,9 +18,19 @@ class Grade extends Model
       'updated_at',
     ];
 
+    public function subjectTeacher()
+    {
+      return $this->belongsToMany(Teacher::class, 'teacher_subjects');
+    }
+
     public function teacher()
     {
-      return $this->belongsTo(Teacher::class, 'teacher_id');
+      return $this->belongsToMany(Teacher::class, 'teacher_grades');
+    }
+
+    public function gradeTeacher()
+    {
+      return $this->belongsToMany(Teacher::class, 'teacher_grades');
     }
 
     public function student()
@@ -29,38 +38,18 @@ class Grade extends Model
       return $this->hasMany(Student::class);
     }
 
-    public function payment_grade()
+    public function subject()
     {
-      return $this->hasMany(Payment_grade::class);
+      return $this->belongsToMany(Subject::class, 'grade_subjects');
     }
 
-    public function spp()
+    public function exam()
     {
-      return $this->hasOne(Payment_grade::class);
+      return $this->belongsToMany(Exam::class, 'grade_exams');
     }
 
-    public function uniform()
+    public function score()
     {
-      return $this->hasOne(Payment_grade::class);
-    }
-
-    public function capital_fee()
-    {
-      return $this->hasOne(Payment_grade::class);
-    }
-    
-    public function bundle()
-    {
-      return $this->hasOne(Payment_grade::class);
-    }
-    
-    public function type()
-    {
-      return $this->hasOne(Payment_grade::class);
-    }
-
-    public function book()
-    {
-      return $this->hasMany(Book::class);
+      return $this->hasMany(Score::class);
     }
 }

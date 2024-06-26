@@ -4,14 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\MailController;
-use App\Models\Bill;
-use App\Models\Book;
-use App\Models\Book_student;
 use App\Models\Grade;
-use App\Models\Payment_grade;
-use App\Models\Payment_student;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\Subject;
+use App\Models\Exam;
+use App\Models\Grade_subject;
+use App\Models\Grade_exam;
+use App\Models\Teacher_grade;
+use App\Models\Teacher_subject;
+
 use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Carbon;
 use Exception;
@@ -30,12 +32,11 @@ class GradeController extends Controller
             'child' => 'database grades',
          ]);
 
-         $data = Grade::with(['teacher'])->withCount(['student as active_student_count' => function ($query) {
-            $query->where('is_active', true);
-         }])->get();;
-         
-         // return $data;
+         $data = Grade::with(['student', 'teacher', 'exam', 'subject'])
+            ->withCount(['student as active_student_count', 'teacher as active_teacher_count', 'exam as active_exam_count', 'subject as active_subject_count'])
+            ->get();
 
+         // dd($data);
          return view('components.grade.data-grade')->with('data', $data);
 
       } catch (Exception $err) {
@@ -51,7 +52,13 @@ class GradeController extends Controller
             'page' => 'grades',
             'child' => 'database grades',
          ]);
-         $data = Teacher::orderBy('id', 'ASC')->get();
+
+         $data = [
+            'teacher' => Teacher::get(),
+            'subject' => Subject::get(),
+         ];
+
+         Teacher::orderBy('id', 'ASC')->get();
 
          return view('components.grade.create-grade')->with('data', $data);
          
@@ -62,60 +69,78 @@ class GradeController extends Controller
    
    public function actionPost(Request $request)
    {
-
-      DB::beginTransaction();
-
+      // dd($request);
       try {
-
          $rules = [
             'name' => $request->name,
-            'teacher_id' => $request->teacher_id,
             'class' => $request->class,
          ];
 
          $validator = Validator::make($rules, [
             'name' => 'required|string',
             'class' => 'required|string|max:15',
-            'teacher_id' => 'required|integer',
-         ],
-      );
+            ],
+         );
 
-      
-      if($validator->fails())
-      {
-         DB::rollBack();
-         return redirect('/admin/grades/create')->withErrors($validator->messages())->withInput($rules);
-      }
-      
-      if(Grade::where('name', $request->name)->where('class', $request->class)->first())
-      {
-         DB::rollBack();
-         return redirect('/admin/grades/create')->withErrors([
-            'name' => 'Grades ' . $request->name . ' class ' . $request->class . ' is has been created ',
-         ])->withInput($rules);
-      }
+         $role = session('role');
 
-      if(Grade::where('teacher_id', $request->teacher_id)->first())
-      {
-         Grade::where('teacher_id', $request->teacher_id)->update([
-               'teacher_id' => null,
-            ]);
-      }
+         if($validator->fails())
+         {
+            DB::rollBack();
+            return redirect('/'. $role .'/grades/create')->withErrors($validator->messages())->withInput($rules);
+         }
          
-      $post = [
+         if(Grade::where('name', $request->name)->where('class', $request->class)->first())
+         {
+            DB::rollBack();
+            return redirect('/'. $role .'/grades/create')->withErrors([
+               'name' => 'Grades ' . $request->name . ' class ' . $request->class . ' is has been created ',
+            ])->withInput($rules);
+         }
+            
+         $post = [
             'name' => $request->name,
-            'teacher_id' => $request->teacher_id,
             'class' => $request->class,
-      ];
-
-
-         session()->flash('after_create_grade');
-
+            'created_at' => now(),
+         ];
+      
          Grade::create($post);
-
          DB::commit();
-         
-         return redirect('/admin/grades');
+
+
+
+         $getIdLastGrade = Grade::latest('id')->value('id');
+         // menyimpan class teacher
+         $teacher_class = [
+            'teacher_id' => $request->teacher_class_id,
+            'grade_id'   => $getIdLastGrade,
+            'created_at' => now(),
+         ];
+         $dataTeacherGrade = Teacher_grade::create($teacher_class);
+
+
+         // menyimpan grade subject & subject teacher
+         for($i = 0; $i < count($request->subject_id); $i++){
+            // Simpan data subjek dan kelasnya
+            $teacher_subject = [
+               'teacher_id' => $request->teacher_subject_id[$i],
+               'subject_id' => $request->subject_id[$i],
+               'grade_id'   => $getIdLastGrade,
+               'created_at' => now(),
+            ];
+
+            $grade_subject = [
+               'grade_id' => $getIdLastGrade,
+               'subject_id' => $request->subject_id[$i]
+            ];
+
+            $dataTeacherSubject = Teacher_subject::create($teacher_subject);
+            $dataGradeSubject = Grade_subject::create($grade_subject);
+         } 
+
+      
+         session()->flash('after_create_grade');
+         return redirect('/' .$role. '/grades');
 
       } catch (Exception $err) {
          DB::rollBack();
@@ -125,30 +150,51 @@ class GradeController extends Controller
 
 
    public function detailGrade($id){
+      session()->flash('page',  $page = (object)[
+         'page' => 'grades',
+         'child' => 'database grades',
+      ]);
+
+      $gradeTeacher = Teacher_grade::where('grade_id',$id)
+         ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+         ->get();
+
+      $gradeExam = Grade_exam::join('exams', 'exams.id','=', 'grade_exams.exam_id')
+         ->join('type_exams', 'type_exams.id', '=', 'exams.type_exam')
+         ->select('exams.*', 'type_exams.name as type_exam_name')
+         ->where('grade_exams.grade_id', $id)
+         ->get();
+
+      $gradeSubject = Grade_subject::join('subjects', 'subjects.id', '=', 'grade_subjects.subject_id')
+         ->where('grade_subjects.grade_id', $id)
+         ->select('subjects.id as subject_id','subjects.name_subject as subject_name')
+         ->get();
+
+      $subjectTeacher = Teacher_subject::where('grade_id', $id)
+         ->join('teachers', 'teachers.id', 'teacher_subjects.teacher_id')
+         ->join('subjects', 'subjects.id', 'teacher_subjects.subject_id')
+         ->select('subjects.id as subject_id','teachers.name as teacher_name')
+         ->get();
+
+      $gradeStudent = Student::where('grade_id', $id)->where('is_active', true)->get();
       
       try {
-         //code...
-         
          $data = (object)[
-            'gradeTeacher' => Grade::with(['teacher'])->where('id', $id)->first(),
-            'gradeStudent' => Student::where('grade_id', $id)->where('is_active', true)->get(),
+            'gradeTeacher' => $gradeTeacher,
+            'gradeStudent' => $gradeStudent,
+            'gradeSubject' => $gradeSubject,
+            'gradeExam' => $gradeExam, 
+            'subjectTeacher' => $subjectTeacher, 
          ];
-         
-         // return $data;
 
-         session()->flash('page',  $page = (object)[
-            'page' => 'grades',
-            'child' => 'database grades',
-         ]);
-
+         // dd($data->gradeSubject);
          return view('components.grade.detail-grade')->with('data', $data);
       } catch (Exception $err) {
          
+         dd($err);
          return abort(404);
       }
-
    }
-
 
    public function pageEdit($id)
    {
@@ -158,12 +204,25 @@ class GradeController extends Controller
             'page' => 'grades',
             'child' => 'database grades',
          ]);
-         $teacher = Teacher::orderBy('id', 'asc')->get();
-         $data = Grade::where('id', $id)->first();
 
-         return view('components.grade.edit-grade')->with('data', $data)->with('teacher', $teacher);
+         // ambil data teacher yang mengajar di class
+         // $teacherGrade = Grade::findOrFail($id)->teacher()->get();
+         $teacherGrade = Teacher_grade::where('grade_id', $id)->pluck('teacher_id')->toArray();
+         $subjectGrade = Grade_subject::where('grade_id', $id)->pluck('subject_id')->toArray();
+
+         // dd(count($subjectGrade));
+         $teacher = Teacher::orderBy('id', 'asc')->get();
+         $subject = Subject::orderBy('id', 'asc')->get();         
+         $data    = Grade::where('id', $id)->first();
+         $gradeSubject = Subject::get();
+         $allTeacher = Teacher::get();
+         
+
+         // dd($teacher);
+         return view('components.grade.edit-grade')->with('data', $data)->with('teacher', $teacher)->with('subject', $subject)->with('teacherGrade', $teacherGrade)->with('subjectGrade', $subjectGrade)->with('allTeacher', $allTeacher);
          
       } catch (Exception $err) {
+         dd($err);
          return abort(404);
       }
    }
@@ -171,10 +230,9 @@ class GradeController extends Controller
 
    public function actionPut(Request $request, $id)
    {
-
       DB::beginTransaction();
-      try {
 
+      try {
          session()->flash('page',  $page = (object)[
             'page' => 'grades',
             'child' => 'database grades',
@@ -189,14 +247,19 @@ class GradeController extends Controller
          $validator = Validator::make($rules, [
             'name' => 'required|string',
             'class' => 'required|string|max:15',
-            'teacher_id' => 'nullable|integer',
             ]
          );
+
          if($validator->fails())
          {
             DB::rollBack();
-            return redirect('/admin/grades/edit/' . $id)->withErrors($validator->messages())->withInput($rules);
+            return redirect('/'.session('role').'/grades/edit/' . $id)->withErrors($validator->messages())->withInput($rules);
          }
+
+         $data = [
+            'teacher' => $request->teacher_id,
+            'subject' => $request->subject_id,
+         ];
          
          $check = Grade::where('name', $request->name)->where('class', $request->class)->first();
 
@@ -206,29 +269,224 @@ class GradeController extends Controller
             DB::rollBack();
             return redirect('/admin/grades/edit/' . $id)->withErrors(['name' => ["The grade " . $request->name . " with class " . $request->class ." is already created !!!"]])->withInput($rules);
          }
-      
 
-         
-         if(Grade::where('teacher_id', $request->teacher_id)->first())
-         {
-            Grade::where('teacher_id', $request->teacher_id)->update([
-               'teacher_id' => null,
-            ]);
-         }
 
-   
-         Grade::where('id', $id)->update($rules);
+      // HANDLE TEACHER  //
+               // Ambil semua teacher_id sebelum diupdate
+               $teacherGradesBeforeUpdate = Teacher_grade::where('grade_id', $id)->pluck('teacher_id')->toArray();
+
+               //check apakah teacher tidak kosong
+               if($request->teacher_id != null)
+               {
+                  // Loop melalui teacher_id dari form
+                  foreach ($request->teacher_id as $tc) 
+                  {
+                     // Jika teacher_id tidak ada di dalam array sebelumnya, tambahkan baru
+                     if (!in_array($tc, $teacherGradesBeforeUpdate)) {
+                        Teacher_grade::create([
+                              'grade_id' => $id,
+                              'teacher_id' => $tc,
+                        ]);
+                     }
+                  }
+                  // Hapus teacher_id yang tidak ada di dalam array yang dikirim melalui form
+                  if($request->teacher_id == null)
+                  {
+                     foreach($teacherGradesBeforeUpdate as $tg) 
+                     {
+                        Teacher_grade::where('grade_id', $id)
+                        ->where('teacher_id', $tg)
+                        ->delete();
+                     }
+                  } 
+                  else 
+                  {
+                     foreach ($teacherGradesBeforeUpdate as $tg) {
+                        if (!in_array($tg, $request->teacher_id)) {
+                           Teacher_grade::where('grade_id', $id)
+                                 ->where('teacher_id', $tg)
+                                 ->delete();
+                        }
+                     }
+                  }
+               }
+               // apabila teacher kosong
+               else 
+               {
+                  // Hapus teacher_id yang tidak ada di dalam array yang dikirim melalui form
+                  if($request->teacher_id == null)
+                  {
+                     foreach($teacherGradesBeforeUpdate as $tg) {
+                        Teacher_grade::where('grade_id', $id)
+                        ->where('teacher_id', $tg)
+                        ->delete();
+                     }
+                  } 
+                  else 
+                  {
+                     foreach ($teacherGradesBeforeUpdate as $tg) {
+                        if (!in_array($tg, $request->teacher_id)) {
+                           Teacher_grade::where('grade_id', $id)
+                                 ->where('teacher_id', $tg)
+                                 ->delete();
+                        }
+                     }
+                  }
+               }
+      // END HANDLE TEACHER //
+
+
+      // HANDLE SUBJECT //
+               $subjectGradesBeforeUpdate = Grade_subject::where('grade_id', $id)->pluck('subject_id')->toArray();
+               
+               // check apakah subject tidak kosong
+               if($request->subject_id != null)
+               {
+                  foreach($request->subject_id as $su) 
+                  {
+                     // Jika subject_id tidak ada di dalam array sebelumnya, tambahkan baru
+                     if (!in_array($su, $subjectGradesBeforeUpdate)) 
+                     {
+                        Grade_subject::create([
+                              'grade_id' => $id,
+                              'subject_id' => $su,
+                        ]);
+                     }
+                  }
+                  // Hapus subject_id yang tidak ada di dalam array yang dikirim melalui form
+                  if($request->subject_id == null)
+                  {
+                     foreach ($subjectGradesBeforeUpdate as $sg) 
+                     {
+                        Grade_subject::where('grade_id', $id)
+                        ->where('subject_id', $sg)
+                        ->delete();
+                     }
+                  }
+                  else 
+                  {
+                     foreach ($subjectGradesBeforeUpdate as $sg) 
+                     {
+                        if (!in_array($sg, $request->subject_id)) 
+                        {
+                           Grade_subject::where('grade_id', $id)
+                                 ->where('subject_id', $sg)
+                                 ->delete();
+                        }
+                     }
+                  }
+               }
+               // apabila subject kosong
+               else 
+               {
+                  // Hapus subject_id yang tidak ada di dalam array yang dikirim melalui form
+                  if($request->subject_id == null)
+                  {
+                     foreach ($subjectGradesBeforeUpdate as $sg) 
+                     {
+                        Grade_subject::where('grade_id', $id)
+                        ->where('subject_id', $sg)
+                        ->delete();
+                     }
+                  }
+                  else 
+                  {
+                     foreach ($subjectGradesBeforeUpdate as $sg) 
+                     {
+                        if (!in_array($sg, $request->subject_id)) 
+                        {
+                           Grade_subject::where('grade_id', $id)
+                                 ->where('subject_id', $sg)
+                                 ->delete();
+                        }
+                     }
+                  }
+               }
+      // END HANDLE SUBJECT //
+
          
          DB::commit();
 
          session()->flash('after_update_grade');
 
-         return redirect('/admin/grades');
+         if(session('role') == 'superadmin'){
+            return redirect('/superadmin/grades');
+         }
+         else {
+            return redirect('/admin/grades');
+         }
+
 
       } catch (Exception $err) {
          DB::rollBack();
          return dd($err);
          // return abort(500);
+      }
+   }
+
+   public function teacherGrade($id)
+   {
+      try {
+         //code...
+         session()->flash('page',  $page = (object)[
+            'page' => 'teacher grades',
+            'child' => 'database teacher grades',
+         ]);
+
+         $getIdTeacher = Teacher::where('user_id', $id)->value('id');
+
+         $gradeTeacher = Teacher_grade::where('teacher_id', $getIdTeacher)
+            ->join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
+            ->select('grades.*', )
+            ->get();
+
+            foreach ($gradeTeacher as $gt) {
+               $gt->students = Student::where('grade_id', $gt->id)->get();
+           }
+
+         $data = [
+            'gradeTeacher' => $gradeTeacher,
+         ];
+
+         // dd($data);
+
+         return view('components.teacher.data-grade-teacher')->with('data', $data);
+
+      } catch (Exception $err) {
+         return dd($err);
+      }
+   }
+
+   public function studentGrade($id)
+   {
+      try {
+         //code...
+         session()->flash('page',  $page = (object)[
+            'page' => 'student grades',
+            'child' => 'database student grades',
+         ]);
+
+         $getIdTeacher = Teacher::where('user_id', $id)->value('id');
+
+         $gradeTeacher = Teacher_grade::where('teacher_id', $getIdTeacher)
+            ->join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
+            ->select('grades.*', )
+            ->get();
+
+            foreach ($gradeTeacher as $gt) {
+               $gt->students = Student::where('grade_id', $gt->id)->get();
+           }
+
+         $data = [
+            'gradeTeacher' => $gradeTeacher,
+         ];
+
+         // dd($data);
+
+         return view('components.teacher.data-grade-teacher')->with('data', $data);
+
+      } catch (Exception $err) {
+         return dd($err);
       }
    }
 
@@ -339,8 +597,8 @@ class GradeController extends Controller
 
 
    public function pagePDF($id){
-      try {
-
+      try 
+      {
          session()->flash('page',  $page = (object)[
             'page' => 'grades',
             'child' => 'database grades',
@@ -356,73 +614,26 @@ class GradeController extends Controller
          $pdf->loadView('components.grade.pdf.dom-pdf', ['data' => $data])->setPaper('a4', 'portrait');
          return $pdf->stream($nameFormatPdf);
 
-      } catch (Exception $err) {
-         
+      } catch (Exception $err) 
+      {
          return dd($err);
       }
    }
 
-
-
-   public function billPaketGraduate($array)
+   public function delete($id)
    {
-      DB::beginTransaction();
       try {
-         //code...
+         // Hapus data grade
+         $teacher = Grade::findOrFail($id);
+         $teacher->delete();
 
-         foreach($array as $studentId)
-         {
+         // Hapus data terkait (Teacher_grade, Teacher_subject)
+         Teacher_grade::where('teacher_id', $id)->delete();
+         Teacher_subject::where('teacher_id', $id)->delete();
 
-            $student = Student::with(['relationship', 'grade' => function($query) {
-               $query->with(['bundle' => function($query) {
-                  $query->where('type', 'Paket')->get();
-               }, 'uniform' => function($query) {
-                  $query->where('type', 'Uniform')->get();
-               }]);
-            }])
-            ->where('id', (int)$studentId)
-            ->where('is_active', true)
-            ->first();
-
-            //lakukan validasi ketika admin lupa memasukkan static payment paket disini;
-            
-            
-            
-            $amount = $student->grade->bundle? $student->grade->bundle->amount : null;
-            $uniformAmount = $student->grade->uniform? $student->grade->uniform->amount : 0; 
-
-            if(!$amount)
-            {
-               $bookAmount = Book::where('grade_id', (int)$student->grade_id)->get();
-               $amountTotal = sizeof($bookAmount) > 0 ? $bookAmount->sum('amount') : 0;
-               $amount = $uniformAmount + $amountTotal;
-            }
-            
-            Bill::create([
-               'student_id' => $student->id,
-               'type' => 'Paket',
-               'subject' => 'Paket',
-               'amount' => $amount,
-               'discount' => null,
-               'installment' => null,
-               'paidOf' => false,
-               'deadline_invoice' => Carbon::now()->setTimezone('Asia/Jakarta')->addMonth()->format('Y-m-10'),
-            ]);
-
-         }
-
-
-         DB::commit();
-         
-         return (object) [
-            'status' => true,
-         ];
-         
-      } catch (Exception $err) {
-         DB::rollBack();
-         return (object) [
-            'status' => false,
-         ];
+         return redirect('/superadmin/teachers')->with('success', 'Data guru berhasil dihapus.');
+      } catch (\Exception $e) {
+         return redirect('/superadmin/teachers')->with('error', 'Terjadi kesalahan saat menghapus data guru.');
       }
    }
 }

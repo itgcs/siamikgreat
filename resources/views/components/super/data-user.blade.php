@@ -12,7 +12,7 @@
     <h2 class="text-center display-4">Data user</h2>
 
 
-    <a type="button" href="user/register-user" id="#" class="btn btn-success btn mt-5 mb-2">
+    <a type="button" href="users/register-user" id="#" class="btn btn-success btn mt-5 mb-2">
         <i class="fa-solid fa-user-plus me-1"></i>
         </i>
         Add user

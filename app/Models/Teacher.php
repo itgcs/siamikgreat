@@ -13,6 +13,7 @@ class Teacher extends Model
     protected $fillable = [
       'id',
       'is_active',
+      'user_id',
       'unique_id',
       'name',
       'place_birth',
@@ -31,8 +32,22 @@ class Teacher extends Model
       'updated_at',
    ];
 
+   public function user()
+   {
+       return $this->belongsTo(User::class, 'user_id');
+   }
+
    public function grade()
    {
-      return $this->hasMany(Grade::class);
+      return $this->belongsToMany(Grade::class, 'teacher_grades');
    }
+
+   public function subject(){
+      return $this->belongsToMany(Subject::class, 'teacher_subjects');
+   }
+
+   public function exam(){
+      return $this->hasMany(Exam::class, 'teacher_id');
+   }
+
 }
