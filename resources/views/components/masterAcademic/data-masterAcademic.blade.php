@@ -105,7 +105,7 @@
         setTimeout(() => {
             Toast.fire({
                 icon: 'success',
-                title: 'Successfully created new type schedule in the database.'
+                title: 'Successfully created new master academic in the database.'
             });
         }, 1500);
     </script>
@@ -123,7 +123,7 @@
         setTimeout(() => {
             Toast.fire({
                 icon: 'success',
-                title: 'Successfully updated the type schedule in the database.'
+                title: 'Successfully updated the master academic in the database.'
             });
         }, 1500);
     </script>

@@ -59,7 +59,26 @@ class ScheduleController extends Controller
             ->where('type_schedule_id', '!=', '1')
             ->get();
 
-         $gradeSchedules = Schedule::where('type_schedule_id', 11)
+         $typeSchedule = Type_schedule::where('name', '=', 'lesson')->value('id');
+
+         // dd($typeSchedule);
+
+         $gradeSchedules = Schedule::where('type_schedule_id', $typeSchedule)
+            ->where('semester', '=', 1)
+            ->leftJoin('grades', 'grades.id', '=', 'schedules.grade_id')
+            ->leftJoin('subjects', 'subjects.id', '=', 'schedules.subject_id')
+            ->leftJoin('teachers', 'teachers.id', '=', 'schedules.teacher_id')
+            ->select('schedules.*', 'schedules.semester as semester',
+            'grades.name as grade_name', 'grades.id as grade_id', 'grades.class as grade_class',
+            'subjects.id as subject_id', 'subjects.name_subject as subject_name',
+            'teachers.id as teacher_id', 'teachers.name as teacher_name')
+            ->get()
+            ->groupBy(function($item) {
+               return $item->grade_name . '-' . $item->grade_class;
+            });
+
+         $gradeSchedulestwo = Schedule::where('type_schedule_id', $typeSchedule)
+            ->where('semester', '=', 2)
             ->leftJoin('grades', 'grades.id', '=', 'schedules.grade_id')
             ->leftJoin('subjects', 'subjects.id', '=', 'schedules.subject_id')
             ->leftJoin('teachers', 'teachers.id', '=', 'schedules.teacher_id')
@@ -79,7 +98,7 @@ class ScheduleController extends Controller
 
          // dd($gradeSchedules);
 
-         return view('components.schedule.all-schedule', compact('exams', 'schedules', 'gradeSchedules', 'semester1', 'semester2', 'endsemester1', 'endsemester2'));
+         return view('components.schedule.all-schedule', compact('exams', 'schedules', 'gradeSchedules', 'gradeSchedulestwo', 'semester1', 'semester2', 'endsemester1', 'endsemester2'));
 
       } catch (Exception $err) {
          return dd($err);
@@ -239,8 +258,19 @@ class ScheduleController extends Controller
             'page' => 'schedules',
             'child' => 'schedules grade',
          ]);
+
+         $semester = Master_academic::first()->value('now_semester');
+         if ($semester === 1) {
+            $startSemester = Master_academic::first()->value('semester1');
+            $endSemester = Master_academic::first()->value('end_semester1');
+         }
+         elseif ($semester === 2) {
+            $startSemester = Master_academic::first()->value('semester2');
+            $endSemester = Master_academic::first()->value('end_semester2');
+         }
          
          $gradeSchedule = Schedule::where('grade_id', $id)
+         ->where('semester', $semester)
          ->join('grades', 'grades.id', '=', 'schedules.grade_id')
          ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
          ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
@@ -287,8 +317,9 @@ class ScheduleController extends Controller
          $grade   = Grade::get();
 
          // dd($subtituteTeacher);
+         // dd($startSemester);
 
-         return view('components.schedule.detail-schedule', compact('gradeSchedule', 'subtituteTeacher'))->with('data', $data)->with('teacher', $teacher)->with('grade', $grade);
+         return view('components.schedule.detail-schedule', compact('gradeSchedule', 'subtituteTeacher', 'endSemester', 'startSemester'))->with('data', $data)->with('teacher', $teacher)->with('grade', $grade);
 
       } catch (Exception $err) {
          return dd($err);
@@ -648,6 +679,7 @@ class ScheduleController extends Controller
                   ->where('note', $request->notes[$i])
                   ->where('start_time', $request->start_time[$i])
                   ->where('end_time', $request->end_time[$i])
+                  ->where('semester', $request->semester[$i])
                   ->exists()) {
                   return redirect('/' . $role . '/schedules/grade/create/' . $request->grade_id)
                      ->withErrors(['notes' => 'Schedules has already been created for this day.'])

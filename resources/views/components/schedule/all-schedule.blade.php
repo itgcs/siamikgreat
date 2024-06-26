@@ -46,7 +46,10 @@ document.addEventListener('DOMContentLoaded', function() {
     var exams = @json($exams);
     var schedules = @json($schedules);
     var gradeSchedules = @json($gradeSchedules);
+    var gradeSchedulestwo = @json($gradeSchedulestwo);
     var semester1 = @json($semester1);
+    var semester2 = @json($semester2);
+    var endsemester1 = @json($endsemester1);
     var endsemester2 = @json($endsemester2);
 
     var calendarEl = document.getElementById('calendar');
@@ -59,36 +62,50 @@ document.addEventListener('DOMContentLoaded', function() {
         },
 
         events: [
-                ...exams.map(exam => ({
-                    title: `${exam.type_exam} (${exam.name_exam} - ${exam.grade_name})`,
-                    start: exam.date_exam,
-                    description: `<br>Teacher : ${exam.teacher_name} <br>Grade : ${exam.grade_name} - ${exam.grade_class}`,
-                    color: 'red',
-                    type: 'exam'
-                })),
-                
-                ...schedules.filter(schedule => {
-                    var scheduleDate = new Date(schedule.date);
-                    return scheduleDate.getDay() != 0; // 0: Sunday
-                }).map(schedule => ({
-                    title: schedule.note || 'No Note',
-                    start: schedule.date,
-                    end: schedule.end_date,
-                    description: schedule.note || 'No Description',
-                    color: getColor(schedule.type_schedule || 'default'),
-                    type: 'schedule'
-                })),
+            ...exams.map(exam => ({
+                title: `${exam.type_exam} (${exam.name_exam} - ${exam.grade_name})`,
+                start: exam.date_exam,
+                description: `<br>Teacher : ${exam.teacher_name} <br>Grade : ${exam.grade_name} - ${exam.grade_class}`,
+                color: 'red',
+                type: 'exam'
+            })),
 
-                ...Object.keys(gradeSchedules).flatMap(key => {
+            ...schedules.filter(schedule => {
+                var scheduleDate = new Date(schedule.date);
+                return scheduleDate.getDay() != 0; // 0: Sunday
+            }).map(schedule => ({
+                title: schedule.note || 'No Note',
+                start: schedule.date,
+                end: schedule.end_date,
+                description: schedule.note || 'No Description',
+                color: getColor(schedule.type_schedule || 'default'),
+                type: 'schedule'
+            })),
+
+            ...Object.keys(gradeSchedules).flatMap(key => {
                 var gradeSchedule = gradeSchedules[key];
                 return [{
                     title: key, // Only show the grade name
-                    startRecur : semester1,
-                    endRecur : endsemester2,
-                    daysOfWeek: [1,2,3,4,5],  // Adjust day: 1 (Mon) -> 0 (Sun), ..., 5 (Fri) -> 4 (Thu)
+                    startRecur: semester1,
+                    endRecur: endsemester1,
+                    daysOfWeek: [1, 2, 3, 4, 5],  // Adjust day: 1 (Mon) -> 0 (Sun), ..., 5 (Fri) -> 4 (Thu)
                     description: key, // Use the grade name for description
                     color: colorGrades(key),
                     type: 'gradeSchedule',
+                    gradeKey: key // Add gradeKey to use it later in eventClick
+                }];
+            }),
+
+            ...Object.keys(gradeSchedulestwo).flatMap(key => {
+                var gradeSchedule2 = gradeSchedulestwo[key];
+                return [{
+                    title: key, // Only show the grade name
+                    startRecur: semester2,
+                    endRecur: endsemester2,
+                    daysOfWeek: [1, 2, 3, 4, 5],  // Adjust day: 1 (Mon) -> 0 (Sun), ..., 5 (Fri) -> 4 (Thu)
+                    description: key, // Use the grade name for description
+                    color: colorGrades(key),
+                    type: 'gradeSchedule2',
                     gradeKey: key // Add gradeKey to use it later in eventClick
                 }];
             })
@@ -109,6 +126,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 var selectedDay = selectedDate.getDay(); // 0: Sunday, 1: Monday, ..., 6: Saturday
 
                 var schedulesForGrade = gradeSchedules[gradeKey].filter(schedule => schedule.day === selectedDay);
+
+                
+                var descriptionHTML = `
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Subject</th>
+                                <th>Teacher</th>
+                                <th>Semester</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${schedulesForGrade.map(schedule => `
+                                <tr>
+                                    <td>${schedule.start_time} - ${schedule.end_time}</td>
+                                    <td>${schedule.subject_name}</td>
+                                    <td>${schedule.teacher_name}</td>
+                                    <td>${schedule.semester}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                document.getElementById('eventTitle').innerText = 'Grade: ' + gradeKey + ' (' + getDayName(selectedDay) + ')';
+                document.getElementById('eventDescription').innerHTML = descriptionHTML;
+            }
+            else if (eventType === 'gradeSchedule2') {
+                var gradeKey = info.event.extendedProps.gradeKey;
+                var selectedDate = info.event.start;
+                var selectedDay = selectedDate.getDay(); // 0: Sunday, 1: Monday, ..., 6: Saturday
+
+                var schedulesForGrade = gradeSchedulestwo[gradeKey].filter(schedule => schedule.day === selectedDay);
 
                 
                 var descriptionHTML = `
