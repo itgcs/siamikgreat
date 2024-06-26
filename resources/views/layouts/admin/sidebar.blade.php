@@ -121,14 +121,6 @@
               </p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="/{{session('role')}}/colorSchedule" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database type schedules' ? 'active' : '') : ''}}">
-            <i class="far fa-circle nav-icon"></i>  
-              <p>
-                Color Schedule
-              </p>
-            </a>
-          </li>
         </ul>
       </li>
       @elseif (session('role') == 'teacher')

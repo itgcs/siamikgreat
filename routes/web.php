@@ -728,15 +728,6 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::put('/{id}', [SupplementarySubjectController::class, 'actionPut'])->name('actionAdminUpdateSupplementarySubject');
       Route::get('/delete/{id}', [SupplementarySubjectController::class, 'delete'])->name('delete-supplementarysubject');
    });
-
-   Route::prefix('/colorSchedule')->group(function () {
-      Route::get('/', [ColorScheduleController::class, 'index']);
-      Route::get('/create', [ColorScheduleController::class, 'pageCreate']);
-      Route::post('/', [ColorScheduleController::class, 'actionPost'])->name('actionAdminCreateColorSchedule');
-      Route::put('/{id}', [ColorScheduleController::class, 'actionPut'])->name('actionAdminUpdateColorSchedule');
-   });
-
-
 });
 
 Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(function () {
