@@ -52,4 +52,9 @@ class Grade extends Model
     {
       return $this->hasMany(Score::class);
     }
+
+    public function schedule()
+    {
+      return $this->hasMany(Schedule::class);
+    }
 }

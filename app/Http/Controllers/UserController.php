@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Master_academic;
 use Exception;
 
 use Illuminate\Http\Request;
@@ -93,10 +94,13 @@ class UserController extends Controller
             $nameUser = Relationship::where('user_id',$user->id)->value('name');
          }
 
+         $semester = Master_academic::first()->value('now_semester');
+
          session()->put([
             'role' => $nameRoles->name,
             'id_user' => $user['id'],
             'name_user' => $nameUser,
+            'semester' => $semester,
          ]);        
 
          $checkRole = session('role');

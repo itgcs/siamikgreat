@@ -367,7 +367,9 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::get('/create', [GradeController::class, 'pageCreate']);
       Route::get('/{id}', [GradeController::class, 'detailGrade']);
       Route::get('/edit/{id}', [GradeController::class, 'pageEdit']);
-      Route::get('/pdf/{id}', [GradeController::class, 'pagePDF']);
+      Route::get('/manageSubject/{id}', [GradeController::class, 'pageEditSubject']);
+      Route::get('/manageSubject/teacher/edit/{id}/{subjectId}/{teacherId}', [GradeController::class, 'pageEditSubjectTeacher']);
+      Route::put('manageSubject/{id}', [GradeController::class, 'actionPutSubjectTeacher'])->name('actionAdminUpdateGradeSubjectTeacher');
       Route::post('/', [GradeController::class, 'actionPost'])->name('actionSuperCreateGrade');
       Route::put('/{id}', [GradeController::class, 'actionPut'])->name('actionSuperUpdateGrade');
       // Route::get('/delete/{id}', [GradeController::class, 'delete'])->name('delete-grade');
@@ -582,7 +584,9 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/create', [GradeController::class, 'pageCreate']);
       Route::get('/{id}', [GradeController::class, 'detailGrade']);
       Route::get('/edit/{id}', [GradeController::class, 'pageEdit']);
-      Route::get('/pdf/{id}', [GradeController::class, 'pagePDF']);
+      Route::get('/manageSubject/{id}', [GradeController::class, 'pageEditSubject']);
+      Route::get('/manageSubject/teacher/edit/{id}/{subjectId}/{teacherId}', [GradeController::class, 'pageEditSubjectTeacher']);
+      Route::put('manageSubject/{id}', [GradeController::class, 'actionPutSubjectTeacher'])->name('actionAdminUpdateGradeSubjectTeacher');
       Route::post('/', [GradeController::class, 'actionPost'])->name('actionAdminCreateGrade');
       Route::put('/{id}', [GradeController::class, 'actionPut'])->name('actionAdminUpdateGrade');
    });

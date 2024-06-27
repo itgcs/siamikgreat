@@ -43,7 +43,10 @@
                      <th>
                         End_time
                      </th>
-                     <th class="text-center" style="width: 25%;">
+                     <th>
+                        Semester
+                     </th>
+                     <th style="width: 25%;">
                         Action
                      </th>
                   </tr>
@@ -52,41 +55,44 @@
                   @foreach ($data as $el)
                   <tr id={{'index_grade_' . $el->id}}>
                      <td>
-                           {{ $loop->index + 1 }}
+                        {{ $loop->index + 1 }}
                      </td>
                      <td>
                         <a>
-                              {{$el->subject_name}}
+                           {{$el->subject_name}}
                         </a>
                      </td>
                      <td>
                         <a>
-                              {{$el->teacher_name}}
+                           {{$el->teacher_name}}
+                        </a>
+                     </td>
+                     <td style="width:20%;">
+                        <a>
+                           {{$el->teacher_companion_name}}
                         </a>
                      </td>
                      <td>
                         <a>
-                              {{$el->teacher_companion_name}}
+                           {{$el->note}}
                         </a>
                      </td>
-                     <td>
+                     <td  class="text-center">
                         <a>
-                              {{$el->note}}
+                           {{$el->day}}
                         </a>
                      </td>
-                     <td>
-                        <a>
-                              {{$el->day}}
-                        </a>
-                     </td>
-                     <td>
+                     <td  class="text-center">
                         {{$el->start_time}}
                      </td>
-                     <td>
+                     <td  class="text-center">
                         {{$el->end_time}}
                      </td>
+                     <td class="text-center">
+                        {{$el->semester}}
+                     </td>
                      
-                     <td class="project-actions text-right toastsDefaultSuccess">
+                     <td class="project-actions text-left toastsDefaultSuccess">
                         <a class="btn btn-primary btn"
                            href="{{url('/' . session('role') .'/schedules/edit') . '/'. $el->grade_id .'/' . $el->id}}">
                            <i class="fas fa-pen">
@@ -133,7 +139,7 @@
                      <th>
                         Teacher
                      </th>
-                     <th>
+                     <th style="width:20%;">
                         Companion Teacher
                      </th>
                      <th>
@@ -189,7 +195,7 @@
                         {{$el->end_time}}
                      </td>
                      
-                     <td class="project-actions text-right toastsDefaultSuccess">
+                     <td class="project-actions text-left toastsDefaultSuccess">
                         <a class="btn btn-primary btn"
                            href="{{url('/' . session('role') .'/schedules/editSubtitute') . '/'. $el->grade_id .'/' . $el->id}}">
                            <i class="fas fa-pen">

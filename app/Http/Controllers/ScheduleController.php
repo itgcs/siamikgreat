@@ -224,8 +224,9 @@ class ScheduleController extends Controller
             'child' => 'schedules grade',
          ]);
 
-         $dataGrade = Grade::with(['student', 'teacher', 'subject'])
-            ->withCount(['student as active_student_count', 'teacher as active_teacher_count', 'subject as active_subject_count'])
+         $dataGrade = Grade::with(['student', 'teacher', 'subject', 'schedule'])
+            ->withCount(['student as active_student_count', 'teacher as active_teacher_count', 
+            'subject as active_subject_count', 'schedule as active_schedule_count'])
             ->get();
          
          $typeSchedule = Type_schedule::get();

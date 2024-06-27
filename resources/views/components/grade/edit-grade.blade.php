@@ -90,11 +90,17 @@
 
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <a class="btn btn-primary btn"
+                                        href="{{url('/' . session('role') .'/grades/manageSubject') . '/' . $gradeId}}">Manage Subject Teacher</a>
+                                    </div>
+                                </div>
                                 <! END SELECT TEACHER >
 
 
                                 <! SELECT SUBJECT >
-                                <div class="form-group row">
+                                <!-- <div class="form-group row">
                                     <div class="col-md-12">
                                         <label for="subject_id">Subject Class</label>
                                         <select name="subject_id[]" class="js-select2 form-control" id="subject_id" multiple="multiple">
@@ -124,10 +130,10 @@
                                         <p style="color: red">{{$errors->first('subject_id')}}</p>
                                         @endif
                                     </div>
-                                </div>
+                                </div> -->
                                 <! END SUBJECT >
 
-                                <table class="table table-striped table-bordered">
+                                <!-- <table class="table table-striped table-bordered">
                                     <thead>
                                         <th style="width: 40%;">Subject</th>
                                         <th style="width: 40%;">Teacher</th>
@@ -164,7 +170,7 @@
                                             </td>
                                         </tr>
                                     </tbody>
-                                </table>
+                                </table> -->
                             </div>
 
 
@@ -180,7 +186,8 @@
 
 </section>
 <script src="{{ asset('template/plugins/jquery/jquery.min.js') }}"></script>
-<! Script untuk manipulasi tambah dan hapus row grade & subject teacher >
+
+
 <script>
 $(document).ready(function() {
     // Function to add a new row

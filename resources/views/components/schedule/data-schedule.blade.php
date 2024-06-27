@@ -68,7 +68,7 @@
                         </a>
                      </td>
                      <td>
-                        {{$el->active_exam_count}}
+                        {{$el->active_schedule_count}}
                      </td>
                      
                      <td class="project-actions text-right toastsDefaultSuccess">
