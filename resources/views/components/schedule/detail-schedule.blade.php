@@ -3,7 +3,7 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
-    @if (session('role') == 'superadmin')
+    @if (session('role') == 'superadmin' || session('role') == 'admin')
     <a class="btn btn-success btn"
         href="{{url('/' . session('role') .'/schedules/grade/create') . '/' . $data['grade_id']}}">
         <i class="fas fa-calendar-plus">

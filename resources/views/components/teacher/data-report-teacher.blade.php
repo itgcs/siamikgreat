@@ -70,13 +70,13 @@
                                        TCOP
                                     </a>
                                     <a class="btn btn-primary btn"
-                                       href="{{url('teacher/dashboard/report') . '/card/semester1/' . $dgt->id}}">
+                                       href="{{url('teacher/dashboard/report') . '/card/semestersatu/' . $dgt->id}}">
                                        
                                        </i>
                                        SEMESTER 1
                                     </a>
                                     <a class="btn btn-primary btn"
-                                       href="{{url('teacher/dashboard/report') . '/card/semester2/' . $dgt->id}}">
+                                       href="{{url('teacher/dashboard/report') . '/card/semesterdua/' . $dgt->id}}">
                                        
                                        </i>
                                        SEMESTER 2
@@ -95,19 +95,19 @@
                                        SOOA
                                     </a>
                                     <a class="btn btn-warning btn"
-                                       href="{{url('teacher/dashboard/report') . '/tcop/detail/' . $dgt->id}}">
+                                       href="{{url('teacher/dashboard/report') . '/tcop/detailSec/' . $dgt->id}}">
                                        
                                        </i>
                                        TCOP
                                     </a>
                                     <a class="btn btn-primary btn"
-                                       href="{{url('teacher/dashboard/report') . '/card/semester1/' . $dgt->id}}">
+                                       href="{{url('teacher/dashboard/report') . '/cardSec/semestersatu/' . $dgt->id}}">
                                        
                                        </i>
                                        SEMESTER 1
                                     </a>
                                     <a class="btn btn-primary btn"
-                                       href="{{url('teacher/dashboard/report') . '/card/semester2/' . $dgt->id}}">
+                                       href="{{url('teacher/dashboard/report') . '/cardSec/semesterdua/' . $dgt->id}}">
                                        
                                        </i>
                                        SEMESTER 2
@@ -153,5 +153,14 @@
       });
    }
 </script>
-  
+
+<script>
+   @if(session('swal'))
+      Swal.fire({
+            icon: '{{ session('swal.type') }}', // 'success', 'error', 'warning', 'info', 'question'
+            title: '{{ session('swal.title') }}',
+            text: '{{ session('swal.text') }}'
+      });
+   @endif
+</script>
 @endsection

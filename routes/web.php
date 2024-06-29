@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\{
    MasterAcademicController,
 };
 
+use App\Http\Controllers\EcaController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\AttendanceController;
@@ -372,7 +373,7 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::put('manageSubject/{id}', [GradeController::class, 'actionPutSubjectTeacher'])->name('actionAdminUpdateGradeSubjectTeacher');
       Route::post('/', [GradeController::class, 'actionPost'])->name('actionSuperCreateGrade');
       Route::put('/{id}', [GradeController::class, 'actionPut'])->name('actionSuperUpdateGrade');
-      // Route::get('/delete/{id}', [GradeController::class, 'delete'])->name('delete-grade');
+      Route::get('/delete/{id}', [GradeController::class, 'delete'])->name('delete-grade');
    });
 
    Route::prefix('/exams')->group(function () {
@@ -458,8 +459,8 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       
       Route::get('tcop/detail/{id}', [ReportController::class, 'tcopPrimary']);
 
-      Route::get('semester1/detail/{id}', [ReportController::class, 'downloadPDFSemester1']);
-      Route::get('semester2/detail/{id}', [ReportController::class, 'downloadPDFSemester2']);
+      Route::get('semestersatu/detail/{id}', [ReportController::class, 'cardSemester1']);
+      Route::get('semesterdua/detail/{id}', [ReportController::class, 'cardSemester1']);
    });
 
    Route::prefix('/schedules')->group(function () {
@@ -625,43 +626,72 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('detailSubject/student/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudent']);
       Route::get('detailSubjectSec/student/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudentSec']);
 
-      Route::post('/scoringMajorPrimary', [ScoringController::class, 'actionPostMajorPrimary'])->name('actionAdminPostScoringMajorPrimary');
-      Route::post('/scoringMinorPrimary', [ScoringController::class, 'actionPostMinorPrimary'])->name('actionAdminPostScoringMinorPrimary');
-      Route::post('/scoringSecondary', [ScoringController::class, 'actionPostSecondary'])->name('actionAdminPostScoringSecondary');
+      Route::post('scoringMajorPrimary', [ScoringController::class, 'actionPostMajorPrimary'])->name('actionAdminPostScoringMajorPrimary');
+      Route::post('scoringMinorPrimary', [ScoringController::class, 'actionPostMinorPrimary'])->name('actionAdminPostScoringMinorPrimary');
+      Route::post('scoringSecondary', [ScoringController::class, 'actionPostSecondary'])->name('actionAdminPostScoringSecondary');
       
       
       Route::get('acar/detail/{id}', [ReportController::class, 'acarPrimary']);
-      Route::post('/acarPrimary', [ScoringController::class, 'actionPostAcarPrimary'])->name('actionAdminPostScoringAcarPrimary');
-      Route::post('/acarSecondary', [ScoringController::class, 'actionPostAcarSecondary'])->name('actionAdminPostScoringAcarSecondary');
+      Route::post('acarPrimary', [ScoringController::class, 'actionPostAcarPrimary'])->name('actionAdminPostScoringAcarPrimary');
+      Route::post('acarSecondary', [ScoringController::class, 'actionPostAcarSecondary'])->name('actionAdminPostScoringAcarSecondary');
       Route::get('acar/detailSec/{id}', [ReportController::class, 'acarSecondary']);
+
 
       Route::get('sooa/detail/{id}', [ReportController::class, 'sooaPrimary']);
       Route::get('sooa/detailSec/{id}', [ReportController::class, 'sooaSecondary']);
-      Route::post('/sooaPrimary', [ScoringController::class, 'actionPostSooaPrimary'])->name('actionAdminPostScoringSooaPrimary');
-      Route::post('/sooaSecondary', [ScoringController::class, 'actionPostSooaSecondary'])->name('actionAdminPostScoringSooaSecondary');
-      Route::post('/updateSooaPrimary/{id}', [ScoringController::class, 'actionPostSooaPrimary'])->name('actionAdminUpdateSooaPrimary');
+      Route::post('sooaPrimary', [ScoringController::class, 'actionPostSooaPrimary'])->name('actionAdminPostScoringSooaPrimary');
+      Route::post('sooaSecondary', [ScoringController::class, 'actionPostSooaSecondary'])->name('actionAdminPostScoringSooaSecondary');
+      Route::post('updateSooaPrimary/{id}', [ScoringController::class, 'actionPostSooaPrimary'])->name('actionAdminUpdateSooaPrimary');
 
-      Route::get('semester1/detail/{id}', [ReportController::class, 'semester1']);
-      Route::get('semester2/detail/{id}', [ReportController::class, 'semester2']);
+      Route::get('tcop/detail/{id}', [ReportController::class, 'tcopPrimary']);
+
+      Route::get('acar/decline/{gradeId}/{teacherId}/{semester}', [ReportController::class, 'acarDecline']); // Sudah termasuk acar primary dan secondary
+      Route::get('sooa/decline/{gradeId}/{teacherId}/{semester}', [ReportController::class, 'sooaPrimaryDecline']);
+      Route::get('scoring/decline/{gradeId}/{teacherId}/{subjectId}/{semester}', [ReportController::class, 'scoringDecline']);
+      Route::get('reportCard/decline/{gradeId}/{teacherId}/{semester}', [ReportController::class, 'reportCardDecline']);
+
+      Route::get('semestersatu/detail/{id}', [ReportController::class, 'cardSemester1']);
+      Route::get('semesterdua/detail/{id}', [ReportController::class, 'cardSemester2']);
    });
 
    Route::prefix('/schedules')->group(function () {
       Route::get('/all', [ScheduleController::class, 'allScheduleSchools']);
       Route::get('/schools', [ScheduleController::class, 'scheduleSchools']);
+      
+      Route::get('/grade/create/{id}', [ScheduleController::class, 'create']);
+      Route::post('/scheduleGrade', [ScheduleController::class, 'actionCreate'])->name('actionAdminCreateSchedule');
       Route::get('/grades', [ScheduleController::class, 'scheduleGrades']);
       Route::get('/manage/{id}', [ScheduleController::class, 'managePage']);  
-      Route::get('grade/create/{id}', [ScheduleController::class, 'create']);
-      Route::post('/scheduleGrade', [ScheduleController::class, 'actionCreate'])->name('actionAdminCreateSchedule');
-      Route::post('schedules/schools', [ScheduleController::class, 'actionCreateOther'])->name('actionAdminCreateOtherSchedule');
-      Route::get('detail/{id}', [ScheduleController::class, 'detail']);
+      Route::get('/detail/{id}', [ScheduleController::class, 'detail']);
+      Route::get('/edit/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPage']);
+      Route::put('/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateGradeSchedule'])->name('actionAdminEditSchedule');
+      Route::get('/delete/{id}', [ScheduleController::class, 'delete']);
+      
+      Route::get('/midexam/create/{id}', [ScheduleController::class, 'createMidExam']);
+      Route::post('/midExam', [ScheduleController::class, 'actionCreateMidExam'])->name('actionAdminCreateMidExam');
+      Route::get('/midexams', [ScheduleController::class, 'scheduleMidExams']);
+      Route::get('/manage/midexam/{id}', [ScheduleController::class, 'managePageMidExam']);
+      Route::get('/detail/midexam/{id}', [ScheduleController::class, 'detailMidExam']);
+      Route::get('/edit/midexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPageMidExam']);
+      Route::put('/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateMidExam'])->name('actionAdminEditMidExam');
+      Route::get('/delete/midexam/{id}', [ScheduleController::class, 'deleteMidExam']);
+      
+      Route::get('/finalexam/create/{id}', [ScheduleController::class, 'createFinalExam']);
+      Route::post('/finalExam', [ScheduleController::class, 'actionCreateFinalExam'])->name('actionAdminCreateFinalExam');
+      Route::get('/finalexams', [ScheduleController::class, 'scheduleFinalExams']);
+      Route::get('/manage/finalexam/{id}', [ScheduleController::class, 'managePageFinalExam']);
+      Route::get('/detail/finalexam/{id}', [ScheduleController::class, 'detailFinalExam']);
+      Route::get('/edit/finalexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPageFinalExam']);
+      Route::put('/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateFinalExam'])->name('actionAdminEditFinalExam');
+      Route::get('/delete/finalexam/{id}', [ScheduleController::class, 'deleteFinalExam']);
+
+
+      Route::post('/schedules/schools', [ScheduleController::class, 'actionCreateOther'])->name('actionAdminCreateOtherSchedule');
 
       Route::get('/schools/manage/otherSchedule', [ScheduleController::class, 'manageOtherSchedulePage']);  
-      Route::get('edit/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPage']);
-      Route::get('editSubtitute/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPageSubtitute']);
-      Route::put('/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateGradeSchedule'])->name('actionAdminEditSchedule');
-      Route::put('subtitute/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateGradeScheduleSubtitute'])->name('actionAdminEditScheduleSubtitute');
+      Route::get('/editSubtitute/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPageSubtitute']);
+      Route::put('/subtitute/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateGradeScheduleSubtitute'])->name('actionAdminEditScheduleSubtitute');
 
-      Route::get('/delete/{id}', [ScheduleController::class, 'delete']);
       Route::get('/deleteSubtitute/{id}', [ScheduleController::class, 'deleteSubtitute']);
       Route::get('/otherSchedule/delete/{id}', [ScheduleController::class, 'deleteOtherSchedule']);
    });
@@ -732,6 +762,16 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::put('/{id}', [SupplementarySubjectController::class, 'actionPut'])->name('actionAdminUpdateSupplementarySubject');
       Route::get('/delete/{id}', [SupplementarySubjectController::class, 'delete'])->name('delete-supplementarysubject');
    });
+
+   Route::prefix('/eca')->group(function () {
+      Route::get('/', [EcaController::class, 'index']);
+      Route::get('/create', [EcaController::class, 'pageCreate']);
+      Route::get('/add/{id}', [EcaController::class, 'addStudent']);
+      Route::post('/addStudent', [EcaController::class, 'actionAddStudent'])->name('actionAdminAddStudent');
+      Route::post('/', [EcaController::class, 'actionPost'])->name('actionAdminCreateEca');
+      Route::put('/{id}', [EcaController::class, 'actionPut'])->name('actionAdminUpdateEca');
+      Route::get('/delete/{id}', [EcaController::class, 'delete'])->name('delete-eca');
+   });
 });
 
 Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(function () {
@@ -741,6 +781,17 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('/edit/{id}', [TeacherController::class, 'editPage']);
       Route::put('/edit/{id}', [TeacherController::class, 'actionEdit'])->name('actionUpdateSelfTeacher');
       
+
+      Route::get('attendance/{id}', [AttendanceController::class, 'attendTeacher']);
+      Route::get('attendance/gradeTeacher/{id}', [AttendanceController::class, 'gradeTeacher']);
+      Route::get('attendance/subjectTeacher/{id}', [AttendanceController::class, 'subjectTeacher']);
+      Route::get('attendance/{id}/{gradeId}', [AttendanceController::class, 'detail'])->name('attendanceSubject');
+      Route::get('attendance/teacher/grade/subject', [AttendanceController::class, 'detailAttendTeacher'])->name('attendance.detail.teacher');
+      Route::get('attendance/view/student/{id}/{gradeId}/{subjectId}', [AttendanceController::class, 'detailViewAttendTeacher']);
+      Route::post('/', [AttendanceController::class, 'postAttendance'])->name('actionUpdateAttendanceStudent');
+      Route::post('/postScoreAttendance', [ScoringController::class, 'actionPostScoreAttendance'])->name('actionTeacherPostScoringAttendance');
+
+
       Route::get('/grade/{id}', [GradeController::class, 'teacherGrade']);
       
       Route::get('/exam/{id}', [ExamController::class, 'teacherExam'])->name('teacher.dashboard.exam');
@@ -776,29 +827,25 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::post('report/sooaSecondary', [ScoringController::class, 'actionPostSooaSecondary'])->name('actionTeacherPostScoringSooaSecondary');
       Route::post('report/updateSooaPrimary/{id}', [ScoringController::class, 'actionPostSooaPrimary'])->name('actionUpdateSooaPrimary');
       
-      Route::get('report/card/semester1/{id}', [ReportController::class, 'cardSemester1']);
-      Route::get('report/card/semester2/{id}', [ReportController::class, 'cardSemester2']);
+      Route::get('report/card/semestersatu/{id}', [ReportController::class, 'cardSemester1']);
+      Route::get('report/card/semesterdua/{id}', [ReportController::class, 'cardSemester2']);
+      Route::get('report/cardSec/semestersatu/{id}', [ReportController::class, 'cardSemester1Sec']);
+      Route::get('report/cardSec/semesterdua/{id}', [ReportController::class, 'cardSemester2Sec']);
+      
 
       Route::get('report/tcop/detail/{id}', [ReportController::class, 'tcopPrimary']);
+      Route::get('report/tcop/detailSec/{id}', [ReportController::class, 'tcopSecondary']);
 
       Route::get('report/semester1/print/{id}', [ReportController::class, 'downloadPDFSemester1']);
       Route::post('report/reportCard1', [ScoringController::class, 'actionPostReportCard1'])->name('actionTeacherPostReportCard1');
       Route::get('report/semester2/print/{id}', [ReportController::class, 'downloadPDFSemester2']);
       Route::post('report/reportCard2', [ScoringController::class, 'actionPostReportCard2'])->name('actionTeacherPostReportCard2');
 
-      Route::get('attendance/{id}', [AttendanceController::class, 'attendTeacher']);
-      Route::get('attendance/gradeTeacher/{id}', [AttendanceController::class, 'gradeTeacher']);
-      Route::get('attendance/subjectTeacher/{id}', [AttendanceController::class, 'subjectTeacher']);
-      Route::get('attendance/{id}/{gradeId}', [AttendanceController::class, 'detail'])->name('attendanceSubject');
-      Route::get('attendance/teacher/grade/subject', [AttendanceController::class, 'detailAttendTeacher'])->name('attendance.detail.teacher');
-      Route::get('attendance/view/student/{id}/{gradeId}/{subjectId}', [AttendanceController::class, 'detailViewAttendTeacher']);
-      Route::post('/', [AttendanceController::class, 'postAttendance'])->name('actionUpdateAttendanceStudent');
-      Route::post('/postScoreAttendance', [ScoringController::class, '3'])->name('actionTeacherPostScoringAttendance');
    
-
       Route::get('schedules/grade/{id}', [ScheduleController::class, 'scheduleGradeTeacher']);
       Route::get('schedules/gradeOther/{id}', [ScheduleController::class, 'scheduleGradeTeacherOther']);
       Route::get('schedules/subject/{id}', [ScheduleController::class, 'scheduleSubjectTeacher']);
+      Route::get('schedules/companion/{id}', [ScheduleController::class, 'scheduleCompanionTeacher']);
       Route::get('schools/{id}', [ScheduleController::class, 'scheduleTeacherSchools']);
       Route::get('schedules/detail/{teacherId}/{gradeId}', [ScheduleController::class, 'detailScheduleTeacher']);
    });

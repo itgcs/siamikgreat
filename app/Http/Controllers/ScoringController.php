@@ -18,6 +18,7 @@ use App\Models\Sooa_primary;
 use App\Models\Sooa_secondary;
 use App\Models\Report_card;
 use App\Models\Report_card_status;
+use App\Models\Scoring_status;
 use App\Models\Acar_status;
 use App\Models\Sooa_status;
 use App\Models\Score_attendance;
@@ -66,6 +67,17 @@ class ScoringController extends Controller
                 Acar::create($scoring);
                 Comment::create($comment);
             }
+
+            $status = [
+                'grade_id' => $request->grade_id,
+                'subject_id' => $request->subject_id,
+                'teacher_id' => $request->subject_teacher,
+                'status' => 1,
+                'semester' => $request->semester,
+                'created_at' => now()
+            ];
+
+            Acar_status::create($status);
 
             session()->flash('after_post_final_score');
 
@@ -167,7 +179,7 @@ class ScoringController extends Controller
 
     public function actionPostAcarPrimary(Request $request){
         try {
-            dd($request);
+            // dd($request);
             for($i=0; $i < count($request->student_id); $i++){
                 $final_score = $request->final_score[$i];
     
@@ -192,8 +204,15 @@ class ScoringController extends Controller
                     'comment' => $request->comment[$i],
                 ];
     
-                Sooa_primary::create($scoring);
-                Acar_comment::create($comment);
+                Sooa_primary::updateOrCreate(
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                    $scoring
+                );
+
+                Acar_comment::updateOrCreate(
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                    $comment
+                );
             }
 
             $status = [
@@ -242,8 +261,15 @@ class ScoringController extends Controller
                     'comment' => $request->comment[$i],
                 ];
     
-                Sooa_secondary::create($scoring);
-                Acar_comment::create($comment);
+                Sooa_secondary::updateOrCreate(
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                    $scoring
+                );
+
+                Acar_comment::updateOrCreate(
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                    $comment
+                );
             }
 
             $status = [
@@ -279,6 +305,7 @@ class ScoringController extends Controller
                     ->value('attendance');
 
                 $final_score = ($academic 
+                    + $request->choice[$i] 
                     + $request->language_and_art[$i] 
                     + $request->self_development[$i] 
                     + $request->eca_aver[$i] 
@@ -309,7 +336,7 @@ class ScoringController extends Controller
                 ];
                 
                 Sooa_primary::updateOrCreate(
-                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id],
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
                     $scoring
                 );
             }
@@ -346,7 +373,84 @@ class ScoringController extends Controller
     
 
     public function actionPostSooaSecondary(Request $request){
-        dd($request);
+        // dd($request);
+        try {
+            for($i=0; $i < count($request->student_id); $i++){
+                $academic = Sooa_secondary::where('sooa_secondaries.grade_id', $request->grade_id)
+                    ->where('sooa_secondaries.class_teacher_id', $request->class_teacher)
+                    ->where('student_id', $request->student_id[$i])
+                    ->value('academic');
+
+                $attendance = Sooa_secondary::where('sooa_secondaries.grade_id', $request->grade_id)
+                    ->where('sooa_secondaries.class_teacher_id', $request->class_teacher)
+                    ->where('student_id', $request->student_id[$i])
+                    ->value('attendance');
+
+                $final_score = ($academic 
+                    + $request->eca_1[$i] 
+                    + $request->eca_2[$i]
+                    + $request->self_development[$i]  
+                    + $request->eca_aver[$i] 
+                    + $request->behavior[$i] 
+                    + $attendance 
+                    + $request->participation[$i]) / 8;
+                
+                $scoring = [
+                    'student_id' => $request->student_id[$i],
+                    'grade_id' => $request->grade_id,
+                    'class_teacher_id' => $request->class_teacher,
+                    'semester' => $request->semester,
+                    'eca_1' => $request->eca_1[$i],
+                    'grades_eca_1' => $this->determineGrade($request->eca_1[$i]),
+                    'eca_2' => $request->eca_2[$i],
+                    'grades_eca_2' => $this->determineGrade($request->eca_2[$i]),
+                    'self_development' => $request->self_development[$i],
+                    'grades_self_development' => $this->determineGrade($request->self_development[$i]),
+                    'eca_aver' => $request->eca_aver[$i],
+                    'grades_eca_aver' => $this->determineGrade($request->eca_aver[$i]),
+                    'behavior' => $request->behavior[$i],
+                    'grades_behavior' => $this->determineGrade($request->behavior[$i]),
+                    'participation' => $request->participation[$i],
+                    'grades_participation' => $this->determineGrade($request->participation[$i]),
+                    'final_score' => round($final_score),
+                    'grades_final_score' => $this->determineGrade($final_score),
+                    'created_at' => now()
+                ];
+                
+                Sooa_secondary::updateOrCreate(
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                    $scoring
+                );
+            }
+    
+            $allScores = Sooa_secondary::where('grade_id', $request->grade_id)
+                ->orderBy('final_score', 'desc')
+                ->get();
+    
+            foreach ($allScores as $index => $student) {
+                $student->ranking = $index + 1;
+                $student->save();
+            }
+            
+            $status = [
+                'grade_id' => $request->grade_id,
+                'class_teacher_id' => $request->class_teacher,
+                'semester' => $request->semester,
+                'status' => 1,
+                'created_at' => now()
+            ];
+    
+            Sooa_status::updateOrCreate(
+                ['grade_id' => $request->grade_id, 'class_teacher_id' => $request->class_teacher, 'semester' => $request->semester],
+                $status
+            );
+    
+            session()->flash('after_post_sooa');
+    
+            return redirect()->back()->with('role', session('role'));
+        } catch (Exception $err) {
+            dd($err);
+        }
     }
 
     public function actionPostScoreAttendance(Request $request){
@@ -424,7 +528,6 @@ class ScoringController extends Controller
                     'student_id' => $request->student_id[$i],
                     'grade_id' => $request->grade_id,
                     'class_teacher_id' => $request->teacher_id,
-                    'subject_teacher_id' => $request->subject_teacher,
                     'semester' => $request->semester,
                     'independent_work' => $request->independent_work[$i],
                     'initiative' => $request->initiative[$i],
@@ -441,7 +544,11 @@ class ScoringController extends Controller
                 ];
                 
                 
-                Report_card::create($scoring);
+                Report_card::updateOrCreate(
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
+                    'class_teacher_id' => $request->teacher_id],
+                    $scoring
+                );
             }
             
             $status = [
@@ -473,7 +580,6 @@ class ScoringController extends Controller
                     'student_id' => $request->student_id[$i],
                     'grade_id' => $request->grade_id,
                     'class_teacher_id' => $request->teacher_id,
-                    'subject_teacher_id' => $request->subject_teacher,
                     'semester' => $request->semester,
                     'independent_work' => $request->independent_work[$i],
                     'initiative' => $request->initiative[$i],
@@ -490,7 +596,11 @@ class ScoringController extends Controller
                 ];
                 
                 
-                Report_card::create($scoring);
+                Report_card::updateOrCreate(
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
+                    'class_teacher_id' => $request->teacher_id],
+                    $scoring
+                );
             }
             
             $status = [

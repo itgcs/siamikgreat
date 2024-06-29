@@ -34,6 +34,7 @@ return new class extends Migration
             $table->string('grades_participation')->nullable();
             $table->integer('final_score')->nullable();
             $table->string('grades_final_score')->nullable();
+            $table->string('ranking')->nullable();
             $table->integer('semester')->nullable();
             $table->foreign('student_id')->references('id')->on('students')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreign('grade_id')->references('id')->on('grades')->cascadeOnDelete()->cascadeOnUpdate();

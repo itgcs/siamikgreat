@@ -25,6 +25,7 @@ use App\Models\Sooa_primary;
 use App\Models\Sooa_secondary;
 use App\Models\Report_card;
 use App\Models\Report_card_status;
+use App\Models\Scoring_status;
 use App\Models\Acar_status;
 use App\Models\Sooa_status;
 
@@ -117,7 +118,6 @@ class ReportController extends Controller
                 ->get();
 
             $grade = grade::where('id', $id)->get();
-
 
             $data = [
                 'grade' => $grade,
@@ -379,6 +379,13 @@ class ReportController extends Controller
 
             // dd($scoresByStudent);
 
+            
+            $status = Scoring_status::where('grade_id', $gradeId)
+                ->where('subject_id', $subject->subject_id)
+                ->where('semester', $semester)
+                ->where('teacher_id', $subjectTeacher->teacher_id)
+                ->first();
+
             $data = [
                 'subjectTeacher' => $subjectTeacher,
                 'classTeacher' => $classTeacher,
@@ -386,6 +393,7 @@ class ReportController extends Controller
                 'grade' => $totalExam,
                 'students' => $scoresByStudent,
                 'semester' => $semester,
+                'status' => $status,
             ];
 
             // dd($data);   
@@ -399,6 +407,37 @@ class ReportController extends Controller
             
         } catch (Exception $err) {
            return dd($err);
+        }
+    }
+
+    public function scoringDecline($gradeId, $teacherId, $subjectId, $semester)
+    {
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => ' database reports',
+                'child' => 'report class teacher',
+            ]);
+
+            Scoring_status::where('grade_id', $gradeId)
+                ->where('subject_id', $subjectId)
+                ->where('teacher_id', $teacherId)
+                ->where('semester', $semester)
+                ->delete();
+
+            session()->flash('after_decline_scoring');
+
+            return redirect()->back()->with([
+                'role' => session('role'),
+                'swal' => [
+                    'type' => 'success',
+                    'title' => 'Decline Scoring',
+                    'text' => 'Succesfully decline scoring'
+                ]
+            ]);
+
+
+        } catch (Exception $err) {
+            dd($err);
         }
     }
 
@@ -740,6 +779,35 @@ class ReportController extends Controller
             dd($err);
         }
     }
+
+    public function acarDecline($gradeId, $teacherId, $semester)
+    {
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => ' database reports',
+                'child' => 'report class teacher',
+            ]);
+
+            Acar_status::where('grade_id', $gradeId)
+                ->where('class_teacher_id', $teacherId)
+                ->where('semester', $semester)
+                ->delete();
+
+            session()->flash('after_decline_acar');
+
+            return redirect()->back()->with([
+                'role' => session('role'),
+                'swal' => [
+                    'type' => 'success',
+                    'title' => 'Decline ACAR Primary',
+                    'text' => 'Succesfully decline ACAR primary'
+                ]
+            ]);
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
     //End Academic Assessment Report
 
     // Summary of Academic Assesment
@@ -908,6 +976,36 @@ class ReportController extends Controller
         }
     }
 
+    public function sooaPrimaryDecline($gradeId, $teacherId, $semester)
+    {
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => ' database reports',
+                'child' => 'report class teacher',
+            ]);
+
+            Sooa_status::where('grade_id', $gradeId)
+                ->where('class_teacher_id', $teacherId)
+                ->where('semester', $semester)
+                ->delete();
+
+            session()->flash('after_decline_sooa');
+
+            return redirect()->back()->with([
+                'role' => session('role'),
+                'swal' => [
+                    'type' => 'success',
+                    'title' => 'Decline SOOA',
+                    'text' => 'Succesfully decline SOOA'
+                ]
+            ]);
+
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
     // End Summary of Academic Assesment
 
     public function tcopPrimary($gradeId){
@@ -922,6 +1020,8 @@ class ReportController extends Controller
                 ->select('grades.name as grade_name', 'grades.class as grade_class', 'teachers.name as teacher_name')
                 ->where('teacher_grades.grade_id', $gradeId)
                 ->first();
+
+            $promoteGrade = Grade::where('id', $gradeId + 1)->first();
 
                 
             $classTeacher = Teacher_grade::where('grade_id', $gradeId)
@@ -938,43 +1038,31 @@ class ReportController extends Controller
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
                 $student = $scores->first();
-                $majorSubject = Major_subject::pluck('subject_id')->toArray();
-                $majorSubjectsScores = $scores->whereIn('subject_id', $majorSubject)->pluck('final_score');
-                $minorSubjectsScores = $scores->whereIn('subject_id', [32, 7, 20, 4])->pluck('final_score');
-                $supplementarySubjectsScores = $scores->whereIn('subject_id', [18, 6, 33, 16])->pluck('final_score');
 
                 // dd($majorSubjectsScores);
+                $scoresBySemester = $scores->groupBy('semester')->map(function ($semesterScores) {
+                    
+                    return $semesterScores->map(function ($score) {
+                        return [
+                            'final_score' => $score->final_score,
+                            'grades_final_score' => $score->grades_final_score,
+                            'semester' => $score->semester,
+                        ];
+                    })->all();
+                });
+
+                $finalScores = $scores->pluck('final_score');
+                $averageFinalScore = $finalScores->count() > 0 ? round($finalScores->sum() / $finalScores->count(), 1) : 0;
+                $marks = $this->determineGrade($averageFinalScore);
 
                 return [
                     'student_id' => $student->student_id,
                     'student_name' => $student->name,
-                    'scores' => $scores->map(function ($score) {
-                        return [
-                            'academic' => $score->academic,
-                            'grades_academic' => $score->grades_academic,
-                            'choice' => $score->choice,
-                            'grades_choice' => $score->grades_choice,
-                            'language_and_art' => $score->language_and_art,
-                            'grades_language_and_art' => $score->grades_language_and_art,
-                            'self_development' => $score->self_development,
-                            'grades_self_development' => $score->grades_self_development,
-                            'eca_aver' => $score->eca_aver,
-                            'grades_eca_aver' => $score->grades_eca_aver,
-                            'behavior' => $score->behavior,
-                            'grades_behavior' => $score->grades_behavior,
-                            'attendance' => $score->attendance,
-                            'grades_attendance' => $score->grades_attendance,
-                            'participation' => $score->participation,
-                            'grades_participation' => $score->grades_participation,
-                            'final_score' => $score->final_score,
-                            'grades_final_score' => $score->grades_final_score,
-                        ];
-                    })->all(),
-                    'percent_majorSubjects' => $majorSubjectsScores->avg() * 0.7,
-                    'percent_minorSubjects' => $minorSubjectsScores->avg() * 0.2,
-                    'percent_supplementarySubjects' => $supplementarySubjectsScores->avg() * 0.1,
-                    'total_score' => (($majorSubjectsScores->avg() * 0.7) + ($minorSubjectsScores->avg() * 0.2) + $supplementarySubjectsScores->avg() * 0.1),
+                    'scores' => $scoresBySemester,
+                    'average_final_score' => $averageFinalScore,
+                    'marks' => $marks,
                 ];
+                
             })->values()->all();
 
             // dd($scoresByStudent);
@@ -984,6 +1072,83 @@ class ReportController extends Controller
                 'students' => $scoresByStudent,
                 'classTeacher' => $classTeacher,
                 'semester' => $semester,
+                'promote' => $promoteGrade,
+            ];
+
+            // dd($data);
+            
+            return view('components.report.tcop')->with('data', $data);
+            
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function tcopSecondary($gradeId){
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => 'reports',
+                'child' => 'database reports',
+            ]);
+            
+            $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('grades.name as grade_name', 'grades.class as grade_class', 'teachers.name as teacher_name')
+                ->where('teacher_grades.grade_id', $gradeId)
+                ->first();
+
+            $promoteGrade = Grade::where('id', $gradeId + 1)->first();
+
+                
+            $classTeacher = Teacher_grade::where('grade_id', $gradeId)
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
+                ->first();
+
+
+            $results = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
+                ->where('sooa_secondaries.grade_id', $gradeId)
+                ->get();
+
+            $semester = session('semester');
+
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
+                $student = $scores->first();
+
+                // dd($majorSubjectsScores);
+                $scoresBySemester = $scores->groupBy('semester')->map(function ($semesterScores) {
+                    
+                    return $semesterScores->map(function ($score) {
+                        return [
+                            'final_score' => $score->final_score,
+                            'grades_final_score' => $score->grades_final_score,
+                            'semester' => $score->semester,
+                        ];
+                    })->all();
+                });
+
+                $finalScores = $scores->pluck('final_score');
+                $averageFinalScore = $finalScores->count() > 0 ? round($finalScores->sum() / $finalScores->count(), 1) : 0;
+                $marks = $this->determineGrade($averageFinalScore);
+
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->name,
+                    'scores' => $scoresBySemester,
+                    'average_final_score' => $averageFinalScore,
+                    'marks' => $marks,
+                ];
+                
+            })->values()->all();
+
+            // dd($scoresByStudent);
+
+            $data = [
+                'grade' => $grade,
+                'students' => $scoresByStudent,
+                'classTeacher' => $classTeacher,
+                'semester' => $semester,
+                'promote' => $promoteGrade,
             ];
 
             // dd($data);
@@ -1526,6 +1691,7 @@ class ReportController extends Controller
     }
 
     public function cardSemester1($id){
+        // dd($id);
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
@@ -1533,10 +1699,19 @@ class ReportController extends Controller
             ]);
             
             $gradeId = $id;
-            $semester = session('semester');
+            $semester = intval(session('semester'));
 
-            if ($semester !== "1") {
-                return redirect()->back()->with('role', session('role'));
+            // dd($semester);
+
+            if ($semester !== 1) {
+                return redirect()->back()->with([
+                    'role' => session('role'),
+                    'swal' => [
+                        'type' => 'error',
+                        'title' => 'Invalid Semester',
+                        'text' => 'This operation cannot be performed in Semester 2.'
+                    ]
+                ]);
             }
 
             $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
@@ -1620,10 +1795,17 @@ class ReportController extends Controller
             ]);
 
             $gradeId = $id;
-            $semester = session('semester');
+            $semester = intval(session('semester'));
 
-            if ($semester !== "2") {
-                return redirect()->back()->with('role', session('role'));
+            if ($semester !== 2) {
+                return redirect()->back()->with([
+                    'role' => session('role'),
+                    'swal' => [
+                        'type' => 'error',
+                        'title' => 'Invalid Semester',
+                        'text' => 'This operation cannot be performed in Semester 1.'
+                    ]
+                ]);
             }
 
             $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
@@ -1693,6 +1875,227 @@ class ReportController extends Controller
             // dd($data);
 
             return view('components.report.semester2')->with('data', $data);
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function cardSemester1Sec($id){
+        // dd($id);
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => 'reports',
+                'child' => 'report class teacher',
+            ]);
+            
+            $gradeId = $id;
+            $semester = intval(session('semester'));
+
+            // dd($semester);
+
+            if ($semester !== 1) {
+                return redirect()->back()->with([
+                    'role' => session('role'),
+                    'swal' => [
+                        'type' => 'error',
+                        'title' => 'Invalid Semester',
+                        'text' => 'This operation cannot be performed in Semester 2.'
+                    ]
+                ]);
+            }
+
+            $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class', 
+                'teachers.name as teacher_name')
+                ->where('teacher_grades.grade_id', $gradeId)
+                ->first();
+
+            $classTeacher = Teacher_grade::where('grade_id', $gradeId)
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
+                ->first();
+
+            $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('report_cards', 'report_cards.student_id', '=', 'students.id')
+                ->where('grades.id', $gradeId)
+                ->where('report_cards.semester', $semester)
+                ->get();
+
+            $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->where('grades.id', $gradeId)
+                ->get();
+
+            // dd($results);
+
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
+                $student = $scores->first();
+               
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->name,
+                    'scores' => $scores->map(function ($score) {
+                        return [
+                            'independent_work' => $score->independent_work,
+                            'initiative' => $score->initiative,
+                            'homework_completion' => $score->homework_completion,
+                            'use_of_information' => $score->use_of_information,
+                            'cooperation_with_other' => $score->cooperation_with_other,
+                            'conflict_resolution' => $score->conflict_resolution,
+                            'class_participation' => $score->class_participation,
+                            'problem_solving' => $score->problem_solving,
+                            'goal_setting_to_improve_work' => $score->goal_setting_to_improve_work,
+                            'strength_weakness_nextstep' => $score->strength_weakness_nextstep,
+                            'remarks' => $score->remarks,
+                        ];
+                    })->all(),
+                ];
+            })->values()->all();
+
+            $status = Report_card_status::where('grade_id', $grade->grade_id)
+                ->where('semester', $semester)
+                ->where('class_teacher_id', $classTeacher->teacher_id)
+                ->first();
+
+            // dd($scoresByStudent);
+
+            $data = [
+                'grade' => $grade,
+                'students' => $student,
+                'result' => $scoresByStudent,
+                'classTeacher' => $classTeacher,
+                'semester' => $semester,
+                'status' => $status,
+            ];
+
+            // dd($data);
+
+            return view('components.report.semester1')->with('data', $data);
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function cardSemester2Sec($id){
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => 'reports',
+                'child' => 'report class teacher',
+            ]);
+
+            $gradeId = $id;
+            $semester = intval(session('semester'));
+
+            if ($semester !== 2) {
+                return redirect()->back()->with([
+                    'role' => session('role'),
+                    'swal' => [
+                        'type' => 'error',
+                        'title' => 'Invalid Semester',
+                        'text' => 'This operation cannot be performed in Semester 1.'
+                    ]
+                ]);
+            }
+
+            $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class', 
+                'teachers.name as teacher_name')
+                ->where('teacher_grades.grade_id', $gradeId)
+                ->first();
+
+            $classTeacher = Teacher_grade::where('grade_id', $gradeId)
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
+                ->first();
+
+            $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('report_cards', 'report_cards.student_id', '=', 'students.id')
+                ->where('grades.id', $gradeId)
+                ->where('report_cards.semester', $semester)
+                ->get();
+
+            $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->where('grades.id', $gradeId)
+                ->get();
+
+            // dd($results);
+
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
+                $student = $scores->first();
+               
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->name,
+                    'scores' => $scores->map(function ($score) {
+                        return [
+                            'independent_work' => $score->independent_work,
+                            'initiative' => $score->initiative,
+                            'homework_completion' => $score->homework_completion,
+                            'use_of_information' => $score->use_of_information,
+                            'cooperation_with_other' => $score->cooperation_with_other,
+                            'conflict_resolution' => $score->conflict_resolution,
+                            'class_participation' => $score->class_participation,
+                            'problem_solving' => $score->problem_solving,
+                            'goal_setting_to_improve_work' => $score->goal_setting_to_improve_work,
+                            'strength_weakness_nextstep' => $score->strength_weakness_nextstep,
+                            'promotion_status' => $score->promotion_status,
+                        ];
+                    })->all(),
+                ];
+            })->values()->all();
+
+            $status = Report_card_status::where('grade_id', $grade->grade_id)
+                ->where('semester', $semester)
+                ->where('class_teacher_id', $classTeacher->teacher_id)
+                ->first();
+
+            // dd($scoresByStudent);
+
+            $data = [
+                'grade' => $grade,
+                'students' => $student,
+                'result' => $scoresByStudent,
+                'classTeacher' => $classTeacher,
+                'semester' => $semester,
+                'status' => $status,
+            ];
+
+            // dd($data);
+
+            return view('components.report.semester2')->with('data', $data);
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function reportCardDecline($gradeId, $teacherId, $semester)
+    {
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => ' database reports',
+                'child' => 'report class teacher',
+            ]);
+
+            Report_card_status::where('grade_id', $gradeId)
+                ->where('class_teacher_id', $teacherId)
+                ->where('semester', $semester)
+                ->delete();
+
+            session()->flash('after_decline_report_card');
+
+            return redirect()->back()->with([
+                'role' => session('role'),
+                'swal' => [
+                    'type' => 'success',
+                    'title' => 'Decline Report Card',
+                    'text' => 'Succesfully decline Report Card'
+                ]
+            ]);
+
 
         } catch (Exception $err) {
             dd($err);
@@ -1790,6 +2193,7 @@ class ReportController extends Controller
             $comments = comment::where('student_id', $id)
                 ->get()
                 ->keyBy('student_id');
+
             $resultsScore = Acar::join('students', 'students.id', '=', 'acars.student_id')
                 ->leftJoin('subjects', function ($join) {
                     $join->on('subjects.id', '=', 'acars.subject_id')
@@ -1798,22 +2202,39 @@ class ReportController extends Controller
                 ->where('acars.student_id', $id)
                 ->get();
                 
-                
-                $order = [
-                    'Religion',
-                    'PPKn',
-                    'Character Building',
-                    'Bahasa Indonesia',
-                    'Mathematics',
-                    'Science',
-                    'General Knowledge',
-                    'Art and Craft',
-                    'PE',
-                    'IT',
-                    'English',
-                    'Chinese'
-                ];
-                
+                if(strtolower($student->grade_name) === "primary")
+                {
+                    $order = [
+                        'Religion',
+                        'PPKn',
+                        'Character Building',
+                        'Bahasa Indonesia',
+                        'Mathematics',
+                        'Science',
+                        'General Knowledge',
+                        'Art and Craft',
+                        'PE',
+                        'IT',
+                        'English',
+                        'Chinese'
+                    ];
+                } elseif (strtolower($student->grade_name) === "secondary") {
+                    $order = [
+                        'Religion',
+                        'PPKn',
+                        'Character Building',
+                        'Bahasa Indonesia',
+                        'Mathematics',
+                        'Science',
+                        'IPS',
+                        'Art and Design',
+                        'PE',
+                        'IT',
+                        'English',
+                        'Chinese'
+                    ];
+                }
+
                 $scoresByStudent = $resultsScore->groupBy('student_id')->map(function ($scores) use($comments, $order) {
                     $student = $scores->first();
                 
@@ -1838,42 +2259,84 @@ class ReportController extends Controller
                 })->values()->all();
                 
 
-            $resultsSooa = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
-                ->where('sooa_primaries.student_id', $id)
-                ->get();
+            
+            if (strtolower($student->grade_name) === "primary") {
+                $resultsSooa = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
+                    ->where('sooa_primaries.student_id', $id)
+                    ->get();
+
+                $scoresByStudentSooa = $resultsSooa->groupBy('student_id')->map(function ($scores) {
+                    $student = $scores->first();
+        
+                    return [
+                        'student_id' => $student->student_id,
+                        'student_name' => $student->name,
+                        'ranking' => $student->ranking,
+                        'scores' => $scores->map(function ($score) {
+                            return [
+                                'academic' => $score->academic,
+                                'grades_academic' => $score->grades_academic,
+                                'choice' => $score->choice,
+                                'grades_choice' => $score->grades_choice,
+                                'language_and_art' => $score->language_and_art,
+                                'grades_language_and_art' => $score->grades_language_and_art,
+                                'self_development' => $score->self_development,
+                                'grades_self_development' => $score->grades_self_development,
+                                'eca_aver' => $score->eca_aver,
+                                'grades_eca_aver' => $score->grades_eca_aver,
+                                'behavior' => $score->behavior,
+                                'grades_behavior' => $score->grades_behavior,
+                                'attendance' => $score->attendance,
+                                'grades_attendance' => $score->grades_attendance,
+                                'participation' => $score->participation,
+                                'grades_participation' => $score->grades_participation,
+                                'final_score' => $score->final_score,
+                                'grades_final_score' => $score->grades_final_score,
+                            ];
+                        })->all(),
+                    ];
+                })->values()->all();
+            }
+            elseif (strtolower($student->grade_name) === "secondary") {
+                $resultsSooa = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
+                    ->where('sooa_secondaries.student_id', $id)
+                    ->get();
+
+                $scoresByStudentSooa = $resultsSooa->groupBy('student_id')->map(function ($scores) {
+                    $student = $scores->first();
+        
+                    return [
+                        'student_id' => $student->student_id,
+                        'student_name' => $student->name,
+                        'ranking' => $student->ranking,
+                        'scores' => $scores->map(function ($score) {
+                            return [
+                                'academic' => $score->academic,
+                                'grades_academic' => $score->grades_academic,
+                                'eca_1' => $score->eca_1,
+                                'grades_eca_1' => $score->eca_1,
+                                'eca_2' => $score->eca_2,
+                                'grades_eca_2' => $score->grades_eca_2,
+                                'self_development' => $score->self_development,
+                                'grades_self_development' => $score->grades_self_development,
+                                'eca_aver' => $score->eca_aver,
+                                'grades_eca_aver' => $score->grades_eca_aver,
+                                'behavior' => $score->behavior,
+                                'grades_behavior' => $score->grades_behavior,
+                                'attendance' => $score->attendance,
+                                'grades_attendance' => $score->grades_attendance,
+                                'participation' => $score->participation,
+                                'grades_participation' => $score->grades_participation,
+                                'final_score' => $score->final_score,
+                                'grades_final_score' => $score->grades_final_score,
+                            ];
+                        })->all(),
+                    ];
+                })->values()->all();
+            }
     
     
-            $scoresByStudentSooa = $resultsSooa->groupBy('student_id')->map(function ($scores) {
-                $student = $scores->first();
-    
-                return [
-                    'student_id' => $student->student_id,
-                    'student_name' => $student->name,
-                    'ranking' => $student->ranking,
-                    'scores' => $scores->map(function ($score) {
-                        return [
-                            'academic' => $score->academic,
-                            'grades_academic' => $score->grades_academic,
-                            'choice' => $score->choice,
-                            'grades_choice' => $score->grades_choice,
-                            'language_and_art' => $score->language_and_art,
-                            'grades_language_and_art' => $score->grades_language_and_art,
-                            'self_development' => $score->self_development,
-                            'grades_self_development' => $score->grades_self_development,
-                            'eca_aver' => $score->eca_aver,
-                            'grades_eca_aver' => $score->grades_eca_aver,
-                            'behavior' => $score->behavior,
-                            'grades_behavior' => $score->grades_behavior,
-                            'attendance' => $score->attendance,
-                            'grades_attendance' => $score->grades_attendance,
-                            'participation' => $score->participation,
-                            'grades_participation' => $score->grades_participation,
-                            'final_score' => $score->final_score,
-                            'grades_final_score' => $score->grades_final_score,
-                        ];
-                    })->all(),
-                ];
-            })->values()->all();
+            
 
             $student->date_of_registration = Carbon::parse($student->date_of_registration);
 
@@ -2054,11 +2517,20 @@ class ReportController extends Controller
                         })->all(),
                     ];
                 })->values()->all();
+
+            // dd($student->grade_name);
                 
 
-            $resultsSooa = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
-                ->where('sooa_primaries.student_id', $id)
-                ->get();
+            if (strtolower($student->grade_name) === "primary") {
+                $resultsSooa = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
+                    ->where('sooa_primaries.student_id', $id)
+                    ->get();
+            }
+            elseif (strtolower($student->grade_name) === "secondary") {
+                $resultsSooa = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
+                    ->where('sooa_secondaries.student_id', $id)
+                    ->get();
+            }
     
     
             $scoresByStudentSooa = $resultsSooa->groupBy('student_id')->map(function ($scores) {

@@ -15,23 +15,63 @@ class SubjectSeeder extends Seeder
     {
         DB::table('subjects')->insert([
             [
-                'name_subject' => 'english language',
+                'name_subject' => 'Chinese',
                 'created_at' => now(),
             ],
             [
-                'name_subject' => 'mandarin language',
+                'name_subject' => 'Mathematics',
                 'created_at' => now(),
             ],
             [
-                'name_subject' => 'math',
+                'name_subject' => 'English',
                 'created_at' => now(),
             ],
             [
-                'name_subject' => 'informatics',
+                'name_subject' => 'Science',
                 'created_at' => now(),
             ],
             [
-                'name_subject' => 'science',
+                'name_subject' => 'Bahasa Indonesia',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'PPKn',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Religion',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'IPS',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'IT',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Art and Craft',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Character Building',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'General Knowledge',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'PE',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Health Education',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Art and Design',
                 'created_at' => now(),
             ],
         ]);

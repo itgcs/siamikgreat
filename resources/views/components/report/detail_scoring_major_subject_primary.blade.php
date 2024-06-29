@@ -4,25 +4,26 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
     <div class="row">
-      <div class="col">
-        <nav aria-label="breadcrumb" class="bg-light rounded-3 mb-4">
-          <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item">Home</li>
-            @if (session('role') == 'superadmin')
-              <li class="breadcrumb-item"><a href="{{url('/superadmin/reports')}}">Reports</a></li>
-            @elseif (session('role') == 'admin')
-            <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
-            @endif
-            <li class="breadcrumb-item active" aria-current="page">Detail Report</li>
-          </ol>
-        </nav>
-      </div>
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 mb-4">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">Home</li>
+                @if (session('role') == 'superadmin')
+                <li class="breadcrumb-item"><a href="{{url('/superadmin/reports')}}">Reports</a></li>
+                @elseif (session('role') == 'admin')
+                <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
+                @endif
+                <li class="breadcrumb-item active" aria-current="page">Detail Report</li>
+            </ol>
+            </nav>
+        </div>
     </div>
 
     <div class="row">
         <div class="col">
             <p class="text-xs text-bold">Major Subject Assessment</p>
             <p class="text-xs">Semester : {{ $data['semester']}}</p> 
+            <p class="text-xs">Subject : {{ $data['subject']->subject_name}}</p>    
             <p class="text-xs">Subject Teacher : {{ $data['subjectTeacher']->teacher_name }}</p>    
             <p class="text-xs">Class Teacher : {{ $data['classTeacher']->teacher_name }}</p>
             <p class="text-xs">Class: {{ $data['grade']->name }} - {{ $data['grade']->class }}</p>
@@ -39,9 +40,24 @@
             <form id="confirmForm" method="POST" action={{route('actionTeacherPostScoringMajorPrimary')}}>
         @endif
         @csrf
-        <div class="input-group-append my-2">
-            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
-        </div>
+
+        @if ($data['status'] == null)
+            <div class="row my-2">
+                <div class="input-group-append mx-2">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit Scoring</button>
+                </div>
+            </div>
+        @elseif ($data['status']->status != null && $data['status']->status == 1)       
+            <div class="row my-2">
+                <div class="input-group-append mx-2">
+                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
+                    @endif
+                </div>
+            </div>  
+        @endif
+
         <table class="table table-striped table-bordered" style=" width: 1400px;">
             <thead>
                 <tr>
@@ -232,8 +248,29 @@
                 </div>
             </div>
         </div>
+
+        <!-- Decline -->
+        <div class="modal fade" id="modalDecline" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Decline Scoring {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Are you sure want to decline scoring {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} ?</div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
@@ -243,6 +280,22 @@
     document.getElementById('confirmAccScoring').addEventListener('click', function() {
         document.getElementById('scoringForm').submit();
     });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    $('#modalDecline').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget);
+        var id = @json($data['grade']->grade_id);
+        var teacherId = @json($data['subjectTeacher']->teacher_id);
+        var subjectId = @json($data['subject']->subject_id)
+        var semester = @json($data['semester']);
+
+        var confirmDecline = document.getElementById('confirmDecline');
+        confirmDecline.href = "{{ url('/' . session('role') . '/reports/scoring/decline') }}/" + id + "/" + teacherId + "/" + subjectId + "/" + semester;
+    });
+});
+
 </script>
 
 @if(session('after_post_final_score')) 
@@ -267,5 +320,23 @@
       </script>
 
   @endif
+
+  @if(session('after_decline_scoring'))
+        <script>
+            var Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+            setTimeout(() => {
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Successfully decline scoring.',
+                });
+            }, 1500);
+        </script>
+    @endif
 
 @endsection

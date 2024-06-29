@@ -114,6 +114,18 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="/{{session('role')}}/schedules/midexams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules midexam' ? 'active' : '') : ''}}">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Mid Exam</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/{{session('role')}}/schedules/finalexams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules finalexam' ? 'active' : '') : ''}}">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Final Exam</p>
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="/{{session('role')}}/typeSchedules" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database type schedules' ? 'active' : '') : ''}}">
             <i class="far fa-circle nav-icon"></i>  
               <p>
@@ -149,6 +161,12 @@
             <a href="/{{session('role')}}/dashboard/schedules/subject/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules subject' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
               <p>Subject</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/{{session('role')}}/dashboard/schedules/companion/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules companion' ? 'active' : '') : ''}}">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Companion</p>
             </a>
           </li>
         </ul>
@@ -464,6 +482,17 @@
         </li>
       @endif
       <!-- END SUBJECT -->
+
+      @if (session('role') == 'admin' || session('role') == 'superadmin')
+        <li class="nav-item">
+          <a href="/{{ session('role') }}/eca" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database eca' ? 'active' : '') : ''}}">
+            <i class="nav-icon fa-solid fa-people-group"></i>
+            <p>
+              Extra Culicular Academic
+            </p>
+          </a>
+        </li>
+      @endif
 
 
       <!-- EXAM -->

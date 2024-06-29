@@ -49,6 +49,9 @@
             <div class="row my-2">
                 <div class="input-group-append mx-2">
                     <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline ACAR</a>
+                    @endif
                 </div>
             </div>  
         @endif
@@ -245,6 +248,40 @@
     </div>
 </div>
 
+<!-- Decline -->
+<div class="modal fade" id="modalDecline" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Decline Acar {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">Are you sure want to decline ACAR {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} ?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#modalDecline').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var id = @json($data['grade']->grade_id);
+            var teacherId = @json($data['classTeacher']->teacher_id);
+            var semester = @json($data['semester']);
+
+            console.log("id=", id, "teacher=", teacherId, "semester=", semester);
+            var confirmDecline = document.getElementById('confirmDecline');
+            confirmDecline.href = "{{ url('/' . session('role') . '/reports/acar/decline') }}/" + id + "/" + teacherId + "/" + semester;
+        });
+    });
+</script>
+
 <script>
     document.getElementById('confirmAcarScoring').addEventListener('click', function() {
         // Mengambil semua input komentar
@@ -298,5 +335,33 @@
     }, 1500);
 </script>
 @endif
+
+@if(session('after_decline_acar'))
+<script>
+    var Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
+    setTimeout(() => {
+        Toast.fire({
+            icon: 'success',
+            title: 'Successfully decline ACAR.',
+        });
+    }, 1500);
+</script>
+@endif
+
+<script>
+    @if(session('swal'))
+        Swal.fire({
+            icon: '{{ session('swal.type') }}', // 'success', 'error', 'warning', 'info', 'question'
+            title: '{{ session('swal.title') }}',
+            text: '{{ session('swal.text') }}'
+        });
+    @endif
+</script>
 
 @endsection

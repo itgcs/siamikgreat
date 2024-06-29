@@ -250,6 +250,74 @@ class ScheduleController extends Controller
       }
    }
 
+   public function scheduleMidExams()
+   {
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'schedules',
+            'child' => 'schedules midexam',
+         ]);
+
+         $dataGrade = Grade::with(['student', 'teacher', 'subject', 'schedule'])
+            ->withCount(['student as active_student_count', 'teacher as active_teacher_count', 
+            'subject as active_subject_count', 'schedule as active_schedule_count'])
+            ->get();
+         
+         $typeSchedule = Type_schedule::get();
+
+         $dataSchedule = Schedule::join('type_schedules', 'schedules.type_schedule_id', '=', 'type_schedules.id')
+            ->select('schedules.*', 'type_schedules.name as type_schedule_name')
+            ->where('type_schedule_id', '!=', 1)
+            ->get();
+
+         $data = [
+            'grade' => $dataGrade,
+            'typeSchedule' => $typeSchedule,
+            'otherSchedule' => $dataSchedule,
+         ];
+
+         // dd($data);
+         return view('components.schedule.data-schedule-midexam')->with('data', $data);
+
+      } catch (Exception $err) {
+         return dd($err);
+      }
+   }
+
+   public function scheduleFinalExams()
+   {
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'schedules',
+            'child' => 'schedules finalexam',
+         ]);
+
+         $dataGrade = Grade::with(['student', 'teacher', 'subject', 'schedule'])
+            ->withCount(['student as active_student_count', 'teacher as active_teacher_count', 
+            'subject as active_subject_count', 'schedule as active_schedule_count'])
+            ->get();
+         
+         $typeSchedule = Type_schedule::get();
+
+         $dataSchedule = Schedule::join('type_schedules', 'schedules.type_schedule_id', '=', 'type_schedules.id')
+            ->select('schedules.*', 'type_schedules.name as type_schedule_name')
+            ->where('type_schedule_id', '!=', 1)
+            ->get();
+
+         $data = [
+            'grade' => $dataGrade,
+            'typeSchedule' => $typeSchedule,
+            'otherSchedule' => $dataSchedule,
+         ];
+
+         // dd($data);
+         return view('components.schedule.data-schedule-finalexam')->with('data', $data);
+
+      } catch (Exception $err) {
+         return dd($err);
+      }
+   }
+
 
    // menampilkan schedule tiap class
    public function detail($id)
@@ -270,8 +338,11 @@ class ScheduleController extends Controller
             $endSemester = Master_academic::first()->value('end_semester2');
          }
          
+         $typeSchedule = Type_schedule::where('name','=', 'lesson')->value('id');
+
          $gradeSchedule = Schedule::where('grade_id', $id)
          ->where('semester', $semester)
+         ->where('type_schedule_id', $typeSchedule)
          ->join('grades', 'grades.id', '=', 'schedules.grade_id')
          ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
          ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
@@ -290,6 +361,8 @@ class ScheduleController extends Controller
          ->get();
 
          $subtituteTeacher = Subtitute_teacher::where('grade_id', $id)
+            ->where('semester', $semester)
+            ->where('type_schedule_id', $typeSchedule)
             ->join('grades', 'grades.id', '=', 'subtitute_teachers.grade_id')
             ->leftJoin('teachers as t1', 't1.id', '=', 'subtitute_teachers.teacher_id')
             ->leftJoin('teachers as t2', 't2.id', '=', 'subtitute_teachers.teacher_companion')
@@ -321,6 +394,124 @@ class ScheduleController extends Controller
          // dd($startSemester);
 
          return view('components.schedule.detail-schedule', compact('gradeSchedule', 'subtituteTeacher', 'endSemester', 'startSemester'))->with('data', $data)->with('teacher', $teacher)->with('grade', $grade);
+
+      } catch (Exception $err) {
+         return dd($err);
+      }
+   }
+
+   public function detailMidExam($id)
+   {
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'schedules',
+            'child' => 'schedules midexam',
+         ]);
+
+         $semester = Master_academic::first()->value('now_semester');
+         if ($semester === 1) {
+            $startSemester = Master_academic::first()->value('semester1');
+            $endSemester = Master_academic::first()->value('end_semester1');
+         }
+         elseif ($semester === 2) {
+            $startSemester = Master_academic::first()->value('semester2');
+            $endSemester = Master_academic::first()->value('end_semester2');
+         }
+
+         $typeSchedule = Type_schedule::where('name', '=', 'mid exam')->value('id');
+         
+         $gradeSchedule = Schedule::where('grade_id', $id)
+         ->where('semester', $semester)
+         ->where('type_schedule_id', $typeSchedule)
+         ->join('grades', 'grades.id', '=', 'schedules.grade_id')
+         ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
+         ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
+         ->leftJoin('subjects', 'subjects.id', '=', 'schedules.subject_id')
+         ->select(
+            'schedules.*',
+            'grades.id as grade_id',
+            'grades.name as grade_name',
+            'grades.class as grade_class',
+            't1.name as teacher_name',
+            't2.name as teacher_companion',
+            't2.id as teacher_companion_id',
+            'subjects.id as subject_id',
+            'subjects.name_subject as subject_name'
+         )
+         ->get();
+
+         // dd($gradeSchedule);
+
+         $data = Grade::where('id', $id)
+            ->select('grades.name as grade_name', 'grades.class as grade_class', 'grades.id as grade_id')
+            ->first();
+
+         $teacher = Teacher::get();
+         $grade   = Grade::get();
+
+         // dd($subtituteTeacher);
+         // dd($startSemester);
+
+         return view('components.schedule.detail-schedule-midexam', compact('gradeSchedule', 'endSemester', 'startSemester'))->with('data', $data)->with('teacher', $teacher)->with('grade', $grade);
+
+      } catch (Exception $err) {
+         return dd($err);
+      }
+   }
+
+   public function detailFinalExam($id)
+   {
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'schedules',
+            'child' => 'schedules finalexam',
+         ]);
+
+         $semester = Master_academic::first()->value('now_semester');
+         if ($semester === 1) {
+            $startSemester = Master_academic::first()->value('semester1');
+            $endSemester = Master_academic::first()->value('end_semester1');
+         }
+         elseif ($semester === 2) {
+            $startSemester = Master_academic::first()->value('semester2');
+            $endSemester = Master_academic::first()->value('end_semester2');
+         }
+
+         $typeSchedule = Type_schedule::where('name', '=', 'final exam')->value('id');
+         
+         $gradeSchedule = Schedule::where('grade_id', $id)
+         ->where('semester', $semester)
+         ->where('type_schedule_id', $typeSchedule)
+         ->join('grades', 'grades.id', '=', 'schedules.grade_id')
+         ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
+         ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
+         ->leftJoin('subjects', 'subjects.id', '=', 'schedules.subject_id')
+         ->select(
+            'schedules.*',
+            'grades.id as grade_id',
+            'grades.name as grade_name',
+            'grades.class as grade_class',
+            't1.name as teacher_name',
+            't2.name as teacher_companion',
+            't2.id as teacher_companion_id',
+            'subjects.id as subject_id',
+            'subjects.name_subject as subject_name'
+         )
+         ->get();
+
+         // dd($gradeSchedule);
+
+         $data = Grade::where('id', $id)
+            ->select('grades.name as grade_name', 'grades.class as grade_class', 'grades.id as grade_id')
+            ->first();
+
+         $teacher = Teacher::get();
+         $grade   = Grade::get();
+
+         // dd($subtituteTeacher);
+         // dd($startSemester);
+
+         return view('components.schedule.detail-schedule-finalexam', compact('gradeSchedule', 'endSemester', 'startSemester'))->with('data', $data)->with('teacher', $teacher)->with('grade', $grade);
 
       } catch (Exception $err) {
          return dd($err);
@@ -381,6 +572,80 @@ class ScheduleController extends Controller
       }
    }
 
+   public function managePageMidExam($gradeId){
+      session()->flash('page',  $page = (object)[
+         'page' => 'schedules',
+         'child' => 'schedules midexam',
+      ]);
+
+      try {
+         $typeSchedule = Type_schedule::where('name', '=', 'mid exam')->value('id');
+
+         $data = Schedule::where('grade_id', $gradeId)
+            ->where('type_schedule_id', $typeSchedule)
+            ->join('grades', 'grades.id', '=', 'schedules.grade_id')
+            ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
+            ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
+            ->leftJoin('subjects', function($join) {
+               $join->on('subjects.id', '=', 'schedules.subject_id')
+                     ->whereNotNull('schedules.subject_id');
+            })
+            ->select('schedules.*', 
+                     'grades.id as grade_id',
+                     'grades.name as grade_name', 
+                     'grades.class as grade_class', 
+                     't1.id as teacher_id',
+                     't1.name as teacher_name',
+                     't2.id as teacher_companion_id',
+                     't2.name as teacher_companion_name',   
+                     'subjects.name_subject as subject_name')
+            ->get();
+
+            return view('components.schedule.manage-schedule-midexam')->with('data', $data);
+
+         // dd($data);
+      } catch (Exception $err) {
+         dd($err);
+      }
+   }
+
+   public function managePageFinalExam($gradeId){
+      session()->flash('page',  $page = (object)[
+         'page' => 'schedules',
+         'child' => 'schedules finalexam',
+      ]);
+
+      try {
+         $typeSchedule = Type_schedule::where('name', '=', 'final exam')->value('id');
+
+         $data = Schedule::where('grade_id', $gradeId)
+            ->where('type_schedule_id', $typeSchedule)
+            ->join('grades', 'grades.id', '=', 'schedules.grade_id')
+            ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
+            ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
+            ->leftJoin('subjects', function($join) {
+               $join->on('subjects.id', '=', 'schedules.subject_id')
+                     ->whereNotNull('schedules.subject_id');
+            })
+            ->select('schedules.*', 
+                     'grades.id as grade_id',
+                     'grades.name as grade_name', 
+                     'grades.class as grade_class', 
+                     't1.id as teacher_id',
+                     't1.name as teacher_name',
+                     't2.id as teacher_companion_id',
+                     't2.name as teacher_companion_name',   
+                     'subjects.name_subject as subject_name')
+            ->get();
+
+            return view('components.schedule.manage-schedule-finalexam')->with('data', $data);
+
+         // dd($data);
+      } catch (Exception $err) {
+         dd($err);
+      }
+   }
+
    public function manageOtherSchedulePage(){
       session()->flash('page',  $page = (object)[
          'page' => 'schedules',
@@ -432,6 +697,78 @@ class ScheduleController extends Controller
          $teacher = Teacher::get();
 
          return view('components.schedule.edit-schedule')->with('data', $data)->with('gradeId', $gradeId)->with('teacher', $teacher);
+      } catch (Exception $err) {
+         dd($err);
+      }
+   }
+
+   public function editPageMidExam($gradeId, $scheduleId){
+      session()->flash('page',  $page = (object)[
+         'page' => 'schedules',
+         'child' => 'schedules midexam',
+      ]);
+
+      try {
+         $data = Schedule::where('schedules.id', $scheduleId)
+         ->leftJoin('type_schedules', 'type_schedules.id', '=', 'schedules.type_schedule_id')
+         ->leftJoin('grades', 'grades.id', '=', 'schedules.grade_id')
+         ->leftJoin('subjects', 'subjects.id', '=', 'schedules.subject_id')
+         ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
+         ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
+         ->select('schedules.*', 
+            'type_schedules.id as type_schedules_id', 
+            'type_schedules.name as type_schedule_name',
+            'grades.id as grade_id',
+            'grades.name as grade_name',
+            'grades.class as grade_class',
+            'subjects.id as subject_id',
+            'subjects.name_subject as subject_name',
+            't1.id as teacher_id',
+            't1.name as teacher_name',
+            't2.id as teacher_companion_id',
+            't2.name as teacher_companion_name')
+         ->get();
+
+         // dd($data);
+         $teacher = Teacher::get();
+
+         return view('components.schedule.edit-schedule-midexam')->with('data', $data)->with('gradeId', $gradeId)->with('teacher', $teacher);
+      } catch (Exception $err) {
+         dd($err);
+      }
+   }
+
+   public function editPageFinalExam($gradeId, $scheduleId){
+      session()->flash('page',  $page = (object)[
+         'page' => 'schedules',
+         'child' => 'schedules finalexam',
+      ]);
+
+      try {
+         $data = Schedule::where('schedules.id', $scheduleId)
+         ->leftJoin('type_schedules', 'type_schedules.id', '=', 'schedules.type_schedule_id')
+         ->leftJoin('grades', 'grades.id', '=', 'schedules.grade_id')
+         ->leftJoin('subjects', 'subjects.id', '=', 'schedules.subject_id')
+         ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
+         ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
+         ->select('schedules.*', 
+            'type_schedules.id as type_schedules_id', 
+            'type_schedules.name as type_schedule_name',
+            'grades.id as grade_id',
+            'grades.name as grade_name',
+            'grades.class as grade_class',
+            'subjects.id as subject_id',
+            'subjects.name_subject as subject_name',
+            't1.id as teacher_id',
+            't1.name as teacher_name',
+            't2.id as teacher_companion_id',
+            't2.name as teacher_companion_name')
+         ->get();
+
+         // dd($data);
+         $teacher = Teacher::get();
+
+         return view('components.schedule.edit-schedule-finalexam')->with('data', $data)->with('gradeId', $gradeId)->with('teacher', $teacher);
       } catch (Exception $err) {
          dd($err);
       }
@@ -567,6 +904,80 @@ class ScheduleController extends Controller
       }
    }
 
+   public function actionUpdateMidExam(Request $request, $gradeId, $scheduleId)
+   {
+      // dd($request);
+      DB::beginTransaction();
+
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'schedules',
+            'child' => 'schedules mid exam',
+         ]);
+        
+        $data = [
+            'teacher_id'        => $request->teacher_id,
+            'teacher_companion' => $request->teacher_companion,
+            'start_time'        => $request->start_time,
+            'end_time'          => $request->end_time,
+            'note'             => $request->notes,
+            'updated_at'        => now(),
+        ];
+
+         $role = session('role');
+
+         Schedule::where('id', $scheduleId)->update($data);
+   
+         DB::commit();
+
+         session()->flash('after_edit_midexam_schedule');
+
+         return redirect('/' . $role . '/schedules/manage/midexam'. '/' . $gradeId );
+
+      } catch (Exception $err) {
+         DB::rollBack();
+         return dd($err);
+         return abort(500);
+      }
+   }
+
+   public function actionUpdateFinalExam(Request $request, $gradeId, $scheduleId)
+   {
+      // dd($request);
+      DB::beginTransaction();
+
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'schedules',
+            'child' => 'schedules final exam',
+         ]);
+        
+        $data = [
+            'teacher_id'        => $request->teacher_id,
+            'teacher_companion' => $request->teacher_companion,
+            'start_time'        => $request->start_time,
+            'end_time'          => $request->end_time,
+            'note'             => $request->notes,
+            'updated_at'        => now(),
+        ];
+
+         $role = session('role');
+
+         Schedule::where('id', $scheduleId)->update($data);
+   
+         DB::commit();
+
+         session()->flash('after_edit_finalexam_schedule');
+
+         return redirect('/' . $role . '/schedules/manage/finalexam'. '/' . $gradeId );
+
+      } catch (Exception $err) {
+         DB::rollBack();
+         return dd($err);
+         return abort(500);
+      }
+   }
+
    public function actionUpdateGradeScheduleSubtitute(Request $request, $gradeId, $scheduleId)
    {
       // dd($request);
@@ -635,7 +1046,7 @@ class ScheduleController extends Controller
          ];
 
 
-         if (strtolower($grade[0]['name']) === "primary" || strtolower($grade[0]['name']) === "seondary") {
+         if (strtolower($grade[0]['name']) === "primary" || strtolower($grade[0]['name']) === "secondary") {
             return view('components.schedule.create-schedule')->with('data', $data);
          }
          else {
@@ -643,6 +1054,82 @@ class ScheduleController extends Controller
          }
 
 
+      } catch (Exception $err) {
+         dd($err);
+      }
+   }
+
+   public function createMidExam($id)
+   {
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'schedules',
+            'child' => 'database midexam',
+         ]);
+
+         $gradeSubject = Grade_subject::where('grade_id', $id)
+            ->join('subjects', 'subjects.id' , '=', 'grade_subjects.subject_id')
+            ->get();
+
+         $gradeTeacher = Teacher_grade::where('grade_id', $id)
+            ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+            ->get();
+
+         $grade = Grade::where('id', $id)->get();
+         $teacher = Teacher::get();
+         $subject = Subject::get();
+
+         $typeSchedule = Type_schedule::where('name', 'mid exam')->get();
+
+         $data = [
+            'gradeSubject' => $gradeSubject,
+            'gradeTeacher' => $gradeTeacher,
+            'grade' => $grade,
+            'teacher' => $teacher,
+            'subject' => $subject,
+            'typeSchedule' => $typeSchedule,
+         ];
+
+
+         return view('components.schedule.create-schedule-midexam')->with('data', $data);
+      } catch (Exception $err) {
+         dd($err);
+      }
+   }
+
+   public function createFinalExam($id)
+   {
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'schedules',
+            'child' => 'database finalexam',
+         ]);
+
+         $gradeSubject = Grade_subject::where('grade_id', $id)
+            ->join('subjects', 'subjects.id' , '=', 'grade_subjects.subject_id')
+            ->get();
+
+         $gradeTeacher = Teacher_grade::where('grade_id', $id)
+            ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+            ->get();
+
+         $grade = Grade::where('id', $id)->get();
+         $teacher = Teacher::get();
+         $subject = Subject::get();
+
+         $typeSchedule = Type_schedule::where('name', 'final exam')->get();
+
+         $data = [
+            'gradeSubject' => $gradeSubject,
+            'gradeTeacher' => $gradeTeacher,
+            'grade' => $grade,
+            'teacher' => $teacher,
+            'subject' => $subject,
+            'typeSchedule' => $typeSchedule,
+         ];
+
+
+         return view('components.schedule.create-schedule-finalexam')->with('data', $data);
       } catch (Exception $err) {
          dd($err);
       }
@@ -677,10 +1164,12 @@ class ScheduleController extends Controller
             
             if(Schedule::where('day', $request->day[$i])
                   ->where('grade_id', $request->grade_id)
-                  ->where('note', $request->notes[$i])
+                  ->where('subject_id', $request->subject_id[$i])
+                  ->where('teacher_id', $request->teacher_id[$i])
+                  ->where('teacher_companion', $request->teacher_companion[$i])
                   ->where('start_time', $request->start_time[$i])
                   ->where('end_time', $request->end_time[$i])
-                  ->where('semester', $request->semester[$i])
+                  ->where('semester', $request->semester)
                   ->exists()) {
                   return redirect('/' . $role . '/schedules/grade/create/' . $request->grade_id)
                      ->withErrors(['notes' => 'Schedules has already been created for this day.'])
@@ -710,6 +1199,150 @@ class ScheduleController extends Controller
          session()->flash('after_create_grade_schedule');
 
          return redirect('/' . $role . '/schedules/detail/' . $request->grade_id);
+      } catch (Exception $err) {
+         dd($err);
+         return redirect()->back()->withErrors(['error' => $err->getMessage()])->withInput();
+      }
+   }
+
+   public function actionCreateMidExam(Request $request)
+   {
+      // dd($request);
+      try {
+         session()->flash('page', (object)[
+            'page' => 'schedules',
+            'child' => 'schedules midexam',
+         ]);
+
+         $role = session('role');
+
+         for ($i=0; $i < count($request->notes) ; $i++) { 
+            if ($request->teacher_id[$i] && $request->teacher_companion[$i]) {
+               if (Schedule::where('day', $request->day[$i])
+               ->where('type_schedule_id', $request->type_schedule)
+               ->where('teacher_id', $request->teacher_id[$i])
+               ->where('teacher_companion', $request->teacher_companion[$i])
+               ->where('start_time', $request->start_time[$i])
+               ->where('end_time', $request->end_time[$i])
+               ->exists()) {
+                  return redirect('/' . $role . '/schedules/midexam/create/' . $request->grade_id)
+                  ->withErrors(['notes' => 'Teacher Subject Or Teacher Companion has same schedules in other grade.'])
+                  ->withInput();
+               }
+            }
+            
+            if(Schedule::where('day', $request->day[$i])
+                  ->where('grade_id', $request->grade_id)
+                  ->where('type_schedule_id', $request->type_schedule)
+                  ->where('subject_id', $request->subject_id[$i])
+                  ->where('teacher_id', $request->teacher_id[$i])
+                  ->where('teacher_companion', $request->teacher_companion[$i])
+                  ->where('start_time', $request->start_time[$i])
+                  ->where('end_time', $request->end_time[$i])
+                  ->where('semester', $request->semester)
+                  ->exists()) {
+                  return redirect('/' . $role . '/schedules/midexam/create/' . $request->grade_id)
+                     ->withErrors(['notes' => 'Schedules mid exam has already been created for this day.'])
+                     ->withInput();
+            }
+
+            $post = [
+               'grade_id' => $request->grade_id,
+               'subject_id' => $request->subject_id[$i],
+               'teacher_id' => $request->teacher_id[$i],
+               'teacher_companion' => $request->teacher_companion[$i],
+               'type_schedule_id' => $request->type_schedule,
+               'note' => $request->notes[$i],
+               'day' => $request->day[$i],
+               'date' => $request->date,
+               'end_date' => $request->end_date,
+               'semester' => $request->semester,
+               'start_time' => $request->start_time[$i],
+               'end_time' => $request->end_time[$i],
+            ];
+            
+            DB::beginTransaction();
+            
+            Schedule::create($post);
+            
+            DB::commit();
+         } 
+
+         session()->flash('after_create_midexam_schedule');
+
+         return redirect('/' . $role . '/schedules/detail/midexam/' . $request->grade_id);
+      } catch (Exception $err) {
+         dd($err);
+         return redirect()->back()->withErrors(['error' => $err->getMessage()])->withInput();
+      }
+   }
+
+   public function actionCreateFinalExam(Request $request)
+   {
+      // dd($request);
+      try {
+         session()->flash('page', (object)[
+            'page' => 'schedules',
+            'child' => 'schedules finalexam',
+         ]);
+
+         $role = session('role');
+
+         for ($i=0; $i < count($request->notes) ; $i++) { 
+            if ($request->teacher_id[$i] && $request->teacher_companion[$i]) {
+               if (Schedule::where('day', $request->day[$i])
+               ->where('type_schedule_id', $request->type_schedule)
+               ->where('teacher_id', $request->teacher_id[$i])
+               ->where('teacher_companion', $request->teacher_companion[$i])
+               ->where('start_time', $request->start_time[$i])
+               ->where('end_time', $request->end_time[$i])
+               ->exists()) {
+                  return redirect('/' . $role . '/schedules/finalexam/create/' . $request->grade_id)
+                  ->withErrors(['notes' => 'Teacher Subject Or Teacher Companion has same schedules in other grade.'])
+                  ->withInput();
+               }
+            }
+            
+            if(Schedule::where('day', $request->day[$i])
+                  ->where('grade_id', $request->grade_id)
+                  ->where('type_schedule_id', $request->type_schedule)
+                  ->where('subject_id', $request->subject_id[$i])
+                  ->where('teacher_id', $request->teacher_id[$i])
+                  ->where('teacher_companion', $request->teacher_companion[$i])
+                  ->where('start_time', $request->start_time[$i])
+                  ->where('end_time', $request->end_time[$i])
+                  ->where('semester', $request->semester)
+                  ->exists()) {
+                  return redirect('/' . $role . '/schedules/finalexam/create/' . $request->grade_id)
+                     ->withErrors(['notes' => 'Schedules mid exam has already been created for this day.'])
+                     ->withInput();
+            }
+
+            $post = [
+               'grade_id' => $request->grade_id,
+               'subject_id' => $request->subject_id[$i],
+               'teacher_id' => $request->teacher_id[$i],
+               'teacher_companion' => $request->teacher_companion[$i],
+               'type_schedule_id' => $request->type_schedule,
+               'note' => $request->notes[$i],
+               'day' => $request->day[$i],
+               'date' => $request->date,
+               'end_date' => $request->end_date,
+               'semester' => $request->semester,
+               'start_time' => $request->start_time[$i],
+               'end_time' => $request->end_time[$i],
+            ];
+            
+            DB::beginTransaction();
+            
+            Schedule::create($post);
+            
+            DB::commit();
+         } 
+
+         session()->flash('after_create_finalexam_schedule');
+
+         return redirect('/' . $role . '/schedules/detail/finalexam/' . $request->grade_id);
       } catch (Exception $err) {
          dd($err);
          return redirect()->back()->withErrors(['error' => $err->getMessage()])->withInput();
@@ -917,6 +1550,63 @@ class ScheduleController extends Controller
       }
    }
 
+   public function scheduleCompanionTeacher($id)
+   {
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'schedules',
+            'child' => 'schedules companion',
+         ]);
+
+         $getIdTeacher = Teacher::where('user_id', $id)->value('id');
+         $getGradeId = Teacher_grade::where('teacher_id', $getIdTeacher)->value('grade_id');
+
+         $gradeSchedule = Schedule::where('teacher_companion', $getIdTeacher)
+            ->join('grades', 'grades.id', '=', 'schedules.grade_id')
+            ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
+            ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
+            ->leftJoin('subjects', function($join) {
+               $join->on('subjects.id', '=', 'schedules.subject_id')
+                     ->whereNotNull('schedules.subject_id');
+            })
+            ->select('schedules.*', 
+                     'grades.id as grade_id',
+                     DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"), 
+                     't1.name as teacher_name',
+                     't2.name as teacher_companion',
+                     't2.id as teacher_companion_id',
+                     'subjects.id as subject_id',
+                     'subjects.name_subject as subject_name')
+            ->get();
+
+         $subtituteTeacher = Subtitute_teacher::where('teacher_companion', $getIdTeacher)
+            ->join('grades', 'grades.id', '=', 'subtitute_teachers.grade_id')
+            ->leftJoin('teachers as t1', 't1.id', '=', 'subtitute_teachers.teacher_id')
+            ->leftJoin('teachers as t2', 't2.id', '=', 'subtitute_teachers.teacher_companion')
+            ->leftJoin('subjects', function($join) {
+               $join->on('subjects.id', '=', 'subtitute_teachers.subject_id')
+                     ->whereNotNull('subtitute_teachers.subject_id');
+            })
+            ->select('subtitute_teachers.*', 
+                     'grades.id as grade_id',
+                     'grades.name as grade_name', 
+                     'grades.class as grade_class', 
+                     't1.name as teacher_name',
+                     't2.name as teacher_companion',
+                     't2.id as teacher_companion_id',
+                     'subjects.id as subject_id',
+                     'subjects.name_subject as subject_name')
+            ->get();
+
+         // dd($subtituteTeacher);
+
+         return view('components.schedule.detail-companion-teacher', compact('gradeSchedule', 'subtituteTeacher'))->with('data', $gradeSchedule);
+
+      } catch (Exception $err) {
+         dd($err);
+      }
+   }
+
    public function detailScheduleTeacher($teacherId, $gradeId)
    {
       try {
@@ -1041,7 +1731,24 @@ class ScheduleController extends Controller
       } 
       catch (Exception $err) {
          dd($err);
-         return redirect('/' . session('role'). '/subjects')->with('error', 'Terjadi kesalahan saat menghapus data schedule.');
+         return redirect('/' . session('role'). '/schedules/manage/'. $gradeId)->with('error', 'Terjadi kesalahan saat menghapus data schedule.');
+      }
+   }
+
+   public function deleteMidExam($id)
+   {
+      try {
+         $gradeId = Schedule::where('id', $id)->value('grade_id');
+         
+         Schedule::where('id', $id)->delete();
+         
+         session()->flash('after_delete_midexam');
+
+         return redirect('/'. session('role') .'/schedules/manage/midexam/'. $gradeId);
+      } 
+      catch (Exception $err) {
+         dd($err);
+         return redirect('/' . session('role'). '/schedules/manage/midexam/'. $gradeId)->with('error', 'Terjadi kesalahan saat menghapus data schedule.');
       }
    }
 

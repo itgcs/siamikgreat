@@ -61,7 +61,7 @@
                                     <td><a>  {{ $pr->active_student_count }}</a></td>
                                     <td><a>  {{ $pr->active_subject_count }}</a></td>
                                     @if (session('role') == 'superadmin')
-                                    <td class="project-actions text-right toastsDefaultSuccess">
+                                    <td class="project-actions text-left toastsDefaultSuccess">
                                        <a class="btn btn-primary btn"
                                           href="{{url(session('role'). '/reports') . '/detail/' . $pr->id}}">
                                           
@@ -87,25 +87,55 @@
                                           TCOP
                                        </a>
                                        <a class="btn btn-primary btn"
-                                          href="{{url(session('role') . '/reports') . '/semester1/detail/' . $pr->id}}">
+                                          href="{{url(session('role') . '/reports') . '/semestersatu/detail/' . $pr->id}}">
                                           
                                           </i>
                                           SEMESTER 1
                                        </a>
                                        <a class="btn btn-primary btn"
-                                          href="{{url(session('role') . '/reports') . '/semester2/detail/' . $pr->id}}">
+                                          href="{{url(session('role') . '/reports') . '/semesterdua/detail/' . $pr->id}}">
                                           
                                           </i>
                                           SEMESTER 2
                                        </a>
                                     </td>
                                     @elseif (session('role') == 'admin')
-                                    <td class="project-actions text-right toastsDefaultSuccess">
+                                    <td class="project-actions text-left toastsDefaultSuccess">
                                        <a class="btn btn-primary btn"
-                                          href="{{url('admin/reports') . '/detail/' . $pr->id}}">
+                                          href="{{url(session('role'). '/reports') . '/detail/' . $pr->id}}">
                                           
                                           </i>
-                                          View
+                                          Scoring
+                                       </a>
+                                       <a class="btn btn-success btn"
+                                          href="{{url(session('role') . '/reports') . '/acar/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          ACAR
+                                       </a>
+                                       <a class="btn btn-warning btn"
+                                          href="{{url(session('role') . '/reports') . '/sooa/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          SOOA
+                                       </a>
+                                       <a class="btn btn-warning btn"
+                                          href="{{url(session('role') . '/reports') . '/tcop/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          TCOP
+                                       </a>
+                                       <a class="btn btn-primary btn"
+                                          href="{{url(session('role') . '/reports') . '/semestersatu/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          SEMESTER 1
+                                       </a>
+                                       <a class="btn btn-primary btn"
+                                          href="{{url(session('role') . '/reports') . '/semesterdua/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          SEMESTER 2
                                        </a>
                                     </td>
                                     @endif
@@ -147,34 +177,43 @@
                                     <td><a>  {{ $pr->teacher_class }}</a></td>
                                     <td><a>  {{ $pr->active_student_count }}</a></td>
                                     <td><a>  {{ $pr->active_subject_count }}</a></td>
-                                    @if (session('role') == 'superadmin')
+                                    @if (session('role') == 'superadmin' || session('role') == 'admin')
                                     <td class="project-actions text-right toastsDefaultSuccess">
                                        <a class="btn btn-primary btn"
-                                          href="{{url('superadmin/reports') . '/detailSec/' . $pr->id}}">
+                                          href="{{url(session('role'). '/reports') . '/detailSec/' . $pr->id}}">
                                           
                                           </i>
                                           Scoring
                                        </a>
                                        <a class="btn btn-success btn"
-                                          href="{{url('superadmin/reports') . '/acar/detailSec/' . $pr->id}}">
+                                          href="{{url(session('role') . '/reports') . '/acar/detailSec/' . $pr->id}}">
                                           
                                           </i>
                                           ACAR
                                        </a>
                                        <a class="btn btn-warning btn"
-                                          href="{{url('superadmin/reports') . '/sooa/detailSec/' . $pr->id}}">
+                                          href="{{url(session('role') . '/reports') . '/sooa/detailSec/' . $pr->id}}">
                                           
                                           </i>
                                           SOOA
                                        </a>
-                                    </td>
-                                    @elseif (session('role') == 'admin')
-                                    <td class="project-actions text-right toastsDefaultSuccess">
-                                       <a class="btn btn-primary btn"
-                                          href="{{url('admin/reports') . '/detailSec/' . $pr->id}}">
+                                       <a class="btn btn-warning btn"
+                                          href="{{url(session('role') . '/reports') . '/tcop/detailSec/' . $pr->id}}">
                                           
                                           </i>
-                                          View
+                                          TCOP
+                                       </a>
+                                       <a class="btn btn-primary btn"
+                                          href="{{url(session('role') . '/reports') . '/semestersatu/detailSec/' . $pr->id}}">
+                                          
+                                          </i>
+                                          SEMESTER 1
+                                       </a>
+                                       <a class="btn btn-primary btn"
+                                          href="{{url(session('role') . '/reports') . '/semesterdua/detailSec/' . $pr->id}}">
+                                          
+                                          </i>
+                                          SEMESTER 2
                                        </a>
                                     </td>
                                     @endif

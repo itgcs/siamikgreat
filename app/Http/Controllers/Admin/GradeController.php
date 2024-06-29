@@ -767,9 +767,12 @@ class GradeController extends Controller
          Teacher_grade::where('teacher_id', $id)->delete();
          Teacher_subject::where('teacher_id', $id)->delete();
 
-         return redirect('/superadmin/teachers')->with('success', 'Data guru berhasil dihapus.');
-      } catch (\Exception $e) {
-         return redirect('/superadmin/teachers')->with('error', 'Terjadi kesalahan saat menghapus data guru.');
+         session()->flash('after_delete_grade');
+
+         return redirect('/superadmin/grades');
+      } catch (Exception $err) {
+         dd($err);
+         return redirect('/superadmin/grades');
       }
    }
 }

@@ -135,6 +135,29 @@
 
    @endif
 
+   @if(session('after_delete_grade')) 
+
+      <script>
+
+        var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+        });
+      
+        setTimeout(() => {
+           Toast.fire({
+              icon: 'success',
+              title: 'Successfully delete grade in the database.',
+        });
+        }, 1500);
+
+
+      </script>
+
+   @endif
+
    @if(session('after_update_grade')) 
       <script>
      

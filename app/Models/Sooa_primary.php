@@ -32,6 +32,7 @@ class Sooa_primary extends Model
         'grades_participation',
         'final_score',
         'grades_final_score',
+        'ranking',
         'semester',
         'created_at',
         'updated_at',

@@ -47,6 +47,7 @@
                                     <td>{{ $loop->index + 1 }}</td>
                                     <td><a>  {{ $pr->subject_name}}</a></td>
                                     <td><a>  {{ $pr->teacher_name }}</a></td>
+                                   
                                     @if (session('role') == 'superadmin')
                                     <td class="project-actions text-right toastsDefaultSuccess">
                                         <a class="btn btn-primary btn"

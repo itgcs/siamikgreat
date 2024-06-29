@@ -48,6 +48,9 @@
             <div class="row my-2">
                 <div class="input-group-append mx-2">
                     <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Report Card Semester 2</a>
+                    @endif
                 </div>
             </div>  
         @endif
@@ -56,198 +59,290 @@
         
         <table class="table table-striped table-bordered bg-white" style=" width: 2200px;">
             @if ($data['status'] == null)
-            <thead>
-                <tr>
-                    <th colspan="2" style="vertical-align : middle;text-align:center;">Legend</th>
-                    <th colspan="11" style="vertical-align : middle;text-align:left;">E – Excellent   G – Good   S – Satisfactory   N – Needs Improvement</th>
-                </tr>
-                <tr>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Independent work</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Initiative</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Homework Completion</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Use of Information</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Cooperation with Others</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Conflict Resolution</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Class Participation</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Problem Solving</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Goal setting to improve work</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Strengths/Weeakness/Next Steps</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Promotion Status</th>
-                </tr>
-            </thead>
-
-            @elseif ($data['status']->status != null && $data['status']->status == 1)
-            <thead>
-                <tr>
-                    <th colspan="2" style="vertical-align : middle;text-align:center;">Legend</th>
-                    <th colspan="12" style="vertical-align : middle;text-align:left;">E – Excellent   G – Good   S – Satisfactory   N – Needs Improvement</th>
-                </tr>
-                <tr>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Independent work</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Initiative</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Homework Completion</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Use of Information</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Cooperation with Others</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Conflict Resolution</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Class Participation</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Problem Solving</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Goal setting to improve work</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Strengths/Weeakness/Next Steps</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Promotion Status</th>
-                    <th class="text-center" style="vertical-align : middle;text-align:center;">Print Report Card</th>
-                </tr>
-            </thead>
-            @endif
-
-            <tbody>
-            @if(!empty($data['result']))
-                @foreach ($data['result'] as $student)
+                <!-- JIKA DATA BELUM DI SUBMIT OLEH TEACHER -->
+                <thead>
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $student['student_name'] }}</td>
-                        @foreach ($student['scores'] as $index => $score)
-                            <!-- Independent Work -->
-                            <td class="text-center">{{ strtoupper($score['independent_work']) }}</td>
+                        <th colspan="2" style="vertical-align : middle;text-align:center;">Legend</th>
+                        <th colspan="11" style="vertical-align : middle;text-align:left;">E – Excellent   G – Good   S – Satisfactory   N – Needs Improvement</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Independent work</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Initiative</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Homework Completion</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Use of Information</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Cooperation with Others</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Conflict Resolution</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Class Participation</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Problem Solving</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Goal setting to improve work</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Strengths/Weeakness/Next Steps</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Promotion Status</th>
+                    </tr>
+                </thead>
 
-                            <!-- Initiative -->
-                            <td class="text-center">{{ strtoupper($score['initiative']) }}</td>
+                <!-- JIKA TEACHER MEMINTA EDIT SETELAH SUBMIT -->
+                @if(!empty($data['result']))
+                    <tbody>
+                        @foreach ($data['result'] as $student)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $student['student_name'] }}</td>
+                                @foreach ($student['scores'] as $index => $score)
+                                        
+                                    <!-- Independent_work -->
+                                    <td class="text-center">
+                                        <input name="independent_work[]" type="text" class="form-control" id="iw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['independent_work'] }}" onkeyup="validateInput(this)"></td>
 
-                            <!-- Homework_completion -->
-                            <td class="text-center">{{ strtoupper($score['homework_completion']) }}</td>
-        
+                                    <!-- Initiative -->
+                                    <td class="text-center">
+                                        <input name="initiative[]" type="text" class="form-control" id="in" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['use_of_information'] }}" onkeyup="validateInput(this)"></td>
 
-                            <!-- Use_of_information -->
-                            <td class="text-center">{{ strtoupper($score['use_of_information']) }}</td>
-        
+                                    <!-- Homework_completion -->
+                                    <td class="text-center">
+                                    <input name="homework_completion[]" type="text" class="form-control" id="hc" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['homework_completion'] }}" onkeyup="validateInput(this)"></td>
 
-                            <!-- Cooperation_with_other -->
-                            <td class="text-center">{{ strtoupper($score['cooperation_with_other']) }}</td>
-        
 
-                            <!-- Conflict_resolution -->
-                            <td class="text-center">{{ strtoupper($score['conflict_resolution']) }}</td>
-        
+                                    <!-- Use_of_information -->
+                                    <td class="text-center">
+                                    <input name="use_of_information[]" type="text" class="form-control" id="uoi" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['use_of_information'] }}" onkeyup="validateInput(this)"></td>
 
-                            <!-- Class_participation -->
-                            <td class="text-center">{{ strtoupper($score['class_participation']) }}</td>
 
-                            <!-- Problem_solving -->
-                            <td class="text-center">{{ strtoupper($score['problem_solving']) }}</td>
-        
+                                    <!-- Cooperation_with_other -->
+                                    <td class="text-center">
+                                    <input name="cooperation_with_other[]" type="text" class="form-control" id="cwo" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['cooperation_with_other'] }}" onkeyup="validateInput(this)"></td>
 
-                            <!-- Goal_setting_to_improve_work -->
-                            <td class="text-center">{{ strtoupper($score['goal_setting_to_improve_work']) }}</td>
-        
 
-                            <!-- Strengths/weakness/nextstep -->
-                            <td class="text-left">{{ $score['strength_weakness_nextstep'] }}</td>
+                                    <!-- Conflict_resolution -->
+                                    <td class="text-center">
+                                    <input name="conflict_resolution[]" type="text" class="form-control" id="cr" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['conflict_resolution'] }}" onkeyup="validateInput(this)"></td>
 
-                            <td class="text-left">
-                                @if($score['promotion_status'] === 1)
-                                    <span class="badge badge-success">Progressing well towards promotion</span>
-                                @elseif($score['promotion_status'] === 2)
-                                    <span class="badge badge-warning">Progressing with some difficulty towards promotion</span>
-                                @elseif($score['promotion_status'] === 3)
-                                <span class="badge badge-danger">No Promotion</span>
-                                @endif
-                            </td>
 
-                            @if ($data['status'] !== null)
-                            <td>
-                                <a class="btn btn-primary btn"
-                                    href="{{url('teacher/dashboard/report/semester2/print') . '/' . $student['student_id']}}">
-                                    Print
-                                </a>
-                            </td>
-                            @endif
+                                    <!-- Class_participation -->
+                                    <td class="text-center">
+                                    <input name="class_participation[]" type="text" class="form-control" id="cp" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['class_participation'] }}" onkeyup="validateInput(this)"></td>
+
+
+                                    <!-- Problem_solving -->
+                                    <td class="text-center">
+                                    <input name="problem_solving[]" type="text" class="form-control" id="ps" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['problem_solving'] }}" onkeyup="validateInput(this)"></td>
+
+
+                                    <!-- Goal_setting_to_improve_work -->
+                                    <td class="text-center">
+                                    <input name="goal_setting_to_improve_work[]" type="text" class="form-control" id="gstiw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['goal_setting_to_improve_work'] }}" onkeyup="validateInput(this)"></td>
+
+
+                                    <!-- Strengths/weakness/nextstep -->
+                                    <td class="text-center">
+                                    <input name="strength_weakness_nextstep[]" type="text" class="form-control"  autocomplete="off" value="{{ $score['strength_weakness_nextstep'] }}" required></td>
+
+                                    <td class="text-left text-xs">
+                                        <div class="form-check me-2 mx-2">
+                                            <input id="promotionstatus1" name="status[]" class="form-check-input status-type" type="checkbox" value="1" id="promotion1" {{ $score['promotion_status'] == 1 ? "checked" : "" }}>
+                                            <label class="form-check-label" for="present">
+                                                Progressing well towards promotion
+                                            </label>
+                                        </div>
+                                        <div class="form-check me-2 mx-2">
+                                            <input id="promotionstatus2" name="status[]" class="form-check-input status-type" type="checkbox" value="2" id="promotion2" {{ $score['promotion_status'] == 2 ? "checked" : "" }}>
+                                            <label class="form-check-label" for="present">
+                                                Progressing with some difficulty towards promotion
+                                            </label>
+                                        </div>
+                                        <div class="form-check me-2 mx-2">
+                                            <input id="promotionstatus3" name="status[]" class="form-check-input status-type" type="checkbox" value="3" id="promotion3" {{ $score['promotion_status'] == 3 ? "checked" : "" }}>
+                                            <label class="form-check-label" for="present">
+                                                No Promotion
+                                            </label>
+                                        </div>
+                                    </td>
+                                @endforeach
+                                <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">
+                            </tr>
                         @endforeach
-                @endforeach
-            @else
-                @foreach ($data['students'] as $student)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $student['name'] }}</td>
-
-                        <!-- Independent_work -->
-                        <td class="text-center">
-                            <input name="independent_work[]" type="text" class="form-control" id="iw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-
-                        <!-- Initiative -->
-                        <td class="text-center">
-                            <input name="initiative[]" type="text" class="form-control" id="in" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-
-                        <!-- Homework_completion -->
-                        <td class="text-center">
-                        <input name="homework_completion[]" type="text" class="form-control" id="hc" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-
-
-                        <!-- Use_of_information -->
-                        <td class="text-center">
-                        <input name="use_of_information[]" type="text" class="form-control" id="uoi" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-
-
-                        <!-- Cooperation_with_other -->
-                        <td class="text-center">
-                        <input name="cooperation_with_other[]" type="text" class="form-control" id="cwo" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-
-
-                        <!-- Conflict_resolution -->
-                        <td class="text-center">
-                        <input name="conflict_resolution[]" type="text" class="form-control" id="cr" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-
-
-                        <!-- Class_participation -->
-                        <td class="text-center">
-                        <input name="class_participation[]" type="text" class="form-control" id="cp" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-
-                        <!-- Problem_solving -->
-                        <td class="text-center">
-                        <input name="problem_solving[]" type="text" class="form-control" id="ps" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-
-
-                        <!-- Goal_setting_to_improve_work -->
-                        <td class="text-center">
-                        <input name="goal_setting_to_improve_work[]" type="text" class="form-control" id="gstiw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-
-
-                        <!-- Strengths/weakness/nextstep -->
-                        <td class="text-center">
-                        <input name="strength_weakness_nextstep[]" type="text" class="form-control"  autocomplete="off" required></td>
-
-                        <td class="text-left text-xs">
-                            <div class="form-check me-2 mx-2">
-                                <input id="promotionstatus1" name="status[]" class="form-check-input absence-type" type="checkbox" value="1" id="promotion1">
-                                <label class="form-check-label" for="present">
-                                    Progressing well towards promotion
-                                </label>
-                            </div>
-                            <div class="form-check me-2 mx-2">
-                                <input id="promotionstatus2" name="status[]" class="form-check-input absence-type" type="checkbox" value="2" id="promotion2">
-                                <label class="form-check-label" for="present">
-                                    Progressing with some difficulty towards promotion
-                                </label>
-                            </div>
-                            <div class="form-check me-2 mx-2">
-                                <input id="promotionstatus3" name="status[]" class="form-check-input absence-type" type="checkbox" value="3" id="promotion3">
-                                <label class="form-check-label" for="present">
-                                    No Promotion
-                                </label>
-                            </div>
-                        </td>
+                    </tbody>
+                    <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
+                    <input name="teacher_id" type="number" class="form-control d-none" id="class_teacher_id" value="{{ $data['classTeacher']->teacher_id }}">    
+                    <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}"> 
                 
-                        <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['id'] }}">
-                </tr>
-                @endforeach
-                <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
-                <input name="teacher_id" type="number" class="form-control d-none" id="class_teacher_id" value="{{ $data['classTeacher']->teacher_id }}">    
-                <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}"> 
+                <!-- JIKA TEACHER BELUM INPUT NILAI -->
+                @else
+                    <tbody>
+                        @foreach ($data['students'] as $student)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $student['name'] }}</td>
+        
+                                    <!-- Independent_work -->
+                                    <td class="text-center">
+                                        <input name="independent_work[]" type="text" class="form-control" id="iw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+        
+                                    <!-- Initiative -->
+                                    <td class="text-center">
+                                        <input name="initiative[]" type="text" class="form-control" id="in" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+        
+                                    <!-- Homework_completion -->
+                                    <td class="text-center">
+                                    <input name="homework_completion[]" type="text" class="form-control" id="hc" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+        
+        
+                                    <!-- Use_of_information -->
+                                    <td class="text-center">
+                                    <input name="use_of_information[]" type="text" class="form-control" id="uoi" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+        
+        
+                                    <!-- Cooperation_with_other -->
+                                    <td class="text-center">
+                                    <input name="cooperation_with_other[]" type="text" class="form-control" id="cwo" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+        
+        
+                                    <!-- Conflict_resolution -->
+                                    <td class="text-center">
+                                    <input name="conflict_resolution[]" type="text" class="form-control" id="cr" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+        
+        
+                                    <!-- Class_participation -->
+                                    <td class="text-center">
+                                    <input name="class_participation[]" type="text" class="form-control" id="cp" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+        
+                                    <!-- Problem_solving -->
+                                    <td class="text-center">
+                                    <input name="problem_solving[]" type="text" class="form-control" id="ps" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+        
+        
+                                    <!-- Goal_setting_to_improve_work -->
+                                    <td class="text-center">
+                                    <input name="goal_setting_to_improve_work[]" type="text" class="form-control" id="gstiw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+        
+        
+                                    <!-- Strengths/weakness/nextstep -->
+                                    <td class="text-center">
+                                    <input name="strength_weakness_nextstep[]" type="text" class="form-control"  autocomplete="off" required></td>
+        
+                                    <td class="text-left text-xs">
+                                        <div class="form-check me-2 mx-2">
+                                            <input id="promotionstatus1" name="status[]" class="form-check-input status-type" type="checkbox" value="1" id="promotion1">
+                                            <label class="form-check-label" for="present">
+                                                Progressing well towards promotion
+                                            </label>
+                                        </div>
+                                        <div class="form-check me-2 mx-2">
+                                            <input id="promotionstatus2" name="status[]" class="form-check-input status-type" type="checkbox" value="2" id="promotion2">
+                                            <label class="form-check-label" for="present">
+                                                Progressing with some difficulty towards promotion
+                                            </label>
+                                        </div>
+                                        <div class="form-check me-2 mx-2">
+                                            <input id="promotionstatus3" name="status[]" class="form-check-input status-type" type="checkbox" value="3" id="promotion3">
+                                            <label class="form-check-label" for="present">
+                                                No Promotion
+                                            </label>
+                                        </div>
+                                    </td>
+                            
+                                    <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['id'] }}">
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
+                    <input name="teacher_id" type="number" class="form-control d-none" id="class_teacher_id" value="{{ $data['classTeacher']->teacher_id }}">    
+                    <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}"> 
+                @endif  
+            
+            <!-- JIKA DATA SUDAH DI SUBMIT OLEH TEACHER -->
+            @elseif ($data['status']->status != null && $data['status']->status == 1)
+                <thead>
+                    <tr>
+                        <th colspan="2" style="vertical-align : middle;text-align:center;">Legend</th>
+                        <th colspan="12" style="vertical-align : middle;text-align:left;">E – Excellent   G – Good   S – Satisfactory   N – Needs Improvement</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Independent work</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Initiative</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Homework Completion</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Use of Information</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Cooperation with Others</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Conflict Resolution</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Class Participation</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Problem Solving</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Goal setting to improve work</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Strengths/Weeakness/Next Steps</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Promotion Status</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Print Report Card</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                @if(!empty($data['result']))
+                    @foreach ($data['result'] as $student)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $student['student_name'] }}</td>
+                            @foreach ($student['scores'] as $index => $score)
+                                <!-- Independent Work -->
+                                <td class="text-center">{{ strtoupper($score['independent_work']) }}</td>
+
+                                <!-- Initiative -->
+                                <td class="text-center">{{ strtoupper($score['initiative']) }}</td>
+
+                                <!-- Homework_completion -->
+                                <td class="text-center">{{ strtoupper($score['homework_completion']) }}</td>
+            
+
+                                <!-- Use_of_information -->
+                                <td class="text-center">{{ strtoupper($score['use_of_information']) }}</td>
+            
+
+                                <!-- Cooperation_with_other -->
+                                <td class="text-center">{{ strtoupper($score['cooperation_with_other']) }}</td>
+            
+
+                                <!-- Conflict_resolution -->
+                                <td class="text-center">{{ strtoupper($score['conflict_resolution']) }}</td>
+            
+
+                                <!-- Class_participation -->
+                                <td class="text-center">{{ strtoupper($score['class_participation']) }}</td>
+
+                                <!-- Problem_solving -->
+                                <td class="text-center">{{ strtoupper($score['problem_solving']) }}</td>
+            
+
+                                <!-- Goal_setting_to_improve_work -->
+                                <td class="text-center">{{ strtoupper($score['goal_setting_to_improve_work']) }}</td>
+            
+
+                                <!-- Strengths/weakness/nextstep -->
+                                <td class="text-left">{{ $score['strength_weakness_nextstep'] }}</td>
+
+                                <td class="text-left">
+                                    @if($score['promotion_status'] === 1)
+                                        <span class="badge badge-success">Progressing well towards promotion</span>
+                                    @elseif($score['promotion_status'] === 2)
+                                        <span class="badge badge-warning">Progressing with some difficulty towards promotion</span>
+                                    @elseif($score['promotion_status'] === 3)
+                                    <span class="badge badge-danger">No Promotion</span>
+                                    @endif
+                                </td>
+
+                                @if ($data['status'] !== null)
+                                <td>
+                                    <a class="btn btn-primary btn"
+                                        href="{{url('teacher/dashboard/report/semester2/print') . '/' . $student['student_id']}}">
+                                        Print
+                                    </a>
+                                </td>
+                                @endif
+                            @endforeach
+                    @endforeach
+                @endif  
+                </tbody>
             @endif
-                    
-            </tbody>
+
         </table>
         @else
             <p>Empty Data Student !!!</p>
@@ -269,6 +364,25 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-primary" id="confirmAccScoring">Yes, Acc</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decline -->
+        <div class="modal fade" id="modalDecline" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Decline Report Card {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} Semester 2</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Are you sure want to decline report card {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} semester 2?</div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
                     </div>
                 </div>
             </div>
@@ -304,12 +418,12 @@
 
 <script>
    document.addEventListener('DOMContentLoaded', function() {
-      let checkboxes = document.querySelectorAll('.absence-type');
+      let checkboxes = document.querySelectorAll('.status-type');
 
       checkboxes.forEach(function(checkbox) {
          checkbox.addEventListener('change', function() {
             let currentRow = this.closest('tr');
-            let checkboxesInRow = currentRow.querySelectorAll('.absence-type');
+            let checkboxesInRow = currentRow.querySelectorAll('.status-type');
 
             checkboxesInRow.forEach(function(cb) {
                if (cb !== checkbox) {
@@ -321,6 +435,20 @@
    });
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#modalDecline').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var id = @json($data['grade']->grade_id);
+            var teacherId = @json($data['classTeacher']->teacher_id);
+            var semester = @json($data['semester']);
+
+            console.log("id=", id, "teacher=", teacherId, "semester=", semester);
+            var confirmDecline = document.getElementById('confirmDecline');
+            confirmDecline.href = "{{ url('/' . session('role') . '/reports/reportCard/decline') }}/" + id + "/" + teacherId + "/" + semester;
+        });
+    });
+</script>
 
 @if(session('after_post_report_card2'))
 <script>

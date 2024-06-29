@@ -177,7 +177,7 @@ class SubjectController extends Controller
     }
 
     public function delete($id)
-   {
+    {
         try {
 
             session()->flash('after_delete_subject');

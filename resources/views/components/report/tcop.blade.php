@@ -30,9 +30,11 @@
 
     <div style="overflow-x: auto;">
         @if (session('role') == 'superadmin')
-            <form id="confirmForm"  method="POST" action={{route('actionPostScoringSooaPrimary')}}>
+            <form id="confirmForm"  method="POST" action={{route('actionPostTcopPrimary')}}>
         @elseif (session('role') == 'admin')
-            <form id="confirmForm" method="POST" action={{route('actionAdminPostScoringSooaPrimary')}}>
+            <form id="confirmForm" method="POST" action={{route('actionAdminPostTcopPrimary')}}>
+        @elseif (session('role') == 'teacher')
+            <form id="confirmForm" method="POST" >
         @endif
         @csrf
         
@@ -67,37 +69,62 @@
             </thead>
 
             <tbody>
-            @if (!empty($data['students']))
+                @if (!empty($data['students']))
+                    @foreach ($data['students'] as $student)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $student['student_name'] }}</td>
 
-                @foreach ($data['students'] as $student)
+                            @php
+                                // Initialize variables to store scores for both semesters
+                                $semester1Scores = [];
+                                $semester2Scores = [];
 
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $student['student_name'] }}</td>
+                                // Separate scores by semester
+                                foreach ($student['scores'] as $semester => $scores) {
+                                    if ($semester == 1) {
+                                        $semester1Scores = $scores;
+                                    } elseif ($semester == 2) {
+                                        $semester2Scores = $scores;
+                                    }
+                                }
+                            @endphp
 
-                    @foreach ($student['scores'] as $index => $score)
+                            @foreach (['semester1Scores', 'semester2Scores'] as $semesterScores)
+                                @if (!empty($$semesterScores))
+                                    @foreach ($$semesterScores as $score)
+                                        <td class="text-center">{{ $score['final_score'] }} </td>
+                                        <td class="text-center">{{ $score['grades_final_score'] }} </td>
+                                    @endforeach
+                                @else
+                                    <!-- Display empty cells if there are no scores for the semester -->
+                                    <td class="text-center">N/A</td>
+                                    <td class="text-center">N/A</td>
+                                @endif
+                            @endforeach
 
-                    <!-- Semester 1 -->
-                    <td class="text-center">{{ $score['academic'] }}</td>
-                    <td class="text-center">{{ $score['grades_academic'] }}</td>
+                            <td class="text-center">{{ $student['average_final_score'] }}</td>
+                            <td class="text-center">{{ $student['marks'] }}</td>
+                            <td class="text-center">{{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</td>
+                            <td class="text-left">
+                                @if ( $student['average_final_score'] > 64)
+                                    <span class="badge badge-success">
+                                        Promote to {{ $data['promote']->name }}-{{ $data['promote']->class }}
+                                    </span>
+                                @else
+                                    <span class="badge badge-danger">
+                                        Stay in {{ $data['grade']->grade_name }}-{{ $data['grade']->grade_class }}
+                                    </span>
+                                @endif
 
-                    <!-- Ssemester 2 -->
-                    <td class="text-center">{{ $score['academic'] }}</td>
-                    <td class="text-center">{{ $score['grades_academic'] }}</td>
-
+                            </td>
+                        </tr>
                     @endforeach
-
-                    <td class="text-center">{{ $score['final_score'] }}</td>
-                    <td class="text-center">{{ $score['grades_final_score'] }}</td>
-                    <td class="text-center">1</td>
-                    <td class="text-center">(T/F)</td>
-                </tr>
-                    
-                @endforeach
-            @else
-                <p>Data Kosong</p>
-            @endif
+                @else
+                    <p>Data Kosong</p>
+                @endif
             </tbody>
+
         </table>
 
         <!-- Modal -->
