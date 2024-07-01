@@ -191,6 +191,6 @@ class TypeScheduleController extends Controller
 
         Type_schedule::where('id', $id)->delete();
 
-        return redirect('/superadmin/typeSchedules');
+        return redirect('/'.session('role'). '/typeSchedules');
     }
 }

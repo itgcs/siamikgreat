@@ -664,7 +664,7 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/manage/{id}', [ScheduleController::class, 'managePage']);  
       Route::get('/detail/{id}', [ScheduleController::class, 'detail']);
       Route::get('/edit/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPage']);
-      Route::put('/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateGradeSchedule'])->name('actionAdminEditSchedule');
+      Route::put('/schedule/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateGradeSchedule'])->name('actionAdminEditSchedule');
       Route::get('/delete/{id}', [ScheduleController::class, 'delete']);
       
       Route::get('/midexam/create/{id}', [ScheduleController::class, 'createMidExam']);
@@ -673,7 +673,7 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/manage/midexam/{id}', [ScheduleController::class, 'managePageMidExam']);
       Route::get('/detail/midexam/{id}', [ScheduleController::class, 'detailMidExam']);
       Route::get('/edit/midexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPageMidExam']);
-      Route::put('/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateMidExam'])->name('actionAdminEditMidExam');
+      Route::put('/midexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateMidExam'])->name('actionAdminEditMidExam');
       Route::get('/delete/midexam/{id}', [ScheduleController::class, 'deleteMidExam']);
       
       Route::get('/finalexam/create/{id}', [ScheduleController::class, 'createFinalExam']);
@@ -682,9 +682,8 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/manage/finalexam/{id}', [ScheduleController::class, 'managePageFinalExam']);
       Route::get('/detail/finalexam/{id}', [ScheduleController::class, 'detailFinalExam']);
       Route::get('/edit/finalexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPageFinalExam']);
-      Route::put('/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateFinalExam'])->name('actionAdminEditFinalExam');
+      Route::put('/finalexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateFinalExam'])->name('actionAdminEditFinalExam');
       Route::get('/delete/finalexam/{id}', [ScheduleController::class, 'deleteFinalExam']);
-
 
       Route::post('/schedules/schools', [ScheduleController::class, 'actionCreateOther'])->name('actionAdminCreateOtherSchedule');
 

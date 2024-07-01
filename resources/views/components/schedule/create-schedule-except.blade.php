@@ -65,7 +65,7 @@
                                 <thead>
                                     <th style="width: 14%;">Subject</th>
                                     <th style="width: 18%;">Teacher</th>
-                                    <th style="width: 18%;">Teacher Companion</th>
+                                    <th style="width: 18%;">Assisstant</th>
                                     <th style="width: 8%;">Days</th>
                                     <th style="width: 8%;">Start Time</th>
                                     <th style="width: 8%;">End Time</th>
@@ -98,7 +98,7 @@
                                         </td>
                                         <td>
                                             <select name="teacher_companion[]" class="form-control" id="teacher_companion">
-                                                <option value="" selected>-- Teacher Companion --</option>
+                                                <option value="" selected>-- Assisstant --</option>
                                                 @foreach($data['teacher'] as $dt)
                                                 <option value="{{ $dt->id }}">{{ $dt->name }}</option>
                                                 @endforeach
@@ -157,7 +157,6 @@
         </div>
     </div>
 </section>
-
 
 <script src="{{ asset('template/plugins/jquery/jquery.min.js') }}"></script>
 

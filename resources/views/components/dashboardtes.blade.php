@@ -137,6 +137,13 @@
                 <i class="fa-solid fa-calendar-xmark mr-1"></i>
                   List Exams
               </h3>
+              <!-- card tools -->
+              <div class="card-tools">
+                <button type="button" class="btn btn-success btn-sm" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+              <!-- /.card-tools -->
             </div><!-- /.card-header -->
             <div class="card-body">
               <div class="tab-content p-0">

@@ -81,14 +81,14 @@ document.addEventListener('DOMContentLoaded', function() {
             @foreach($gradeSchedule as $schedule)
             @php
                 $event = [
-                    'title' => $schedule->note == "" ? $schedule->subject_name : $schedule->note,
+                    'title' => $schedule->subject_name,
                     'startRecur' => $schedule->date,
                     'endRecur' => $schedule->end_date,
                     'daysOfWeek' => [$schedule->day],
                     'startTime' => $schedule->start_time,
                     'endTime' => $schedule->end_time,
                     'description' => '',
-                    'color' => 'blue',
+                    'color' => $schedule->color,
                     'teacherId' => $schedule->teacher_id,
                     'teacherCompanion' => $schedule->teacher_companion_id,
                     'day' => $schedule->day,
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         eventClick: function(info) {
             document.getElementById('eventTitle').innerText = info.event.title;
-            document.getElementById('eventDescription').innerHTML = 'Description Final Exam :' + info.event.extendedProps.description;
+            document.getElementById('eventDescription').innerHTML = 'Description Mid Exam :' + info.event.extendedProps.description;
 
             var eventModal = new bootstrap.Modal(document.getElementById('eventModal'), {
                 keyboard: false
@@ -110,8 +110,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     calendar.render();
-
-    // Add event listeners for teacher and grade selects
 });
 
 

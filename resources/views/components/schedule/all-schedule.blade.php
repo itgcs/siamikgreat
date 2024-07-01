@@ -142,8 +142,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             ${schedulesForGrade.map(schedule => `
                                 <tr>
                                     <td>${schedule.start_time} - ${schedule.end_time}</td>
-                                    <td>${schedule.subject_name}</td>
-                                    <td>${schedule.teacher_name}</td>
+                                    <td>${schedule.subject_name ? schedule.subject_name : schedule.note}</td>
+                                    <td>${schedule.teacher_name ? schedule.teacher_name : ""}</td>
                                     <td>${schedule.semester}</td>
                                 </tr>
                             `).join('')}
@@ -160,7 +160,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 var selectedDay = selectedDate.getDay(); // 0: Sunday, 1: Monday, ..., 6: Saturday
 
                 var schedulesForGrade = gradeSchedulestwo[gradeKey].filter(schedule => schedule.day === selectedDay);
-
                 
                 var descriptionHTML = `
                     <table class="table table-bordered">
@@ -176,8 +175,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             ${schedulesForGrade.map(schedule => `
                                 <tr>
                                     <td>${schedule.start_time} - ${schedule.end_time}</td>
-                                    <td>${schedule.subject_name}</td>
-                                    <td>${schedule.teacher_name}</td>
+                                    <td>${schedule.subject_name ? schedule.subject_name : schedule.note}</td>
+                                    <td>${schedule.teacher_name ? schedule.teacher_name : ""}</td>
                                     <td>${schedule.semester}</td>
                                 </tr>
                             `).join('')}

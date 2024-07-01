@@ -90,12 +90,6 @@
         </a>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-           <a href="/{{session('role')}}/masterSchedules" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'master schedules' ? 'active' : '') : ''}}">
-             <i class="far fa-circle nav-icon"></i>
-             <p>Master Schedule</p>
-           </a>
-          </li>
-          <li class="nav-item">
            <a href="/{{session('role')}}/schedules/all" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'all schedules' ? 'active' : '') : ''}}">
              <i class="far fa-circle nav-icon"></i>
              <p>All Schedules</p>

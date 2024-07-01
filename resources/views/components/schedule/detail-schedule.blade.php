@@ -141,7 +141,7 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="substituteTeacherCompanionModalLabel">Select Substitute Teacher Companion</h5>
+                <h5 class="modal-title" id="substituteTeacherCompanionModalLabel">Select Substitute Assisstant</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -154,7 +154,7 @@
                             <div class="form-group">
                                 <form id="confirmForm" method="POST" action={{route('subtitute.teacher')}}>
                                     @csrf
-                                    <label>Select Subitute Teacher Companion: <span style="color: red"></span></label>
+                                    <label>Select Subitute Assisstant: <span style="color: red"></span></label>
                                     <select id="select_teacher_companion" name="select_teacher_companion" class="form-control">
                                         <option value="">-- Select Teacher --</option>
                                         @foreach ($teacher as $tc)
@@ -197,7 +197,7 @@
                     <table class="table table-bordered" id="substituteTeacherCompanionTable">
                         <thead class="thead-dark">
                             <tr>
-                                <th>Teacher Companion</th>
+                                <th>Assisstant</th>
                                 <th>Grade Name</th>
                                 <th>Subject Name</th>
                                 <th>Start Time</th>
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         $event['color'] = 'orange';
                         break;
                     default:
-                        $event['description'] = "<br>Teacher: {$schedule->teacher_name}<br>Teacher Companion: {$schedule->teacher_companion}<br>Grade: {$schedule->grade_name} - {$schedule->grade_class}";
+                        $event['description'] = "<br>Teacher: {$schedule->teacher_name}<br>Assisstant: {$schedule->teacher_companion}<br>Grade: {$schedule->grade_name} - {$schedule->grade_class}";
                 }
 
                 echo json_encode($event) . ',';
@@ -293,8 +293,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 'title' => $schedule->subject_name,
                                 'start' => "{$st->date}T{$schedule->start_time}",
                                 'end' => "{$st->date}T{$schedule->end_time}",
-                                'description' => "<br>Teacher: {$st->teacher_name} <span class='badge badge-danger'>substitute</span><br>Teacher Companion: {$schedule->teacher_companion} <br>Grade: {$schedule->grade_name} - {$schedule->grade_class}",
-                                'color' => 'red',
+                                'description' => "<br>Teacher: {$st->teacher_name} <span class='badge badge-danger'>substitute</span><br>Assisstant: {$schedule->teacher_companion} <br>Grade: {$schedule->grade_name} - {$schedule->grade_class}",
+                                'color' => 'darkblue',
                                 'teacherId' => $schedule->teacher_id,
                                 'teacherCompanion' => $schedule->teacher_companion_id,
                                 'day' => $schedule->day,
@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 'title' => $schedule->subject_name,
                                 'start' => "{$st->date}T{$schedule->start_time}",
                                 'end' => "{$st->date}T{$schedule->end_time}",
-                                'description' => "<br>Teacher: {$schedule->teacher_name}<br>Teacher Companion: {$st->teacher_companion} <span class='badge badge-danger'>substitute</span> <br>Grade: {$schedule->grade_name} - {$schedule->grade_class}",
+                                'description' => "<br>Teacher: {$schedule->teacher_name}<br>Assisstant: {$st->teacher_companion} <span class='badge badge-danger'>substitute</span> <br>Grade: {$schedule->grade_name} - {$schedule->grade_class}",
                                 'color' => 'green',
                                 'teacherId' => $schedule->teacher_id,
                                 'teacherCompanion' => $schedule->teacher_companion_id,
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 'title' => $schedule->subject_name,
                                 'start' => "{$st->date}T{$schedule->start_time}",
                                 'end' => "{$st->date}T{$schedule->end_time}",
-                                'description' => "<br>Teacher: {$st->teacher_name}<span class='badge badge-danger'>substitute</span><br>Teacher Companion: {$st->teacher_companion} <span class='badge badge-danger'>substitute</span> <br>Grade: {$schedule->grade_name} - {$schedule->grade_class}",
+                                'description' => "<br>Teacher: {$st->teacher_name}<span class='badge badge-danger'>substitute</span><br>Assisstant: {$st->teacher_companion} <span class='badge badge-danger'>substitute</span> <br>Grade: {$schedule->grade_name} - {$schedule->grade_class}",
                                 'color' => 'pink',
                                 'teacherId' => $schedule->teacher_id,
                                 'teacherCompanion' => $schedule->teacher_companion_id,
@@ -585,7 +585,7 @@ function showSubstituteCompanionButton(scheduleData) {
         } else {
             Swal.fire({
                 title: 'Are you sure?',
-                text: `Do you want to assign ${teacherCompanionName} as the substitute teacher companion?`,
+                text: `Do you want to assign ${teacherCompanionName} as the substitute Assisstant?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, assign!',
@@ -607,13 +607,13 @@ function showSubstituteCompanionButton(scheduleData) {
                             _token: '{{ csrf_token() }}'
                         },
                         success: function(response) {
-                            Swal.fire('Assigned!', 'The substitute teacher companion has been assigned.', 'success').then(() => {
+                            Swal.fire('Assigned!', 'The substitute Assisstant has been assigned.', 'success').then(() => {
                                 location.reload();
                             });
                             console.log('success:', response);
                         },
                         error: function(xhr, status, error) {
-                            Swal.fire('Error!', 'There was an error assigning the substitute teacher companion.', 'error');
+                            Swal.fire('Error!', 'There was an error assigning the substitute Assisstant.', 'error');
                             console.error('Error saving:', error);
                         }
                     });
@@ -626,7 +626,7 @@ function showSubstituteCompanionButton(scheduleData) {
         var substituteCompanionBtn = document.createElement('button');
         substituteCompanionBtn.setAttribute('type', 'button');
         substituteCompanionBtn.setAttribute('class', 'btn btn-danger');
-        substituteCompanionBtn.innerText = 'Substitute Teacher Companion';
+        substituteCompanionBtn.innerText = 'Substitute Assisstant';
 
         substituteCompanionBtn.onclick = function() {
             var selectedTeacher = document.querySelector('select[name="teacher"]').value;

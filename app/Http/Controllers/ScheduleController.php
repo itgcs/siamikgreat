@@ -43,6 +43,11 @@ class ScheduleController extends Controller
             'page' => 'schedules',
             'child' => 'all schedules',
          ]);
+
+         $typeSchedule = Type_schedule::where('name', '=', 'lesson')->value('id');
+         $typeMidExam = Type_schedule::where('name', '=', 'mid exam')->value('id');
+         $typeFinalExam = Type_schedule::where('name', '=', 'final exam')->value('id');
+         $semester = Master_academic::first()->value('now_semester');
          
          $exams =  Exam::join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
             ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
@@ -56,10 +61,10 @@ class ScheduleController extends Controller
 
          $schedules = Schedule::join('type_schedules', 'schedules.type_schedule_id', '=', 'type_schedules.id')
             ->select('schedules.*', 'type_schedules.name as type_schedule')
-            ->where('type_schedule_id', '!=', '1')
+            ->where('type_schedule_id', '!=', $typeSchedule)
+            ->where('type_schedule_id', '!=', $typeMidExam)
+            ->where('type_schedule_id', '!=', $typeFinalExam)
             ->get();
-
-         $typeSchedule = Type_schedule::where('name', '=', 'lesson')->value('id');
 
          // dd($typeSchedule);
 
@@ -96,9 +101,7 @@ class ScheduleController extends Controller
          $semester2 = Master_academic::value('semester2');
          $endsemester2 = Master_academic::value('end_semester2');
 
-         // dd($gradeSchedules);
-
-         return view('components.schedule.all-schedule', compact('exams', 'schedules', 'gradeSchedules', 'gradeSchedulestwo', 'semester1', 'semester2', 'endsemester1', 'endsemester2'));
+         return view('components.schedule.all-schedule', compact('exams', 'schedules', 'gradeSchedules', 'gradeSchedulestwo', 'semester1', 'semester2', 'endsemester1', 'endsemester2',));
 
       } catch (Exception $err) {
          return dd($err);
@@ -124,9 +127,13 @@ class ScheduleController extends Controller
             ->get();
 
          $getIdLesson = Type_schedule::where('name', '=', 'Lesson')->value('id');
+         $getIdMid = Type_schedule::where('name', '=', 'Mid Exam')->value('id');
+         $getFinal = Type_schedule::where('name', '=', 'Final Exam')->value('id');
 
          $schedules = Schedule::join('type_schedules', 'schedules.type_schedule_id', '=', 'type_schedules.id')
             ->where('type_schedule_id', '!=', $getIdLesson)
+            ->where('type_schedule_id', '!=', $getIdMid)
+            ->where('type_schedule_id', '!=', $getFinal)
             ->select('schedules.*', 'type_schedules.name as type_schedule', 'type_schedules.color as color')
             ->get();
 
@@ -361,7 +368,6 @@ class ScheduleController extends Controller
          ->get();
 
          $subtituteTeacher = Subtitute_teacher::where('grade_id', $id)
-            ->where('semester', $semester)
             ->where('type_schedule_id', $typeSchedule)
             ->join('grades', 'grades.id', '=', 'subtitute_teachers.grade_id')
             ->leftJoin('teachers as t1', 't1.id', '=', 'subtitute_teachers.teacher_id')
@@ -427,6 +433,7 @@ class ScheduleController extends Controller
          ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
          ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
          ->leftJoin('subjects', 'subjects.id', '=', 'schedules.subject_id')
+         ->leftJoin('type_schedules', 'type_schedules.id', '=', 'schedules.type_schedule_id')
          ->select(
             'schedules.*',
             'grades.id as grade_id',
@@ -436,7 +443,8 @@ class ScheduleController extends Controller
             't2.name as teacher_companion',
             't2.id as teacher_companion_id',
             'subjects.id as subject_id',
-            'subjects.name_subject as subject_name'
+            'subjects.name_subject as subject_name',
+            'type_schedules.color as color'
          )
          ->get();
 
@@ -486,6 +494,7 @@ class ScheduleController extends Controller
          ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
          ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
          ->leftJoin('subjects', 'subjects.id', '=', 'schedules.subject_id')
+         ->leftJoin('type_schedules', 'type_schedules.id', '=', 'schedules.type_schedule_id')
          ->select(
             'schedules.*',
             'grades.id as grade_id',
@@ -495,7 +504,8 @@ class ScheduleController extends Controller
             't2.name as teacher_companion',
             't2.id as teacher_companion_id',
             'subjects.id as subject_id',
-            'subjects.name_subject as subject_name'
+            'subjects.name_subject as subject_name',
+            'type_schedules.color as color'
          )
          ->get();
 
@@ -1246,6 +1256,13 @@ class ScheduleController extends Controller
                      ->withInput();
             }
 
+            if ($request->semester == 1) {
+               $text = "Mid Exam Semester 1";
+            }
+            elseif ($request->semester == 2) {
+               $text = "Mid Exam Semester 2";
+            }
+
             $post = [
                'grade_id' => $request->grade_id,
                'subject_id' => $request->subject_id[$i],
@@ -1259,6 +1276,7 @@ class ScheduleController extends Controller
                'semester' => $request->semester,
                'start_time' => $request->start_time[$i],
                'end_time' => $request->end_time[$i],
+               'note' => $text,
             ];
             
             DB::beginTransaction();
@@ -1318,6 +1336,13 @@ class ScheduleController extends Controller
                      ->withInput();
             }
 
+            if ($request->semester == 1) {
+               $text = "Final Exam Semester 1";
+            }
+            elseif ($request->semester == 2) {
+               $text = "Final Exam Semester 2";
+            }
+
             $post = [
                'grade_id' => $request->grade_id,
                'subject_id' => $request->subject_id[$i],
@@ -1331,6 +1356,7 @@ class ScheduleController extends Controller
                'semester' => $request->semester,
                'start_time' => $request->start_time[$i],
                'end_time' => $request->end_time[$i],
+               'note' => $text,
             ];
             
             DB::beginTransaction();
