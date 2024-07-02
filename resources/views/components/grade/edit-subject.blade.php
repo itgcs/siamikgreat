@@ -4,6 +4,14 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
+    <div class="row">
+    @foreach ($data as $da)
+        <a type="button" href="{{ url('/' . session('role') . '/grades/manageSubject/addSubject') . '/' . $da->id }}" class="btn btn-success btn mt-5 mx-2">   <i class="fa-solid fa-user-plus"></i>
+        </i>   
+        Add Subject & Teacher
+        </a>
+    @endforeach
+   </div>
     <div class="card card-dark mt-2">
         <div class="card-header">
             @foreach ($data as $da)
@@ -59,7 +67,7 @@
                               Edit
                             </a>
                             @if (session('role') == 'superadmin' || session('role') == 'admin')
-                                <a class="btn btn-danger btn" data-toggle="modal" data-target="#modalDeleteTypeSchedule" data-id="{{ $el->subject_id }}">
+                                <a class="btn btn-danger btn" data-toggle="modal" data-target="#modalDeleteTypeSchedule" data-subject-id="{{ $el->subject_id }}" data-teacher-id="{{ $el->teacher_id }}" data-grade-id="{{ $el->grade_id }}">
                                     <i class="fas fa-trash"></i> Delete
                                 </a>
                             @endif
@@ -100,75 +108,49 @@
 document.addEventListener('DOMContentLoaded', function() {
     $('#modalDeleteTypeSchedule').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
-        var id = button.data('id');
+        var gradeId = button.data('grade-id');
+        var subjectId = button.data('subject-id');
+        var teacherId = button.data('teacher-id');
         var confirmDelete = document.getElementById('confirmDelete');
-        confirmDelete.href = "{{ url('/' . session('role') . '/typeSchedules/delete') }}/" + id;
+        confirmDelete.href = "{{ url('/' . session('role') . '/grades/subject/delete') }}" + '/' + gradeId + '/' + subjectId + '/' + teacherId;
     });
 });
 </script>
 
-    @if(session('after_create_typeSchedule')) 
-
-      <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully created new type schedule in the database.',
-        });
-        }, 1500);
-
-
-      </script>
-
-    @endif
-  
-    @if(session('after_update_typeSchedule')) 
-        <script>
-     
+@if(session('after_add_subject_grade')) 
+    <script>
         var Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
                 timer: 3000
         });
-  
+
         setTimeout(() => {
             Toast.fire({
                 icon: 'success',
-                title: 'Successfully updated the type schedule in the database.',
+                title: 'Successfully created new subject grade in the database.',
         });
         }, 1500);
+    </script>
+@endif
 
-        </script>
-    @endif
-
-    @if(session('after_delete_typeSchedule')) 
-        <script>
-        
+@if(session('after_delete_subject_grade')) 
+    <script>
         var Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
                 timer: 3000
         });
-    
+
         setTimeout(() => {
             Toast.fire({
                 icon: 'success',
-                title: 'Successfully delete the type schedule in the database.',
+                title: 'Successfully delete subject grade in the database.',
         });
         }, 1500);
-
-        
-        </script>
-    @endif
+    </script>
+@endif
 
 @endsection

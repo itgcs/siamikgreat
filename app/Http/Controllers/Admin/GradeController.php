@@ -66,10 +66,31 @@ class GradeController extends Controller
          return abort(500);
       }
    }
+
+   public function pageAddSubjectTeacher($id)
+   {
+      try {
+         //code...
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
+
+         $data = [
+            'teacher' => Teacher::get(),
+            'subject' => Subject::get(),
+            'grade' => Grade::where('id', '=', $id)->get(),
+         ];
+
+         return view('components.grade.add-subject-grade')->with('data', $data);
+         
+      } catch (Exception) {
+         return abort(500);
+      }
+   }
    
    public function actionPost(Request $request)
    {
-      // dd($request);
       try {
          $rules = [
             'name' => $request->name,
@@ -107,8 +128,6 @@ class GradeController extends Controller
          Grade::create($post);
          DB::commit();
 
-
-
          $getIdLastGrade = Grade::latest('id')->value('id');
          // menyimpan class teacher
          $teacher_class = [
@@ -141,6 +160,48 @@ class GradeController extends Controller
       
          session()->flash('after_create_grade');
          return redirect('/' .$role. '/grades');
+
+      } catch (Exception $err) {
+         DB::rollBack();
+         return dd($err);
+      }
+   }
+
+   public function actionPostAddSubjectGrade(Request $request)
+   {
+      // dd($request);
+      try {
+         for ($i=0; $i < count($request->subject_id); $i++) { 
+            if(Grade_subject::where('grade_id', $request->grade_id)->where('subject_id', $request->subject_id[$i])->exists())
+            {
+               DB::rollBack();
+               return redirect('/'. session('role').'/grades/manageSubject/addSubject/' . $request->grade_id)
+               ->with('sweetalert', [
+                  'title' => 'Error',
+                  'text' => 'Subject Grade has been created',
+                  'icon' => 'error'
+               ]);
+            }
+         
+            $teacher_subject = [
+               'teacher_id' => $request->teacher_subject_id[$i],
+               'subject_id' => $request->subject_id[$i],
+               'grade_id'   => $request->grade_id,
+               'created_at' => now(),
+            ];
+
+            $grade_subject = [
+               'grade_id' => $request->grade_id,
+               'subject_id' => $request->subject_id[$i],
+               'created_at' => now(),
+            ];
+
+            $dataTeacherSubject = Teacher_subject::create($teacher_subject);
+            $dataGradeSubject = Grade_subject::create($grade_subject);
+         }
+      
+         session()->flash('after_add_subject_grade');
+         return redirect('/' .session('role'). '/grades/manageSubject/' . $request->grade_id);
 
       } catch (Exception $err) {
          DB::rollBack();
@@ -773,6 +834,30 @@ class GradeController extends Controller
       } catch (Exception $err) {
          dd($err);
          return redirect('/superadmin/grades');
+      }
+   }
+
+   public function deleteSubjectGrade($gradeId, $subjectId, $teacherId)
+   {
+      try {
+         // Hapus data terkait (Teacher_subject dan Grade_subject)
+         
+         Grade_subject::where('grade_id', $gradeId)
+            ->where('subject_id', $subjectId)
+            ->delete();
+
+         Teacher_subject::where('teacher_id', $teacherId)
+            ->where('grade_id', $gradeId)
+            ->where('subject_id', $subjectId)
+            ->delete();
+
+
+         session()->flash('after_delete_subject_grade');
+
+         return redirect('/'. session('role') .'/grades/manageSubject/' . $gradeId);
+      } catch (Exception $err) {
+         dd($err);
+         return redirect('/'. session('role') .'/grades/manageSubject/' . $gradeId);
       }
    }
 }

@@ -101,6 +101,52 @@
       </div>
       <!-- /.card-body -->
    </div>
+
+   @if (count($data['ecaStudent']) === 0)
+   <div class="card card-dark mt-2">
+      <div class="card-header">
+         <h3 class="card-title">ECA</h3>
+
+         <div class="card-tools">
+               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-minus"></i>
+               </button>
+         </div>
+      </div>
+      <div class="card-body p-0">
+         <table class="table table-striped projects">
+            <thead>
+               <tr>
+                  <th>
+                     #
+                  </th>
+                  <th style="width: 15%">
+                     Student Name
+                  </th>
+                  <th style="width: 80%">
+                     Student Class
+                  </th>
+               </tr>
+            </thead>
+            <tbody>
+               @foreach ($data['ecaStudent'] as $es)
+               <tr id={{'index_grade_' . $es->id}}>
+                  <td>
+                        {{ $loop->index + 1 }}
+                  </td>
+                  <td>
+                     <a>
+                           {{$el->name}}
+                     </a>
+                  </td>
+               </tr>
+               @endforeach
+            </tbody>
+         </table>
+      </div>
+      <!-- /.card-body -->
+   </div>
+   @endif
   
 </div>
 
@@ -122,6 +168,29 @@
            Toast.fire({
               icon: 'success',
               title: 'Successfully created new eca in the database.',
+        });
+        }, 1500);
+
+
+      </script>
+
+  @endif
+
+  @if(session('after_add_student_eca')) 
+
+      <script>
+
+        var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+        });
+      
+        setTimeout(() => {
+           Toast.fire({
+              icon: 'success',
+              title: 'Successfully add student eca in the database.',
         });
         }, 1500);
 

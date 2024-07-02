@@ -38,13 +38,29 @@
             <form id="confirmForm" method="POST" action={{route('actionPostScoringMinorPrimary')}}>
         @elseif (session('role') == 'admin')
             <form id="confirmForm" method="POST" action={{route('actionAdminCreateExam')}}>
-        @elseif (session('role') == 'admin')
+        @elseif (session('role') == 'teacher')
             <form id="confirmForm" method="POST" action={{route('actionTeacherPostScoringMinorPrimary')}}>
         @endif
+
         @csrf
-        <div class="input-group-append my-2">
-            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
-        </div>
+
+        @if ($data['status'] == null)
+            <div class="row my-2">
+                <div class="input-group-append my-2">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
+                </div>
+            </div>
+        @elseif ($data['status']->status != null && $data['status']->status == 1)       
+            <div class="row my-2">
+                <div class="input-group-append mx-2">
+                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline ACAR</a>
+                    @endif
+                </div>
+            </div>  
+        @endif
+        
         <table class="table table-striped table-bordered" style=" width: 1400px;">
             <thead>
                 <tr>
@@ -212,9 +228,35 @@
 
 <script>
     document.getElementById('confirmAccScoring').addEventListener('click', function() {
-        document.getElementById('scoringForm').submit();
+        var comments = document.querySelectorAll('input[name="comment[]"]');
+        var allFilled = true;
+        
+        // Memeriksa setiap komentar apakah kosong atau tidak
+        comments.forEach(function(comment) {
+            if (comment.value.trim() === '') {
+                allFilled = false;
+                // Menambahkan kelas untuk memberikan highlight pada input yang kosong
+                comment.classList.add('is-invalid');
+            } else {
+                // Menghapus kelas jika input tidak kosong
+                comment.classList.remove('is-invalid');
+            }
+        });
+        
+        // Jika semua komentar terisi, submit form
+        if (allFilled) {
+            document.getElementById('confirmForm').submit();
+        } else {
+            // Menampilkan pesan peringatan
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'All comments must be filled before submitting the form!',
+            });
+        }
     });
 </script>
+
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>

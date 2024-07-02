@@ -5,13 +5,13 @@
     <div class="container-fluid">
         <div class="row d-flex justify-content-center">
             <!-- left column -->
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <!-- general form elements -->
                 <div>
                     @if (session('role') == 'superadmin')
-                        <form method="POST" action={{route('actionSuperCreateEca')}}>
+                        <form method="POST" action={{route('actionSuperAddStudent')}}>
                     @elseif (session('role') == 'admin')
-                        <form method="POST" action={{route('actionAdminCreateEca')}}>
+                        <form method="POST" action={{route('actionAdminAddStudent')}}>
                     @endif
                         @csrf
                         <div class="card card-dark">
@@ -23,23 +23,37 @@
                             <div class="card-body">
                                 <div class="form-group row">
                                     <div class="col-md-12">
-                                        <label for="student_name">Select Student</label>
-                                        <select name="student_name[]" id="student_name" class="js-select2 form-control" multiple="multiple>
-                                            <option value="" >-- SELECTED STUDENT --</option>
-                                            @foreach ($data as $dt)
-                                                <option value="{{ $dt->unique_id }}">{{ $dt->name }} ({{  }})</option>
+                                        <label for="Eca">ECA</label>
+                                        <select name="eca" id="eca" class="form-control">
+                                            @foreach ($eca as $ec)
+                                                <option value="{{ $ec->id }}" selected>{{ $ec->name }}</option>
                                             @endforeach
                                         </select>
 
                                        @if($errors->any())
-                                          <p style="color: red">{{$errors->first('student_name')}}</p>
+                                          <p style="color: red">{{$errors->first('eca')}}</p>
                                        @endif
                                     </div>
-                                 </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <label for="student_id">Select Student</label>
+                                        <select name="student_id[]" id="student_id" class="js-select2 form-control" multiple="multiple>
+                                            <option value="" >-- SELECTED STUDENT --</option>
+                                            @foreach ($data as $dt)
+                                                <option value="{{ $dt->id }}">{{ $dt->name }} ({{ $dt->grade_name }} - {{ $dt->grade_class }})</option>
+                                            @endforeach
+                                        </select>
+
+                                       @if($errors->any())
+                                          <p style="color: red">{{$errors->first('student_id')}}</p>
+                                       @endif
+                                    </div>
+                                </div>
                               
-                                 <div class="row d-flex justify-content-center">
-                                    <input role="button" type="submit" class="btn btn-success center col-11 m-3">
-                                 </div>
+                                <div class="row d-flex justify-content-center">
+                                <input role="button" type="submit" class="btn btn-success center col-12 m-3">
+                                </div>
                            </div>
                     </form>
                 </div>

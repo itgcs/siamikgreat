@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Eca;
 use App\Models\Student;
+use App\Models\Student_eca;
 
 use Illuminate\Support\Carbon;
 use Exception;
@@ -23,14 +24,17 @@ class EcaController extends Controller
             ]);
 
             $data = Eca::get();
+            $ecaStudent = Student_eca::leftJoin('students', 'student_ecas.student_id', '=', 'students.id')
+                ->leftJoin('ecas', 'student_ecas.eca_id', '=', 'ecas.id')
+                ->select('students.name as student_name', 'ecas.name as eca_name')    
+                ->get();
 
-            // dd($data);
-            
             $data = [
                 'data' => $data,
+                'ecaStudent' => $ecaStudent,
             ];
 
-            // dd($data);
+            dd($data);
             return view('components.eca.data-eca')->with('data', $data);
 
         } catch (Exception $err) {
@@ -62,10 +66,15 @@ class EcaController extends Controller
             'child' => 'database eca',
             ]);
 
-            $data = Student::orderBy('grade_id', 'asc')->get();
+            $data = Student::leftJoin('grades', 'grades.id', '=', 'students.grade_id')
+                ->select('students.*','grades.name as grade_name', 'grades.class as grade_class')
+                ->get();
+
+            $eca = Eca::where('id', $id)->get();
+            
             // dd($data);
 
-            return view('components.eca.add-student')->with('data', $data);
+            return view('components.eca.add-student')->with('data', $data)->with('eca', $eca);
             
         } catch (Exception) {
             return abort(500);
@@ -74,9 +83,7 @@ class EcaController extends Controller
    
     public function actionPost(Request $request)
     {
-
         DB::beginTransaction();
-
         try {
 
             $rules = [
@@ -116,6 +123,49 @@ class EcaController extends Controller
             DB::commit();
             
             return redirect('/'.  $role .'/eca');
+
+        } catch (Exception $err) {
+            DB::rollBack();
+            return dd($err);
+        }
+    }
+
+    public function actionAddStudent(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            // CHECK APABILA STUDENT SUDAH MENGAMBIL ECA YANG SAMA
+            for ($i=0; $i < count($request->student_id); $i++) { 
+                $rules = [
+                    'eca_id' => $request->eca,
+                    'student_id' => $request->student_id[$i],
+                    'created_at' => now(),
+                ];
+
+                if(Student_eca::where('eca_id', $request->eca)->where('student_id', $request->student_id[$i])->first())
+                {
+                    DB::rollBack();
+                    return redirect('/'.  session('role') .'/eca/add' . '/' . $request->eca)->withErrors([
+                        'student_id' => 'Student ' . $request->student_id[$i] .  ' is has been created ',
+                    ])->withInput($rules);
+                }
+            }
+
+            for ($i=0; $i < count($request->student_id); $i++) { 
+                $post = [
+                    'eca_id' => $request->eca,
+                    'student_id' => $request->student_id[$i],
+                    'created_at'   => now(),
+                ];
+
+                Student_eca::create($post);
+                DB::commit();
+            }
+            
+            session()->flash('after_add_student_eca');
+            
+            return redirect('/'. session('role') . '/eca');
 
         } catch (Exception $err) {
             DB::rollBack();

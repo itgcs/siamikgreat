@@ -4,14 +4,16 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
+   
+   <div class="row">
+      <a type="button" href="{{ url('/teacher/dashboard/exam/create/' . session('id_user')) }}" class="btn btn-success btn mt-5 mx-2">
+         <i class="fa-solid fa-user-plus"></i>
+         </i>   
+         Add Exam
+      </a>
+   </div>
 
-   <a type="button" href="{{ url('/teacher/dashboard/exam/create/' . session('id_user')) }}" class="btn btn-success btn mt-5 mx-2">
-      <i class="fa-solid fa-user-plus"></i>
-      </i>   
-      Add Exam
-   </a>
-
-    <div class="card card-dark mt-5">
+   <div class="card card-dark mt-2">
         <div class="card-header">
             <h3 class="card-title">Exams</h3>
 

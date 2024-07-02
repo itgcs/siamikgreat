@@ -77,7 +77,76 @@ class ScoringController extends Controller
                 'created_at' => now()
             ];
 
-            Acar_status::create($status);
+            Scoring_status::create($status);
+
+            session()->flash('after_post_final_score');
+
+            return redirect()->back()->with('role', session('role'));
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function actionPostMinorPrimary(Request $request){
+        try {
+            $type = "minor_subject_assessment";
+            
+            $subject = Subject::where('id', $request->subject_id)->value('name_subject');
+            $getReligionId = Subject::where('name_subject', '=', 'religion')->value('id');
+            
+
+            if (strtolower($subject) == "religion islamic" || 
+                strtolower($subject) == "religion catholic" || 
+                strtolower($subject) == "religion christian" || 
+                strtolower($subject) == "religion buddhism" || 
+                strtolower($subject) == "religion hinduism" || 
+                strtolower($subject) == "religion confucianism") {
+                $subject_id = $getReligionId;
+            }
+
+            for($i=0; $i < count($request->student_id); $i++){
+                $final_score = round($request->final_score[$i]);
+
+                $grade = $this->determineGrade($final_score);
+
+                // dd($grade);
+
+                $scoring = [
+                    'student_id' => $request->student_id[$i],
+                    'grade_id' => $request->grade_id,
+                    'subject_id' => $subject_id,
+                    'subject_teacher_id' => $request->subject_teacher,
+                    'semester' => $request->semester,
+                    'comment' => $request->comment[$i],
+                    'grades' => $grade,
+                    'final_score' => $request->final_score[$i],
+                ];
+
+                $comment = [
+                    'student_id' => $request->student_id[$i],
+                    'grade_id' => $request->grade_id,
+                    'subject_id' => $request->subject_id,
+                    'subject_teacher_id' => $request->subject_teacher,
+                    'semester' => $request->semester,
+                    'type' => $type,
+                    'comment' => $request->comment[$i],
+                ];
+
+                Acar::create($scoring);
+                Comment::create($comment);
+            }
+
+            $status = [
+                'grade_id' => $request->grade_id,
+                'subject_id' => $request->subject_id,
+                'teacher_id' => $request->subject_teacher,
+                'status' => 1,
+                'semester' => $request->semester,
+                'created_at' => now()
+            ];
+
+            Scoring_status::create($status);
 
             session()->flash('after_post_final_score');
 
@@ -122,51 +191,16 @@ class ScoringController extends Controller
                 Comment::create($comment);
             }
 
-            session()->flash('after_post_final_score');
+            $status = [
+                'grade_id' => $request->grade_id,
+                'subject_id' => $request->subject_id,
+                'teacher_id' => $request->subject_teacher,
+                'status' => 1,
+                'semester' => $request->semester,
+                'created_at' => now()
+            ];
 
-            return redirect()->back()->with('role', session('role'));
-
-        } catch (Exception $err) {
-            dd($err);
-        }
-    }
-
-    public function actionPostMinorPrimary(Request $request){
-        try {
-
-            $type = "minor_subject_assessment";
-            
-            for($i=0; $i < count($request->student_id); $i++){
-                $final_score = round($request->final_score[$i]);
-
-                $grade = $this->determineGrade($final_score);
-
-                // dd($grade);
-
-                $scoring = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
-                    'subject_id' => $request->subject_id,
-                    'subject_teacher_id' => $request->subject_teacher,
-                    'semester' => $request->semester,
-                    'comment' => $request->comment[$i],
-                    'grades' => $grade,
-                    'final_score' => $request->final_score[$i],
-                ];
-
-                $comment = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
-                    'subject_id' => $request->subject_id,
-                    'subject_teacher_id' => $request->subject_teacher,
-                    'semester' => $request->semester,
-                    'type' => $type,
-                    'comment' => $request->comment[$i],
-                ];
-
-                Acar::create($scoring);
-                Comment::create($comment);
-            }
+            Scoring_status::create($status);
 
             session()->flash('after_post_final_score');
 

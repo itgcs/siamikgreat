@@ -196,11 +196,11 @@ class SubjectController extends Controller
             Score::where('exam_id', $getIdExam)->delete();
         }
 
-            return redirect('/superadmin/subjects');
+            return redirect('/' .session('role'). '/subjects');
         } 
         catch (Exception $err) {
             dd($err);
-            return redirect('/superadmin/subjects')->with('error', 'Terjadi kesalahan saat menghapus data subject.');
+            return redirect('/'.session('role').'/subjects')->with('error', 'Terjadi kesalahan saat menghapus data subject.');
         }
     }
 }

@@ -3,12 +3,6 @@
 set_time_limit(300);
 
 // Your script logic here
-
-$path = public_path('images/great.png');
-$type = pathinfo($path, PATHINFO_EXTENSION);
-$data = file_get_contents($path);
-$base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-
 $pathlogo = public_path('images/logo-school.png');
 $typelogo = pathinfo($pathlogo, PATHINFO_EXTENSION);
 $datalogo = file_get_contents($pathlogo);
@@ -70,9 +64,7 @@ $cambridge = 'data:image/' . $type . ';base64,' . base64_encode($datacambridge);
 </head>
 <body>
 
-<div class="container">
-    <img src="<?= $base64 ?>" style="width:95%;height:20%;" class="watermark" alt="Watermark image">
-    <!-- PAGE 1 -->
+<div class="container"> <!-- PAGE 1 -->
         <div class="header">
             <div style="padding-left:50px;padding-right:50px;margin-bottom:20px;">
                 <img src="<?= $logo ?>" style="width:100%;height:10%;" alt="Sample image">
