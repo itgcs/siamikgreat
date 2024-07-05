@@ -28,6 +28,13 @@ use App\Models\Report_card_status;
 use App\Models\Scoring_status;
 use App\Models\Acar_status;
 use App\Models\Sooa_status;
+use App\Models\Nursery_toddler;
+use App\Models\Kindergarten;
+use App\Models\Eca;
+use App\Models\Student_eca;
+use App\Models\Chinese_higher;
+use App\Models\Chinese_lower;
+use App\Models\Master_academic;
 
 use Barryvdh\DomPDF\PDF;
 use Dompdf\Dompdf;
@@ -54,6 +61,18 @@ class ReportController extends Controller
                 foreach ($grade as $gt) {
                     $gt->students = Student::where('grade_id', $gt->id)->get();
                 }
+
+            $other = Grade::with(['student', 'subject'])
+                ->join('teacher_grades', 'teacher_grades.grade_id', '=', 'grades.id')
+                ->leftJoin('teachers', function ($join) {
+                    $join->on('teachers.id', '=', 'teacher_grades.teacher_id');
+                })
+                ->whereIn('grades.id', [1, 2, 3, 4, 14])
+                ->select('grades.id as id', 'grades.name as grade_name', 'grades.class as grade_class',
+                'teachers.name as teacher_class')
+                ->withCount(['student as active_student_count', 'subject as active_subject_count'])
+                ->orderBy('grades.id', 'asc')
+                ->get();
    
             $primary  = Grade::with(['student', 'subject'])
                 ->join('teacher_grades', 'teacher_grades.grade_id', '=', 'grades.id')
@@ -66,7 +85,6 @@ class ReportController extends Controller
                 ->withCount(['student as active_student_count', 'subject as active_subject_count'])
                 ->orderBy('grades.id', 'asc')
                 ->get();
-
 
             $secondary = Grade::with(['student', 'subject'])
                 ->join('teacher_grades', 'teacher_grades.grade_id', '=', 'grades.id')
@@ -81,9 +99,10 @@ class ReportController extends Controller
                 ->get();
 
             $data = [
-               'grade'     => $grade,
-               'primary'   => $primary,
-               'secondary' => $secondary,
+                'other'     => $other,
+                'grade'     => $grade,
+                'primary'   => $primary,
+                'secondary' => $secondary,
             ];
 
             // dd($data);
@@ -417,6 +436,7 @@ class ReportController extends Controller
                 'page' => ' database reports',
                 'child' => 'report class teacher',
             ]);
+
 
             Scoring_status::where('grade_id', $gradeId)
                 ->where('subject_id', $subjectId)
@@ -832,19 +852,30 @@ class ReportController extends Controller
                 ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
                 ->first();
     
-            $results = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
+            $results = Sooa_primary::leftJoin('students', 'students.id', '=', 'sooa_primaries.student_id')
                 ->where('sooa_primaries.grade_id', $gradeId)
                 ->where('sooa_primaries.semester', $semester)
                 ->get();
     
-    
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
                 $student = $scores->first();
+
+                if (Student_eca::where('student_id', $student->student_id)->exists()) {
+                    $haveEca = 1;
+                    $nameEca = Student_eca::where('student_ecas.student_id', $student->student_id)
+                        ->leftJoin('ecas', 'ecas.id', 'student_ecas.eca_id')
+                        ->get()->value('name');
+                } else{
+                    $haveEca = 0;
+                    $nameEca = "Not Choice";
+                }
     
                 return [
                     'student_id' => $student->student_id,
                     'student_name' => $student->name,
                     'ranking' => $student->ranking,
+                    'haveEca' => $haveEca,
+                    'nameEca' => $nameEca,
                     'scores' => $scores->map(function ($score) {
                         return [
                             'academic' => $score->academic,
@@ -874,7 +905,7 @@ class ReportController extends Controller
                 ->where('semester', $semester)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
-    
+
             $data = [
                 'grade' => $grade,
                 'students' => $scoresByStudent,
@@ -919,16 +950,41 @@ class ReportController extends Controller
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
                 $student = $scores->first();
-                $majorSubject = Major_subject::pluck('subject_id')->toArray();
-                $majorSubjectsScores = $scores->whereIn('subject_id', $majorSubject)->pluck('final_score');
-                $minorSubjectsScores = $scores->whereIn('subject_id', [32, 7, 20, 4])->pluck('final_score');
-                $supplementarySubjectsScores = $scores->whereIn('subject_id', [18, 6, 33, 16])->pluck('final_score');
 
+                if (Student_eca::where('student_id', $student->student_id)->exists()) {
+                    $haveEca = 1;
+                    $ecaData = Student_eca::where('student_ecas.student_id', $student->student_id)
+                        ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
+                        ->get(['student_ecas.student_id', 'ecas.name as eca_name']);
+
+                    $groupedEcaData = [];
+                    $counter = 1;
+
+                    // dd(count($ecaData));
+
+                    if (count($ecaData) == 1) {
+                        $groupedEcaData['student_id'] = $ecaData[0]->student_id;
+                        $groupedEcaData['eca_1'] = $ecaData[0]->eca_name;
+                        $groupedEcaData['eca_2'] = "Not Choice";
+                    }
+                    elseif (count($ecaData) == 2) {
+                        for ($i=0; $i < 2; $i++) { 
+                            $groupedEcaData['student_id'] = $ecaData[$i]->student_id;
+                            $groupedEcaData['eca_' . $i+1] = $ecaData[$i]->eca_name;
+                        }
+                    }
+
+                } else{
+                    $haveEca = 0;
+                    $groupedEcaData = "Not Choice";
+                }
 
                 return [
                     'student_id' => $student->student_id,
                     'student_name' => $student->name,
                     'ranking' => $student->ranking,
+                    'haveEca' => $haveEca,
+                    'nameEca' => $groupedEcaData,
                     'scores' => $scores->map(function ($score) {
                         return [
                             'academic' => $score->academic,
@@ -1427,6 +1483,7 @@ class ReportController extends Controller
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
+
             else{
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
@@ -1450,8 +1507,9 @@ class ReportController extends Controller
                 ->where('exams.semester', $semester)
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
-
             }
+
+            dd($results);
 
             if ($isMajorSubject) {
             
@@ -1810,6 +1868,60 @@ class ReportController extends Controller
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
+            elseif (strtolower($subject->subject_name) == "chinese lower") {
+                $chineseLowerStudent = Chinese_lower::pluck('student_id')->toArray();
+                
+                $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
+                ->join('exams', 'exams.id', '=', 'grade_exams.exam_id')
+                ->leftJoin('subject_exams', function($join){
+                    $join->on('subject_exams.exam_id', '=', 'exams.id');
+                })
+                ->leftJoin('scores', function ($join) {
+                    $join->on('scores.student_id', '=', 'students.id')
+                        ->on('scores.exam_id', '=', 'exams.id');
+                })
+                ->select(
+                    'students.id as student_id',
+                    'students.name as student_name',
+                    'exams.id as exam_id',
+                    'exams.type_exam as type_exam',
+                    'scores.score as score',
+                )
+                ->whereIn('students.id', $chineseLowerStudent)
+                ->where('grades.id', $gradeId)
+                ->where('subject_exams.subject_id', $subjectId)
+                ->where('exams.semester', $semester)
+                ->where('exams.teacher_id', $teacherId)
+                ->get();
+            }
+            elseif (strtolower($subject->subject_name) == "chinese higher") {
+                $chineseHigherStudent = Chinese_higher::pluck('student_id')->toArray();
+                
+                $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
+                ->join('exams', 'exams.id', '=', 'grade_exams.exam_id')
+                ->leftJoin('subject_exams', function($join){
+                    $join->on('subject_exams.exam_id', '=', 'exams.id');
+                })
+                ->leftJoin('scores', function ($join) {
+                    $join->on('scores.student_id', '=', 'students.id')
+                        ->on('scores.exam_id', '=', 'exams.id');
+                })
+                ->select(
+                    'students.id as student_id',
+                    'students.name as student_name',
+                    'exams.id as exam_id',
+                    'exams.type_exam as type_exam',
+                    'scores.score as score',
+                )
+                ->whereIn('students.id', $chineseHigherStudent)
+                ->where('grades.id', $gradeId)
+                ->where('subject_exams.subject_id', $subjectId)
+                ->where('exams.semester', $semester)
+                ->where('exams.teacher_id', $teacherId)
+                ->get();
+            }
             else{
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
@@ -1898,7 +2010,7 @@ class ReportController extends Controller
                 'status' => $status,
             ];
 
-            dd($data);   
+            // dd($data);   
 
             if(session('role') == 'superadmin' || session('role') == 'admin'){
                 return view('components.report.detail_scoring_subject_secondary')->with('data', $data);
@@ -2388,6 +2500,315 @@ class ReportController extends Controller
         }
     }
 
+    public function cardToddler($id){
+        // dd($id);
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => 'reports',
+                'child' => 'report class teacher',
+            ]);
+            
+            $gradeId = $id;
+
+            // dd($gradeId);
+
+            $semester = intval(session('semester'));
+
+            // dd($semester);
+
+            // if ($semester !== 1) {
+            //     return redirect()->back()->with([
+            //         'role' => session('role'),
+            //         'swal' => [
+            //             'type' => 'error',
+            //             'title' => 'Invalid Semester',
+            //             'text' => 'This operation cannot be performed in Semester 2.'
+            //         ]
+            //     ]);
+            // }
+
+            $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class', 
+                'teachers.name as teacher_name')
+                ->where('teacher_grades.grade_id', $gradeId)
+                ->first();
+
+            $classTeacher = Teacher_grade::where('grade_id', $gradeId)
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
+                ->first();
+
+            $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('nursery_toddlers', 'nursery_toddlers.student_id', '=', 'students.id')
+                ->where('grades.id', $gradeId)
+                ->where('nursery_toddlers.semester', $semester)
+                ->get();
+
+            $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->where('grades.id', $gradeId)
+                ->get();
+
+            // dd($results);
+
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
+                $student = $scores->first();
+               
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->name,
+                    'remarks' => $student->remarks,
+                    'scores' => $scores->map(function ($score) {
+                        return [
+                            'songs' => $score->songs,
+                            'prayer' => $score->prayer,
+                            'colour' => $score->colour,
+                            'number' => $score->number,
+                            'object' => $score->object,
+                            'body_movement' => $score->body_movement,
+                            'colouring' => $score->colouring,
+                            'painting' => $score->painting,
+                            'chinese_songs' => $score->chinese_songs,
+                            'ability_to_recognize_the_objects' => $score->ability_to_recognize_the_objects,
+                            'able_to_own_up_to_mistakes' => $score->able_to_own_up_to_mistakes,
+                            'takes_care_of_personal_belongings_and_property' => $score->takes_care_of_personal_belongings_and_property,
+                            'demonstrates_importance_of_self_control' => $score->demonstrates_importance_of_self_control,
+                            'management_emotional_problem_solving' => $score->management_emotional_problem_solving,
+                            'promote' => $score->promote,
+                        ];
+                    })->all(),
+                ];
+            })->values()->all();
+
+            $status = Report_card_status::where('grade_id', $grade->grade_id)
+                ->where('semester', $semester)
+                ->where('class_teacher_id', $classTeacher->teacher_id)
+                ->first();
+
+            // dd($scoresByStudent);
+
+            $data = [
+                'grade' => $grade,
+                'students' => $student,
+                'result' => $scoresByStudent,
+                'classTeacher' => $classTeacher,
+                'semester' => $semester,
+                'status' => $status,
+            ];
+
+            // dd($data);
+
+            return view('components.report.toddler')->with('data', $data);
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function cardNursery($id){
+        // dd($id);
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => 'reports',
+                'child' => 'report class teacher',
+            ]);
+            
+            $gradeId = $id;
+
+            // dd($gradeId);
+
+            $semester = intval(session('semester'));
+
+            // dd($semester);
+
+            // if ($semester !== 1) {
+            //     return redirect()->back()->with([
+            //         'role' => session('role'),
+            //         'swal' => [
+            //             'type' => 'error',
+            //             'title' => 'Invalid Semester',
+            //             'text' => 'This operation cannot be performed in Semester 2.'
+            //         ]
+            //     ]);
+            // }
+
+            $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class', 
+                'teachers.name as teacher_name')
+                ->where('teacher_grades.grade_id', $gradeId)
+                ->first();
+
+            $classTeacher = Teacher_grade::where('grade_id', $gradeId)
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
+                ->first();
+
+            $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('nursery_toddlers', 'nursery_toddlers.student_id', '=', 'students.id')
+                ->where('grades.id', $gradeId)
+                ->where('nursery_toddlers.semester', $semester)
+                ->get();
+
+            $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->where('grades.id', $gradeId)
+                ->get();
+
+            // dd($results);
+
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
+                $student = $scores->first();
+               
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->name,
+                    'remarks' => $student->remarks,
+                    'scores' => $scores->map(function ($score) {
+                        return [
+                            'songs' => $score->songs,
+                            'prayer' => $score->prayer,
+                            'colour' => $score->colour,
+                            'number' => $score->number,
+                            'object' => $score->object,
+                            'body_movement' => $score->body_movement,
+                            'colouring' => $score->colouring,
+                            'painting' => $score->painting,
+                            'chinese_songs' => $score->chinese_songs,
+                            'ability_to_recognize_the_objects' => $score->ability_to_recognize_the_objects,
+                            'able_to_own_up_to_mistakes' => $score->able_to_own_up_to_mistakes,
+                            'takes_care_of_personal_belongings_and_property' => $score->takes_care_of_personal_belongings_and_property,
+                            'demonstrates_importance_of_self_control' => $score->demonstrates_importance_of_self_control,
+                            'management_emotional_problem_solving' => $score->management_emotional_problem_solving,
+                            'promote' => $score->promote,
+                        ];
+                    })->all(),
+                ];
+            })->values()->all();
+
+            $status = Report_card_status::where('grade_id', $grade->grade_id)
+                ->where('semester', $semester)
+                ->where('class_teacher_id', $classTeacher->teacher_id)
+                ->first();
+
+            // dd($scoresByStudent);
+
+            $data = [
+                'grade' => $grade,
+                'students' => $student,
+                'result' => $scoresByStudent,
+                'classTeacher' => $classTeacher,
+                'semester' => $semester,
+                'status' => $status,
+            ];
+
+            // dd($data);
+
+            return view('components.report.nursery')->with('data', $data);
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function cardKindergarten($id){
+        // dd($id);
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => 'reports',
+                'child' => 'report class teacher',
+            ]);
+            
+            $gradeId = $id;
+
+            // dd($gradeId);
+
+            $semester = intval(session('semester'));
+
+            // dd($semester);
+
+            // if ($semester !== 1) {
+            //     return redirect()->back()->with([
+            //         'role' => session('role'),
+            //         'swal' => [
+            //             'type' => 'error',
+            //             'title' => 'Invalid Semester',
+            //             'text' => 'This operation cannot be performed in Semester 2.'
+            //         ]
+            //     ]);
+            // }
+
+            $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class', 
+                'teachers.name as teacher_name')
+                ->where('teacher_grades.grade_id', $gradeId)
+                ->first();
+
+            $classTeacher = Teacher_grade::where('grade_id', $gradeId)
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
+                ->first();
+
+            $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('kindergartens', 'kindergartens.student_id', '=', 'students.id')
+                ->where('grades.id', $gradeId)
+                ->where('kindergartens.semester', $semester)
+                ->get();
+
+            $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->where('grades.id', $gradeId)
+                ->get();
+
+            // dd($results);
+
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
+                $student = $scores->first();
+               
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->name,
+                    'scores' => $scores->map(function ($score) {
+                        return [
+                            'english' => $score->english,
+                            'mathematics' => $score->mathematics,
+                            'chinese' => $score->chinese,
+                            'science' => $score->science,
+                            'character_building' => $score->character_building,
+                            'art_and_craft' => $score->art_and_craft,
+                            'it' => $score->it,
+                            'conduct' => $score->conduct,
+                            'remarks' => $score->remarks,
+                            'promote' => $score->promote,
+                        ];
+                    })->all(),
+                ];
+            })->values()->all();
+
+            $status = Report_card_status::where('grade_id', $grade->grade_id)
+                ->where('semester', $semester)
+                ->where('class_teacher_id', $classTeacher->teacher_id)
+                ->first();
+
+            // dd($status);
+
+            $data = [
+                'grade' => $grade,
+                'students' => $student,
+                'result' => $scoresByStudent,
+                'classTeacher' => $classTeacher,
+                'semester' => $semester,
+                'status' => $status,
+            ];
+
+            // dd($data);
+
+            return view('components.report.kindergarten')->with('data', $data);
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
     public function reportCardDecline($gradeId, $teacherId, $semester)
     {
         try {
@@ -2417,6 +2838,9 @@ class ReportController extends Controller
             dd($err);
         }
     }
+
+
+
 
     private function determineGrade($finalScore)
     {
@@ -2551,6 +2975,25 @@ class ReportController extends Controller
                     ];
                 }
 
+                $ecaData = Student_eca::where('student_ecas.student_id', $id)
+                    ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
+                    ->get(['student_ecas.student_id', 'ecas.name as eca_name']);
+
+                $groupedEcaData = [];
+                $counter = 1;
+
+                foreach ($ecaData as $eca) {
+                    $groupedEcaData['student_id'] = $eca->student_id;
+                    $groupedEcaData['eca_' . $counter] = $eca->eca_name;
+                    $counter++;
+                }
+
+                // if (empty($groupedEcaData)) {
+                //     $groupedEcaData['student_id'] = $id;
+                // }
+                
+                // dd($groupedEcaData);
+
                 $scoresByStudent = $resultsScore->groupBy('student_id')->map(function ($scores) use($comments, $order) {
                     $student = $scores->first();
                 
@@ -2573,7 +3016,6 @@ class ReportController extends Controller
                         })->all(),
                     ];
                 })->values()->all();
-                
 
             
             if (strtolower($student->grade_name) === "primary") {
@@ -2650,11 +3092,10 @@ class ReportController extends Controller
                     ];
                 })->values()->all();
             }
-    
-    
-            
 
             $student->date_of_registration = Carbon::parse($student->date_of_registration);
+
+            $academicYear = Master_academic::first()->value('academic_year');
 
             // dd($learningSkills);
 
@@ -2667,6 +3108,8 @@ class ReportController extends Controller
                 'attendance' => $attendancesByStudent,
                 'relation' => $relation,
                 'serial' => $getSerial,
+                'academicYear' => $academicYear,
+                'eca' => $groupedEcaData,
             ];
 
             // dd($data);
@@ -2675,8 +3118,8 @@ class ReportController extends Controller
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);
             $pdf->set_option('isHtml5ParserEnabled', true);
-            $pdf->loadView('components.report.pdf.semester1-pdf', $data)->setPaper('a4', 'portrait');
-            return $pdf->download($student->student_name . '_semester' . $semester . '.pdf');
+            $pdf->loadView('components.report.pdf.semester1-pdf', $data)->setPaper('a5', 'portrait');
+            return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
 
 
             // $dompdf = new Dompdf();
@@ -2739,6 +3182,19 @@ class ReportController extends Controller
                     $getSerial = $student->serial_number;
                     break;
                 }
+            }
+
+            $ecaData = Student_eca::where('student_ecas.student_id', $id)
+                ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
+                ->get(['student_ecas.student_id', 'ecas.name as eca_name']);
+
+            $groupedEcaData = [];
+            $counter = 1;
+
+            foreach ($ecaData as $eca) {
+                $groupedEcaData['student_id'] = $eca->student_id;
+                $groupedEcaData['eca_' . $counter] = $eca->eca_name;
+                $counter++;
             }
 
             $student = Student::where('students.id', $id)
@@ -2883,6 +3339,8 @@ class ReportController extends Controller
 
             $student->date_of_registration = Carbon::parse($student->date_of_registration);
 
+            $academicYear = Master_academic::first()->value('academic_year');
+
             // dd($learningSkills);
 
             $data = [
@@ -2895,6 +3353,8 @@ class ReportController extends Controller
                 'relation' => $relation,
                 'serial' => $getSerial,
                 'promotionGrade' => $grade,
+                'academicYear' => $academicYear,
+                'eca' => $groupedEcaData,
             ];
 
             // dd($data);
@@ -2902,10 +3362,8 @@ class ReportController extends Controller
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);
             $pdf->set_option('isHtml5ParserEnabled', true);
-            $pdf->loadView('components.report.pdf.semester2-pdf', $data)->setPaper('a4', 'portrait');
+            $pdf->loadView('components.report.pdf.semester2-pdf', $data)->setPaper('a5', 'portrait');
             return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
-
-
 
             // $dompdf = new Dompdf();
             // $html = View::make('components.report.pdf.semester1-pdf')->render();
@@ -2923,6 +3381,345 @@ class ReportController extends Controller
         
             // return $dompdf->stream('tes.pdf');
 
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function downloadPDFToddler($id)
+    {
+        try {
+            $semester = intval(session('semester'));
+
+            $score = Nursery_toddler::where('student_id', $id)
+                ->where('semester', $semester)
+                ->first();
+    
+            $gradeId = Student::where('id', $id)->value('grade_id');
+
+            if ($semester == 2) {
+                if ($score->promote === 1) {
+                    $nextGrade = Grade::where('id', $gradeId+1)
+                    ->select('grades.name as grade_name', 'grades.class as grade_class')
+                    ->first();
+                    $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
+                } 
+                elseif ($score->promote === null) {
+                    $nextGrade =  $nextGrade = Grade::where('id', $gradeId)
+                    ->select('grades.name as grade_name', 'grades.class as grade_class')
+                    ->first();
+                    $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
+                }
+            }
+
+            $student = Student::where('students.id', $id)
+                ->join('grades', 'grades.id', '=', 'students.grade_id')
+                ->select('students.name as student_name', 'students.created_at as date_of_registration', 
+                'grades.name as grade_name', 'grades.class as grade_class', 'grades.id as grade_id')
+                ->first();
+
+            $classTeacher = Teacher_grade::where('teacher_grades.grade_id', $student->grade_id)
+                ->join('teachers', 'teachers.id', 'teacher_grades.teacher_id')
+                ->select('teachers.name as teacher_name')
+                ->first();
+            
+            $resultsAttendance = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->leftJoin('attendances', function ($join) {
+                    $join->on('attendances.student_id', '=', 'students.id');
+                })
+                ->select(
+                    'students.id as student_id',
+                    'students.name as student_name',
+                    'attendances.*',
+                )
+                ->where('grades.id', $student->grade_id)
+                ->where('students.id', $id)
+                ->where('attendances.semester', $semester)
+                ->get();
+
+            $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
+                
+                $totalAlpha = $attendances->where('alpha', 1)->count();
+                $totalSick = $attendances->where('sick', 1)->count();
+                $totalPermission = $attendances->where('permission', 1)->count();
+                
+                return [
+                    'days_absent' => $totalAlpha,
+                    'sick' => $totalSick,
+                    'permission' => $totalPermission,
+                ];
+            })->values()->all();
+
+            $academicYear = Master_academic::first()->value('academic_year');
+
+            // dd($learningSkills);
+
+            if ($semester == 1) {
+                $data = [
+                    'student' => $student,
+                    'classTeacher' => $classTeacher,
+                    'score' => $score,
+                    'attendance' => $attendancesByStudent,
+                    'semester' => $semester,
+                    'academicYear' => $academicYear,
+                ];
+            } 
+            elseif ($semester == 2) {
+                $data = [
+                    'student' => $student,
+                    'classTeacher' => $classTeacher,
+                    'score' => $score,
+                    'attendance' => $attendancesByStudent,
+                    'promotionGrade' => $grade,
+                    'semester' => $semester,
+                    'academicYear' => $academicYear,
+                ];
+            }
+
+            // dd($data);
+
+            $pdf = app('dompdf.wrapper');
+            $pdf->set_option('isRemoteEnabled', true);
+            $pdf->set_option('isHtml5ParserEnabled', true);
+            $pdf->loadView('components.report.pdf.toddler-pdf', $data)->setPaper('a5', 'portrait');
+            return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function downloadPDFNursery($id)
+    {
+        try {
+            $semester = intval(session('semester'));
+
+            $score = Nursery_toddler::where('student_id', $id)
+                ->where('semester', $semester)
+                ->first();
+    
+            $gradeId = Student::where('id', $id)->value('grade_id');
+
+            if ($semester == 2) {
+                if ($score->promote === 1) {
+                    $nextGrade = Grade::where('id', $gradeId+1)
+                    ->select('grades.name as grade_name', 'grades.class as grade_class')
+                    ->first();
+                    $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
+                } 
+                elseif ($score->promote === null) {
+                    $nextGrade =  $nextGrade = Grade::where('id', $gradeId)
+                    ->select('grades.name as grade_name', 'grades.class as grade_class')
+                    ->first();
+                    $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
+                }
+            }
+
+            $student = Student::where('students.id', $id)
+                ->join('grades', 'grades.id', '=', 'students.grade_id')
+                ->select('students.name as student_name', 'students.created_at as date_of_registration', 
+                'grades.name as grade_name', 'grades.class as grade_class', 'grades.id as grade_id')
+                ->first();
+
+            $classTeacher = Teacher_grade::where('teacher_grades.grade_id', $student->grade_id)
+                ->join('teachers', 'teachers.id', 'teacher_grades.teacher_id')
+                ->select('teachers.name as teacher_name')
+                ->first();
+            
+            $relation = Student_relationship::where('Student_relationships.student_id', $id)
+                ->join('relationships', 'relationships.id', '=', 'student_relationships.relationship_id')
+                ->select('relationships.name as relationship_name')
+                ->first();
+
+            $resultsAttendance = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->leftJoin('attendances', function ($join) {
+                    $join->on('attendances.student_id', '=', 'students.id');
+                })
+                ->select(
+                    'students.id as student_id',
+                    'students.name as student_name',
+                    'attendances.*',
+                )
+                ->where('grades.id', $student->grade_id)
+                ->where('students.id', $id)
+                ->where('attendances.semester', $semester)
+                ->get();
+
+            $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
+                
+                $totalAlpha = $attendances->where('alpha', 1)->count();
+                $totalSick = $attendances->where('sick', 1)->count();
+                $totalPermission = $attendances->where('permission', 1)->count();
+                
+                return [
+                    'days_absent' => $totalAlpha,
+                    'sick' => $totalSick,
+                    'permission' => $totalPermission,
+                ];
+            })->values()->all();
+
+            $academicYear = Master_academic::first()->value('academic_year');
+
+            // dd($learningSkills);
+
+            if ($semester == 1) {
+                $data = [
+                    'student' => $student,
+                    'classTeacher' => $classTeacher,
+                    'score' => $score,
+                    'attendance' => $attendancesByStudent,
+                    'relation' => $relation,
+                    'semester' => $semester,
+                    'academicYear' => $academicYear,
+                ];
+            } 
+            elseif ($semester == 2) {
+                $data = [
+                    'student' => $student,
+                    'classTeacher' => $classTeacher,
+                    'score' => $score,
+                    'attendance' => $attendancesByStudent,
+                    'promotionGrade' => $grade,
+                    'relation' => $relation,
+                    'semester' => $semester,
+                    'academicYear' => $academicYear,
+                ];
+            }
+
+
+            $pdf = app('dompdf.wrapper');
+            $pdf->set_option('isRemoteEnabled', true);
+            $pdf->set_option('isHtml5ParserEnabled', true);
+            $pdf->loadView('components.report.pdf.nursery-pdf', $data)->setPaper('a5', 'portrait');
+            return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
+
+            // $dompdf = new Dompdf();
+            // $html = View::make('components.report.pdf.semester1-pdf')->render();
+
+            // $dompdf->loadHtml($html);
+            
+
+            // // (Optional) Setup the paper size and orientation
+            // $dompdf->setPaper('A4', 'portrait');
+
+            // // Render the HTML as PDF
+            // $dompdf->render();
+
+            // // Output the generated PDF to Browser
+        
+            // return $dompdf->stream('tes.pdf');
+
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function downloadPDFKindergarten($id)
+    {
+        try {
+            $semester = intval(session('semester'));
+
+            $score = Kindergarten::where('student_id', $id)
+                ->where('semester', $semester)
+                ->first();
+    
+            $gradeId = Student::where('id', $id)->value('grade_id');
+
+            if ($semester == 2) {
+                if ($score->promote === 1) {
+                    $nextGrade = Grade::where('id', $gradeId+1)
+                    ->select('grades.name as grade_name', 'grades.class as grade_class')
+                    ->first();
+                    $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
+                } 
+                elseif ($score->promote === null) {
+                    $nextGrade =  $nextGrade = Grade::where('id', $gradeId)
+                    ->select('grades.name as grade_name', 'grades.class as grade_class')
+                    ->first();
+                    $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
+                }
+            }
+
+            $student = Student::where('students.id', $id)
+                ->join('grades', 'grades.id', '=', 'students.grade_id')
+                ->select('students.name as student_name', 'students.created_at as date_of_registration', 
+                'grades.name as grade_name', 'grades.class as grade_class', 'grades.id as grade_id')
+                ->first();
+
+            $classTeacher = Teacher_grade::where('teacher_grades.grade_id', $student->grade_id)
+                ->join('teachers', 'teachers.id', 'teacher_grades.teacher_id')
+                ->select('teachers.name as teacher_name')
+                ->first();
+            
+            $relation = Student_relationship::where('Student_relationships.student_id', $id)
+                ->join('relationships', 'relationships.id', '=', 'student_relationships.relationship_id')
+                ->select('relationships.name as relationship_name')
+                ->first();
+
+            $resultsAttendance = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->leftJoin('attendances', function ($join) {
+                    $join->on('attendances.student_id', '=', 'students.id');
+                })
+                ->select(
+                    'students.id as student_id',
+                    'students.name as student_name',
+                    'attendances.*',
+                )
+                ->where('grades.id', $student->grade_id)
+                ->where('students.id', $id)
+                ->where('attendances.semester', $semester)
+                ->get();
+
+            $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
+                
+                $totalAlpha = $attendances->where('alpha', 1)->count();
+                $totalSick = $attendances->where('sick', 1)->count();
+                $totalPermission = $attendances->where('permission', 1)->count();
+                
+                return [
+                    'days_absent' => $totalAlpha,
+                    'sick' => $totalSick,
+                    'permission' => $totalPermission,
+                ];
+            })->values()->all();
+
+            $academicYear = Master_academic::first()->value('academic_year');
+
+            // dd($learningSkills);
+
+            if ($semester == 1) {
+                $data = [
+                    'student' => $student,
+                    'classTeacher' => $classTeacher,
+                    'score' => $score,
+                    'attendance' => $attendancesByStudent,
+                    'relation' => $relation,
+                    'semester' => $semester,
+                    'academicYear' => $academicYear,
+                ];
+            } 
+            elseif ($semester == 2) {
+                $data = [
+                    'student' => $student,
+                    'classTeacher' => $classTeacher,
+                    'score' => $score,
+                    'attendance' => $attendancesByStudent,
+                    'promotionGrade' => $grade,
+                    'relation' => $relation,
+                    'semester' => $semester,
+                    'academicYear' => $academicYear,
+                ];
+            }
+
+            // dd($data);
+
+            $pdf = app('dompdf.wrapper');
+            $pdf->set_option('isRemoteEnabled', true);
+            $pdf->set_option('isHtml5ParserEnabled', true);
+            $pdf->loadView('components.report.pdf.kindergarten-pdf', $data)->setPaper('a5', 'portrait');
+            return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
 
         } catch (Exception $err) {
             dd($err);

@@ -42,7 +42,7 @@
         @csrf
         @if ($data['status'] == null)
             <div class="row my-2">
-                <div class="input-group-append my-2">
+                <div class="input-group-append mx-2">
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
                 </div>
             </div>
@@ -137,9 +137,6 @@
                                 @php $foundFinalExam = true; @endphp
                             @endif
                         @endforeach
-                        @if(!$foundFinalExam)
-                            <td>&nbsp;</td>
-                        @endif
                         <td>{{ $student['avg_fe'] ?? '&nbsp;' }}</td>
                         <td>{{ $student['percent_fe'] ?? '&nbsp;' }}</td>
                         <!-- END COUNT F.EXAM -->

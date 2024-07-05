@@ -30,10 +30,10 @@
 
    <!-- START TABEL -->
    @if (sizeof($data['grade']) != 0)
-         <!-- PRIMARY -->
-         <div class="card card-dark mt-2">
+    <!-- UNDERGRADE -->
+    <div class="card card-dark mt-2">
                <div class="card-header">
-                  <h3 class="card-title">Primary</h3>
+                  <h3 class="card-title">Except Primary dan Secondary</h3>
                   <div class="card-tools">
                      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                            <i class="fas fa-minus"></i>
@@ -53,7 +53,7 @@
                            </tr>
                      </thead>
                      <tbody>
-                           @foreach ($data['primary'] as $pr)
+                           @foreach ($data['other'] as $pr)
                               <tr id="{{ 'index_grade_' . $pr->id }}">
                                     <td>{{ $loop->index + 1 }}</td>
                                     <td><a>  {{ $pr->grade_name }} - {{ $pr->grade_class }}</a></td>
@@ -100,7 +100,124 @@
                                        </a>
                                     </td>
                                     @elseif (session('role') == 'admin')
-                                    <td class="project-actions text-left toastsDefaultSuccess">
+                                    <td class="project-actions text-right toastsDefaultSuccess">
+                                       <a class="btn btn-primary btn"
+                                          href="{{url(session('role'). '/reports') . '/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          Scoring
+                                       </a>
+                                       <a class="btn btn-success btn"
+                                          href="{{url(session('role') . '/reports') . '/acar/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          ACAR
+                                       </a>
+                                       <a class="btn btn-warning btn"
+                                          href="{{url(session('role') . '/reports') . '/sooa/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          SOOA
+                                       </a>
+                                       <a class="btn btn-warning btn"
+                                          href="{{url(session('role') . '/reports') . '/tcop/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          TCOP
+                                       </a>
+                                       <a class="btn btn-primary btn"
+                                          href="{{url(session('role') . '/reports') . '/semestersatu/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          SEMESTER 1
+                                       </a>
+                                       <a class="btn btn-primary btn"
+                                          href="{{url(session('role') . '/reports') . '/semesterdua/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          SEMESTER 2
+                                       </a>
+                                    </td>
+                                    @endif
+                              </tr>
+                           @endforeach
+                     </tbody>
+                  </table>
+               </div>
+         </div>
+         <!-- END UNDERGRADE -->
+
+         <!-- PRIMARY -->
+         <div class="card card-dark mt-2">
+               <div class="card-header">
+                  <h3 class="card-title">Primary</h3>
+                  <div class="card-tools">
+                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                           <i class="fas fa-minus"></i>
+                     </button>
+                  </div>
+               </div>
+               <div class="card-body p-0">
+                  <table class="table table-striped projects">
+                     <thead>
+                           <tr>
+                              <th>#</th>
+                              <th style="width:10%;">Class</th>
+                              <th>Teacher Class</th>
+                              <th>Total Student</th>
+                              <th>Total Subject</th>
+                              <th style="width:50%;"></th>
+                           </tr>
+                     </thead>
+                     <tbody>
+                           @foreach ($data['primary'] as $pr)
+                              <tr id="{{ 'index_grade_' . $pr->id }}">
+                                    <td>{{ $loop->index + 1 }}</td>
+                                    <td><a>  {{ $pr->grade_name }} - {{ $pr->grade_class }}</a></td>
+                                    <td><a>  {{ $pr->teacher_class }}</a></td>
+                                    <td><a>  {{ $pr->active_student_count }}</a></td>
+                                    <td><a>  {{ $pr->active_subject_count }}</a></td>
+                                    @if (session('role') == 'superadmin')
+                                    <td class="project-actions text-right toastsDefaultSuccess">
+                                       <a class="btn btn-primary btn"
+                                          href="{{url(session('role'). '/reports') . '/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          Scoring
+                                       </a>
+                                       <a class="btn btn-success btn"
+                                          href="{{url(session('role') . '/reports') . '/acar/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          ACAR
+                                       </a>
+                                       <a class="btn btn-warning btn"
+                                          href="{{url(session('role') . '/reports') . '/sooa/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          SOOA
+                                       </a>
+                                       <a class="btn btn-warning btn"
+                                          href="{{url(session('role') . '/reports') . '/tcop/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          TCOP
+                                       </a>
+                                       <a class="btn btn-primary btn"
+                                          href="{{url(session('role') . '/reports') . '/semestersatu/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          SEMESTER 1
+                                       </a>
+                                       <a class="btn btn-primary btn"
+                                          href="{{url(session('role') . '/reports') . '/semesterdua/detail/' . $pr->id}}">
+                                          
+                                          </i>
+                                          SEMESTER 2
+                                       </a>
+                                    </td>
+                                    @elseif (session('role') == 'admin')
+                                    <td class="project-actions text-right toastsDefaultSuccess">
                                        <a class="btn btn-primary btn"
                                           href="{{url(session('role'). '/reports') . '/detail/' . $pr->id}}">
                                           

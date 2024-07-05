@@ -107,7 +107,13 @@
 
                                 <!-- Choice -->
                                 <td class="text-center">
-                                    <input name="choice[]" min="0" max="100" type="number" class="form-control" id="choice" value="{{ $score['choice'] ?: '' }}" autocomplete="off" required>
+                                    @if ($student['haveEca'] == 1)
+                                        {{ $student['nameEca'] }}
+                                        <input name="choice[]" min="0" max="100" type="number" class="form-control" id="choice" value="{{ $score['choice'] ?: '' }}" autocomplete="off" required>
+                                    @elseif ($student['haveEca'] == 0)
+                                        {{ $student['nameEca'] }}
+                                        <input name="choice[]" min="0" max="100" type="number" class="form-control d-none" id="choice" value="0" autocomplete="off" required>
+                                    @endif
                                 </td>
                                 <td class="text-center">{{ $score['grades_choice'] }}</td>
 
@@ -316,7 +322,7 @@
                                 @if($score['choice'])
                                     {{ $score['choice'] }}
                                 @else
-                                    <input name="choice[]" min="0" max="100" type="number" class="form-control" id="choice" value="{{ $score['choice'] ?: '' }}" autocomplete="off" required>
+                                    -
                                 @endif
                             </td>
                             <td class="text-center">{{ $score['grades_choice'] }}</td>
@@ -326,7 +332,7 @@
                                 @if(isset($score['language_and_art']))
                                     {{ $score['language_and_art'] }}
                                 @else
-                                    <input name="language_and_art[]" min="0" max="100" type="number" class="form-control" id="language_and_art" value="{{ $score['language_and_art'] ?: '' }}" autocomplete="off" required>
+                                    <input name="language_and_art[]" min="0" max="100" type="number" class="form-control" id="language_and_art" value="{{ $score['language_and_art'] ? : '' }}" autocomplete="off" required>
                                 @endif
                             </td>
                             <td class="text-center">{{ $score['grades_language_and_art'] ?? '' }}</td>
@@ -458,7 +464,7 @@
 
             console.log("id=", id, "teacher=", teacherId, "semester=", semester);
             var confirmDecline = document.getElementById('confirmDecline');
-            confirmDecline.href = "{{ url('/' . session('role') . '/reports/acar/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            confirmDecline.href = "{{ url('/' . session('role') . '/reports/sooa/decline') }}/" + id + "/" + teacherId + "/" + semester;
         });
     });
 </script>

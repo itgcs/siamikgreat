@@ -252,12 +252,12 @@
                 <p>Class Teacher</p>
               </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a href="/{{session('role')}}/dashboard/attendance/subjectTeacher/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'attendance subject teacher' ? 'active' : '') : ''}}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Subject Teacher</p>
               </a>
-            </li>
+            </li> -->
           </ul>
         </li>
       @endif
@@ -470,6 +470,18 @@
               <a href="/{{ session('role') }}/supplementarySubjects" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database supplementary subjects' ? 'active' : '') : ''}}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Supplementary Subject</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/{{ session('role') }}/chineseHigher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database chinese higher' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Chinese Higher</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/{{ session('role') }}/chineseLower" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database chinese lower' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Chinese Lower</p>
               </a>
             </li>
           </ul>

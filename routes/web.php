@@ -26,6 +26,8 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ScoringController;
 use App\Http\Controllers\ColorScheduleController;
+use App\Http\Controllers\ChineseHigherController;
+use App\Http\Controllers\ChineseLowerController;
 
 use App\Http\Controllers\SuperAdmin\{
    SuperAdminController,
@@ -525,6 +527,21 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::get('/', [Pdf::class, 'index']);
    });
 
+
+   Route::prefix('/chineseHigher')->group(function () {
+      Route::get('/', [ChineseHigherController::class, 'index']);
+      Route::get('/add', [ChineseHigherController::class, 'addStudent']);
+      Route::post('/', [ChineseHigherController::class, 'actionPost'])->name('actionSuperAddStudentChineseHigher');
+      Route::get('/student/delete/{id}', [ChineseHigherController::class, 'delete']);
+   });
+
+   Route::prefix('/chineseLower')->group(function () {
+      Route::get('/', [ChineseLowerController::class, 'index']);
+      Route::get('/add', [ChineseLowerController::class, 'addStudent']);
+      Route::post('/', [ChineseLowerController::class, 'actionPost'])->name('actionSuperAddStudentChineseLower');
+      Route::get('/student/delete/{id}', [ChineseLowerController::class, 'delete']);
+   });
+
    Route::prefix('/eca')->group(function () {
       Route::get('/', [EcaController::class, 'index']);
       Route::get('/create', [EcaController::class, 'pageCreate']);
@@ -782,14 +799,30 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/delete/{id}', [SupplementarySubjectController::class, 'delete'])->name('delete-supplementarysubject');
    });
 
+   Route::prefix('/chineseHigher')->group(function () {
+      Route::get('/', [ChineseHigherController::class, 'index']);
+      Route::get('/add', [ChineseHigherController::class, 'addStudent']);
+      Route::post('/', [ChineseHigherController::class, 'actionPost'])->name('actionAdminAddStudentChineseHigher');
+      Route::get('/student/delete/{id}', [ChineseHigherController::class, 'delete']);
+   });
+
+   Route::prefix('/chineseLower')->group(function () {
+      Route::get('/', [ChineseLowerController::class, 'index']);
+      Route::get('/add', [ChineseLowerController::class, 'addStudent']);
+      Route::post('/', [ChineseLowerController::class, 'actionPost'])->name('actionAdminAddStudentChineseLower');
+      Route::get('/student/delete/{id}', [ChineseLowerController::class, 'delete']);
+   });
+
    Route::prefix('/eca')->group(function () {
       Route::get('/', [EcaController::class, 'index']);
       Route::get('/create', [EcaController::class, 'pageCreate']);
       Route::get('/add/{id}', [EcaController::class, 'addStudent']);
+      Route::get('/view/{id}', [EcaController::class, 'detailStudent']);
       Route::post('/addStudent', [EcaController::class, 'actionAddStudent'])->name('actionAdminAddStudent');
       Route::post('/', [EcaController::class, 'actionPost'])->name('actionAdminCreateEca');
       Route::put('/{id}', [EcaController::class, 'actionPut'])->name('actionAdminUpdateEca');
       Route::get('/delete/{id}', [EcaController::class, 'delete'])->name('delete-eca');
+      Route::get('/delete/student/{ecaId}/{studentId}', [EcaController::class, 'deleteStudent'])->name('delete-eca-student');
    });
 });
 
@@ -850,15 +883,26 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('report/card/semesterdua/{id}', [ReportController::class, 'cardSemester2']);
       Route::get('report/cardSec/semestersatu/{id}', [ReportController::class, 'cardSemester1Sec']);
       Route::get('report/cardSec/semesterdua/{id}', [ReportController::class, 'cardSemester2Sec']);
+      Route::get('report/cardToddler/{id}', [ReportController::class, 'cardToddler']);
+      Route::get('report/cardNursery/{id}', [ReportController::class, 'cardNursery']);
+      Route::get('report/cardKindergarten/{id}', [ReportController::class, 'cardKindergarten']);
       
 
       Route::get('report/tcop/detail/{id}', [ReportController::class, 'tcopPrimary']);
       Route::get('report/tcop/detailSec/{id}', [ReportController::class, 'tcopSecondary']);
 
       Route::get('report/semester1/print/{id}', [ReportController::class, 'downloadPDFSemester1']);
-      Route::post('report/reportCard1', [ScoringController::class, 'actionPostReportCard1'])->name('actionTeacherPostReportCard1');
       Route::get('report/semester2/print/{id}', [ReportController::class, 'downloadPDFSemester2']);
+      Route::get('report/toddler/print/{id}', [ReportController::class, 'downloadPDFToddler']);
+      Route::get('report/nursery/print/{id}', [ReportController::class, 'downloadPDFNursery']);
+      Route::get('report/kindergarten/print/{id}', [ReportController::class, 'downloadPDFKindergarten']);
+      
+
+      Route::post('report/reportCard1', [ScoringController::class, 'actionPostReportCard1'])->name('actionTeacherPostReportCard1');
       Route::post('report/reportCard2', [ScoringController::class, 'actionPostReportCard2'])->name('actionTeacherPostReportCard2');
+      Route::post('report/toddler', [ScoringController::class, 'actionPostReportCardToddler'])->name('actionTeacherPostReportCardToddler');
+      Route::post('report/nursery', [ScoringController::class, 'actionPostReportCardNursery'])->name('actionTeacherPostReportCardNursery');
+      Route::post('report/kindergarten', [ScoringController::class, 'actionPostReportCardKindergarten'])->name('actionTeacherPostReportCardKindergarten');
 
    
       Route::get('schedules/grade/{id}', [ScheduleController::class, 'scheduleGradeTeacher']);

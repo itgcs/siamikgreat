@@ -119,13 +119,30 @@
 
                                     <!-- ECA 1 -->
                                     <td class="text-center">
-                                        <input name="eca_1[]" min="0" max="100" type="number" class="form-control" id="eca_1" value="{{ $score['eca_1'] ?: '' }}" autocomplete="off" required>
+                                        @if ($student['haveEca'] ==  1)
+                                            {{ $student['nameEca']['eca_1'] }}
+                                            <input name="eca_1[]" min="0" max="100" type="number" class="form-control" id="eca_1" autocomplete="off" required>
+                                        @elseif ($student['haveEca'] == 0)
+                                            {{ $student['nameEca'] }}
+                                            <input name="choice[]" min="0" max="100" type="number" class="form-control d-none" id="choice" value="0" autocomplete="off" required>
+                                        @endif
                                     </td>
                                     <td class="text-center">{{ $score['grades_eca_1'] }}</td>
                                     
                                     <!-- ECA 2 -->  
                                     <td class="text-center">
-                                        <input name="eca_2[]"  min="0" max="100" type="number" class="form-control" id="eca_2" value="{{ $score['eca_2'] ?: '' }}" autocomplete="off" required>
+                                        @if ($student['haveEca'] == 1)
+                                            @if ($student['nameEca']['eca_2'] !=  "Not Choice")
+                                                {{ $student['nameEca']['eca_2'] }}
+                                                <input name="eca_2[]" min="0" max="100" type="number" class="form-control" id="eca_2" autocomplete="off" required>
+                                            @elseif ($student['nameEca']['eca_2'] ==  "Not Choice")
+                                                {{ $student['nameEca']['eca_2'] }}
+                                                <input name="eca_2[]" min="0" max="100" type="number" class="form-control d-none" id="eca_2" value="0" autocomplete="off" required>    
+                                            @endif
+                                        @elseif ($student['haveEca'] == 0)
+                                            {{ $student['nameEca'] }}
+                                            <input name="eca_2[]" min="0" max="100" type="number" class="form-control d-none" id="eca_2" value="0" autocomplete="off" required>    
+                                        @endif
                                     </td>
                                     <td class="text-center">{{ $score['grades_eca_2'] }}</td>
 

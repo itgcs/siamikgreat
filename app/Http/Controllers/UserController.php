@@ -94,14 +94,25 @@ class UserController extends Controller
             $nameUser = Relationship::where('user_id',$user->id)->value('name');
          }
 
-         $semester = Master_academic::first()->value('now_semester');
 
-         session()->put([
-            'role' => $nameRoles->name,
-            'id_user' => $user['id'],
-            'name_user' => $nameUser,
-            'semester' => $semester,
-         ]);        
+         // dd(empty(Master_academic::first()));
+
+         if(empty(Master_academic::first())){
+            session()->put([
+               'role' => $nameRoles->name,
+               'id_user' => $user['id'],
+               'name_user' => $nameUser,
+            ]);        
+         } else {
+            $semester = Master_academic::first()->value('now_semester');
+   
+            session()->put([
+               'role' => $nameRoles->name,
+               'id_user' => $user['id'],
+               'name_user' => $nameUser,
+               'semester' => $semester,
+            ]);        
+         }
 
          $checkRole = session('role');
          // dd($checkRole);
