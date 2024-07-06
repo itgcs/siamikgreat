@@ -92,7 +92,7 @@ Route::get('/get-subjects/{gradeId}/{teacherId}', function($gradeId, $teacherId)
 
 // Route untuk mengambil data grade teacher
 Route::get('/get-grades/{teacherId}', function($teacherId) {
-   $grades = Teacher_grade::join('grades', 'teacher_grades.grade_id', '=', 'grades.id')
+   $grades = Teacher_subject::join('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
    ->where('teacher_id', $teacherId)
    ->get();
    return response()->json($grades);
@@ -463,6 +463,7 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::post('/sooaPrimary', [ScoringController::class, 'actionPostSooaPrimary'])->name('actionPostScoringSooaPrimary');
       Route::post('/sooaSecondary', [ScoringController::class, 'actionPostSooaSecondary'])->name('actionPostScoringSooaSecondary');
       Route::post('/updateSooaPrimary/{id}', [ScoringController::class, 'actionPostSooaPrimary'])->name('actionUpdateSooaPrimary');
+      Route::post('/updateSooaSecondary/{id}', [ScoringController::class, 'actionPostSooaSecondary']);
       
       Route::get('tcop/detail/{id}', [ReportController::class, 'tcopPrimary']);
 
@@ -679,6 +680,7 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::post('sooaPrimary', [ScoringController::class, 'actionPostSooaPrimary'])->name('actionAdminPostScoringSooaPrimary');
       Route::post('sooaSecondary', [ScoringController::class, 'actionPostSooaSecondary'])->name('actionAdminPostScoringSooaSecondary');
       Route::post('updateSooaPrimary/{id}', [ScoringController::class, 'actionPostSooaPrimary'])->name('actionAdminUpdateSooaPrimary');
+      Route::post('updateSooaSecondary/{id}', [ScoringController::class, 'actionPostSooaSecondary']);
 
       Route::get('tcop/detail/{id}', [ReportController::class, 'tcopPrimary']);
 

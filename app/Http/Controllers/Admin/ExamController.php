@@ -264,10 +264,10 @@ class ExamController extends Controller
             ->select('exams.*', 'grades.id as grade_id', 'grades.name as grade_name', 'grades.class as grade_class','subjects.id as subject_id', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.id as type_exam_id','type_exams.name as type_exam')
             ->first();
 
-         // $teacher    = Teacher::orderBy('id', 'ASC')->get();
-         // $subject    = Subject::orderBy('id', 'ASC')->get();
-         // $grade      = Grade::orderBy('id', 'ASC')->get();
-         // $typeExam   = Type_exam::orderBy('id', 'ASC')->get();
+         $teacher    = Teacher::orderBy('id', 'ASC')->get();
+         $subject    = Subject::orderBy('id', 'ASC')->get();
+         $grade      = Grade::orderBy('id', 'ASC')->get();
+         $typeExam   = Type_exam::orderBy('id', 'ASC')->get();
 
          $data = [
             'teacher'   => Teacher::orderBy('id', 'ASC')->get(),

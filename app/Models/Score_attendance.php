@@ -15,6 +15,7 @@ class Score_attendance extends Model
       'teacher_id',
       'student_id',
       'score',
+      'semester',
       'created_at',
       'updated_at',
     ];

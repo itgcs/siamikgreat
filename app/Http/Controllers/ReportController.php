@@ -1509,7 +1509,7 @@ class ReportController extends Controller
                 ->get();
             }
 
-            dd($results);
+            // dd($results);
 
             if ($isMajorSubject) {
             
@@ -1997,7 +1997,9 @@ class ReportController extends Controller
             $status = Scoring_status::where('grade_id', $gradeId)
                 ->where('semester', $semester)
                 ->where('teacher_id', $subjectTeacher->teacher_id)
+                ->where('subject_id', $subject->subject_id)
                 ->first();
+            
 
             
             $data = [
@@ -2940,6 +2942,7 @@ class ReportController extends Controller
                     ->select('subjects.name');
                 })
                 ->where('acars.student_id', $id)
+                ->where('acars.semester', $semester)
                 ->get();
                 
                 if(strtolower($student->grade_name) === "primary")
@@ -3021,6 +3024,7 @@ class ReportController extends Controller
             if (strtolower($student->grade_name) === "primary") {
                 $resultsSooa = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
                     ->where('sooa_primaries.student_id', $id)
+                    ->where('sooa_primaries.semester', $semester)
                     ->get();
 
                 $scoresByStudentSooa = $resultsSooa->groupBy('student_id')->map(function ($scores) {
@@ -3058,6 +3062,7 @@ class ReportController extends Controller
             elseif (strtolower($student->grade_name) === "secondary") {
                 $resultsSooa = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
                     ->where('sooa_secondaries.student_id', $id)
+                    ->where('sooa_secondaries.semester', $semester)
                     ->get();
 
                 $scoresByStudentSooa = $resultsSooa->groupBy('student_id')->map(function ($scores) {
@@ -3071,9 +3076,9 @@ class ReportController extends Controller
                             return [
                                 'academic' => $score->academic,
                                 'grades_academic' => $score->grades_academic,
-                                'eca_1' => $score->eca_1,
-                                'grades_eca_1' => $score->eca_1,
-                                'eca_2' => $score->eca_2,
+                                'eca_1' => $score->eca_1 == 0 ? "-" : $score->eca_1,
+                                'grades_eca_1' => $score->grades_eca_1,
+                                'eca_2' => $score->eca_2 == 0 ? "-" : $score->eca_2,
                                 'grades_eca_2' => $score->grades_eca_2,
                                 'self_development' => $score->self_development,
                                 'grades_self_development' => $score->grades_self_development,
@@ -3249,6 +3254,7 @@ class ReportController extends Controller
                     ->select('subjects.name');
                 })
                 ->where('acars.student_id', $id)
+                ->where('acars.semester', $semester)
                 ->get();
                 
                 
@@ -3296,11 +3302,13 @@ class ReportController extends Controller
             if (strtolower($student->grade_name) === "primary") {
                 $resultsSooa = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
                     ->where('sooa_primaries.student_id', $id)
+                    ->where('sooa_primaries.semester', $semester)
                     ->get();
             }
             elseif (strtolower($student->grade_name) === "secondary") {
                 $resultsSooa = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
                     ->where('sooa_secondaries.student_id', $id)
+                    ->where('sooa_secondaries.semester', $semester)
                     ->get();
             }
     

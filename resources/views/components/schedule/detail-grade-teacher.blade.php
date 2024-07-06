@@ -102,91 +102,93 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
 
+@if ($totalClass === 1)
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            headerToolbar: {
+                left: 'prev,next',
+                center: 'title',
+                right: ''
+            },
+            dayHeaderFormat: { weekday: 'short' },
+            slotLabelFormat: { hour: 'numeric', minute: '2-digit', omitZeroMinute: false, meridiem: 'short' },
+            slotMinTime: '07:00:00',
+            slotMaxTime: '18:00:00',
+            hiddenDays: [0, 6],
+            events: [
+                @foreach($gradeSchedule as $schedule)
+                @php
+                    $event = [
+                        'title' => $schedule->note == "" ? $schedule->subject_name : $schedule->note,
+                        'startRecur' => \Carbon\Carbon::now()->startOfWeek()->format('Y-m-d'),
+                        'daysOfWeek' => [$schedule->day],
+                        'startTime' => $schedule->start_time,
+                        'endTime' => $schedule->end_time,
+                        'description' => '',
+                        'color' => 'blue'
+                    ];
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'timeGridWeek',
-        headerToolbar: {
-            left: 'prev,next',
-            center: 'title',
-            right: ''
-        },
-        dayHeaderFormat: { weekday: 'short' },
-        slotLabelFormat: { hour: 'numeric', minute: '2-digit', omitZeroMinute: false, meridiem: 'short' },
-        slotMinTime: '07:00:00',
-        slotMaxTime: '18:00:00',
-        hiddenDays: [0, 6],
-        events: [
-            @foreach($gradeSchedule as $schedule)
-            @php
-                $event = [
-                    'title' => $schedule->note == "" ? $schedule->subject_name : $schedule->note,
-                    'startRecur' => \Carbon\Carbon::now()->startOfWeek()->format('Y-m-d'),
-                    'daysOfWeek' => [$schedule->day],
-                    'startTime' => $schedule->start_time,
-                    'endTime' => $schedule->end_time,
-                    'description' => '',
-                    'color' => 'blue'
-                ];
-
-                switch (strtolower($schedule->note)) {
-                    case 'break':
-                        $event['description'] = 'BREAK';
-                        $event['color'] = 'red';
-                        break;
-                    case 'eca':
-                        $event['description'] = 'ECA';
-                        $event['color'] = 'bluesky';
-                        break;
-                    case 'advisory session by ct':
-                        $event['description'] = 'Advisory Session by CT';
-                        $event['color'] = 'orange';
-                        break;
-                    case 'general assembly':
-                        $event['description'] = 'General Assembly';
-                        $event['color'] = 'pink';
-                        break;
-                    case 'morning reading':
-                        $event['description'] = 'Morning Reading';
-                        $event['color'] = 'orange';
-                        break;
-                    default:
-                        $event['description'] = "Teacher: {$schedule->teacher_name}<br>Grade: {$schedule->grade_name} - {$schedule->grade_class}";
-                }
-
-                echo json_encode($event) . ',';
-
-                foreach ($subtituteTeacher as $st) {
-                    if ($st->grade_id == $schedule->grade_id && $st->subject_id == $schedule->subject_id && $st->day == $schedule->day && $st->start_time == $schedule->start_time && $st->end_time == $schedule->end_time) {
-                        $substituteEvent = [
-                            'title' => $schedule->subject_name,
-                            'start' => "{$st->date}T{$schedule->start_time}",
-                            'end' => "{$st->date}T{$schedule->end_time}",
-                            'description' => "<br>Teacher: {$st->teacher_name} <span class='badge badge-danger'>substitute</span> <br>Grade: {$schedule->grade_name} - {$schedule->grade_class}",
-                            'color' => 'green'
-                        ];
-                        echo json_encode($substituteEvent) . ',';
+                    switch (strtolower($schedule->note)) {
+                        case 'break':
+                            $event['description'] = 'BREAK';
+                            $event['color'] = 'red';
+                            break;
+                        case 'eca':
+                            $event['description'] = 'ECA';
+                            $event['color'] = 'bluesky';
+                            break;
+                        case 'advisory session by ct':
+                            $event['description'] = 'Advisory Session by CT';
+                            $event['color'] = 'orange';
+                            break;
+                        case 'general assembly':
+                            $event['description'] = 'General Assembly';
+                            $event['color'] = 'pink';
+                            break;
+                        case 'morning reading':
+                            $event['description'] = 'Morning Reading';
+                            $event['color'] = 'orange';
+                            break;
+                        default:
+                            $event['description'] = "Teacher: {$schedule->teacher_name}<br>Grade: {$schedule->grade_name} - {$schedule->grade_class}";
                     }
-                }
-            @endphp
-            @endforeach
-        ],
-        eventClick: function(info) {
-            document.getElementById('eventTitle').innerText = info.event.title;
-            document.getElementById('eventDescription').innerHTML = 'Description : ' + info.event.extendedProps.description;
 
-            var eventModal = new bootstrap.Modal(document.getElementById('eventModal'), {
-                keyboard: false
-            });
-            eventModal.show();
-        }
+                    echo json_encode($event) . ',';
+
+                    foreach ($subtituteTeacher as $st) {
+                        if ($st->grade_id == $schedule->grade_id && $st->subject_id == $schedule->subject_id && $st->day == $schedule->day && $st->start_time == $schedule->start_time && $st->end_time == $schedule->end_time) {
+                            $substituteEvent = [
+                                'title' => $schedule->subject_name,
+                                'start' => "{$st->date}T{$schedule->start_time}",
+                                'end' => "{$st->date}T{$schedule->end_time}",
+                                'description' => "<br>Teacher: {$st->teacher_name} <span class='badge badge-danger'>substitute</span> <br>Grade: {$schedule->grade_name} - {$schedule->grade_class}",
+                                'color' => 'green'
+                            ];
+                            echo json_encode($substituteEvent) . ',';
+                        }
+                    }
+                @endphp
+                @endforeach
+            ],
+            eventClick: function(info) {
+                document.getElementById('eventTitle').innerText = info.event.title;
+                document.getElementById('eventDescription').innerHTML = 'Description : ' + info.event.extendedProps.description;
+
+                var eventModal = new bootstrap.Modal(document.getElementById('eventModal'), {
+                    keyboard: false
+                });
+                eventModal.show();
+            }
+        });
+        calendar.render();
     });
-    calendar.render();
-});
 
-</script>
+    </script>
+@endif
+
 
 @if(session('after_create_grade_schedule')) 
 

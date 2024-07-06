@@ -45,7 +45,7 @@
         @csrf
 
         @if ($data['status'] == null)
-            <div class="row my-2">
+            <div class="row mx-2">
                 <div class="input-group-append my-2">
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
                 </div>
@@ -177,8 +177,9 @@
                     <input name="subject_teacher" type="number" class="form-control d-none" id="subject_teacher" value="{{ $data['subjectTeacher']->teacher_id }}">  
                 </form>
             @else
-                
-                <p>data kosong</p>
+                <tr>
+                    <td colspan="9" style="text-align:center;">Data Empty</td>
+                </tr>
             @endif
                 
             </tbody>

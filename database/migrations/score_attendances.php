@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreign('teacher_id')->references('id')->on('teachers')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreign('student_id')->references('id')->on('students')->cascadeOnDelete()->cascadeOnUpdate();
             $table->unsignedBigInteger('score');
+            $table->integer('semester');
             $table->timestamps();
         });
     }

@@ -169,7 +169,7 @@ class GradeController extends Controller
 
    public function actionPostAddSubjectGrade(Request $request)
    {
-      dd($request);
+      // dd($request);
       try {
          for ($i=0; $i < count($request->subject_id); $i++) { 
             if(Grade_subject::where('grade_id', $request->grade_id)->where('subject_id', $request->subject_id[$i])->exists())
@@ -226,11 +226,15 @@ class GradeController extends Controller
          ->where('grade_exams.grade_id', $id)
          ->get();
 
-      $gradeSubject = Grade_subject::join('subjects', 'subjects.id', '=', 'grade_subjects.subject_id')
-         ->where('grade_subjects.grade_id', $id)
-         ->pluck('name_subject')->toArray();
-         // ->select('subjects.id as subject_id','subjects.name_subject as subject_name')
-         // ->get();
+      $gradeSubject = Teacher_subject::where('grade_id', $id)
+      ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
+      ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
+      ->select(
+         'teacher_subjects.grade_id as grade_id',
+         'subjects.name_subject as subject_name', 'subjects.id as subject_id',
+         'teachers.name as teacher_name', 'teachers.id as teacher_id'
+      )
+      ->get();
 
       // dd($gradeSubject);
 
@@ -251,7 +255,7 @@ class GradeController extends Controller
             'subjectTeacher' => $subjectTeacher, 
          ];
 
-         // dd($data->gradeSubject);
+         // dd($data);
          return view('components.grade.detail-grade')->with('data', $data);
       } catch (Exception $err) {
          

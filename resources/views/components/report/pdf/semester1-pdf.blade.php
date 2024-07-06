@@ -269,7 +269,13 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
                 <tr style="border-right: 1px solid black;border-left: 1px solid black;">
                     <td style="text-align:center;text-decoration:underline;" colspan="3">{{ $classTeacher->teacher_name }}</td>
                     <td style="text-align:center;text-decoration:underline;" colspan="2">Yuliana Harijanto, B.Eng (Hons)</td>
-                    <td style="text-align:center;text-decoration:underline;" colspan="3">{{ $relation->relationship_name }}</td>
+                    <td style="text-align:center;text-decoration:underline;" colspan="3">
+                        @if ($relation == null)
+                        <p><b>-</b></p>
+                        @else
+                        <p><b>{{ $relation['relationship_name'] }}</b></p>
+                        @endif
+                    </td>
                 </tr>
                 <tr style="border-right: 1px solid black;border-left: 1px solid black;">
                     <th style="text-align:center;border-bottom: 3px solid black;" colspan="3"><b>Class Teacher's Signature</b></td>
@@ -344,7 +350,7 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
                             </td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-left:8px;" colspan="2">Grade</td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;" colspan="2">
-                                ECA @if (empty($eca))
+                                ECA @if (empty($eca) || count($eca) == 2)
                                 @else
                                     ({{ $eca['eca_2'] }})
                                 @endif
@@ -413,8 +419,7 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
 
                 <!-- REMARKS -->
                     <tr style="border-top: 3px solid black;border-bottom: 1px dotted black;border-right: 1px solid black;border-left: 1px solid black;">
-                        <th style="text-align:left;">Remarks : </th>
-                        <td colspan="7">{{ $learningSkills->remarks }}</td>
+                        <td colspan="8"><b>Remarks :</b> {{ $learningSkills->remarks }}</td>
                     </tr>
                 <!-- END RAMARKS -->
 
@@ -427,7 +432,13 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
                     <tr style="border-right: 1px solid black;border-left: 1px solid black;">
                         <td style="text-align:center;text-decoration:underline;" colspan="3">{{ $classTeacher->teacher_name }}</td>
                         <td style="text-align:center;text-decoration:underline;" colspan="2">Yuliana Harijanto, B.Eng (Hons)</td>
-                        <td style="text-align:center;text-decoration:underline;" colspan="3">{{ $relation->relationship_name }}</td>
+                        <td style="text-align:center;text-decoration:underline;" colspan="3">
+                            @if ($relation == null)
+                            <p><b>-</b></p>
+                            @else
+                            <p><b>{{ $relation['relationship_name'] }}</b></p>
+                            @endif
+                        </td>
                     </tr>
                     <tr style="border-right: 1px solid black;border-left: 1px solid black;">
                         <th style="text-align:left;border-bottom: 3px solid black;" colspan="3"><b>Class Teacher's Signature</b></td>
@@ -436,11 +447,11 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
                     </tr>
                 <!-- END SIGNATURE -->
 
-                    <tr>
-                        <td colspan="3" style="text-align:left;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
-                        <td colspan="2" style="text-align:center;padding-top: 8px;"> <img src="<?= $cambridge ?>" style="width:60%;" alt="Sample image"></td>
-                        <td colspan="3" style="text-align:right;">Page 2 of 2</td>
-                    </tr>
+                <tr>
+                    <td colspan="2" style="text-align:left;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
+                    <td colspan="4" style="text-align:center;padding-top: 8px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td>
+                    <td colspan="2" style="text-align:right;">Page 2 of 2</td>
+                </tr>
                 </tbody>
             </table>
         </div>

@@ -415,8 +415,8 @@
                     Are you sure want to submit score sooa?
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
-                    <a class="btn btn-succes btn" href="{{url('/' . session('role') .'/reports') . '/updateSooaPrimary/' . $data['grade']->grade_id}}">Yes</a>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
+                    <button type="button" class="btn btn-primary" id="confirmSooaScoring">Yes, Acc SOOA</button>
                 </div>
             </div>
         </div>
