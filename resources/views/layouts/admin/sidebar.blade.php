@@ -158,7 +158,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/schedules/companion/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules companion' ? 'active' : '') : ''}}">
+            <a href="/{{session('role')}}/dashboard/schedules/companion/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules assisstant' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
               <p>Assisstant</p>
             </a>

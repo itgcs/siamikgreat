@@ -28,24 +28,6 @@ class UserSeeder extends Seeder
             'role_id' => '2',
             'created_at' => now(),
          ],
-         [
-            'username' => 'teacher',
-            'password' => Hash::make('teacher'),
-            'role_id' => '3',
-            'created_at' => now(),
-         ],
-         [
-            'username' => 'student',
-            'password' => Hash::make('student'),
-            'role_id' => '4',
-            'created_at' => now(),
-         ],
-         [
-            'username' => 'parent',
-            'password' => Hash::make('parent'),
-            'role_id' => '5',
-            'created_at' => now(),
-         ],
       ];
 
       DB::table('users')->insert($data);
