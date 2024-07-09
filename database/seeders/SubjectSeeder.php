@@ -47,7 +47,15 @@ class SubjectSeeder extends Seeder
                 'created_at' => now(),
             ],
             [
+                'name_subject' => 'PE',
+                'created_at' => now(),
+            ],
+            [
                 'name_subject' => 'IT',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'General Knowledge',
                 'created_at' => now(),
             ],
             [
@@ -59,19 +67,79 @@ class SubjectSeeder extends Seeder
                 'created_at' => now(),
             ],
             [
-                'name_subject' => 'General Knowledge',
-                'created_at' => now(),
-            ],
-            [
-                'name_subject' => 'PE',
-                'created_at' => now(),
-            ],
-            [
                 'name_subject' => 'Health Education',
                 'created_at' => now(),
             ],
             [
                 'name_subject' => 'Art and Design',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Calistung',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'English Speaking',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Literasi Numerasi',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'IPS (UN)',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Seni Budaya dan Prakarya (UN)',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Bahasa Jawa (UN)',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'PJOK (UN)',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'MTK (UN)',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'IPA (UN)',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Bahasa Inggris (UN)',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Bahasa Indonesia (UN)',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Religion Catholic',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Religion Buddhism',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Religion Islamic',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Religion Christian',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Chinese Lower',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Chinese Higher',
                 'created_at' => now(),
             ],
         ]);

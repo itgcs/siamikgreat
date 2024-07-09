@@ -20,6 +20,8 @@ use App\Http\Controllers\Admin\{
    MasterAcademicController,
 };
 
+use App\Http\Controllers\Excel\Import;
+
 use App\Http\Controllers\EcaController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScheduleController;
@@ -35,15 +37,11 @@ use App\Http\Controllers\SuperAdmin\{
 };
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-use App\Jobs\SendEmailJob;
-use App\Jobs\SendMailReminder;
 use App\Livewire\Counter;
-use App\Mail\SendEmailTest;
 use App\Models\Grade_subject;
 use App\Models\Teacher_subject;
 use App\Models\Teacher_grade;
 use App\Models\Schedule;
-use Faker\Provider\ar_EG\Payment;
 use Illuminate\Notifications\Notification;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Mail;
@@ -525,6 +523,8 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::get('/subject/{id}', [AttendanceController::class, 'subject']);
       Route::get('/subject/student/{gradeId}/{subjectId}', [AttendanceController::class, 'detailAttend']);
       Route::post('/postScoreAttendance', [ScoringController::class, 'actionPostScoreAttendance'])->name('actionPostScoringAttendance');
+   
+      Route::get('/teacher/grade/subject', [AttendanceController::class, 'detailAttendance'])->name('super.attendance.detail');
    });
 
    Route::prefix('/reportCard')->group(function () {

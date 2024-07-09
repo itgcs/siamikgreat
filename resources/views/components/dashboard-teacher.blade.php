@@ -109,7 +109,7 @@
               <div class="tab-content p-0">
                 <!-- Morris chart - Sales -->
                 <div class="chart tab-pane active" id="revenue-chart"
-                     style="position: relative; height: full;">
+                  style="position: relative; height: 500px; overflow-y: auto;">
 
                      @if (sizeof($data['exam']) == 0)
                       <div class="d-flex justify-content-center">
@@ -191,7 +191,7 @@
               </div>
               <!-- /.card-tools -->
             </div>
-            <div class="card-body">
+            <div class="card-body" style="position: relative; height: 500px; overflow-y: auto;">
              <table class="table table-borderless">
                <thead>
                  <tr>
@@ -252,7 +252,7 @@
               </h3>
             </div>
             <!-- /.card-header -->
-            <div class="card-body">
+            <div class="card-body" style="position: relative; height: 500px; overflow-y: auto;">
              <table class="table table-borderless">      
               @if(sizeof($data['teacherSubject']) != 0)
                 <thead>

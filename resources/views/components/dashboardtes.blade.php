@@ -149,15 +149,13 @@
               <div class="tab-content p-0">
                 <!-- Morris chart - Sales -->
                 <div class="chart tab-pane active" id="revenue-chart"
-                     style="position: relative; height: full;">
+                     style="position: relative; height: 500px; overflow-y: auto;">
 
                      @if (sizeof($data['exam']) == 0)
                       <div class="d-flex justify-content-center">
                         <h2>Exam empty !!!</h2>
                       </div>
                      @else
-    
-                      {{-- <canvas id="sales-chart-canvas" height="300" style="height: 300px;"></canvas> --}}
                       <div>
                        <!-- /.card-header -->
                        <div>
@@ -181,6 +179,20 @@
                              <!-- todo text -->
                              <span class="text text-sm">( {{$el->type_exam_name}} ) {{$el->name_exam}} ({{ $el->subject }}) ({{ $el->grade_name .'-'. $el->grade_class }})</span>
                              <!-- Emphasis label -->
+
+                             <span>
+                                @if ($el->date_exam == now())
+                                  $currentDate = now(); // Tanggal saat ini
+                                  $dateExam = $el->date_exam; // Tanggal exam dari data
+                                  $diff = strtotime($dateExam) - strtotime($currentDate);
+                                  $days = floor($diff / (60 * 60 * 24));
+                                  
+                                  <span class="badge badge-warning">{{$days}} days again</span>
+                                @else
+                                 <span class="badge badge-success">Done</span>
+                                @endif
+                              </span>
+                              
                              
                              <div class="tools">
                                <a href="/admin/exams/detail/{{$el->id}}" target="_blank">
@@ -218,7 +230,7 @@
               </div>
               <!-- /.card-tools -->
             </div>
-            <div class="card-body">
+            <div class="card-body" style="position: relative; height: 500px; overflow-y: auto;">
              <table class="table table-borderless">
                <thead>
                  <tr>
@@ -284,7 +296,7 @@
               </div>
               <!-- /.card-tools -->
             </div>
-            <div class="card-body">
+            <div class="card-body" style="position: relative; height: 500px; overflow-y: auto;">
              <table class="table table-borderless">
                <thead>
                  <tr>
@@ -328,7 +340,7 @@
             </div>
           </div>
 
-          <!-- Grade List -->
+          <!-- Teacher List -->
           <div class=" card bg-success">
             <div class="card-header border-0">
               <h3 class="card-title">
@@ -343,7 +355,7 @@
               </div>
               <!-- /.card-tools -->
             </div>
-            <div class="card-body">
+            <div class="card-body" style="position: relative; height: 500px; overflow-y: auto;">
              <table class="table table-borderless">
                <thead>
                  <tr>

@@ -6,7 +6,7 @@
 <div class="container-fluid">
    <div class="col">
       <div class="text-center">
-         <h2 class="text-center">Assessment Search</h2>
+         <h2 class="text-center">Exam Search</h2>
       </div>
       <div class="row">
          @if (session('role') == 'superadmin')
@@ -51,13 +51,13 @@
       <a type="button" href="{{url('/' . session('role') . '/exams/create')}}" class="btn btn-success btn mx-2">
          <i class="fa-solid fa-user-plus"></i>
          </i>   
-         Add Assessment
+         Add Exam
       </a>
    </div>
    
    <div class="card card-dark mt-2">
       <div class="card-header">
-         <h3 class="card-title">Assessments</h3>
+         <h3 class="card-title">Exams</h3>
 
          <div class="card-tools">
                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -72,11 +72,11 @@
                      <th>#</th>
                      <th style="width: 20%">Name</th>
                      <th style="width: 10%">Date</th>
-                     <th>Grade</th>
-                     <th>Subject</th>
-                     <th>Teacher</th>
-                     <th>Status</th>
-                     <th style="width: 25%"></th>
+                     <th style="width: 10%">Grade</th>
+                     <th style="width: 15%">Subject</th>
+                     <th style="width: 15%">Teacher</th>
+                     <th style="width: 10%">Status</th>
+                     <th style="width: 20%">Action</th>
                   </tr>
                </thead>
                <tbody>
@@ -97,13 +97,16 @@
                         <br>
                         @php
                            $currentDate = now(); // Tanggal saat ini
-                           $dateAssessment = $el->date_exam; // Tanggal exam dari data
+                           $dateExam = $el->date_exam; // Tanggal exam dari data
 
                            // Hitung selisih antara tanggal exam dengan tanggal saat ini
-                           $diff = strtotime($dateAssessment) - strtotime($currentDate);
+                           $diff = strtotime($dateExam) - strtotime($currentDate);
                            $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
                         @endphp
-                        <small class="text-muted mb-0"><span class="badge badge-danger">{{$days}} days again</span></small>
+                        @if($el->is_active)
+                           <small class="text-muted mb-0"><span class="badge badge-danger">{{$days}} days again</span></small>
+                        @else
+                        @endif
                      </td>
                      <td>
                         {{$el->grade_name}} - {{ $el->grade_class }}
@@ -118,10 +121,10 @@
                         @if($el->is_active)
                         <span class="badge badge-success"> Active </span>
                         @else
-                        <span class="badge badge-danger"> Inactive </span>
+                        <span class="badge badge-danger"> Done </span>
                         @endif
                      </td>
-                     <td class="project-actions text-right toastsDefaultSuccess">
+                     <td class="project-actions text-left toastsDefaultSuccess">
                         <a class="btn btn-primary btn-sm"
                            href="{{url('/' . session('role') . '/exams') . '/' . $el->id}}">
                            <i class="fas fa-folder">
@@ -130,18 +133,16 @@
                         </a>
                         <a class="btn btn-info btn-sm"
                            href="{{url('/' . session('role') . '/exams') . '/edit/' . $el->id}}">
-                           {{-- <i class="fa-solid fa-user-graduate"></i> --}}
                            <i class="fas fa-pencil-alt">
                            </i>
                            Edit
                         </a>
-                        <a class="btn btn-success btn-sm"
+                        <!-- <a class="btn btn-success btn-sm"
                            href="{{url('/' . session('role') . '/exams') . '/done/' . $el->id}}">
-                           {{-- <i class="fa-solid fa-user-graduate"></i> --}}
                            <i class="fas fa-check">
                            </i>
                            Done
-                        </a>
+                        </a> -->
                      </td>
                   </tr>
 

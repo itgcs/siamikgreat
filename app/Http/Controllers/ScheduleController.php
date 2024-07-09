@@ -1447,6 +1447,7 @@ class ScheduleController extends Controller
 
          $getIdTeacher = Teacher::where('user_id', $id)->value('id');
          $getGradeId = Teacher_grade::where('teacher_id', $getIdTeacher)->get();
+         $lesson = Type_schedule::where('name', '=', 'lesson')->value('id');
 
 
          if (count($getGradeId) > 1) {
@@ -1479,6 +1480,7 @@ class ScheduleController extends Controller
                         'teachers.name as teacher_name', 
                         'subjects.id as subject_id',
                         'subjects.name_subject as subject_name')
+               ->where('schedules.type_schedule_id', $lesson)
                ->get();
    
             $subtituteTeacher = Subtitute_teacher::where('grade_id', $getGradeId)
@@ -1581,7 +1583,7 @@ class ScheduleController extends Controller
       try {
          session()->flash('page',  $page = (object)[
             'page' => 'schedules',
-            'child' => 'schedules companion',
+            'child' => 'schedules assistant',
          ]);
 
          $getIdTeacher = Teacher::where('user_id', $id)->value('id');

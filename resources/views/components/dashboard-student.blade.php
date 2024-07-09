@@ -109,7 +109,7 @@
               <div class="tab-content p-0">
                 <!-- Morris chart - Sales -->
                 <div class="chart tab-pane active" id="revenue-chart"
-                     style="position: relative; height: full;">
+                     style="position: relative; height: 500px; overflow-y: auto;">
 
                      @if(sizeof($data['dataStudent']->exam) == 0)
                       <div class="d-flex justify-content-center">

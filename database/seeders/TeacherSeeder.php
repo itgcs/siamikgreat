@@ -13,22 +13,6 @@ class TeacherSeeder extends Seeder
      */
     public function run(): void
     {
-      // $table->string('unique_id')->unique();
-      // $table->string('name');
-      // $table->string('nik')->unique();
-      // $table->string('religion');
-      // $table->string('gender');
-      // $table->string('place_birth');
-      // $table->string('nationality');
-      // $table->date('date_birth');
-      // $table->text('home_address');
-      // $table->text('temporary_address');
-      // $table->string('handphone');
-      // $table->string('email');
-      // $table->string('last_education');
-      // $table->string('major');
-
-
       DB::table('teachers')->insert([
          [
             'is_active' => 1,

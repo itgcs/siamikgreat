@@ -62,6 +62,8 @@ class EcaController extends Controller
                 'eca' => $eca,
             ];
 
+            // dd($data);
+
             return view('components.eca.detail-eca')->with('data', $data);
 
         } catch (Exception $err) {

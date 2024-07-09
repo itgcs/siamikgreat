@@ -25,6 +25,7 @@ class Student extends Model
       'nationality',
       'place_of_issue',
       'date_exp',
+      'is_graduate',
       'created_at',
       'updated_at',
    ];

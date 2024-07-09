@@ -15,19 +15,55 @@ class TypeExamSeeder extends Seeder
     {
         DB::table('type_exams')->insert([
             [
-                'name' => 'Ulangan Harian',
+                'name' => 'Homework',
                 'created_at' => now(),
             ],
             [
-                'name' => 'UTS',
+                'name' => 'Exercise',
                 'created_at' => now(),
             ],
             [
-                'name' => 'UAS',
+                'name' => 'Quiz',
                 'created_at' => now(),
             ],
             [
-                'name' => 'Praktikum',
+                'name' => 'Final Exam',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Participation',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Project',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Practical',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Small Project',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Presentation',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Practical Exam',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Written Tes',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Big Project',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'Exam',
                 'created_at' => now(),
             ],
         ]);

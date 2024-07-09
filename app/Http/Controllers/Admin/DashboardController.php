@@ -43,7 +43,7 @@ class DashboardController extends Controller
             $totalStudent  = Student::where('is_active', true)->orderBy('created_at', 'desc')->get()->count('id');
             $totalTeacher  = Teacher::where('is_active', true)->get()->count('id');
             $totalGrade    = Grade::all()->count('id');
-            $totalExam     = Exam::where('is_active', true)->get()->count('id');
+            $totalExam     = Exam::get()->count('id');
             
             $studentData   = Student::where('is_active', true)
             ->join('grades', 'grades.id', '=', 'students.grade_id')
@@ -51,7 +51,7 @@ class DashboardController extends Controller
             ->take(6)
             ->get();
             
-            $teacherData   = Teacher::where('is_active', true)->take(6)->get();
+            $teacherData   = Teacher::where('is_active', true)->get();
             
             $examData  = Grade_exam::join('grades', 'grades.id', '=', 'grade_exams.grade_id')
                ->join('exams', 'exams.id', '=', 'grade_exams.exam_id')

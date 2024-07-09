@@ -56,12 +56,12 @@
                         </i>
                         Add Student
                      </a>
-                     <a class="btn btn-warning btn"
+                     <!-- <a class="btn btn-warning btn"
                         href="{{url('/' . session('role') .'/eca') . '/edit/' . $el->id}}">
                         <i class="fas fa-pencil-alt">
                         </i>
                         Edit
-                     </a>
+                     </a> -->
                      <a class="btn btn-success btn"
                         href="{{url('/' . session('role') .'/eca') . '/view/' . $el->id}}">
                         <i class="fas fa-eye">

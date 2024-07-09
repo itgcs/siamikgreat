@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('nationality');
             $table->string('place_of_issue')->nullable();
             $table->date('date_exp')->nullable();
+            $table->boolean('is_graduate');
             $table->timestamps();
       });
    }

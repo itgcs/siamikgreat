@@ -34,8 +34,8 @@ class ExamController extends Controller
    {
       try {
          session()->flash('page',  $page = (object)[
-            'page' => 'exams',
-            'child' => 'database assessment',
+            'page' => 'database exam',
+            'child' => 'database exam',
          ]);
 
          $form = (object) [
@@ -70,8 +70,8 @@ class ExamController extends Controller
       try {
          //code...
          session()->flash('page',  $page = (object)[
-            'page' => 'exams',
-            'child' => 'database assessment',
+            'page' => 'database exam',
+            'child' => 'database exam',
          ]);
 
          $dataTeacher = Teacher::get();
@@ -100,8 +100,8 @@ class ExamController extends Controller
       // DB::beginTransaction();
       try {
          session()->flash('page',  $page = (object)[
-            'page' => 'exams',
-            'child' => 'database assessment',
+            'page' => 'database exam',
+            'child' => 'database exam',
          ]);
 
          $rules = [
@@ -212,7 +212,7 @@ class ExamController extends Controller
    public function getById($id)
    {
       session()->flash('page',  $page = (object)[
-         'page' => 'exams',
+         'page' => 'database exam',
          'child' => 'exams',
       ]);
 
@@ -243,11 +243,11 @@ class ExamController extends Controller
    public function getByIdSession()
    {
       session()->flash('page',  $page = (object)[
-         'page' => 'exams',
+         'page' => 'database exam',
          'child' => 'exams',
       ]);
 
-      $id = session('assessment_id');
+      $id = session('exam_id');
 
       try {
          $data = Exam::select('exams.*', 'grades.name as grade_name', 'subjects.name_subject')
@@ -275,8 +275,8 @@ class ExamController extends Controller
       try {
          //code...
          session()->flash('page',  $page = (object)[
-            'page' => 'exams',
-            'child' => 'database assessments',
+            'page' => 'database exam',
+            'child' => 'database exams',
          ]);
 
          $dataExam = Exam::select('exams.*', 'grades.name as grade_name', 'subjects.name_subject')
@@ -323,8 +323,8 @@ class ExamController extends Controller
       try {
 
          session()->flash('page',  $page = (object)[
-            'page' => 'exams',
-            'child' => 'database assessment',
+            'page' => 'database exam',
+            'child' => 'database exam',
          ]);
 
          $rules = [
@@ -393,7 +393,7 @@ class ExamController extends Controller
    {
       try {
          session()->flash('page',  $page = (object)[
-            'page' => 'exams',
+            'page' => 'database exam',
             'child' => 'database teacher exams',
          ]);
 
@@ -423,8 +423,8 @@ class ExamController extends Controller
    public function detailTeacherExam($id)
    {
       session()->flash('page',  $page = (object)[
-         'page' => 'exams',
-         'child' => 'database assessment',
+         'page' => 'database exam',
+         'child' => 'database exam',
       ]);
 
       try {
@@ -453,8 +453,8 @@ class ExamController extends Controller
       try {
          //code...
          session()->flash('page',  $page = (object)[
-            'page' => 'exams',
-            'child' => 'database assessment',
+            'page' => 'database exam',
+            'child' => 'database exam',
          ]);
 
          $getIdTeacher = Teacher::where('user_id', $id)->value('id');
@@ -494,7 +494,7 @@ class ExamController extends Controller
    {
       try {
          session()->flash('page',  $page = (object)[
-            'page' => 'exams',
+            'page' => 'database exam',
             'child' => 'exams',
         ]);
 
@@ -549,8 +549,8 @@ class ExamController extends Controller
    public function detailGradeExam($id)
    {
       session()->flash('page',  $page = (object)[
-         'page' => 'exams',
-         'child' => 'database assessment',
+         'page' => 'database exam',
+         'child' => 'database exam',
       ]);
 
       try {
@@ -602,8 +602,8 @@ class ExamController extends Controller
    public function doneExam($id){
       try {
          session()->flash('page',  $page = (object)[
-            'page' => 'exams',
-            'child' => 'database assessment',
+            'page' => 'database exam',
+            'child' => 'database exam',
          ]);
 
          $rules = [
@@ -631,7 +631,7 @@ class ExamController extends Controller
 
    public function setAssessmentId(Request $request)
    {
-      session(['assessment_id' => $request->id]);
+      session(['exam_id' => $request->id]);
 
       return response()->json(['success' => true]);
    }

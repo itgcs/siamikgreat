@@ -160,7 +160,7 @@
           <li class="nav-item">
             <a href="/{{session('role')}}/dashboard/schedules/companion/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules companion' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
-              <p>Companion</p>
+              <p>Assisstant</p>
             </a>
           </li>
         </ul>
@@ -343,7 +343,6 @@
         <li class="nav-item">
           <a href="/{{ session('role') }}/teachers" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database teachers' ? 'active' : '') : ''}}">
             <i class="nav-icon fa-solid fa-person-chalkboard"></i>
-            {{-- <i class="nav-icon fa-solid fa-chalkboard-user"></i> --}}
             <p>
               Teachers
             </p>
@@ -504,7 +503,7 @@
       <!-- EXAM -->
       @if (session('role') == 'admin' || session('role') == 'superadmin')
         <li class="nav-item">
-          <a href="/{{ session('role') }}/exams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database exams' ? 'active' : '') : ''}}">
+          <a href="/{{ session('role') }}/exams" class="nav-link {{ session('page') && session('page')->page == 'database exam' ? 'active' : '' }}">
             <i class="nav-icon fa-solid fa-pencil"></i>
             <p>
               Exam
