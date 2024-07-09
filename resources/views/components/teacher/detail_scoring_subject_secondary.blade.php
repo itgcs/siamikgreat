@@ -23,9 +23,7 @@
         <div class="col">
         <p class="text-xs">Semester : {{ $data['semester']}}</p> 
             <p class="text-xs">Subject Teacher : {{ $data['subjectTeacher']->teacher_name }}</p>    
-            <p class="text-xs">Subject Teacher : {{ $data['subjectTeacher']->teacher_id }}</p>    
             <p class="text-xs">Class Teacher : {{ $data['classTeacher']->teacher_name }}</p>
-            <p class="text-xs">Class Teacher : {{ $data['classTeacher']->teacher_id }}</p>
             <p class="text-xs">Class : {{ $data['grade']->name }} - {{ $data['grade']->class }}</p>
             <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
         </div>
@@ -42,7 +40,7 @@
         @csrf
         @if ($data['status'] == null)
             <div class="row my-2">
-                <div class="input-group-append my-2">
+                <div class="input-group-append mx-2">
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
                 </div>
             </div>
@@ -61,15 +59,15 @@
                 <tr>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
                     <th rowspan="2 class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
-                    <th colspan="{{ $data['grade']->total_homework + 2 }}" class="text-center" style="vertical-align : middle;text-align:center;"> Tasks (Homework/Small Project/Presentation)</th>
-                    <th colspan="{{ $data['grade']->total_quiz + 2 }}" class="text-center" style="vertical-align : middle;text-align:center;">Quiz/Practical Exam/Project</th>
+                    <th colspan="{{ $data['grade']->total_tasks + 2 }}" class="text-center" style="vertical-align : middle;text-align:center;"> Tasks (Homework/Small Project/Presentation)</th>
+                    <th colspan="{{ $data['grade']->total_mid + 2 }}" class="text-center" style="vertical-align : middle;text-align:center;">Quiz/Practical Exam/Project</th>
                     <th colspan="{{ $data['grade']->total_final_exam + 2 }}" class="text-center" style="vertical-align : middle;text-align:center;">Final Exam (Written Tes/Big Project)</th>
                     <th class="text-center">Total</th>
                     <th rowspan="2" class="text-center" style="width: 25%;" style="vertical-align : middle;text-align:center;">Comment</th>
                 </tr>
                 <tr>
                     <!-- TASKS -->
-                    @for ($i=1; $i <= $data['grade']->total_homework; $i++)
+                    @for ($i=1; $i <= $data['grade']->total_tasks; $i++)
                         <td class="text-center">{{ $i }}</td>
                     @endfor
                     <td class="text-center">Avg</td>
@@ -77,7 +75,7 @@
                     <!-- END TASKS -->
 
                     <!-- QUIZ -->
-                    @for ($j=1; $j <= $data['grade']->total_quiz; $j++)
+                    @for ($j=1; $j <= $data['grade']->total_mid; $j++)
                         <td class="text-center">{{ $j }}</td>
                     @endfor
                     <td class="text-center">Avg</td>
@@ -107,39 +105,36 @@
                 
                         <!-- COUNT TASKS -->
                         @foreach ($student['scores'] as $index => $score)
-                            @if($score['type_exam'] == 1)
+                            @if(in_array($score['type_exam'], $data['tasks']))
                                 <td class="text-center">{{ $score['score'] }}</td>
                             @endif
                         @endforeach
 
-                        <td>{{ $student['avg_homework'] }} </td>
-                        <td>{{ $student['percent_homework'] }} </td>
+                        <td>{{ $student['avg_tasks'] }} </td>
+                        <td>{{ $student['percent_tasks'] }} </td>
                         <!-- END TASKS -->
 
 
                         <!-- COUNT QUIZ -->
                         @foreach ($student['scores'] as $index => $score)
-                            @if($score['type_exam'] == 3)
+                            @if(in_array($score['type_exam'], $data['mid']))
                                 <td class="text-center">{{ $score['score'] }}</td>
                             @endif
                         @endforeach
 
-                        <td class="text-center">{{ $student['avg_quiz'] }}</td> <!-- nilai rata-rata exercise -->
-                        <td class="text-center">{{ $student['percent_quiz'] }}</td> <!-- 15% dari nilai rata-rata exercise -->
+                        <td class="text-center">{{ $student['avg_mid'] }}</td> <!-- nilai rata-rata exercise -->
+                        <td class="text-center">{{ $student['percent_mid'] }}</td> <!-- 15% dari nilai rata-rata exercise -->
                         <!-- END COUNT QUIZ -->
 
 
                         <!-- COUNT F.EXAM -->
                         @php $foundFinalExam = false; @endphp
                         @foreach ($student['scores'] as $score)
-                            @if($score['type_exam'] == 4)
+                            @if(in_array($score['type_exam'], $data['finalExam']))
                                 <td class="text-center">{{ $score['score'] }}</td>
                                 @php $foundFinalExam = true; @endphp
                             @endif
                         @endforeach
-                        @if(!$foundFinalExam)
-                            <td>&nbsp;</td>
-                        @endif
                         <td>{{ $student['avg_fe'] ?? '&nbsp;' }}</td>
                         <td>{{ $student['percent_fe'] ?? '&nbsp;' }}</td>
                         <!-- END COUNT F.EXAM -->

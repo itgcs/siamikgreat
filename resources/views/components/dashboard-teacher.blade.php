@@ -76,7 +76,7 @@
              <div class="inner">
                <h3>{{ $data['totalExam']}}</h3>
 
-               <p>Total Exams Active</p>
+               <p>Total Exams</p>
              </div>
              <div class="icon">
                {{-- <i class="ion ion-pie-graph"></i> --}}
@@ -109,7 +109,7 @@
               <div class="tab-content p-0">
                 <!-- Morris chart - Sales -->
                 <div class="chart tab-pane active" id="revenue-chart"
-                     style="position: relative; height: full;">
+                  style="position: relative; height: 500px; overflow-y: auto;">
 
                      @if (sizeof($data['exam']) == 0)
                       <div class="d-flex justify-content-center">
@@ -140,6 +140,20 @@
                              </div>
                              <!-- todo text -->
                              <span class="text text-sm">( {{$el->type_exam_name}} ) {{$el->name_exam}} ({{ $el->subject }}) ({{ $el->grade_name .'-'. $el->grade_class }})</span>
+
+                             <span>
+                                @if ($el->date_exam == now())
+                                  $currentDate = now(); // Tanggal saat ini
+                                  $dateExam = $el->date_exam; // Tanggal exam dari data
+                                  $diff = strtotime($dateExam) - strtotime($currentDate);
+                                  $days = floor($diff / (60 * 60 * 24));
+                                  
+                                  <span class="badge badge-warning">{{$days}} days again</span>
+                                @else
+                                 <span class="badge badge-success">Done</span>
+                                @endif
+                              </span>
+
                              <!-- Emphasis label -->
                              <div class="tools">
                                <a href="/teacher/dashboard/exam/detail/{{$el->id}}">
@@ -177,7 +191,7 @@
               </div>
               <!-- /.card-tools -->
             </div>
-            <div class="card-body">
+            <div class="card-body" style="position: relative; height: 500px; overflow-y: auto;">
              <table class="table table-borderless">
                <thead>
                  <tr>
@@ -238,7 +252,7 @@
               </h3>
             </div>
             <!-- /.card-header -->
-            <div class="card-body">
+            <div class="card-body" style="position: relative; height: 500px; overflow-y: auto;">
              <table class="table table-borderless">      
               @if(sizeof($data['teacherSubject']) != 0)
                 <thead>

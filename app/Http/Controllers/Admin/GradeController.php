@@ -226,10 +226,17 @@ class GradeController extends Controller
          ->where('grade_exams.grade_id', $id)
          ->get();
 
-      $gradeSubject = Grade_subject::join('subjects', 'subjects.id', '=', 'grade_subjects.subject_id')
-         ->where('grade_subjects.grade_id', $id)
-         ->select('subjects.id as subject_id','subjects.name_subject as subject_name')
-         ->get();
+      $gradeSubject = Teacher_subject::where('grade_id', $id)
+      ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
+      ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
+      ->select(
+         'teacher_subjects.grade_id as grade_id',
+         'subjects.name_subject as subject_name', 'subjects.id as subject_id',
+         'teachers.name as teacher_name', 'teachers.id as teacher_id'
+      )
+      ->get();
+
+      // dd($gradeSubject);
 
       $subjectTeacher = Teacher_subject::where('grade_id', $id)
          ->join('teachers', 'teachers.id', 'teacher_subjects.teacher_id')
@@ -248,7 +255,7 @@ class GradeController extends Controller
             'subjectTeacher' => $subjectTeacher, 
          ];
 
-         // dd($data->gradeSubject);
+         // dd($data);
          return view('components.grade.detail-grade')->with('data', $data);
       } catch (Exception $err) {
          
@@ -356,7 +363,7 @@ class GradeController extends Controller
          $teacher = Teacher::get();
          $subject = Subject::get();
          
-         // dd($data);
+         dd($data);
          return view('components.grade.page-edit-subject')->with('data', $data)->with('subject', $subject)->with('teacher', $teacher);
          
       } catch (Exception $err) {
@@ -687,135 +694,6 @@ class GradeController extends Controller
       }
    }
 
-
-   public function pagePromotion($id)
-   {
-      try {
-         //code...
-         $data = Student::with(['grade', 'bill' => function($query) {
-
-            $query->where('paidOf', false)->get();
-         }])
-         ->where('grade_id', $id)
-         ->where('is_active', true)
-         ->orderBy('name', 'asc')
-         ->get();
-         
-         $grade = Grade::where('id', $id)->first();
-         
-         session()->flash('page',  $page = (object)[
-            'page' => 'grades',
-            'child' => 'database grades',
-         ]);
-
-         // return $data;
-
-         return view('components.grade.promotion.page')->with('data', $data)->with('grade', $grade);
-         
-      } catch (Exception $err) {
-         return abort(404);
-      }
-   }
-
-
-   public function actionPromotion(Request $request)
-   {
-      DB::beginTransaction();
-      try {
-         //code...
-         session()->flash('page',  $page = (object)[
-            'page' => 'grades',
-            'child' => 'database grades',
-         ]);
-         
-         $promoteId = $request->except(['_token', '_method']);
-
-         if(sizeof($promoteId)<=0)
-         {
-            DB::rollBack();
-            return redirect()->back()->withErrors([
-               'checklist' => 'must checklist at least one student!!!',
-            ]);
-         }
-
-         $grade = Student::with('grade', 'relationship')->where('id', reset($promoteId))->first();
-         
-         $lastest_grade = DB::table('grades')->where('name', $grade->grade->name)->orderBy('id', 'desc')->first();
-
-         
-         if($grade->grade->id < $lastest_grade->id)
-         {
-            $paket = Payment_grade::where('type', 'Paket')->where('grade_id', $grade->grade->id+1)->first('amount');
-   
-            //harus memberi ada validasi semisal paket dari kelas belom di set up;
-            if(!$paket)
-            {
-               return redirect('/admin/payment-grades/'.$grade->grade->id+1)->withErrors(['paket' => 'Paket payments for '. $grade->grade->name .' - '. $grade->grade->class. ' grades have not been set up']);
-            }
-            foreach ($promoteId as $value) {
-               
-               Book_student::where('student_id', (int)$value)->delete();
-               Payment_student::where('student_id', (int)$value)->where('type', "SPP")->delete();
-
-               Student::where('id', $value)->update([
-                  'grade_id' => (int)$grade->grade->id + 1,
-               ]);
-            }
-
-            session()->flash('levelup', $grade->grade->name . " " . $grade->grade->class);
-         } else {
-            foreach ($promoteId as $value) {
-               
-               Book_student::where('student_id', (int)$value)->delete();
-               
-               Student::where('id', $value)->update([
-                  'is_active' => 0,
-                  'is_graduate' => 1,
-               ]);
-            }
-            
-            session()->flash('graduate', $grade->grade->name . " " . $grade->grade->class);
-         }
-
-
-         session()->flash('preloader');
-         $this->billPaketGraduate($promoteId);
-
-
-         DB::commit();
-
-         return redirect('/admin/grades/');
-
-      } catch (Exception $err) {
-         DB::rollBack();
-         return dd($err);
-      }
-   }
-
-
-   public function pagePDF($id){
-      try 
-      {
-         session()->flash('page',  $page = (object)[
-            'page' => 'grades',
-            'child' => 'database grades',
-         ]);
-         
-         $data = Grade::with(['student' => function ($query) {
-               $query->where('is_active', true)->orderBy('name', 'asc');
-         }])->find($id);
-
-         $nameFormatPdf = Carbon::now()->format('YmdHis') . mt_rand(1000, 9999).'_'.date('d-m-Y').'_'.$data->name.'_'.$data->class.'.pdf';
-
-	      $pdf = app('dompdf.wrapper');
-         $pdf->loadView('components.grade.pdf.dom-pdf', ['data' => $data])->setPaper('a4', 'portrait');
-         return $pdf->stream($nameFormatPdf);
-
-      } catch (Exception $err) 
-      {
-         return dd($err);
-      }
-   }
 
    public function delete($id)
    {

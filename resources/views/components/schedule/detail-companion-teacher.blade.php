@@ -6,7 +6,7 @@
     @if (!empty($data))
         <div class="card card-dark mt-2">
             <div class="card-header header-elements-inline">
-                <h5 class="card-title">Your Companion Schedule</h5>
+                <h5 class="card-title">Assisstant Schedule</h5>
 
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 daysOfWeek: [schedule.day],
                 startTime: schedule.start_time,
                 endTime: schedule.end_time,
-                description: `<br>Teacher : ${schedule.teacher_name}<br>Teacher Companion : ${schedule.teacher_companion} <br>Grade : ${schedule.grade_name}`,
+                description: `<br>Teacher : ${schedule.teacher_name}<br>TeaAssisstant : ${schedule.teacher_companion} <br>Grade : ${schedule.grade_name}`,
                 color: colorGrades(schedule.grade_name),
                 grade_id: schedule.grade_id,
                 subject_id: schedule.subject_id,
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 daysOfWeek: [subs.day],
                 startTime: subs.start_time,
                 endTime: subs.end_time,
-                description: `<br>Teacher: ${subs.teacher_name}<span class='badge badge-danger'>substitute</span><br>Teacher Companion : ${subs.teacher_companion}<br>Grade: ${subs.grade_name} - ${subs.grade_class}`,
+                description: `<br>Teacher: ${subs.teacher_name}<span class='badge badge-danger'>substitute</span><br>TeaAssisstant : ${subs.teacher_companion}<br>Grade: ${subs.grade_name} - ${subs.grade_class}`,
                 color: 'light',
                 grade_id: subs.grade_id,
                 subject_id: subs.subject_id,

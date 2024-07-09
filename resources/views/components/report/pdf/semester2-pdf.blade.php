@@ -6,12 +6,12 @@ set_time_limit(300);
 $pathlogo = public_path('images/logo-school.png');
 $typelogo = pathinfo($pathlogo, PATHINFO_EXTENSION);
 $datalogo = file_get_contents($pathlogo);
-$logo = 'data:image/' . $type . ';base64,' . base64_encode($datalogo);
+$logo = 'data:image/' . $typelogo . ';base64,' . base64_encode($datalogo);
 
 $pathcambridge = public_path('images/cambridge.png');
 $typecambridge = pathinfo($pathcambridge, PATHINFO_EXTENSION);
 $datacambridge = file_get_contents($pathcambridge);
-$cambridge = 'data:image/' . $type . ';base64,' . base64_encode($datacambridge);
+$cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($datacambridge);
 
 ?>
 
@@ -70,7 +70,7 @@ $cambridge = 'data:image/' . $type . ';base64,' . base64_encode($datacambridge);
                 <img src="<?= $logo ?>" style="width:100%;height:10%;" alt="Sample image">
             </div>
             <h3>Report Card</h3>
-            <h3>Semester II School Year 2023 – 2024</h3>
+            <h3>Semester II School Year {{ $academicYear }}</h3>
         </div>
 
         <div>
@@ -290,10 +290,20 @@ $cambridge = 'data:image/' . $type . ';base64,' . base64_encode($datacambridge);
                         <th colspan="8" style="text-align:center;border-top: 3px solid black;border-bottom: 3px solid black;">Extra-Curricular Activity</th>
                     </tr>
                     <tr>
-                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: none;" colspan="2">ECA (1)</td>
+                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: none;" colspan="2">
+                            ECA @if (empty($eca))
+                                @else
+                                    ({{ $eca['eca_1'] }})
+                                @endif
+                        </td>
                         <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-left:8px;" colspan="2">Grade</td>
-                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;" colspan="2">ECA (2)</td>
-                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-left:8px;border-right: none;" colspan="2">Grade</td>
+                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;" colspan="2">
+                            ECA @if (empty($eca))
+                                @else
+                                    ({{ $eca['eca_2'] }})
+                                @endif
+                        </td>
+                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-left:8px;border-right: n;" colspan="2">Grade</td>
                     </tr>
                     <tr>
                         <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: none;" colspan="2">100</td>

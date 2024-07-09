@@ -17,6 +17,7 @@ use App\Models\Exam;
 use App\Models\Student_relationship;
 use App\Models\Relationship;
 use App\Models\Attendance;
+use App\Models\Student_eca;
 
 use Carbon\Carbon;
 use Exception;
@@ -42,7 +43,7 @@ class DashboardController extends Controller
             $totalStudent  = Student::where('is_active', true)->orderBy('created_at', 'desc')->get()->count('id');
             $totalTeacher  = Teacher::where('is_active', true)->get()->count('id');
             $totalGrade    = Grade::all()->count('id');
-            $totalExam     = Exam::where('is_active', true)->get()->count('id');
+            $totalExam     = Exam::get()->count('id');
             
             $studentData   = Student::where('is_active', true)
             ->join('grades', 'grades.id', '=', 'students.grade_id')
@@ -50,7 +51,7 @@ class DashboardController extends Controller
             ->take(6)
             ->get();
             
-            $teacherData   = Teacher::where('is_active', true)->take(6)->get();
+            $teacherData   = Teacher::where('is_active', true)->get();
             
             $examData  = Grade_exam::join('grades', 'grades.id', '=', 'grade_exams.grade_id')
                ->join('exams', 'exams.id', '=', 'grade_exams.exam_id')
@@ -148,17 +149,22 @@ class DashboardController extends Controller
 
 
             $dataStudent       = Grade::with(['subject', 'exam', 'teacher', 'student'])->where('id', $gradeIdStudent)->first();
+            
             $totalExam         = Grade_exam::join('exams', 'exams.id', '=', 'grade_exams.exam_id')
-            ->where('grade_id', $gradeIdStudent)
-            ->where('exams.is_active', 1)
-            ->get()
-            ->count('id');
+               ->where('grade_id', $gradeIdStudent)
+               ->get()
+               ->count('id');
+
             $totalSubject      = Grade_subject::where('grade_id', $gradeIdStudent)->get()->count('id');
             $totalStudentGrade = Student::where('grade_id', $gradeIdStudent)->get()->count('id');
             $totalAbsent       = Attendance::where('student_id', $id)
             ->where('present', 0)
             ->get()
             ->count();
+
+            $eca = Student_eca::where('student_id', $id)
+               ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
+               ->get();
 
             
             $dataExam  = Grade_exam::join('grades', 'grades.id', '=', 'grade_exams.grade_id')
@@ -175,6 +181,7 @@ class DashboardController extends Controller
             };
 
             $data = [
+               'eca'          => $eca,
                'dataStudent'  => $dataStudent,
                'exam'         => $dataExam,
                'totalExam'    => (int)$totalExam,
@@ -189,20 +196,48 @@ class DashboardController extends Controller
          }
          if($checkRole == 'parent')
          {
-            $id                = Relationship::where('user_id', session('id_user'))->value('id');
-            $getIdStudent      = Student_relationship::where('relationship_id', $id)->value('student_id');
-            $gradeIdStudent    = Student::where('id', $getIdStudent)->value('grade_id');
+            $id              = Relationship::where('user_id', session('id_user'))->value('id');
+            $setStudentFirst = session('studentId');
+            $getIdStudent    = Student_relationship::where('relationship_id', $id)->pluck('student_id')->toArray();
 
-            $dataStudent       = Grade::with(['subject', 'exam', 'teacher', 'student'])->where('id', $gradeIdStudent)->first();
+            $getDataStudent = Student::whereIn('students.id', $getIdStudent)
+               ->leftJoin('grades', 'grades.id', '=', 'students.grade_id')
+               ->select('students.name as student_name', 'students.id as student_id',
+               'grades.id as grade_id', 'grades.name as grade_name', 'grades.class as grade_class')
+               ->get();
+
+            $detailStudent = Student::where('students.id', $setStudentFirst)
+               ->leftJoin('grades', 'grades.id', '=', 'students.grade_id')
+               ->select('students.name as student_name', 'students.id as student_id',
+               'grades.id as grade_id', 'grades.name as grade_name', 'grades.class as grade_class')
+               ->first();
+
+            $eca = Student_eca::where('student_id', $setStudentFirst)
+               ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
+               ->select('ecas.name as eca_name')
+               ->get();
+
+            // dd($detailStudent);
+            // dd($getDataStudent);
+
+            $gradeIdStudent  = Student::where('students.id', $setStudentFirst)->value('grade_id');
+
+            $dataStudent       = Grade::with(['subject', 'exam', 'teacher', 'student'])->where('grades.id', $gradeIdStudent)->first();
             $totalExam         = Grade_exam::where('grade_id', $gradeIdStudent)->get()->count('id');
             $totalSubject      = Grade_subject::where('grade_id', $gradeIdStudent)->get()->count('id');
             $totalStudentGrade = Student::where('grade_id', $gradeIdStudent)->get()->count('id');
+
+            $totalAbsent       = Attendance::where('student_id', $setStudentFirst)
+               ->where('present', 0)
+               ->get()
+               ->count();
             
             $dataExam  = Grade_exam::join('grades', 'grades.id', '=', 'grade_exams.grade_id')
                ->join('exams', 'exams.id', '=', 'grade_exams.exam_id')
                ->join('type_exams', 'type_exams.id', '=', 'exams.type_exam')
                ->select('exams.*', 'type_exams.name as type_exam_name', 'grades.name as grade_name', 'grades.class as grade_class')
                ->where('grades.id', $gradeIdStudent)
+               ->where('exams.is_active', 1)
                ->get();
 
             foreach ($dataExam as $ed ) {
@@ -212,11 +247,15 @@ class DashboardController extends Controller
             };
 
             $data = [
-               'dataStudent'    => $dataStudent,
-               'exam'           => $dataExam,
-               'totalExam'      => (int)$totalExam,
-               'totalSubject'   => (int)$totalSubject,
-               'totalStudent'   => (int)$totalStudentGrade, 
+               'eca'           => $eca,
+               'totalRelation' => $getDataStudent,
+               'detailStudent' => $detailStudent,
+               'dataStudent'   => $dataStudent,
+               'exam'          => $dataExam,
+               'totalExam'     => (int)$totalExam,
+               'totalSubject'  => (int)$totalSubject,
+               'totalStudent'  => (int)$totalStudentGrade, 
+               'totalAbsent'   => (int)$totalAbsent,  
             ];
 
             // dd($data);

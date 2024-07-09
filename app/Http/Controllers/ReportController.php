@@ -28,6 +28,14 @@ use App\Models\Report_card_status;
 use App\Models\Scoring_status;
 use App\Models\Acar_status;
 use App\Models\Sooa_status;
+use App\Models\Nursery_toddler;
+use App\Models\Kindergarten;
+use App\Models\Eca;
+use App\Models\Student_eca;
+use App\Models\Chinese_higher;
+use App\Models\Chinese_lower;
+use App\Models\Master_academic;
+use App\Models\Type_exam;
 
 use Barryvdh\DomPDF\PDF;
 use Dompdf\Dompdf;
@@ -54,6 +62,18 @@ class ReportController extends Controller
                 foreach ($grade as $gt) {
                     $gt->students = Student::where('grade_id', $gt->id)->get();
                 }
+
+            $other = Grade::with(['student', 'subject'])
+                ->join('teacher_grades', 'teacher_grades.grade_id', '=', 'grades.id')
+                ->leftJoin('teachers', function ($join) {
+                    $join->on('teachers.id', '=', 'teacher_grades.teacher_id');
+                })
+                ->whereIn('grades.id', [1, 2, 3, 4, 14])
+                ->select('grades.id as id', 'grades.name as grade_name', 'grades.class as grade_class',
+                'teachers.name as teacher_class')
+                ->withCount(['student as active_student_count', 'subject as active_subject_count'])
+                ->orderBy('grades.id', 'asc')
+                ->get();
    
             $primary  = Grade::with(['student', 'subject'])
                 ->join('teacher_grades', 'teacher_grades.grade_id', '=', 'grades.id')
@@ -66,7 +86,6 @@ class ReportController extends Controller
                 ->withCount(['student as active_student_count', 'subject as active_subject_count'])
                 ->orderBy('grades.id', 'asc')
                 ->get();
-
 
             $secondary = Grade::with(['student', 'subject'])
                 ->join('teacher_grades', 'teacher_grades.grade_id', '=', 'grades.id')
@@ -81,9 +100,10 @@ class ReportController extends Controller
                 ->get();
 
             $data = [
-               'grade'     => $grade,
-               'primary'   => $primary,
-               'secondary' => $secondary,
+                'other'     => $other,
+                'grade'     => $grade,
+                'primary'   => $primary,
+                'secondary' => $secondary,
             ];
 
             // dd($data);
@@ -359,15 +379,15 @@ class ReportController extends Controller
                                 'score' => $score->score,
                             ];
                         })->all(),
-                        'avg_homework' => $homeworkScores->avg(),
-                        'avg_exercise' => $exerciseScores->avg(),
-                        'avg_participation' => $participationScore->avg(),
-                        'avg_fe' => $finalExamScores->avg(),
+                        'avg_homework' => round($homeworkScores->avg()),
+                        'avg_exercise' => round($exerciseScores->avg()),
+                        'avg_participation' => round($participationScore->avg()),
+                        'avg_fe' => round($finalExamScores->avg()),
                         
-                        'percent_homework' => $homeworkScores->avg() * 0.2,
-                        'percent_exercise' => $exerciseScores->avg() * 0.35,
-                        'percent_participation' => $participationScore->avg() * 0.1,
-                        'percent_fe' => $finalExamScores->avg() * 0.35,
+                        'percent_homework' => round($homeworkScores->avg() * 0.2),
+                        'percent_exercise' => round($exerciseScores->avg() * 0.35),
+                        'percent_participation' => round($participationScore->avg() * 0.1),
+                        'percent_fe' => round($finalExamScores->avg() * 0.35),
                         
                         'total_score' => (($homeworkScores->avg() * 0.2) + ($exerciseScores->avg() * 0.35) + ($participationScore->avg() * 0.10)) + ($finalExamScores->avg() * 0.35),
 
@@ -417,6 +437,7 @@ class ReportController extends Controller
                 'page' => ' database reports',
                 'child' => 'report class teacher',
             ]);
+
 
             Scoring_status::where('grade_id', $gradeId)
                 ->where('subject_id', $subjectId)
@@ -832,19 +853,30 @@ class ReportController extends Controller
                 ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
                 ->first();
     
-            $results = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
+            $results = Sooa_primary::leftJoin('students', 'students.id', '=', 'sooa_primaries.student_id')
                 ->where('sooa_primaries.grade_id', $gradeId)
                 ->where('sooa_primaries.semester', $semester)
                 ->get();
     
-    
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
                 $student = $scores->first();
+
+                if (Student_eca::where('student_id', $student->student_id)->exists()) {
+                    $haveEca = 1;
+                    $nameEca = Student_eca::where('student_ecas.student_id', $student->student_id)
+                        ->leftJoin('ecas', 'ecas.id', 'student_ecas.eca_id')
+                        ->get()->value('name');
+                } else{
+                    $haveEca = 0;
+                    $nameEca = "Not Choice";
+                }
     
                 return [
                     'student_id' => $student->student_id,
                     'student_name' => $student->name,
                     'ranking' => $student->ranking,
+                    'haveEca' => $haveEca,
+                    'nameEca' => $nameEca,
                     'scores' => $scores->map(function ($score) {
                         return [
                             'academic' => $score->academic,
@@ -874,7 +906,7 @@ class ReportController extends Controller
                 ->where('semester', $semester)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
-    
+
             $data = [
                 'grade' => $grade,
                 'students' => $scoresByStudent,
@@ -919,16 +951,41 @@ class ReportController extends Controller
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
                 $student = $scores->first();
-                $majorSubject = Major_subject::pluck('subject_id')->toArray();
-                $majorSubjectsScores = $scores->whereIn('subject_id', $majorSubject)->pluck('final_score');
-                $minorSubjectsScores = $scores->whereIn('subject_id', [32, 7, 20, 4])->pluck('final_score');
-                $supplementarySubjectsScores = $scores->whereIn('subject_id', [18, 6, 33, 16])->pluck('final_score');
 
+                if (Student_eca::where('student_id', $student->student_id)->exists()) {
+                    $haveEca = 1;
+                    $ecaData = Student_eca::where('student_ecas.student_id', $student->student_id)
+                        ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
+                        ->get(['student_ecas.student_id', 'ecas.name as eca_name']);
+
+                    $groupedEcaData = [];
+                    $counter = 1;
+
+                    // dd(count($ecaData));
+
+                    if (count($ecaData) == 1) {
+                        $groupedEcaData['student_id'] = $ecaData[0]->student_id;
+                        $groupedEcaData['eca_1'] = $ecaData[0]->eca_name;
+                        $groupedEcaData['eca_2'] = "Not Choice";
+                    }
+                    elseif (count($ecaData) == 2) {
+                        for ($i=0; $i < 2; $i++) { 
+                            $groupedEcaData['student_id'] = $ecaData[$i]->student_id;
+                            $groupedEcaData['eca_' . $i+1] = $ecaData[$i]->eca_name;
+                        }
+                    }
+
+                } else{
+                    $haveEca = 0;
+                    $groupedEcaData = "Not Choice";
+                }
 
                 return [
                     'student_id' => $student->student_id,
                     'student_name' => $student->name,
                     'ranking' => $student->ranking,
+                    'haveEca' => $haveEca,
+                    'nameEca' => $groupedEcaData,
                     'scores' => $scores->map(function ($score) {
                         return [
                             'academic' => $score->academic,
@@ -1167,10 +1224,9 @@ class ReportController extends Controller
                 'child' => 'scores',
             ]);
 
-
             $getIdParent = Relationship::where('user_id', '=', session('id_user'))->value('id');
 
-            $id = Student_relationship::where('relationship_id', $getIdParent)->value('student_id');
+            $id = session('studentId');
   
             $data = Exam::join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
                 ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
@@ -1192,9 +1248,10 @@ class ReportController extends Controller
                  'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
                  'students.id as student_id', 'students.name as student_name',
                  'scores.score as score')
-                ->get();
+                ->paginate(15);
 
-                return view('components.teacher.detail-report')->with('data', $data);
+
+            return view('components.teacher.detail-report')->with('data', $data);
             
         } catch (Exception $err) {
            return dd($err);
@@ -1233,45 +1290,14 @@ class ReportController extends Controller
             $majorSubject = Major_subject::select('subject_id')->get();
             $isMajorSubject = $majorSubject->pluck('subject_id')->contains($subjectId);
 
-            $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId) {
-                $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                    $subQuery->where('subject_id', $subjectId);
-                });
-            }])
-            ->where('grades.id', $gradeId)
-            ->withCount([
-                'exam as total_homework' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 1);
-                },
-                'exam as total_exercise' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 2);
-                },
-                'exam as total_quiz' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 3);
-                },
-                'exam as total_final_exam' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 4);
-                },
-                'exam as total_participation' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 5);
-                },
-            ])
-            ->first();
+            $homework = Type_exam::where('name', '=', 'homework')->value('id');
+            $exercise = Type_exam::where('name', '=', 'exercise')->value('id');
+            $participation = Type_exam::where('name', '=', 'participation')->value('id');
+            $quiz = Type_exam::where('name', '=', 'quiz')->value('id');
+            $finalExam = Type_exam::where('name', '=', 'final exam')->value('id'); 
+            $finalAssessment = Type_exam::whereIn('name', ['project', 'practical', 'final exam'])
+                ->pluck('id')
+                ->toArray();
 
             $semester = session('semester');
 
@@ -1450,10 +1476,50 @@ class ReportController extends Controller
                 ->where('exams.semester', $semester)
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
-
             }
 
+            // dd($results);
+
             if ($isMajorSubject) {
+                $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalExam) {
+                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                        $subQuery->where('subject_id', $subjectId);
+                    });
+                }])
+                ->where('grades.id', $gradeId)
+                ->withCount([
+                    'exam as total_homework' => function ($query) use ($subjectId, $homework) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $homework);
+                    },
+                    'exam as total_exercise' => function ($query) use ($subjectId, $exercise) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $exercise);
+                    },
+                    'exam as total_quiz' => function ($query) use ($subjectId, $quiz) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $quiz);
+                    },
+                    'exam as total_final_exam' => function ($query) use ($subjectId, $finalExam) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $finalExam);
+                    },
+                    'exam as total_participation' => function ($query) use ($subjectId, $participation) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $participation);
+                    },
+                ])
+                ->first();
             
                 $type = "major_subject_assessment";
 
@@ -1465,13 +1531,18 @@ class ReportController extends Controller
                     ->keyBy('student_id');
 
                 $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use($comments) {
+                    $homework = Type_exam::where('name', '=', 'homework')->value('id');
+                    $exercise = Type_exam::where('name', '=', 'exercise')->value('id');
+                    $participation = Type_exam::where('name', '=', 'participation')->value('id');
+                    $quiz = Type_exam::where('name', '=', 'quiz')->value('id');
+                    $finalExam = Type_exam::where('name', '=', 'final exam')->value('id');
 
                     $student            = $scores->first();
-                    $homeworkScores     = $scores->where('type_exam', 1)->pluck('score');
-                    $exerciseScores     = $scores->where('type_exam', 2)->pluck('score');
-                    $participationScore = $scores->where('type_exam', 5)->pluck('score');
-                    $quizScores         = $scores->where('type_exam', 3)->pluck('score');
-                    $finalExamScores    = $scores->where('type_exam', 4)->pluck('score');
+                    $homeworkScores     = $scores->where('type_exam', $homework)->pluck('score');
+                    $exerciseScores     = $scores->where('type_exam', $exercise)->pluck('score');
+                    $participationScore = $scores->where('type_exam', $participation)->pluck('score');
+                    $quizScores         = $scores->where('type_exam', $quiz)->pluck('score');
+                    $finalExamScores    = $scores->where('type_exam', $finalExam)->pluck('score');
                     
                     return [
                         'student_id' => $student->student_id,
@@ -1501,6 +1572,45 @@ class ReportController extends Controller
                     ];
                 })->values()->all();
             } else {
+                $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment) {
+                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                        $subQuery->where('subject_id', $subjectId);
+                    });
+                }])
+                ->where('grades.id', $gradeId)
+                ->withCount([
+                    'exam as total_homework' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $homework);
+                    },
+                    'exam as total_exercise' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $exercise);
+                    },
+                    'exam as total_quiz' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $quiz);
+                    },
+                    'exam as total_final_exam' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->whereIn('type_exam', $finalAssessment);
+                    },
+                    'exam as total_participation' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $participation);
+                    },
+                ])
+                ->first();
 
                 $type = "minor_subject_assessment";
 
@@ -1511,20 +1621,31 @@ class ReportController extends Controller
                     ->get()
                     ->keyBy('student_id');
 
+                    // dd($finalAssessment);
+
                 $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use($comments) {
                     
-                    $student            = $scores->first();
-                    $homeworkScores     = $scores->where('type_exam', 1)->pluck('score');
-                    $exerciseScores     = $scores->where('type_exam', 2)->pluck('score');
-                    $participationScore = $scores->where('type_exam', 5)->pluck('score');
-                    $quizScores         = $scores->where('type_exam', 3)->pluck('score');
-                    $finalExamScores    = $scores->where('type_exam', 4)->pluck('score');
+                    $homework = Type_exam::where('name', '=', 'homework')->value('id');
+                    $exercise = Type_exam::where('name', '=', 'exercise')->value('id');
+                    $participation = Type_exam::where('name', '=', 'participation')->value('id');
+                    $quiz = Type_exam::where('name', '=', 'quiz')->value('id'); 
+                    $finalAssessment = Type_exam::whereIn('name', ['project', 'practical', 'final exam'])
+                        ->pluck('id')
+                        ->toArray();
 
-                    $homeworkAvg       = $homeworkScores->avg() ?: 0;
-                    $exerciseAvg       = $exerciseScores->avg() ?: 0;
-                    $participationAvg  = $participationScore->avg() ?: 0;
-                    $quizAvg          = $quizScores->avg() ?: 0;
-                    $finalExamAvg     = $finalExamScores->avg() ?: 0;
+                    $student            = $scores->first();
+                    $homeworkScores     = $scores->where('type_exam', $homework)->pluck('score');
+                    $exerciseScores     = $scores->where('type_exam', $exercise)->pluck('score');
+                    $participationScore = $scores->where('type_exam', $participation)->pluck('score');
+                    $quizScores         = $scores->where('type_exam', $quiz)->pluck('score');
+                    $finalExamScores    = $scores->whereIn('type_exam', $finalAssessment)->pluck('score');
+
+                    $homeworkAvg       = round($homeworkScores->avg()) ?: 0;
+                    $exerciseAvg       = round($exerciseScores->avg()) ?: 0;
+                    $participationAvg  = round($participationScore->avg()) ?: 0;
+                    $quizAvg          = round($quizScores->avg()) ?: 0;
+                    $finalExamAvg     = round($finalExamScores->avg()) ?: 0;
+
 
                     $final_score = round(($homeworkAvg * 0.2) + ($exerciseAvg * 0.35) + ($participationAvg * 0.10) + ($finalExamAvg * 0.35));
     
@@ -1540,17 +1661,17 @@ class ReportController extends Controller
                                 'score' => $score->score,
                             ];
                         })->all(),
-                        'avg_homework' => $homeworkScores->avg(),
-                        'avg_exercise' => $exerciseScores->avg(),
-                        'avg_participation' => $participationScore->avg(),
-                        'avg_fe' => $finalExamScores->avg(),
+                        'avg_homework' => round($homeworkScores->avg()),
+                        'avg_exercise' => round($exerciseScores->avg()),
+                        'avg_participation' => round($participationScore->avg()),
+                        'avg_fe' => round($finalExamScores->avg()),
                         
                         'percent_homework' => $homeworkScores->avg() * 0.2,
                         'percent_exercise' => $exerciseScores->avg() * 0.35,
                         'percent_participation' => $participationScore->avg() * 0.1,
                         'percent_fe' => $finalExamScores->avg() * 0.35,
                         
-                        'total_score' => (($homeworkScores->avg() * 0.2) + ($exerciseScores->avg() * 0.35) + ($participationScore->avg() * 0.10)) + ($finalExamScores->avg() * 0.35),
+                        'total_score' => round(($homeworkScores->avg() * 0.2) + ($exerciseScores->avg() * 0.35) + ($participationScore->avg() * 0.10)) + round($finalExamScores->avg() * 0.35),
 
                         'grades' => $grade,
                         'comment' => $comments->get($student->student_id)?->comment ?? '',
@@ -1565,6 +1686,14 @@ class ReportController extends Controller
                 ->where('teacher_id', $subjectTeacher->teacher_id)
                 ->first();
 
+            $homework = Type_exam::where('name', '=', 'homework')->value('id');
+            $exercise = Type_exam::where('name', '=', 'exercise')->value('id');
+            $participation = Type_exam::where('name', '=', 'participation')->value('id');
+            $quiz = Type_exam::where('name', '=', 'quiz')->value('id');
+            $project = Type_exam::where('name', 'project', )->value('id');
+            $practical = Type_exam::where('name', 'practical', )->value('id');
+            $final_exam = Type_exam::where('name', 'final exam', )->value('id');
+
             $data = [
                 'subjectTeacher' => $subjectTeacher,
                 'classTeacher' => $classTeacher,
@@ -1573,6 +1702,13 @@ class ReportController extends Controller
                 'students' => $scoresByStudent,
                 'semester' => $semester,
                 'status' => $status,
+                'homework' => $homework,
+                'exercise' => $exercise,
+                'participation' => $participation,
+                'quiz' => $quiz,
+                'project' => $project,
+                'practical' => $practical,
+                'finalExam' => $final_exam,
             ];
 
             // dd($data); 
@@ -1616,44 +1752,40 @@ class ReportController extends Controller
                 ->select('subjects.name_subject as subject_name', 'subjects.id as subject_id')
                 ->first();
 
-            // check apakah major subject
+            $tasks = Type_exam::whereIn('name', ['homework', 'small project', 'presentation'])
+                ->pluck('id')
+                ->toArray();
+            $mid = Type_exam::whereIn('name', ['quiz', 'practical', 'exam', 'project'])
+                ->pluck('id')
+                ->toArray();
+            $finalExam = Type_exam::whereIn('name', ['written tes', 'big project'])
+                ->pluck('id')
+                ->toArray();
 
-            $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId) {
+            $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId, $mid, $tasks, $finalExam) {
                 $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                     $subQuery->where('subject_id', $subjectId);
                 });
             }])
             ->where('grades.id', $gradeId)
             ->withCount([
-                'exam as total_homework' => function ($query) use ($subjectId) {
+                'exam as total_tasks' => function ($query) use ($subjectId, $tasks) {
                     $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                         $subQuery->where('subject_id', $subjectId);
                     })
-                    ->where('type_exam', 1);
+                    ->whereIn('type_exam', $tasks);
                 },
-                'exam as total_exercise' => function ($query) use ($subjectId) {
+                'exam as total_mid' => function ($query) use ($subjectId, $mid) {
                     $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                         $subQuery->where('subject_id', $subjectId);
                     })
-                    ->where('type_exam', 2);
+                    ->whereIn('type_exam', $mid);
                 },
-                'exam as total_quiz' => function ($query) use ($subjectId) {
+                'exam as total_final_exam' => function ($query) use ($subjectId, $finalExam) {
                     $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                         $subQuery->where('subject_id', $subjectId);
                     })
-                    ->where('type_exam', 3);
-                },
-                'exam as total_final_exam' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 4);
-                },
-                'exam as total_participation' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 5);
+                    ->whereIn('type_exam', $finalExam);
                 },
             ])
             ->first();
@@ -1810,6 +1942,60 @@ class ReportController extends Controller
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
+            elseif (strtolower($subject->subject_name) == "chinese lower") {
+                $chineseLowerStudent = Chinese_lower::pluck('student_id')->toArray();
+                
+                $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
+                ->join('exams', 'exams.id', '=', 'grade_exams.exam_id')
+                ->leftJoin('subject_exams', function($join){
+                    $join->on('subject_exams.exam_id', '=', 'exams.id');
+                })
+                ->leftJoin('scores', function ($join) {
+                    $join->on('scores.student_id', '=', 'students.id')
+                        ->on('scores.exam_id', '=', 'exams.id');
+                })
+                ->select(
+                    'students.id as student_id',
+                    'students.name as student_name',
+                    'exams.id as exam_id',
+                    'exams.type_exam as type_exam',
+                    'scores.score as score',
+                )
+                ->whereIn('students.id', $chineseLowerStudent)
+                ->where('grades.id', $gradeId)
+                ->where('subject_exams.subject_id', $subjectId)
+                ->where('exams.semester', $semester)
+                ->where('exams.teacher_id', $teacherId)
+                ->get();
+            }
+            elseif (strtolower($subject->subject_name) == "chinese higher") {
+                $chineseHigherStudent = Chinese_higher::pluck('student_id')->toArray();
+                
+                $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
+                ->join('exams', 'exams.id', '=', 'grade_exams.exam_id')
+                ->leftJoin('subject_exams', function($join){
+                    $join->on('subject_exams.exam_id', '=', 'exams.id');
+                })
+                ->leftJoin('scores', function ($join) {
+                    $join->on('scores.student_id', '=', 'students.id')
+                        ->on('scores.exam_id', '=', 'exams.id');
+                })
+                ->select(
+                    'students.id as student_id',
+                    'students.name as student_name',
+                    'exams.id as exam_id',
+                    'exams.type_exam as type_exam',
+                    'scores.score as score',
+                )
+                ->whereIn('students.id', $chineseHigherStudent)
+                ->where('grades.id', $gradeId)
+                ->where('subject_exams.subject_id', $subjectId)
+                ->where('exams.semester', $semester)
+                ->where('exams.teacher_id', $teacherId)
+                ->get();
+            }
             else{
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
@@ -1845,48 +2031,44 @@ class ReportController extends Controller
                 ->get()
                 ->keyBy('student_id');
 
-                $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use($comments) {
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use($comments, $tasks, $mid, $finalExam) {
 
-                    $student            = $scores->first();
-                    $homeworkScores     = $scores->where('type_exam', 1)->pluck('score');
-                    $exerciseScores     = $scores->where('type_exam', 2)->pluck('score');
-                    $participationScore = $scores->where('type_exam', 5)->pluck('score');
-                    $quizScores         = $scores->where('type_exam', 3)->pluck('score');
-                    $finalExamScores    = $scores->where('type_exam', 4)->pluck('score');
+                $student            = $scores->first();
+                $tasks              = $scores->whereIn('type_exam', $tasks)->pluck('score');
+                $mid                = $scores->whereIn('type_exam', $mid)->pluck('score');
+                $finalExamScores    = $scores->whereIn('type_exam', $finalExam)->pluck('score');
 
-                    // dd($quizScores);
+                // dd($quizScores);
+                
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->student_name,
+                    'scores' => $scores->map(function ($score) {
+                        return [
+                            'exam_id' => $score->exam_id,
+                            'type_exam' => $score->type_exam,
+                            'score' => $score->score,
+                        ];
+                    })->all(),
+                    'avg_tasks' => round($tasks->avg()),
+                    'avg_mid'   => round($mid->avg()),
+                    'avg_fe'    => round($finalExamScores->avg()),
+
+                    'percent_tasks' => round($tasks->avg() * 0.25),
+                    'percent_mid'  => round($mid->avg() * 0.35),
+                    'percent_fe'    => round($finalExamScores->avg() * 0.4),
+                    'total_score'   => (round(($tasks->avg() * 0.25)) +  round(($mid->avg() * 0.35)) + round(($finalExamScores->avg() * 0.4))),
                     
-                    return [
-                        'student_id' => $student->student_id,
-                        'student_name' => $student->student_name,
-                        'scores' => $scores->map(function ($score) {
-                            return [
-                                'exam_id' => $score->exam_id,
-                                'type_exam' => $score->type_exam,
-                                'score' => $score->score,
-                            ];
-                        })->all(),
-                        'avg_homework'      => round($homeworkScores->avg()),
-                        'avg_exercise'      => round($exerciseScores->avg()),
-                        'avg_participation' => round($participationScore->avg()),
-                        'avg_quiz'          => round($quizScores->avg()),
-                        'avg_fe'            => round($finalExamScores->avg()),
-
-                        'percent_homework' => round($homeworkScores->avg() * 0.25),
-                        'percent_quiz'  => round($quizScores->avg() * 0.35),
-                        'percent_fe'    => round($finalExamScores->avg() * 0.4),
-                        'total_score'   => (round(($homeworkScores->avg() * 0.25)) +  round(($quizScores->avg() * 0.35)) + round(($finalExamScores->avg() * 0.4))),
-                        
-                        'comment' => $comments->get($student->student_id)?->comment ?? '',
-                    ];
-                })->values()->all();
+                    'comment' => $comments->get($student->student_id)?->comment ?? '',
+                ];
+            })->values()->all();
 
             // dd($scoresByStudent);
             $status = Scoring_status::where('grade_id', $gradeId)
                 ->where('semester', $semester)
                 ->where('teacher_id', $subjectTeacher->teacher_id)
+                ->where('subject_id', $subject->subject_id)
                 ->first();
-
             
             $data = [
                 'subjectTeacher' => $subjectTeacher,
@@ -1896,9 +2078,12 @@ class ReportController extends Controller
                 'students' => $scoresByStudent,
                 'semester' => $semester,
                 'status' => $status,
+                'tasks' => $tasks,
+                'mid'   => $mid,
+                'finalExam' => $finalExam,
             ];
 
-            dd($data);   
+            // dd($data);   
 
             if(session('role') == 'superadmin' || session('role') == 'admin'){
                 return view('components.report.detail_scoring_subject_secondary')->with('data', $data);
@@ -2388,6 +2573,315 @@ class ReportController extends Controller
         }
     }
 
+    public function cardToddler($id){
+        // dd($id);
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => 'reports',
+                'child' => 'report class teacher',
+            ]);
+            
+            $gradeId = $id;
+
+            // dd($gradeId);
+
+            $semester = intval(session('semester'));
+
+            // dd($semester);
+
+            // if ($semester !== 1) {
+            //     return redirect()->back()->with([
+            //         'role' => session('role'),
+            //         'swal' => [
+            //             'type' => 'error',
+            //             'title' => 'Invalid Semester',
+            //             'text' => 'This operation cannot be performed in Semester 2.'
+            //         ]
+            //     ]);
+            // }
+
+            $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class', 
+                'teachers.name as teacher_name')
+                ->where('teacher_grades.grade_id', $gradeId)
+                ->first();
+
+            $classTeacher = Teacher_grade::where('grade_id', $gradeId)
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
+                ->first();
+
+            $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('nursery_toddlers', 'nursery_toddlers.student_id', '=', 'students.id')
+                ->where('grades.id', $gradeId)
+                ->where('nursery_toddlers.semester', $semester)
+                ->get();
+
+            $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->where('grades.id', $gradeId)
+                ->get();
+
+            // dd($results);
+
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
+                $student = $scores->first();
+               
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->name,
+                    'remarks' => $student->remarks,
+                    'scores' => $scores->map(function ($score) {
+                        return [
+                            'songs' => $score->songs,
+                            'prayer' => $score->prayer,
+                            'colour' => $score->colour,
+                            'number' => $score->number,
+                            'object' => $score->object,
+                            'body_movement' => $score->body_movement,
+                            'colouring' => $score->colouring,
+                            'painting' => $score->painting,
+                            'chinese_songs' => $score->chinese_songs,
+                            'ability_to_recognize_the_objects' => $score->ability_to_recognize_the_objects,
+                            'able_to_own_up_to_mistakes' => $score->able_to_own_up_to_mistakes,
+                            'takes_care_of_personal_belongings_and_property' => $score->takes_care_of_personal_belongings_and_property,
+                            'demonstrates_importance_of_self_control' => $score->demonstrates_importance_of_self_control,
+                            'management_emotional_problem_solving' => $score->management_emotional_problem_solving,
+                            'promote' => $score->promote,
+                        ];
+                    })->all(),
+                ];
+            })->values()->all();
+
+            $status = Report_card_status::where('grade_id', $grade->grade_id)
+                ->where('semester', $semester)
+                ->where('class_teacher_id', $classTeacher->teacher_id)
+                ->first();
+
+            // dd($scoresByStudent);
+
+            $data = [
+                'grade' => $grade,
+                'students' => $student,
+                'result' => $scoresByStudent,
+                'classTeacher' => $classTeacher,
+                'semester' => $semester,
+                'status' => $status,
+            ];
+
+            // dd($data);
+
+            return view('components.report.toddler')->with('data', $data);
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function cardNursery($id){
+        // dd($id);
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => 'reports',
+                'child' => 'report class teacher',
+            ]);
+            
+            $gradeId = $id;
+
+            // dd($gradeId);
+
+            $semester = intval(session('semester'));
+
+            // dd($semester);
+
+            // if ($semester !== 1) {
+            //     return redirect()->back()->with([
+            //         'role' => session('role'),
+            //         'swal' => [
+            //             'type' => 'error',
+            //             'title' => 'Invalid Semester',
+            //             'text' => 'This operation cannot be performed in Semester 2.'
+            //         ]
+            //     ]);
+            // }
+
+            $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class', 
+                'teachers.name as teacher_name')
+                ->where('teacher_grades.grade_id', $gradeId)
+                ->first();
+
+            $classTeacher = Teacher_grade::where('grade_id', $gradeId)
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
+                ->first();
+
+            $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('nursery_toddlers', 'nursery_toddlers.student_id', '=', 'students.id')
+                ->where('grades.id', $gradeId)
+                ->where('nursery_toddlers.semester', $semester)
+                ->get();
+
+            $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->where('grades.id', $gradeId)
+                ->get();
+
+            // dd($results);
+
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
+                $student = $scores->first();
+               
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->name,
+                    'remarks' => $student->remarks,
+                    'scores' => $scores->map(function ($score) {
+                        return [
+                            'songs' => $score->songs,
+                            'prayer' => $score->prayer,
+                            'colour' => $score->colour,
+                            'number' => $score->number,
+                            'object' => $score->object,
+                            'body_movement' => $score->body_movement,
+                            'colouring' => $score->colouring,
+                            'painting' => $score->painting,
+                            'chinese_songs' => $score->chinese_songs,
+                            'ability_to_recognize_the_objects' => $score->ability_to_recognize_the_objects,
+                            'able_to_own_up_to_mistakes' => $score->able_to_own_up_to_mistakes,
+                            'takes_care_of_personal_belongings_and_property' => $score->takes_care_of_personal_belongings_and_property,
+                            'demonstrates_importance_of_self_control' => $score->demonstrates_importance_of_self_control,
+                            'management_emotional_problem_solving' => $score->management_emotional_problem_solving,
+                            'promote' => $score->promote,
+                        ];
+                    })->all(),
+                ];
+            })->values()->all();
+
+            $status = Report_card_status::where('grade_id', $grade->grade_id)
+                ->where('semester', $semester)
+                ->where('class_teacher_id', $classTeacher->teacher_id)
+                ->first();
+
+            // dd($scoresByStudent);
+
+            $data = [
+                'grade' => $grade,
+                'students' => $student,
+                'result' => $scoresByStudent,
+                'classTeacher' => $classTeacher,
+                'semester' => $semester,
+                'status' => $status,
+            ];
+
+            // dd($data);
+
+            return view('components.report.nursery')->with('data', $data);
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function cardKindergarten($id){
+        // dd($id);
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => 'reports',
+                'child' => 'report class teacher',
+            ]);
+            
+            $gradeId = $id;
+
+            // dd($gradeId);
+
+            $semester = intval(session('semester'));
+
+            // dd($semester);
+
+            // if ($semester !== 1) {
+            //     return redirect()->back()->with([
+            //         'role' => session('role'),
+            //         'swal' => [
+            //             'type' => 'error',
+            //             'title' => 'Invalid Semester',
+            //             'text' => 'This operation cannot be performed in Semester 2.'
+            //         ]
+            //     ]);
+            // }
+
+            $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class', 
+                'teachers.name as teacher_name')
+                ->where('teacher_grades.grade_id', $gradeId)
+                ->first();
+
+            $classTeacher = Teacher_grade::where('grade_id', $gradeId)
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
+                ->first();
+
+            $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('kindergartens', 'kindergartens.student_id', '=', 'students.id')
+                ->where('grades.id', $gradeId)
+                ->where('kindergartens.semester', $semester)
+                ->get();
+
+            $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->where('grades.id', $gradeId)
+                ->get();
+
+            // dd($results);
+
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
+                $student = $scores->first();
+               
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->name,
+                    'scores' => $scores->map(function ($score) {
+                        return [
+                            'english' => $score->english,
+                            'mathematics' => $score->mathematics,
+                            'chinese' => $score->chinese,
+                            'science' => $score->science,
+                            'character_building' => $score->character_building,
+                            'art_and_craft' => $score->art_and_craft,
+                            'it' => $score->it,
+                            'conduct' => $score->conduct,
+                            'remarks' => $score->remarks,
+                            'promote' => $score->promote,
+                        ];
+                    })->all(),
+                ];
+            })->values()->all();
+
+            $status = Report_card_status::where('grade_id', $grade->grade_id)
+                ->where('semester', $semester)
+                ->where('class_teacher_id', $classTeacher->teacher_id)
+                ->first();
+
+            // dd($status);
+
+            $data = [
+                'grade' => $grade,
+                'students' => $student,
+                'result' => $scoresByStudent,
+                'classTeacher' => $classTeacher,
+                'semester' => $semester,
+                'status' => $status,
+            ];
+
+            // dd($data);
+
+            return view('components.report.kindergarten')->with('data', $data);
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
     public function reportCardDecline($gradeId, $teacherId, $semester)
     {
         try {
@@ -2516,6 +3010,7 @@ class ReportController extends Controller
                     ->select('subjects.name');
                 })
                 ->where('acars.student_id', $id)
+                ->where('acars.semester', $semester)
                 ->get();
                 
                 if(strtolower($student->grade_name) === "primary")
@@ -2551,6 +3046,25 @@ class ReportController extends Controller
                     ];
                 }
 
+                $ecaData = Student_eca::where('student_ecas.student_id', $id)
+                    ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
+                    ->get(['student_ecas.student_id', 'ecas.name as eca_name']);
+
+                $groupedEcaData = [];
+                $counter = 1;
+
+                foreach ($ecaData as $eca) {
+                    $groupedEcaData['student_id'] = $eca->student_id;
+                    $groupedEcaData['eca_' . $counter] = $eca->eca_name;
+                    $counter++;
+                }
+
+                // if (empty($groupedEcaData)) {
+                //     $groupedEcaData['student_id'] = $id;
+                // }
+                
+                // dd($groupedEcaData);
+
                 $scoresByStudent = $resultsScore->groupBy('student_id')->map(function ($scores) use($comments, $order) {
                     $student = $scores->first();
                 
@@ -2573,12 +3087,12 @@ class ReportController extends Controller
                         })->all(),
                     ];
                 })->values()->all();
-                
 
             
             if (strtolower($student->grade_name) === "primary") {
                 $resultsSooa = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
                     ->where('sooa_primaries.student_id', $id)
+                    ->where('sooa_primaries.semester', $semester)
                     ->get();
 
                 $scoresByStudentSooa = $resultsSooa->groupBy('student_id')->map(function ($scores) {
@@ -2616,6 +3130,7 @@ class ReportController extends Controller
             elseif (strtolower($student->grade_name) === "secondary") {
                 $resultsSooa = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
                     ->where('sooa_secondaries.student_id', $id)
+                    ->where('sooa_secondaries.semester', $semester)
                     ->get();
 
                 $scoresByStudentSooa = $resultsSooa->groupBy('student_id')->map(function ($scores) {
@@ -2629,9 +3144,9 @@ class ReportController extends Controller
                             return [
                                 'academic' => $score->academic,
                                 'grades_academic' => $score->grades_academic,
-                                'eca_1' => $score->eca_1,
-                                'grades_eca_1' => $score->eca_1,
-                                'eca_2' => $score->eca_2,
+                                'eca_1' => $score->eca_1 == 0 ? "-" : $score->eca_1,
+                                'grades_eca_1' => $score->grades_eca_1,
+                                'eca_2' => $score->eca_2 == 0 ? "-" : $score->eca_2,
                                 'grades_eca_2' => $score->grades_eca_2,
                                 'self_development' => $score->self_development,
                                 'grades_self_development' => $score->grades_self_development,
@@ -2650,11 +3165,10 @@ class ReportController extends Controller
                     ];
                 })->values()->all();
             }
-    
-    
-            
 
             $student->date_of_registration = Carbon::parse($student->date_of_registration);
+
+            $academicYear = Master_academic::first()->value('academic_year');
 
             // dd($learningSkills);
 
@@ -2667,6 +3181,8 @@ class ReportController extends Controller
                 'attendance' => $attendancesByStudent,
                 'relation' => $relation,
                 'serial' => $getSerial,
+                'academicYear' => $academicYear,
+                'eca' => $groupedEcaData,
             ];
 
             // dd($data);
@@ -2675,8 +3191,8 @@ class ReportController extends Controller
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);
             $pdf->set_option('isHtml5ParserEnabled', true);
-            $pdf->loadView('components.report.pdf.semester1-pdf', $data)->setPaper('a4', 'portrait');
-            return $pdf->download($student->student_name . '_semester' . $semester . '.pdf');
+            $pdf->loadView('components.report.pdf.semester1-pdf', $data)->setPaper('a5', 'portrait');
+            return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
 
 
             // $dompdf = new Dompdf();
@@ -2741,6 +3257,19 @@ class ReportController extends Controller
                 }
             }
 
+            $ecaData = Student_eca::where('student_ecas.student_id', $id)
+                ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
+                ->get(['student_ecas.student_id', 'ecas.name as eca_name']);
+
+            $groupedEcaData = [];
+            $counter = 1;
+
+            foreach ($ecaData as $eca) {
+                $groupedEcaData['student_id'] = $eca->student_id;
+                $groupedEcaData['eca_' . $counter] = $eca->eca_name;
+                $counter++;
+            }
+
             $student = Student::where('students.id', $id)
                 ->join('grades', 'grades.id', '=', 'students.grade_id')
                 ->select('students.name as student_name', 'students.created_at as date_of_registration', 
@@ -2793,6 +3322,7 @@ class ReportController extends Controller
                     ->select('subjects.name');
                 })
                 ->where('acars.student_id', $id)
+                ->where('acars.semester', $semester)
                 ->get();
                 
                 
@@ -2840,11 +3370,13 @@ class ReportController extends Controller
             if (strtolower($student->grade_name) === "primary") {
                 $resultsSooa = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
                     ->where('sooa_primaries.student_id', $id)
+                    ->where('sooa_primaries.semester', $semester)
                     ->get();
             }
             elseif (strtolower($student->grade_name) === "secondary") {
                 $resultsSooa = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
                     ->where('sooa_secondaries.student_id', $id)
+                    ->where('sooa_secondaries.semester', $semester)
                     ->get();
             }
     
@@ -2883,6 +3415,8 @@ class ReportController extends Controller
 
             $student->date_of_registration = Carbon::parse($student->date_of_registration);
 
+            $academicYear = Master_academic::first()->value('academic_year');
+
             // dd($learningSkills);
 
             $data = [
@@ -2895,6 +3429,8 @@ class ReportController extends Controller
                 'relation' => $relation,
                 'serial' => $getSerial,
                 'promotionGrade' => $grade,
+                'academicYear' => $academicYear,
+                'eca' => $groupedEcaData,
             ];
 
             // dd($data);
@@ -2902,10 +3438,8 @@ class ReportController extends Controller
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);
             $pdf->set_option('isHtml5ParserEnabled', true);
-            $pdf->loadView('components.report.pdf.semester2-pdf', $data)->setPaper('a4', 'portrait');
+            $pdf->loadView('components.report.pdf.semester2-pdf', $data)->setPaper('a5', 'portrait');
             return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
-
-
 
             // $dompdf = new Dompdf();
             // $html = View::make('components.report.pdf.semester1-pdf')->render();
@@ -2923,6 +3457,345 @@ class ReportController extends Controller
         
             // return $dompdf->stream('tes.pdf');
 
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function downloadPDFToddler($id)
+    {
+        try {
+            $semester = intval(session('semester'));
+
+            $score = Nursery_toddler::where('student_id', $id)
+                ->where('semester', $semester)
+                ->first();
+    
+            $gradeId = Student::where('id', $id)->value('grade_id');
+
+            if ($semester == 2) {
+                if ($score->promote === 1) {
+                    $nextGrade = Grade::where('id', $gradeId+1)
+                    ->select('grades.name as grade_name', 'grades.class as grade_class')
+                    ->first();
+                    $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
+                } 
+                elseif ($score->promote === null) {
+                    $nextGrade =  $nextGrade = Grade::where('id', $gradeId)
+                    ->select('grades.name as grade_name', 'grades.class as grade_class')
+                    ->first();
+                    $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
+                }
+            }
+
+            $student = Student::where('students.id', $id)
+                ->join('grades', 'grades.id', '=', 'students.grade_id')
+                ->select('students.name as student_name', 'students.created_at as date_of_registration', 
+                'grades.name as grade_name', 'grades.class as grade_class', 'grades.id as grade_id')
+                ->first();
+
+            $classTeacher = Teacher_grade::where('teacher_grades.grade_id', $student->grade_id)
+                ->join('teachers', 'teachers.id', 'teacher_grades.teacher_id')
+                ->select('teachers.name as teacher_name')
+                ->first();
+            
+            $resultsAttendance = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->leftJoin('attendances', function ($join) {
+                    $join->on('attendances.student_id', '=', 'students.id');
+                })
+                ->select(
+                    'students.id as student_id',
+                    'students.name as student_name',
+                    'attendances.*',
+                )
+                ->where('grades.id', $student->grade_id)
+                ->where('students.id', $id)
+                ->where('attendances.semester', $semester)
+                ->get();
+
+            $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
+                
+                $totalAlpha = $attendances->where('alpha', 1)->count();
+                $totalSick = $attendances->where('sick', 1)->count();
+                $totalPermission = $attendances->where('permission', 1)->count();
+                
+                return [
+                    'days_absent' => $totalAlpha,
+                    'sick' => $totalSick,
+                    'permission' => $totalPermission,
+                ];
+            })->values()->all();
+
+            $academicYear = Master_academic::first()->value('academic_year');
+
+            // dd($learningSkills);
+
+            if ($semester == 1) {
+                $data = [
+                    'student' => $student,
+                    'classTeacher' => $classTeacher,
+                    'score' => $score,
+                    'attendance' => $attendancesByStudent,
+                    'semester' => $semester,
+                    'academicYear' => $academicYear,
+                ];
+            } 
+            elseif ($semester == 2) {
+                $data = [
+                    'student' => $student,
+                    'classTeacher' => $classTeacher,
+                    'score' => $score,
+                    'attendance' => $attendancesByStudent,
+                    'promotionGrade' => $grade,
+                    'semester' => $semester,
+                    'academicYear' => $academicYear,
+                ];
+            }
+
+            // dd($data);
+
+            $pdf = app('dompdf.wrapper');
+            $pdf->set_option('isRemoteEnabled', true);
+            $pdf->set_option('isHtml5ParserEnabled', true);
+            $pdf->loadView('components.report.pdf.toddler-pdf', $data)->setPaper('a5', 'portrait');
+            return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function downloadPDFNursery($id)
+    {
+        try {
+            $semester = intval(session('semester'));
+
+            $score = Nursery_toddler::where('student_id', $id)
+                ->where('semester', $semester)
+                ->first();
+    
+            $gradeId = Student::where('id', $id)->value('grade_id');
+
+            if ($semester == 2) {
+                if ($score->promote === 1) {
+                    $nextGrade = Grade::where('id', $gradeId+1)
+                    ->select('grades.name as grade_name', 'grades.class as grade_class')
+                    ->first();
+                    $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
+                } 
+                elseif ($score->promote === null) {
+                    $nextGrade =  $nextGrade = Grade::where('id', $gradeId)
+                    ->select('grades.name as grade_name', 'grades.class as grade_class')
+                    ->first();
+                    $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
+                }
+            }
+
+            $student = Student::where('students.id', $id)
+                ->join('grades', 'grades.id', '=', 'students.grade_id')
+                ->select('students.name as student_name', 'students.created_at as date_of_registration', 
+                'grades.name as grade_name', 'grades.class as grade_class', 'grades.id as grade_id')
+                ->first();
+
+            $classTeacher = Teacher_grade::where('teacher_grades.grade_id', $student->grade_id)
+                ->join('teachers', 'teachers.id', 'teacher_grades.teacher_id')
+                ->select('teachers.name as teacher_name')
+                ->first();
+            
+            $relation = Student_relationship::where('Student_relationships.student_id', $id)
+                ->join('relationships', 'relationships.id', '=', 'student_relationships.relationship_id')
+                ->select('relationships.name as relationship_name')
+                ->first();
+
+            $resultsAttendance = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->leftJoin('attendances', function ($join) {
+                    $join->on('attendances.student_id', '=', 'students.id');
+                })
+                ->select(
+                    'students.id as student_id',
+                    'students.name as student_name',
+                    'attendances.*',
+                )
+                ->where('grades.id', $student->grade_id)
+                ->where('students.id', $id)
+                ->where('attendances.semester', $semester)
+                ->get();
+
+            $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
+                
+                $totalAlpha = $attendances->where('alpha', 1)->count();
+                $totalSick = $attendances->where('sick', 1)->count();
+                $totalPermission = $attendances->where('permission', 1)->count();
+                
+                return [
+                    'days_absent' => $totalAlpha,
+                    'sick' => $totalSick,
+                    'permission' => $totalPermission,
+                ];
+            })->values()->all();
+
+            $academicYear = Master_academic::first()->value('academic_year');
+
+            // dd($learningSkills);
+
+            if ($semester == 1) {
+                $data = [
+                    'student' => $student,
+                    'classTeacher' => $classTeacher,
+                    'score' => $score,
+                    'attendance' => $attendancesByStudent,
+                    'relation' => $relation,
+                    'semester' => $semester,
+                    'academicYear' => $academicYear,
+                ];
+            } 
+            elseif ($semester == 2) {
+                $data = [
+                    'student' => $student,
+                    'classTeacher' => $classTeacher,
+                    'score' => $score,
+                    'attendance' => $attendancesByStudent,
+                    'promotionGrade' => $grade,
+                    'relation' => $relation,
+                    'semester' => $semester,
+                    'academicYear' => $academicYear,
+                ];
+            }
+
+
+            $pdf = app('dompdf.wrapper');
+            $pdf->set_option('isRemoteEnabled', true);
+            $pdf->set_option('isHtml5ParserEnabled', true);
+            $pdf->loadView('components.report.pdf.nursery-pdf', $data)->setPaper('a5', 'portrait');
+            return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
+
+            // $dompdf = new Dompdf();
+            // $html = View::make('components.report.pdf.semester1-pdf')->render();
+
+            // $dompdf->loadHtml($html);
+            
+
+            // // (Optional) Setup the paper size and orientation
+            // $dompdf->setPaper('A4', 'portrait');
+
+            // // Render the HTML as PDF
+            // $dompdf->render();
+
+            // // Output the generated PDF to Browser
+        
+            // return $dompdf->stream('tes.pdf');
+
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function downloadPDFKindergarten($id)
+    {
+        try {
+            $semester = intval(session('semester'));
+
+            $score = Kindergarten::where('student_id', $id)
+                ->where('semester', $semester)
+                ->first();
+    
+            $gradeId = Student::where('id', $id)->value('grade_id');
+
+            if ($semester == 2) {
+                if ($score->promote === 1) {
+                    $nextGrade = Grade::where('id', $gradeId+1)
+                    ->select('grades.name as grade_name', 'grades.class as grade_class')
+                    ->first();
+                    $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
+                } 
+                elseif ($score->promote === null) {
+                    $nextGrade =  $nextGrade = Grade::where('id', $gradeId)
+                    ->select('grades.name as grade_name', 'grades.class as grade_class')
+                    ->first();
+                    $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
+                }
+            }
+
+            $student = Student::where('students.id', $id)
+                ->join('grades', 'grades.id', '=', 'students.grade_id')
+                ->select('students.name as student_name', 'students.created_at as date_of_registration', 
+                'grades.name as grade_name', 'grades.class as grade_class', 'grades.id as grade_id')
+                ->first();
+
+            $classTeacher = Teacher_grade::where('teacher_grades.grade_id', $student->grade_id)
+                ->join('teachers', 'teachers.id', 'teacher_grades.teacher_id')
+                ->select('teachers.name as teacher_name')
+                ->first();
+            
+            $relation = Student_relationship::where('Student_relationships.student_id', $id)
+                ->join('relationships', 'relationships.id', '=', 'student_relationships.relationship_id')
+                ->select('relationships.name as relationship_name')
+                ->first();
+
+            $resultsAttendance = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->leftJoin('attendances', function ($join) {
+                    $join->on('attendances.student_id', '=', 'students.id');
+                })
+                ->select(
+                    'students.id as student_id',
+                    'students.name as student_name',
+                    'attendances.*',
+                )
+                ->where('grades.id', $student->grade_id)
+                ->where('students.id', $id)
+                ->where('attendances.semester', $semester)
+                ->get();
+
+            $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
+                
+                $totalAlpha = $attendances->where('alpha', 1)->count();
+                $totalSick = $attendances->where('sick', 1)->count();
+                $totalPermission = $attendances->where('permission', 1)->count();
+                
+                return [
+                    'days_absent' => $totalAlpha,
+                    'sick' => $totalSick,
+                    'permission' => $totalPermission,
+                ];
+            })->values()->all();
+
+            $academicYear = Master_academic::first()->value('academic_year');
+
+            // dd($learningSkills);
+
+            if ($semester == 1) {
+                $data = [
+                    'student' => $student,
+                    'classTeacher' => $classTeacher,
+                    'score' => $score,
+                    'attendance' => $attendancesByStudent,
+                    'relation' => $relation,
+                    'semester' => $semester,
+                    'academicYear' => $academicYear,
+                ];
+            } 
+            elseif ($semester == 2) {
+                $data = [
+                    'student' => $student,
+                    'classTeacher' => $classTeacher,
+                    'score' => $score,
+                    'attendance' => $attendancesByStudent,
+                    'promotionGrade' => $grade,
+                    'relation' => $relation,
+                    'semester' => $semester,
+                    'academicYear' => $academicYear,
+                ];
+            }
+
+            // dd($data);
+
+            $pdf = app('dompdf.wrapper');
+            $pdf->set_option('isRemoteEnabled', true);
+            $pdf->set_option('isHtml5ParserEnabled', true);
+            $pdf->loadView('components.report.pdf.kindergarten-pdf', $data)->setPaper('a5', 'portrait');
+            return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
 
         } catch (Exception $err) {
             dd($err);

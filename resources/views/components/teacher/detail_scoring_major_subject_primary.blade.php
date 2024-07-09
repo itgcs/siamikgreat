@@ -25,7 +25,8 @@
         <div class="col">
             <p class="text-xs text-bold">Major Subject Assessment</p>
             <p class="text-xs">Semester : {{ $data['semester']}}</p> 
-            <p class="text-xs">Subject Teacher : {{ $data['subjectTeacher']->teacher_name }}</p>    
+            <p class="text-xs">Subject Teacher : {{ $data['subjectTeacher']->teacher_name }}</p>   
+            <p class="text-xs">Subject Teacher : {{ $data['subject']->subject_name }}</p>   
             <p class="text-xs">Class Teacher : {{ $data['classTeacher']->teacher_name }}</p>
             <p class="text-xs">Class: {{ $data['grade']->name }} - {{ $data['grade']->class }}</p>
             <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
@@ -44,7 +45,7 @@
 
         @if ($data['status'] == null)
             <div class="row my-2">
-                <div class="input-group-append my-2">
+                <div class="input-group-append mx-2">
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
                 </div>
             </div>

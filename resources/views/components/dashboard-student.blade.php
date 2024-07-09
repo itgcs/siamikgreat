@@ -76,7 +76,7 @@
              <div class="inner">
                <h3>{{ $data['totalExam']}}</h3>
 
-               <p>Total Exams Active</p>
+               <p>Total Exams</p>
              </div>
              <div class="icon">
                {{-- <i class="ion ion-pie-graph"></i> --}}
@@ -109,7 +109,7 @@
               <div class="tab-content p-0">
                 <!-- Morris chart - Sales -->
                 <div class="chart tab-pane active" id="revenue-chart"
-                     style="position: relative; height: full;">
+                     style="position: relative; height: 500px; overflow-y: auto;">
 
                      @if(sizeof($data['dataStudent']->exam) == 0)
                       <div class="d-flex justify-content-center">
@@ -140,6 +140,20 @@
                               </div>
                               <!-- todo text -->
                               <span class="text text-sm">( {{$el->type_exam_name}} ) ({{ $el->subject }}) {{$el->name_exam}} </span>
+                              
+                              <span>
+                                @if ($el->date_exam == now())
+                                  $currentDate = now(); // Tanggal saat ini
+                                  $dateExam = $el->date_exam; // Tanggal exam dari data
+                                  $diff = strtotime($dateExam) - strtotime($currentDate);
+                                  $days = floor($diff / (60 * 60 * 24));
+                                  
+                                  <span class="badge badge-warning">{{$days}} days again</span>
+                                @else
+                                 <span class="badge badge-success">Done</span>
+                                @endif
+                              </span>
+
                               <div class="tools">
                                   <a href="/student/dashboard/exam/detail/{{$el->id}}">
                                       <i class="fas fa-search"></i>

@@ -22,7 +22,7 @@
                   <h3 class="card-title">Your Class Teacher</h3>
                   <div class="card-tools">
                      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                           <i class="fas fa-minus"></i>
+                        <i class="fas fa-minus"></i>
                      </button>
                   </div>
                </div>
@@ -31,12 +31,12 @@
                      <thead>
                            <tr>
                               <th>
-                                 #
+                                 No
                               </th>
-                              <th>
+                              <th style="width:15%;">
                                  Name 
                               </th>
-                              <th>
+                              <th style="width:85%;">
                               </th>
                            </tr>
                      </thead>
@@ -49,7 +49,7 @@
                               <td>
                                  {{ $dgt->name }} - {{ $dgt->class }}
                               </td>
-                              <td class="dgtoject-actions text-right toastsDefaultSuccess">
+                              <td class="dgtoject-actions text-left toastsDefaultSuccess">
                                  @if (strtolower($dgt->name) === "primary")
                                     <a class="btn btn-success btn"
                                        href="{{url('teacher/dashboard/report') . '/acar/detail/' . $dgt->id}}">
@@ -82,7 +82,7 @@
                                        SEMESTER 2
                                     </a>
                                  @elseif (strtolower($dgt->name) === "secondary")
-                                 <a class="btn btn-success btn"
+                                    <a class="btn btn-success btn"
                                        href="{{url('teacher/dashboard/report') . '/acar/detailSec/' . $dgt->id}}">
                                        
                                        </i>
@@ -112,6 +112,45 @@
                                        </i>
                                        SEMESTER 2
                                     </a>
+                                 @elseif (strtolower($dgt->name) === "nursery")
+                                 <a class="btn btn-primary btn"
+                                    href="{{ url('teacher/dashboard/report/cardNursery') . '/' . $dgt->id }}">
+                                    
+                                    </i>
+                                    SEMESTER 1
+                                 </a>
+                                 <a class="btn btn-primary btn"
+                                    href="{{url('teacher/dashboard/report/cardNursery') . '/' . $dgt->id }}">
+                                    
+                                    </i>
+                                    SEMESTER 2
+                                 </a>
+                                 @elseif (strtolower($dgt->name) === "toddler")
+                                 <a class="btn btn-primary btn"
+                                    href="{{ url('teacher/dashboard/report/cardToddler') . '/' . $dgt->id }}">
+                                    
+                                    </i>
+                                    SEMESTER 1
+                                 </a>
+                                 <a class="btn btn-primary btn"
+                                 href="{{ url('teacher/dashboard/report/cardToddler') . '/' . $dgt->id }}">
+                                    
+                                    </i>
+                                    SEMESTER 2
+                                 </a>
+                                 @elseif (strtolower($dgt->name) === "kindergarten")
+                                 <a class="btn btn-primary btn"
+                                    href="{{ url('teacher/dashboard/report/cardKindergarten') . '/' . $dgt->id }}">
+                                    
+                                    </i>
+                                    SEMESTER 1
+                                 </a>
+                                 <a class="btn btn-primary btn"
+                                    href="{{url('teacher/dashboard/report/cardKindergarten') . '/' . $dgt->id }}">
+                                    
+                                    </i>
+                                    SEMESTER 2
+                                 </a>
                                  @endif
                               </td>
                         </tr>

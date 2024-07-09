@@ -19,11 +19,10 @@
                 <thead>
                     <tr>
                         <th > # </th>
-                        <th style="width: 12%"> Grades </th>
-                        <th style="width: 16%"> Teacher Class </th>
-                        <th style="width: 12%;text-align:center;"> Total Student </th>
-                        <th style="width: 12%;text-align:center;"> Total Subject </th>
-                        <th style="width: 48%">Action</th>
+                        <th style="width: 15%"> Grades </th>
+                        <th style="width: 20%"> Teacher Class </th>
+                        <th style="width: 10%;text-align:center;"> Total Student </th>
+                        <th style="width: 55%">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,19 +46,25 @@
                                 {{$el->active_student_count}}
                             </a>
                         </td>
-                        <td style="text-align:center;">
-                            <a>
-                                {{$el->active_subject_count}}
+                        </td>
+                        @if (session('role') == 'superadmin')
+                            <td class="project-actions text-left toastsDefaultSuccess">
+                                <a class="btn btn-primary btn"
+                                    href="{{ route('super.attendance.detail', ['id' => session('id_user'), 'gradeId' => $el->id]) }}">
+                                        <i class="fas fa-folder"> </i>
+                                        View
+                                </a>
+                            </td>   
+                        @elseif (session('role') == 'admin')
+                            <td class="project-actions text-left toastsDefaultSuccess">
+                            <a class="btn btn-primary btn"
+                                href="{{ route('attendance.detail', ['id' => session('id_user'), 'gradeId' => $el->id]) }}">
+                                    <i class="fas fa-folder"> </i>
+                                    View
                             </a>
-                        </td>
+                            </td> 
+                        @endif
                         
-                        <td class="project-actions text-left toastsDefaultSuccess">
-                           <a class="btn btn-primary btn"
-                            href="{{ route('attendance.detail', ['id' => session('id_user'), 'gradeId' => $el->id]) }}">
-                                <i class="fas fa-folder"> </i>
-                                View
-                           </a>
-                        </td>
                     </tr>
 
                     @endforeach

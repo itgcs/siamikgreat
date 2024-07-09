@@ -24,18 +24,47 @@ class EcaController extends Controller
             ]);
 
             $data = Eca::get();
-            $ecaStudent = Student_eca::leftJoin('students', 'student_ecas.student_id', '=', 'students.id')
-                ->leftJoin('ecas', 'student_ecas.eca_id', '=', 'ecas.id')
-                ->select('students.name as student_name', 'ecas.name as eca_name')    
-                ->get();
 
             $data = [
                 'data' => $data,
-                'ecaStudent' => $ecaStudent,
             ];
 
-            dd($data);
             return view('components.eca.data-eca')->with('data', $data);
+
+        } catch (Exception $err) {
+            return dd($err);
+        }
+    }
+
+    public function detailStudent($id)
+    {
+        try {
+            session()->flash('page',  $page = (object)[
+            'page' => 'eca',
+            'child' => 'database eca',
+            ]);
+
+            $eca = Eca::where('id', $id)->get();
+
+            $student = Eca::where('ecas.id', $id)
+                ->leftJoin('student_ecas', function($join) {
+                    $join->on('student_ecas.eca_id', '=', 'ecas.id');
+                })
+                ->leftJoin('students', 'students.id', '=', 'student_ecas.student_id')
+                ->leftJoin('grades', 'grades.id', '=', 'students.grade_id')
+                ->select('students.id as student_id', 'students.name as student_name', 'grades.name as grade_name', 'grades.class as grade_class', 
+                'ecas.name as eca_name', 'ecas.id as eca_id')
+                ->orderBy('grades.id', 'asc')
+                ->get();
+        
+            $data = [
+                'student' => $student,
+                'eca' => $eca,
+            ];
+
+            // dd($data);
+
+            return view('components.eca.detail-eca')->with('data', $data);
 
         } catch (Exception $err) {
             return dd($err);
@@ -192,7 +221,6 @@ class EcaController extends Controller
         }
     }
 
-
     public function actionPut(Request $request, $id)
     {
         DB::beginTransaction();
@@ -257,6 +285,23 @@ class EcaController extends Controller
         catch (Exception $err) {
             dd($err);
             return redirect('/'.session('role').'/eca')->with('error', 'Terjadi kesalahan saat menghapus data eca.');
+        }
+    }
+
+    public function deleteStudent($ecaId, $studentId)
+    {
+        try {
+            session()->flash('after_delete_student_eca');
+
+            Student_eca::where('eca_id', $ecaId)
+            ->where('student_id', $studentId)
+            ->delete();
+
+            return redirect('/'.session('role').'/eca/view' . '/' . $ecaId);
+        } 
+        catch (Exception $err) {
+            dd($err);
+            return redirect('/'.session('role').'/eca/view' . '/' . $ecaId)->with('error', 'Terjadi kesalahan saat menghapus data student eca.');
         }
     }
 }

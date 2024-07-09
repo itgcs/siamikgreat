@@ -19,9 +19,9 @@
                             <div class="card-body">
                                 <div class="form-group row">
                                     <div class="col-md-12">
-                                        <label for="name">Exam Name<span style="color: red">*</span></label>
+                                        <label for="name">Name<span style="color: red">*</span></label>
                                         <input name="name" type="text" class="form-control" id="name"
-                                                placeholder="Enter Exam Name" value="{{ old('name') ? old('name') : $data['dataExam']->name_exam }}" autocomplete="off" required>
+                                                placeholder="Enter Assessment Name" value="{{ old('name') ? old('name') : $data['dataExam']->name_exam }}" autocomplete="off" required>
                                         @if($errors->has('name'))
                                                 <p style="color: red">{{ $errors->first('name') }}</p>
                                         @endif
@@ -32,7 +32,7 @@
                                     <div class="col-md-12">
                                         <label for="type_exam">Type<span style="color: red">*</span></label>
                                         <select required name="type_exam" class="form-control" id="type_exam">
-                                                <option selected disabled>--- SELECT TYPE EXAM ---</option>
+                                                <option selected disabled>--- SELECT TYPE ASSESSMENT ---</option>
                                                 @foreach($data['typeExam'] as $el)
                                                 <option value="{{ $el->id }}" {{ $el->id == $data['dataExam']->type_exam_id ? 'selected' : '' }}>{{ $el->name }}</option>
                                                 @endforeach
@@ -95,7 +95,7 @@
 
                                 <div class="form-group row">
                                     <div class="col-md-12">
-                                        <label for="date_exam">Date Exam<span style="color: red">*</span></label>
+                                        <label for="date_exam">Date<span style="color: red">*</span></label>
                                         <input name="date_exam" type="date" class="form-control" id="date_exam" value="{{ $data['dataExam']->date_exam }}" required>
                                         
                                         @if($errors->has('date_exam'))
