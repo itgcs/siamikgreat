@@ -35,6 +35,7 @@ use App\Models\Student_eca;
 use App\Models\Chinese_higher;
 use App\Models\Chinese_lower;
 use App\Models\Master_academic;
+use App\Models\Type_exam;
 
 use Barryvdh\DomPDF\PDF;
 use Dompdf\Dompdf;
@@ -378,15 +379,15 @@ class ReportController extends Controller
                                 'score' => $score->score,
                             ];
                         })->all(),
-                        'avg_homework' => $homeworkScores->avg(),
-                        'avg_exercise' => $exerciseScores->avg(),
-                        'avg_participation' => $participationScore->avg(),
-                        'avg_fe' => $finalExamScores->avg(),
+                        'avg_homework' => round($homeworkScores->avg()),
+                        'avg_exercise' => round($exerciseScores->avg()),
+                        'avg_participation' => round($participationScore->avg()),
+                        'avg_fe' => round($finalExamScores->avg()),
                         
-                        'percent_homework' => $homeworkScores->avg() * 0.2,
-                        'percent_exercise' => $exerciseScores->avg() * 0.35,
-                        'percent_participation' => $participationScore->avg() * 0.1,
-                        'percent_fe' => $finalExamScores->avg() * 0.35,
+                        'percent_homework' => round($homeworkScores->avg() * 0.2),
+                        'percent_exercise' => round($exerciseScores->avg() * 0.35),
+                        'percent_participation' => round($participationScore->avg() * 0.1),
+                        'percent_fe' => round($finalExamScores->avg() * 0.35),
                         
                         'total_score' => (($homeworkScores->avg() * 0.2) + ($exerciseScores->avg() * 0.35) + ($participationScore->avg() * 0.10)) + ($finalExamScores->avg() * 0.35),
 
@@ -1223,10 +1224,9 @@ class ReportController extends Controller
                 'child' => 'scores',
             ]);
 
-
             $getIdParent = Relationship::where('user_id', '=', session('id_user'))->value('id');
 
-            $id = Student_relationship::where('relationship_id', $getIdParent)->value('student_id');
+            $id = session('studentId');
   
             $data = Exam::join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
                 ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
@@ -1248,9 +1248,10 @@ class ReportController extends Controller
                  'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
                  'students.id as student_id', 'students.name as student_name',
                  'scores.score as score')
-                ->get();
+                ->paginate(15);
 
-                return view('components.teacher.detail-report')->with('data', $data);
+
+            return view('components.teacher.detail-report')->with('data', $data);
             
         } catch (Exception $err) {
            return dd($err);
@@ -1289,45 +1290,14 @@ class ReportController extends Controller
             $majorSubject = Major_subject::select('subject_id')->get();
             $isMajorSubject = $majorSubject->pluck('subject_id')->contains($subjectId);
 
-            $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId) {
-                $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                    $subQuery->where('subject_id', $subjectId);
-                });
-            }])
-            ->where('grades.id', $gradeId)
-            ->withCount([
-                'exam as total_homework' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 1);
-                },
-                'exam as total_exercise' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 2);
-                },
-                'exam as total_quiz' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 3);
-                },
-                'exam as total_final_exam' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 4);
-                },
-                'exam as total_participation' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 5);
-                },
-            ])
-            ->first();
+            $homework = Type_exam::where('name', '=', 'homework')->value('id');
+            $exercise = Type_exam::where('name', '=', 'exercise')->value('id');
+            $participation = Type_exam::where('name', '=', 'participation')->value('id');
+            $quiz = Type_exam::where('name', '=', 'quiz')->value('id');
+            $finalExam = Type_exam::where('name', '=', 'final exam')->value('id'); 
+            $finalAssessment = Type_exam::whereIn('name', ['project', 'practical', 'final exam'])
+                ->pluck('id')
+                ->toArray();
 
             $semester = session('semester');
 
@@ -1483,7 +1453,6 @@ class ReportController extends Controller
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
-
             else{
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
@@ -1512,6 +1481,45 @@ class ReportController extends Controller
             // dd($results);
 
             if ($isMajorSubject) {
+                $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalExam) {
+                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                        $subQuery->where('subject_id', $subjectId);
+                    });
+                }])
+                ->where('grades.id', $gradeId)
+                ->withCount([
+                    'exam as total_homework' => function ($query) use ($subjectId, $homework) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $homework);
+                    },
+                    'exam as total_exercise' => function ($query) use ($subjectId, $exercise) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $exercise);
+                    },
+                    'exam as total_quiz' => function ($query) use ($subjectId, $quiz) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $quiz);
+                    },
+                    'exam as total_final_exam' => function ($query) use ($subjectId, $finalExam) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $finalExam);
+                    },
+                    'exam as total_participation' => function ($query) use ($subjectId, $participation) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $participation);
+                    },
+                ])
+                ->first();
             
                 $type = "major_subject_assessment";
 
@@ -1523,13 +1531,18 @@ class ReportController extends Controller
                     ->keyBy('student_id');
 
                 $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use($comments) {
+                    $homework = Type_exam::where('name', '=', 'homework')->value('id');
+                    $exercise = Type_exam::where('name', '=', 'exercise')->value('id');
+                    $participation = Type_exam::where('name', '=', 'participation')->value('id');
+                    $quiz = Type_exam::where('name', '=', 'quiz')->value('id');
+                    $finalExam = Type_exam::where('name', '=', 'final exam')->value('id');
 
                     $student            = $scores->first();
-                    $homeworkScores     = $scores->where('type_exam', 1)->pluck('score');
-                    $exerciseScores     = $scores->where('type_exam', 2)->pluck('score');
-                    $participationScore = $scores->where('type_exam', 5)->pluck('score');
-                    $quizScores         = $scores->where('type_exam', 3)->pluck('score');
-                    $finalExamScores    = $scores->where('type_exam', 4)->pluck('score');
+                    $homeworkScores     = $scores->where('type_exam', $homework)->pluck('score');
+                    $exerciseScores     = $scores->where('type_exam', $exercise)->pluck('score');
+                    $participationScore = $scores->where('type_exam', $participation)->pluck('score');
+                    $quizScores         = $scores->where('type_exam', $quiz)->pluck('score');
+                    $finalExamScores    = $scores->where('type_exam', $finalExam)->pluck('score');
                     
                     return [
                         'student_id' => $student->student_id,
@@ -1559,6 +1572,45 @@ class ReportController extends Controller
                     ];
                 })->values()->all();
             } else {
+                $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment) {
+                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                        $subQuery->where('subject_id', $subjectId);
+                    });
+                }])
+                ->where('grades.id', $gradeId)
+                ->withCount([
+                    'exam as total_homework' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $homework);
+                    },
+                    'exam as total_exercise' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $exercise);
+                    },
+                    'exam as total_quiz' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $quiz);
+                    },
+                    'exam as total_final_exam' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->whereIn('type_exam', $finalAssessment);
+                    },
+                    'exam as total_participation' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment) {
+                        $query->whereHas('subject', function ($subQuery) use ($subjectId) {
+                            $subQuery->where('subject_id', $subjectId);
+                        })
+                        ->where('type_exam', $participation);
+                    },
+                ])
+                ->first();
 
                 $type = "minor_subject_assessment";
 
@@ -1569,20 +1621,31 @@ class ReportController extends Controller
                     ->get()
                     ->keyBy('student_id');
 
+                    // dd($finalAssessment);
+
                 $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use($comments) {
                     
-                    $student            = $scores->first();
-                    $homeworkScores     = $scores->where('type_exam', 1)->pluck('score');
-                    $exerciseScores     = $scores->where('type_exam', 2)->pluck('score');
-                    $participationScore = $scores->where('type_exam', 5)->pluck('score');
-                    $quizScores         = $scores->where('type_exam', 3)->pluck('score');
-                    $finalExamScores    = $scores->where('type_exam', 4)->pluck('score');
+                    $homework = Type_exam::where('name', '=', 'homework')->value('id');
+                    $exercise = Type_exam::where('name', '=', 'exercise')->value('id');
+                    $participation = Type_exam::where('name', '=', 'participation')->value('id');
+                    $quiz = Type_exam::where('name', '=', 'quiz')->value('id'); 
+                    $finalAssessment = Type_exam::whereIn('name', ['project', 'practical', 'final exam'])
+                        ->pluck('id')
+                        ->toArray();
 
-                    $homeworkAvg       = $homeworkScores->avg() ?: 0;
-                    $exerciseAvg       = $exerciseScores->avg() ?: 0;
-                    $participationAvg  = $participationScore->avg() ?: 0;
-                    $quizAvg          = $quizScores->avg() ?: 0;
-                    $finalExamAvg     = $finalExamScores->avg() ?: 0;
+                    $student            = $scores->first();
+                    $homeworkScores     = $scores->where('type_exam', $homework)->pluck('score');
+                    $exerciseScores     = $scores->where('type_exam', $exercise)->pluck('score');
+                    $participationScore = $scores->where('type_exam', $participation)->pluck('score');
+                    $quizScores         = $scores->where('type_exam', $quiz)->pluck('score');
+                    $finalExamScores    = $scores->whereIn('type_exam', $finalAssessment)->pluck('score');
+
+                    $homeworkAvg       = round($homeworkScores->avg()) ?: 0;
+                    $exerciseAvg       = round($exerciseScores->avg()) ?: 0;
+                    $participationAvg  = round($participationScore->avg()) ?: 0;
+                    $quizAvg          = round($quizScores->avg()) ?: 0;
+                    $finalExamAvg     = round($finalExamScores->avg()) ?: 0;
+
 
                     $final_score = round(($homeworkAvg * 0.2) + ($exerciseAvg * 0.35) + ($participationAvg * 0.10) + ($finalExamAvg * 0.35));
     
@@ -1598,17 +1661,17 @@ class ReportController extends Controller
                                 'score' => $score->score,
                             ];
                         })->all(),
-                        'avg_homework' => $homeworkScores->avg(),
-                        'avg_exercise' => $exerciseScores->avg(),
-                        'avg_participation' => $participationScore->avg(),
-                        'avg_fe' => $finalExamScores->avg(),
+                        'avg_homework' => round($homeworkScores->avg()),
+                        'avg_exercise' => round($exerciseScores->avg()),
+                        'avg_participation' => round($participationScore->avg()),
+                        'avg_fe' => round($finalExamScores->avg()),
                         
                         'percent_homework' => $homeworkScores->avg() * 0.2,
                         'percent_exercise' => $exerciseScores->avg() * 0.35,
                         'percent_participation' => $participationScore->avg() * 0.1,
                         'percent_fe' => $finalExamScores->avg() * 0.35,
                         
-                        'total_score' => (($homeworkScores->avg() * 0.2) + ($exerciseScores->avg() * 0.35) + ($participationScore->avg() * 0.10)) + ($finalExamScores->avg() * 0.35),
+                        'total_score' => round(($homeworkScores->avg() * 0.2) + ($exerciseScores->avg() * 0.35) + ($participationScore->avg() * 0.10)) + round($finalExamScores->avg() * 0.35),
 
                         'grades' => $grade,
                         'comment' => $comments->get($student->student_id)?->comment ?? '',
@@ -1623,6 +1686,14 @@ class ReportController extends Controller
                 ->where('teacher_id', $subjectTeacher->teacher_id)
                 ->first();
 
+            $homework = Type_exam::where('name', '=', 'homework')->value('id');
+            $exercise = Type_exam::where('name', '=', 'exercise')->value('id');
+            $participation = Type_exam::where('name', '=', 'participation')->value('id');
+            $quiz = Type_exam::where('name', '=', 'quiz')->value('id');
+            $project = Type_exam::where('name', 'project', )->value('id');
+            $practical = Type_exam::where('name', 'practical', )->value('id');
+            $final_exam = Type_exam::where('name', 'final exam', )->value('id');
+
             $data = [
                 'subjectTeacher' => $subjectTeacher,
                 'classTeacher' => $classTeacher,
@@ -1631,6 +1702,13 @@ class ReportController extends Controller
                 'students' => $scoresByStudent,
                 'semester' => $semester,
                 'status' => $status,
+                'homework' => $homework,
+                'exercise' => $exercise,
+                'participation' => $participation,
+                'quiz' => $quiz,
+                'project' => $project,
+                'practical' => $practical,
+                'finalExam' => $final_exam,
             ];
 
             // dd($data); 
@@ -1674,44 +1752,40 @@ class ReportController extends Controller
                 ->select('subjects.name_subject as subject_name', 'subjects.id as subject_id')
                 ->first();
 
-            // check apakah major subject
+            $tasks = Type_exam::whereIn('name', ['homework', 'small project', 'presentation'])
+                ->pluck('id')
+                ->toArray();
+            $mid = Type_exam::whereIn('name', ['quiz', 'practical', 'exam', 'project'])
+                ->pluck('id')
+                ->toArray();
+            $finalExam = Type_exam::whereIn('name', ['written tes', 'big project'])
+                ->pluck('id')
+                ->toArray();
 
-            $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId) {
+            $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId, $mid, $tasks, $finalExam) {
                 $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                     $subQuery->where('subject_id', $subjectId);
                 });
             }])
             ->where('grades.id', $gradeId)
             ->withCount([
-                'exam as total_homework' => function ($query) use ($subjectId) {
+                'exam as total_tasks' => function ($query) use ($subjectId, $tasks) {
                     $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                         $subQuery->where('subject_id', $subjectId);
                     })
-                    ->where('type_exam', 1);
+                    ->whereIn('type_exam', $tasks);
                 },
-                'exam as total_exercise' => function ($query) use ($subjectId) {
+                'exam as total_mid' => function ($query) use ($subjectId, $mid) {
                     $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                         $subQuery->where('subject_id', $subjectId);
                     })
-                    ->where('type_exam', 2);
+                    ->whereIn('type_exam', $mid);
                 },
-                'exam as total_quiz' => function ($query) use ($subjectId) {
+                'exam as total_final_exam' => function ($query) use ($subjectId, $finalExam) {
                     $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                         $subQuery->where('subject_id', $subjectId);
                     })
-                    ->where('type_exam', 3);
-                },
-                'exam as total_final_exam' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 4);
-                },
-                'exam as total_participation' => function ($query) use ($subjectId) {
-                    $query->whereHas('subject', function ($subQuery) use ($subjectId) {
-                        $subQuery->where('subject_id', $subjectId);
-                    })
-                    ->where('type_exam', 5);
+                    ->whereIn('type_exam', $finalExam);
                 },
             ])
             ->first();
@@ -1957,41 +2031,37 @@ class ReportController extends Controller
                 ->get()
                 ->keyBy('student_id');
 
-                $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use($comments) {
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use($comments, $tasks, $mid, $finalExam) {
 
-                    $student            = $scores->first();
-                    $homeworkScores     = $scores->where('type_exam', 1)->pluck('score');
-                    $exerciseScores     = $scores->where('type_exam', 2)->pluck('score');
-                    $participationScore = $scores->where('type_exam', 5)->pluck('score');
-                    $quizScores         = $scores->where('type_exam', 3)->pluck('score');
-                    $finalExamScores    = $scores->where('type_exam', 4)->pluck('score');
+                $student            = $scores->first();
+                $tasks              = $scores->whereIn('type_exam', $tasks)->pluck('score');
+                $mid                = $scores->whereIn('type_exam', $mid)->pluck('score');
+                $finalExamScores    = $scores->whereIn('type_exam', $finalExam)->pluck('score');
 
-                    // dd($quizScores);
+                // dd($quizScores);
+                
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->student_name,
+                    'scores' => $scores->map(function ($score) {
+                        return [
+                            'exam_id' => $score->exam_id,
+                            'type_exam' => $score->type_exam,
+                            'score' => $score->score,
+                        ];
+                    })->all(),
+                    'avg_tasks' => round($tasks->avg()),
+                    'avg_mid'   => round($mid->avg()),
+                    'avg_fe'    => round($finalExamScores->avg()),
+
+                    'percent_tasks' => round($tasks->avg() * 0.25),
+                    'percent_mid'  => round($mid->avg() * 0.35),
+                    'percent_fe'    => round($finalExamScores->avg() * 0.4),
+                    'total_score'   => (round(($tasks->avg() * 0.25)) +  round(($mid->avg() * 0.35)) + round(($finalExamScores->avg() * 0.4))),
                     
-                    return [
-                        'student_id' => $student->student_id,
-                        'student_name' => $student->student_name,
-                        'scores' => $scores->map(function ($score) {
-                            return [
-                                'exam_id' => $score->exam_id,
-                                'type_exam' => $score->type_exam,
-                                'score' => $score->score,
-                            ];
-                        })->all(),
-                        'avg_homework'      => round($homeworkScores->avg()),
-                        'avg_exercise'      => round($exerciseScores->avg()),
-                        'avg_participation' => round($participationScore->avg()),
-                        'avg_quiz'          => round($quizScores->avg()),
-                        'avg_fe'            => round($finalExamScores->avg()),
-
-                        'percent_homework' => round($homeworkScores->avg() * 0.25),
-                        'percent_quiz'  => round($quizScores->avg() * 0.35),
-                        'percent_fe'    => round($finalExamScores->avg() * 0.4),
-                        'total_score'   => (round(($homeworkScores->avg() * 0.25)) +  round(($quizScores->avg() * 0.35)) + round(($finalExamScores->avg() * 0.4))),
-                        
-                        'comment' => $comments->get($student->student_id)?->comment ?? '',
-                    ];
-                })->values()->all();
+                    'comment' => $comments->get($student->student_id)?->comment ?? '',
+                ];
+            })->values()->all();
 
             // dd($scoresByStudent);
             $status = Scoring_status::where('grade_id', $gradeId)
@@ -1999,8 +2069,6 @@ class ReportController extends Controller
                 ->where('teacher_id', $subjectTeacher->teacher_id)
                 ->where('subject_id', $subject->subject_id)
                 ->first();
-            
-
             
             $data = [
                 'subjectTeacher' => $subjectTeacher,
@@ -2010,6 +2078,9 @@ class ReportController extends Controller
                 'students' => $scoresByStudent,
                 'semester' => $semester,
                 'status' => $status,
+                'tasks' => $tasks,
+                'mid'   => $mid,
+                'finalExam' => $finalExam,
             ];
 
             // dd($data);   
@@ -2840,9 +2911,6 @@ class ReportController extends Controller
             dd($err);
         }
     }
-
-
-
 
     private function determineGrade($finalScore)
     {

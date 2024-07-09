@@ -2,10 +2,10 @@
 @section('content')
 @php
 $currentDate = now(); // Tanggal saat ini
-$dateExam = $data->date_exam; // Tanggal exam dari data
+$dateAssessment = $data->date_exam; // Tanggal exam dari data
 
 // Hitung selisih antara tanggal exam dengan tanggal saat ini
-$diff = strtotime($dateExam) - strtotime($currentDate);
+$diff = strtotime($dateAssessment) - strtotime($currentDate);
 $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
 @endphp
 
@@ -16,8 +16,8 @@ $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
             <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item">Home</li>
-                <li class="breadcrumb-item"><a href="{{url('/'.session('role').'/dashboard/exam/' . session('id_user')) }}">Exams</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Detail Exam</li>
+                <li class="breadcrumb-item"><a href="{{ url('/' . session('role') . '/dashboard/exam') }}">Assessment</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Detail Assessment</li>
               </ol>
             </nav>
           </div>
@@ -28,79 +28,82 @@ $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
             <div class="card mb-4">
               <div class="card-body">
                 <div class="row">
-                  <div class="col-sm-4">
-                    <p class="mb-0">Name Exam</p>
+                  <div class="col-sm-2">
+                    <p class="mb-0">Name Assessment</p>
                   </div>
-                  <div class="col-sm-8">
-                    <p class="text-muted mb-0">{{$data->name_exam}}</p>
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-4">
-                    <p class="mb-0">Type Exam</p>
-                  </div>
-                  <div class="col-sm-8">
-                    <p class="text-muted mb-0">{{$data->type_exam}}</p>
+                  <div class="col-sm-10">
+                    <p class="text-muted mb-0">: {{$data->name_exam}}</p>
                   </div>
                 </div>
                 <hr>
                 <div class="row">
-                  <div class="col-sm-4">
-                    <p class="mb-0">Date Exam</p>
+                  <div class="col-sm-2">
+                    <p class="mb-0">Type Assessment</p>
                   </div>
-                  <div class="col-sm-8">
-                    <p class="text-muted mb-0">{{$data->date_exam}}</p>
-                    <small class="text-muted mb-0">Days until exam:  <span class="badge badge-danger">{{$days}} days</span></small>
+                  <div class="col-sm-10">
+                    <p class="text-muted mb-0">: {{$data->type_exam}}</p>
                   </div>
                 </div>
                 <hr>
                 <div class="row">
-                  <div class="col-sm-4">
+                  <div class="col-sm-2">
+                    <p class="mb-0">Date Assessment</p>
+                  </div>
+                  <div class="col-sm-10">
+                    <p class="text-muted mb-0">; {{$data->date_exam}}</p>
+                      @if ($data->is_active)
+                        <small class="text-muted mb-0">Days until exam:  <span class="badge badge-danger">{{$days}} days</span></small>
+                      @else
+                      @endif
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-2">
                     <p class="mb-0">Grade</p>
                   </div>
-                  <div class="col-sm-8">
-                    <p class="text-muted mb-0">{{$data->grade_name}} - {{$data->grade_class}}</p>
+                  <div class="col-sm-10">
+                    <p class="text-muted mb-0">: {{$data->grade_name}} - {{$data->grade_class}}</p>
                   </div>
                 </div>
                 <hr>
                 <div class="row">
-                  <div class="col-sm-4">
+                  <div class="col-sm-2">
                     <p class="mb-0">Subject</p>
                   </div>
-                  <div class="col-sm-8">
-                    <p class="text-muted mb-0">{{$data->subject_name}}</p>
+                  <div class="col-sm-10">
+                    <p class="text-muted mb-0">: {{$data->subject_name}}</p>
                   </div>
                 </div>
                 <hr>
                 <div class="row">
-                  <div class="col-sm-4">
+                  <div class="col-sm-2">
                     <p class="mb-0">Teacher</p>
                   </div>
-                  <div class="col-sm-8">
-                    <p class="text-muted mb-0">{{$data->teacher_name}}</p>
+                  <div class="col-sm-10">
+                    <p class="text-muted mb-0">: {{$data->teacher_name}}</p>
                   </div>
                 </div>
                 <hr>
                 <div class="row">
-                  <div class="col-sm-4">
+                  <div class="col-sm-2">
                     <p class="mb-0">Materi</p>
                   </div>
-                  <div class="col-sm-8">
-                    <p class="text-muted mb-0">{{$data->materi}}</p>
+                  <div class="col-sm-10">
+                    <p class="text-muted mb-0">: {{$data->materi}}</p>
                   </div>
                 </div>
                 <hr>
                 <div class="row">
-                  <div class="col-sm-4">
+                  <div class="col-sm-2">
                     <p class="mb-0">Status</p>
                   </div>
-                  <div class="col-sm-8">
+                  <div class="col-sm-10">
                      <p class="text-muted mb-0">
                         @if($data->is_active)
-                           <h1 class="badge badge-success">Active</h1>
+                          : <span class="badge badge-success">Active</span>
                         @else
-                           <h1 class="badge badge-danger">Inactive</h1>
+                          : <span class="badge badge-danger">Inactive</span>
                         @endif
                      </p>
                   </div>

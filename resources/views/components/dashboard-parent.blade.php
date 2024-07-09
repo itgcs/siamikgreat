@@ -1,49 +1,69 @@
 @extends('layouts.admin.master')
 @section('content')
-   <!-- Content Header (Page header) -->
-   <!-- /.content-header -->
+  <!-- Content Header (Page header) -->
+  <!-- /.content-header -->
 
-   <!-- Main content -->
-   <section class="content">
-     <div class="container-fluid">
-       <!-- Small boxes (Stat box) -->
-       <div class="row">
-         <!-- STUDENT ACTIVE -->
-         <div class="col-lg-3 col-6">
-           <!-- small box -->
-           <div class="small-box bg-info">
-             <div class="inner">
-               <h3>{{$data['totalStudent']}}</h3>
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <!-- Small boxes (Stat box) -->
+       
+      <div class="form-group row">
+          <div class="col-md-12">
+            <select required name="studentId" class="form-control" id="studentId" onchange="saveStudentId()">
+                <option value="">-- Your Relation -- </option>
+                @foreach ($data['totalRelation'] as $dtr)
+                  <option value="{{ $dtr->student_id }}" {{ session('studentId') == $dtr->student_id ? "selected" : "" }}> {{ $dtr->student_name }} ({{ $dtr->grade_name }} - {{ $dtr->grade_class }})</option>
+                @endforeach
+            </select>
+          </div>
+      </div>
 
-               <p>Total Students Active</p>
-             </div>
-             <div class="icon">
-               {{-- <i class="ion ion-bag"></i> --}}
-               <i class="fa-solid fa-graduation-cap"></i>
-             </div>
-             <a href="/teacher/students" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-             <div class="small-box-footer" style="padding: 0.93rem"></div>
+      <div class="row">
+        <!-- STUDENT ACTIVE -->
+        <div class="col-lg-12 col-12">
+            <!-- small box -->
+            <div class="small-box bg-info">
+
+              <div class="inner">
+                <h4>Detail Relationship</h4>
+                <div>
+                  <table>
+                    <tr>
+                      <td>Student Name </td>
+                      <td> : {{ $data['detailStudent']->student_name }}</td>
+                    </tr>
+                    <tr>
+                      <td>Grade </td>
+                      <td> : {{ $data['detailStudent']->grade_name }} - {{ $data['detailStudent']->grade_class }}</td>
+                    </tr>
+                    @foreach($data['eca'] as $de)
+                    <tr>
+                      <td>Ekstra Culicular {{ $loop->index+1 }}</td>
+                      <td> : {{ $de->eca_name }}</td>
+                    </tr>
+                    @endforeach
+                  </table>
+                </div>
+              </div>
             </div>
-         </div>
-         <!-- ./col -->
-
+        </div>
+        <!-- ./col -->
+       </div>
+       
+      <div class="row">
          <!-- GRADE ACTIVE -->
-         <div class="col-lg-3 col-6">
+        <div class="col-lg-3 col-6">
            <!-- small box -->
            <div class="small-box bg-success">
              <div class="inner">
-               <h3>Total Attendance
-                {{-- <sup style="font-size: 20px">%</sup> --}}
-              </h3>
-
+               <h3>{{ $data['totalAbsent'] }}</h3>
                <p>Total Absent Student</p>
              </div>
              <div class="icon">
-               {{-- <i class="ion ion-stats-bars"></i> --}}
                <i class="fa-solid fa-chalkboard-user"></i>
              </div>
               <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-              <div class="small-box-footer" style="padding: 0.93rem"></div>
            </div>
          </div>
          <!-- ./col -->
@@ -64,7 +84,6 @@
                 <i class="fa-solid fa-receipt"></i>
               </div>
               <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-              <div class="small-box-footer" style="padding:0.93rem;"></div>
            </div>
          </div>
          <!-- ./col -->
@@ -76,15 +95,13 @@
              <div class="inner">
                <h3>{{ $data['totalExam']}}</h3>
 
-               <p>Total Exams Active</p>
+               <p>Total Exam</p>
              </div>
              <div class="icon">
-               {{-- <i class="ion ion-pie-graph"></i> --}}
-               <i class="fa-solid fa-calendar-xmark"></i>
+               <i class="fa-solid fa-pencil"></i>
              </div>
              
-             <a href="/parent/dashboard/exam/{{ session('id_user') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-             <div class="small-box-footer" style="padding:0.93rem;"></div>
+             <a href="/parent/dashboard/exam" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
              
            </div>
          </div>
@@ -102,23 +119,22 @@
             <div class="card-header">
               <h3 class="card-title">
                 <i class="fa-solid fa-calendar-xmark mr-1"></i>
-                  List Exams
+                  List Exam
               </h3>
+              <!-- card tools -->
+              <div class="card-tools">
+                <button type="button" class="btn btn-danger btn-sm" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+              <!-- /.card-tools -->
             </div><!-- /.card-header -->
             <div class="card-body">
               <div class="tab-content p-0">
                 <!-- Morris chart - Sales -->
                 <div class="chart tab-pane active" id="revenue-chart"
                      style="position: relative; height: full;">
-
-                     @if(sizeof($data['dataStudent']->exam) == 0)
-                      <div class="d-flex justify-content-center">
-                        <h2>This grade don't have any exam!!!</h2>
-                      </div>
-                     @else
-    
-                      {{-- <canvas id="sales-chart-canvas" height="300" style="height: 300px;"></canvas> --}}
-                      <div>
+                     <div>
                        <!-- /.card-header -->
                        <div>
                          <ul class="todo-list bg-danger" data-widget="todo-list">
@@ -127,7 +143,8 @@
                            $currentDate = date('y-m-d');
                           @endphp 
     
-                           @foreach ($data['exam'] as $el)
+                          @if (count($data['exam']) !== 0)
+                            @foreach ($data['exam'] as $el)
                             <li>
                               <!-- drag handle -->
                               <span class="handle">
@@ -140,87 +157,23 @@
                               </div>
                               <!-- todo text -->
                               <span class="text text-sm">( {{$el->type_exam_name}} ) ({{ $el->subject }}) {{$el->name_exam}} </span>
+                              
                               <div class="tools">
-                                  <a href="/parent/dashboard/exam/detail/{{$el->id}}">
-                                      <i class="fas fa-search"></i>
-                                  </a>
+                                <a class="btn" id="view" data-id="{{ $el->id }}">
+                                    <i class="fas fa-search"></i>
+                                </a>
                               </div>
                             </li>
-
-                           
-                           @endforeach
-                         </ul>
+                            @endforeach
+                          @else
+                            <li>No active assessments</li>
+                          @endif
+                          </ul>
                        </div>
                      </div>
-    
-                     @endif
-                 
-
                  </div>
               </div>
             </div><!-- /.card-body -->
-          </div>
-          <!-- /.card -->
-
-          <!-- Map card -->
-          <div class=" card bg-info">
-            <div class="card-header border-0">
-              <h3 class="card-title">
-                <i class="fa-solid fa-graduation-cap mr-1"></i>
-                Student's
-              </h3>
-              <!-- card tools -->
-              <div class="card-tools">
-                <button type="button" class="btn btn-info btn-sm" data-card-widget="collapse" title="Collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
-              </div>
-              <!-- /.card-tools -->
-            </div>
-            <div class="card-body">
-             <table class="table table-borderless">
-               <thead>
-                 <tr>
-                   <th scope="col">#</th>
-                   <th scope="col">Name</th>
-                   <th scope="col">Gender</th>
-                   <th scope="col">Grade</th>
-                 </tr>
-               </thead>
-               <tbody>
-
-               @foreach($data['dataStudent']->student as $el)
-                 <tr>
-                   <td scope="row">{{$loop->index+1}}</td>
-                   <td>{{ $el->name }}</td>
-                   <td>{{ $el->gender }}</td>
-                   <td>{{$data['dataStudent']->name}} - {{$data['dataStudent']->class}}</td>
-                 </tr>
-               @endforeach  
-                 
-               </tbody>
-             </table>
-            </div>
-            <div class="card-footer bg-transparent">
-              <div class="d-none row">
-                <div class="col-4 text-center">
-                  <div id="sparkline-1"></div>
-                  <div class="text-white">Visitors</div>
-                </div>
-                <!-- ./col -->
-                <div class="col-4 text-center">
-                  <div id="sparkline-2"></div>
-                  <div class="text-white">Online</div>
-                </div>
-                <!-- ./col -->
-                <div class="col-4 text-center">
-                  <div id="sparkline-3"></div>
-                  <div class="text-white">Sales</div>
-                </div>
-                <!-- ./col -->
-              </div>
-              <!-- /.row -->
-            </div>
           </div>
           <!-- /.card -->
        
@@ -236,8 +189,16 @@
                 <i class="fa-solid fa-receipt mr-1"></i>
                 Subject's
               </h3>
+              <!-- card tools -->
+              <div class="card-tools">
+                <button type="button" class="btn btn-warning btn-sm" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+              <!-- /.card-tools -->
             </div>
             <!-- /.card-header -->
+            
             <div class="card-body">
              <table class="table table-borderless">      
               @if(sizeof($data['dataStudent']->subject) != 0)
@@ -262,62 +223,6 @@
              </table>
             </div>
           </div>
-
-          <!-- Grade List -->
-          <div class=" card bg-success">
-            <div class="card-header border-0">
-              <h3 class="card-title">
-                <i class="fa-solid fa-chalkboard-user mr-1"></i>
-                Grade's
-              </h3>
-              <!-- card tools -->
-              <div class="card-tools">
-                <button type="button" class="btn btn-success btn-sm" data-card-widget="collapse" title="Collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
-              </div>
-              <!-- /.card-tools -->
-            </div>
-            <div class="card-body">
-             <table class="table table-borderless">
-               <thead>
-                 <tr>
-                   <th scope="col">#</th>
-                   <th scope="col">Name</th>
-                   <th scope="col">Class</th>
-                 </tr>
-               </thead>
-               <tbody>
-                 <tr>
-                   <td scope="row">{{1}}</td>
-                   <td>{{$data['dataStudent']->name}}</td>
-                   <td>{{$data['dataStudent']->class}}</td>
-                 </tr>
-               </tbody>
-             </table>
-            </div>
-            <div class="card-footer">
-              <div class="d-none row">
-                <div class="col-4 text-center">
-                  <div id="sparkline-1"></div>
-                  <div class="text-white">Visitors</div>
-                </div>
-                <!-- ./col -->
-                <div class="col-4 text-center">
-                  <div id="sparkline-2"></div>
-                  <div class="text-white">Online</div>
-                </div>
-                <!-- ./col -->
-                <div class="col-4 text-center">
-                  <div id="sparkline-3"></div>
-                  <div class="text-white">Sales</div>
-                </div>
-                <!-- ./col -->
-              </div>
-              <!-- /.row -->
-            </div>
-          </div>
-          <!-- /.card -->
          </section>
          <!-- right col -->
        </div>
@@ -325,4 +230,28 @@
      </div><!-- /.container-fluid -->
    </section>
  <!-- /.content-wrapper -->
+
+<script>
+  function saveStudentId() {
+    var studentIdSelect = document.getElementById('studentId');
+    var selectedStudentId = studentIdSelect.value;
+    
+    // Simpan nilai semester ke dalam session
+    $.ajax({
+        url: '{{ route('save.student.session') }}',
+        type: 'POST',
+        data: {
+          studentId: selectedStudentId,
+          _token: '{{ csrf_token() }}'
+        },
+        success: function(response) {
+          console.log('Student ID saved to session:', response.studentId);
+          window.location.href = '/parent/dashboard/';
+        },
+        error: function(xhr, status, error) {
+          console.error('Error saving semester to session:', error);
+        }
+    });
+  }
+</script>
 @endsection

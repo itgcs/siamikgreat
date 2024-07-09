@@ -507,17 +507,16 @@
           <a href="/{{ session('role') }}/exams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database exams' ? 'active' : '') : ''}}">
             <i class="nav-icon fa-solid fa-pencil"></i>
             <p>
-              Exams
+              Exam
             </p>
           </a>
-
         </li>
       @elseif (session('role') == 'teacher')  
         <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'exams' ? 'menu-open' : '') : ''}}">
           <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'exams' ? 'active' : '') : ''}}">
             <i class="nav-icon fa-solid fa-pencil"></i>
             <p>
-              Exams
+              Exam
               <i class="right fas fa-angle-left"></i>
             </p>
           </a>
@@ -531,11 +530,11 @@
           </ul>
         </li>
       @elseif (session('role') == 'student' || session('role') == 'parent')  
-        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'exams' ? 'menu-open' : '') : ''}}">
-          <a href="/{{ session('role') }}/dashboard/exam" class="nav-link {{ session('page') && session('page')->child ? (session('page')->child == session('role') . ' exams' ? 'active' : '') : '' }}">
+        <li class="nav-item">
+          <a href="/{{ session('role') }}/dashboard/exam" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'exams' ? 'active' : '') : ''}}">
             <i class="nav-icon fa-solid fa-pencil"></i>
             <p>
-              Exams
+              Exam
             </p>
           </a>
         </li>
@@ -544,11 +543,11 @@
 
       <!-- SCORE IN PARENT -->
       @if (session('role') == 'parent')  
-        <li class="nav-item ">
-          <a href="/{{ session('role') }}/dashboard/score" class="nav-link {{ session('page') && session('page')->child ? (session('page')->child == session('role') . ' scores' ? 'active' : '') : '' }}">
-            <i class="nav-icon fa-solid fa-file"></i>
+      <li class="nav-item">
+          <a href="/{{ session('role') }}/dashboard/score" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'scores' ? 'active' : '') : ''}}">
+            <i class="nav-icon fa-solid fa-book"></i>
             <p>
-              Score
+              Report Score
             </p>
           </a>
         </li>

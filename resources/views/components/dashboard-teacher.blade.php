@@ -76,7 +76,7 @@
              <div class="inner">
                <h3>{{ $data['totalExam']}}</h3>
 
-               <p>Total Exams Active</p>
+               <p>Total Exams</p>
              </div>
              <div class="icon">
                {{-- <i class="ion ion-pie-graph"></i> --}}
@@ -140,6 +140,20 @@
                              </div>
                              <!-- todo text -->
                              <span class="text text-sm">( {{$el->type_exam_name}} ) {{$el->name_exam}} ({{ $el->subject }}) ({{ $el->grade_name .'-'. $el->grade_class }})</span>
+
+                             <span>
+                                @if ($el->date_exam == now())
+                                  $currentDate = now(); // Tanggal saat ini
+                                  $dateExam = $el->date_exam; // Tanggal exam dari data
+                                  $diff = strtotime($dateExam) - strtotime($currentDate);
+                                  $days = floor($diff / (60 * 60 * 24));
+                                  
+                                  <span class="badge badge-warning">{{$days}} days again</span>
+                                @else
+                                 <span class="badge badge-success">Done</span>
+                                @endif
+                              </span>
+
                              <!-- Emphasis label -->
                              <div class="tools">
                                <a href="/teacher/dashboard/exam/detail/{{$el->id}}">

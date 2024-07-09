@@ -35,7 +35,7 @@ class ExamController extends Controller
       try {
          session()->flash('page',  $page = (object)[
             'page' => 'exams',
-            'child' => 'database exams',
+            'child' => 'database assessment',
          ]);
 
          $form = (object) [
@@ -71,7 +71,7 @@ class ExamController extends Controller
          //code...
          session()->flash('page',  $page = (object)[
             'page' => 'exams',
-            'child' => 'database exams',
+            'child' => 'database assessment',
          ]);
 
          $dataTeacher = Teacher::get();
@@ -101,7 +101,7 @@ class ExamController extends Controller
       try {
          session()->flash('page',  $page = (object)[
             'page' => 'exams',
-            'child' => 'database exams',
+            'child' => 'database assessment',
          ]);
 
          $rules = [
@@ -213,7 +213,7 @@ class ExamController extends Controller
    {
       session()->flash('page',  $page = (object)[
          'page' => 'exams',
-         'child' => 'database exams',
+         'child' => 'exams',
       ]);
 
       try {
@@ -228,14 +228,40 @@ class ExamController extends Controller
             ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
             ->first();
 
-         // dd($data);
          if(session('role') == 'admin'){
             return view('components.exam.detail-exam')->with('data', $data);
          }
          elseif (session('role') == 'teacher') {
             return view('components.teacher.detail-exam-teacher')->with('data', $data);
          }
-         elseif (session('role') == 'student' || 'parent'){
+      } catch (Exception $err) {  
+         dd($err);
+         return abort(404);
+      }
+   }
+
+   public function getByIdSession()
+   {
+      session()->flash('page',  $page = (object)[
+         'page' => 'exams',
+         'child' => 'exams',
+      ]);
+
+      $id = session('assessment_id');
+
+      try {
+         $data = Exam::select('exams.*', 'grades.name as grade_name', 'subjects.name_subject')
+            ->join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
+            ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
+            ->join('subject_exams', 'exams.id', '=', 'subject_exams.exam_id')
+            ->join('subjects', 'subject_exams.subject_id', '=', 'subjects.id')
+            ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
+            ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
+            ->where('exams.id', $id)
+            ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
+            ->first();
+
+         if (session('role') == 'student' || 'parent'){
             return view('components.student.detail-exam-student')->with('data', $data);
          }
       } catch (Exception $err) {  
@@ -250,7 +276,7 @@ class ExamController extends Controller
          //code...
          session()->flash('page',  $page = (object)[
             'page' => 'exams',
-            'child' => 'database exams',
+            'child' => 'database assessments',
          ]);
 
          $dataExam = Exam::select('exams.*', 'grades.name as grade_name', 'subjects.name_subject')
@@ -298,7 +324,7 @@ class ExamController extends Controller
 
          session()->flash('page',  $page = (object)[
             'page' => 'exams',
-            'child' => 'database exams',
+            'child' => 'database assessment',
          ]);
 
          $rules = [
@@ -398,7 +424,7 @@ class ExamController extends Controller
    {
       session()->flash('page',  $page = (object)[
          'page' => 'exams',
-         'child' => 'database  exams',
+         'child' => 'database assessment',
       ]);
 
       try {
@@ -428,7 +454,7 @@ class ExamController extends Controller
          //code...
          session()->flash('page',  $page = (object)[
             'page' => 'exams',
-            'child' => 'database exams',
+            'child' => 'database assessment',
          ]);
 
          $getIdTeacher = Teacher::where('user_id', $id)->value('id');
@@ -469,16 +495,17 @@ class ExamController extends Controller
       try {
          session()->flash('page',  $page = (object)[
             'page' => 'exams',
-            'child' => 'student exams',
-         ]);
+            'child' => 'exams',
+        ]);
 
          if(session('role') == 'parent')
          {
-            $getIdUser = session('id_user');
+            $getIdUser         = session('id_user');
             $id                = Relationship::where('user_id', $getIdUser)->value('id');
-            $getIdStudent      = Student_relationship::where('relationship_id', $id)->value('student_id');
+            $getIdStudent      = session('studentId');
             $gradeIdStudent    = Student::where('id', $getIdStudent)->value('grade_id');
-         
+            
+
             $data = Exam::select('exams.*', 'grades.name as grade_name', 'subjects.name_subject')
             ->join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
             ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
@@ -486,28 +513,31 @@ class ExamController extends Controller
             ->join('subjects', 'subject_exams.subject_id', '=', 'subjects.id')
             ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
             ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
-            ->where('grade_exams.grade_id', $gradeIdStudent, 'exams.is_active')
+            ->where('grade_exams.grade_id', $gradeIdStudent)
             ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
-            ->get();
+            ->paginate(15);
          } 
          elseif (session('role') == 'student') 
          {
             $getIdUser  = session('id_user');
-            $id         = Student::where('user_id', $getIdUser)->value('id');
-            $getGradeId = Student::where('user_id', $id)->value('grade_id');
+            $id         = Student::where('user_id', $getIdUser)->value('grade_id');
+            $getGradeId = Grade::where('id', $id)->value('id');
+
+            // dd($getGradeId);
    
             $data = Exam::select('exams.*', 'grades.name as grade_name', 'subjects.name_subject')
-               ->join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
-               ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
-               ->join('subject_exams', 'exams.id', '=', 'subject_exams.exam_id')
-               ->join('subjects', 'subject_exams.subject_id', '=', 'subjects.id')
-               ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
-               ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
-               ->where('grade_exams.grade_id', $getGradeId)
-               ->where('exams.is_active', 1)
-               ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
-               ->get();
+            ->join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
+            ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
+            ->join('subject_exams', 'exams.id', '=', 'subject_exams.exam_id')
+            ->join('subjects', 'subject_exams.subject_id', '=', 'subjects.id')
+            ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
+            ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
+            ->where('grade_exams.grade_id', $getGradeId)
+            ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
+            ->paginate(15);
          }
+
+         // dd($data);
 
          return view('components.student.data-exam-student')->with('data', $data);
 
@@ -520,7 +550,7 @@ class ExamController extends Controller
    {
       session()->flash('page',  $page = (object)[
          'page' => 'exams',
-         'child' => 'database  exams',
+         'child' => 'database assessment',
       ]);
 
       try {
@@ -573,7 +603,7 @@ class ExamController extends Controller
       try {
          session()->flash('page',  $page = (object)[
             'page' => 'exams',
-            'child' => 'database exams',
+            'child' => 'database assessment',
          ]);
 
          $rules = [
@@ -597,6 +627,13 @@ class ExamController extends Controller
       } catch (Exception $err) {
          dd($err);
       }
+   }
+
+   public function setAssessmentId(Request $request)
+   {
+      session(['assessment_id' => $request->id]);
+
+      return response()->json(['success' => true]);
    }
 
 }

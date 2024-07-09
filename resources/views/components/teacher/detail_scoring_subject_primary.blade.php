@@ -108,17 +108,17 @@
 
                         <!-- COUNT HOMEWORK -->
                         @foreach ($student['scores'] as $index => $score)
-                            @if($score['type_exam'] == 1)
+                            @if($score['type_exam'] == $data['homework'])
                                 <td class="text-center">{{ $score['score'] }}</td>
                             @endif
                         @endforeach
-                        <td>{{ $student['avg_homework'] }} </td>
+                        <td class="text-center">{{ $student['avg_homework'] }} </td>
                         <!-- END HOMEWORK -->
 
 
                         <!-- COUNT EXERCISE -->
                         @foreach ($student['scores'] as $index => $score)
-                            @if($score['type_exam'] == 2)
+                            @if($score['type_exam'] == $data['exercise'])
                                 <td class="text-center">{{ $score['score'] }}</td>
                             @endif
                         @endforeach
@@ -129,7 +129,7 @@
 
                         <!-- COUNT PARTICIPATION -->
                         @foreach ($student['scores'] as $index => $score)
-                            @if($score['type_exam'] == 5)
+                            @if($score['type_exam'] == $data['participation'])
                                 <td class="text-center">{{ $score['score'] }}</td> 
                             @endif
                         @endforeach
@@ -140,8 +140,12 @@
 
                         <!-- COUNT PROJECT / PRACTICAL / FINAL ASESSMENT -->
                         @foreach ($student['scores'] as $index => $score)
-                            @if($score['type_exam'] == 4)
-                                <td class="text-center">{{ $score['score'] }}</td> <!-- total jumlah homework -->
+                            @if($score['type_exam'] == $data['project'])
+                                <td class="text-center">{{ $score['score'] }}</td> 
+                            @elseif($score['type_exam'] == $data['practical'])
+                                <td class="text-center">{{ $score['score'] }}</td> 
+                            @elseif($score['type_exam'] == $data['finalExam'])
+                                <td class="text-center">{{ $score['score'] }}</td> 
                             @endif
                         @endforeach
                         <td class="text-center">{{ $student['avg_fe'] }}</td>

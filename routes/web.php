@@ -301,6 +301,9 @@ Route::post('/update-schedule/{id}', [ScheduleController::class, 'actionUpdateOt
 // Route untuk save semester kedalam session
 Route::post('/save-semester-session', [UserController::class, 'saveSemesterToSession'])->name('save.semester.session');
 
+// Route untuk save semester kedalam session
+Route::post('/save-studentId-session', [UserController::class, 'saveStudentIdToSession'])->name('save.student.session');
+
 // Route untuk menyimpan substitute teacher
 Route::post('/subtitute-teacher', [ScheduleController::class, 'subtituteTeacher'])->name('subtitute.teacher');
 
@@ -921,11 +924,14 @@ Route::middleware(['auth.login', 'role:student'])->prefix('/student')->group(fun
       Route::get('/', [DashboardController::class, 'index']);
       Route::get('/detail/{id}', [TeacherController::class, 'getById']);
       Route::get('/grade/{id}', [GradeController::class, 'studentGrade']);
-      Route::get('/exam/{id}', [ExamController::class, 'gradeExam'])->name('student.dashboard.exam');
-      Route::get('exam/detail/{id}', [ExamController::class, 'getById']);
+
+      Route::get('/exam', [ExamController::class, 'gradeExam'])->name('student.dashboard.exam');
+      Route::post('/set-assessment-id-student', [ExamController::class, 'setAssessmentId'])->name('set.assessment.id.student');
+      Route::get('exam/detail', [ExamController::class, 'getByIdSession'])->name('exam.detail');
+      
       Route::get('relation/{id}', [RelationController::class, 'getById']);
 
-      Route::get('/schools/{gradeId}', [ScheduleController::class, 'scheduleStudentSchools']);
+      Route::get('/schools', [ScheduleController::class, 'scheduleStudentSchools']);
       Route::get('schedules/grade', [ScheduleController::class, 'scheduleStudent']);
    });
 });
@@ -933,10 +939,12 @@ Route::middleware(['auth.login', 'role:student'])->prefix('/student')->group(fun
 Route::middleware(['auth.login', 'role:parent'])->prefix('/parent')->group(function () {
    Route::prefix('/dashboard')->group(function () {
       Route::get('/', [DashboardController::class, 'index']);
-      Route::get('/detail/{id}', [TeacherController::class, 'getById']);
       Route::get('/grade/{id}', [GradeController::class, 'studentGrade']);
+     
       Route::get('/exam', [ExamController::class, 'gradeExam'])->name('student.dashboard.exam');
-      Route::get('exam/detail/{id}', [ExamController::class, 'getById']);
+      Route::post('/set-assessment-id', [ExamController::class, 'setAssessmentId'])->name('set.assessment.id');
+      Route::get('exam/detail', [ExamController::class, 'getByIdSession'])->name('exam.detail');
+
       Route::get('relation/{id}', [RelationController::class, 'getById']);
       Route::get('/score', [ReportController::class, 'detail']);
 

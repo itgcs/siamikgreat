@@ -15,6 +15,7 @@ use App\Models\Roles;
 use App\Models\Teacher;
 use App\Models\Student;
 use App\Models\Relationship;
+use App\Models\Student_relationship;
 
 class UserController extends Controller
 {
@@ -130,7 +131,14 @@ class UserController extends Controller
          if($checkRole == 'student') {
             return redirect('student/dashboard/');
          }
-         if($checkRole == 'parent') {
+         if($checkRole == 'parent') {  
+            $id           = Relationship::where('user_id', session('id_user'))->value('id');
+            $getIdStudent = Student_relationship::where('relationship_id', $id)->value('student_id');
+
+            session()->put([
+               'studentId' => $getIdStudent,
+            ]); 
+
             return redirect('parent/dashboard/');
          }
 
@@ -165,4 +173,13 @@ class UserController extends Controller
       session()->put('semester', $semester);
       return response()->json(['semester' => $semester]);
    }
+
+   public function saveStudentIdToSession(Request $request)
+   {
+      $studentId = $request->input('studentId');
+      session()->put('studentId', $studentId);
+      return response()->json(['studentId' => $studentId]);
+   }
+
+
 }

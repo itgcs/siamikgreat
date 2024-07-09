@@ -6,7 +6,7 @@
 <div class="container-fluid">
    <div class="col">
       <div class="text-center">
-         <h2 class="text-center">Exam Search</h2>
+         <h2 class="text-center">Assessment Search</h2>
       </div>
       <div class="row">
          @if (session('role') == 'superadmin')
@@ -51,13 +51,13 @@
       <a type="button" href="{{url('/' . session('role') . '/exams/create')}}" class="btn btn-success btn mx-2">
          <i class="fa-solid fa-user-plus"></i>
          </i>   
-         Add Exam
+         Add Assessment
       </a>
    </div>
    
    <div class="card card-dark mt-2">
       <div class="card-header">
-         <h3 class="card-title">Exams</h3>
+         <h3 class="card-title">Assessments</h3>
 
          <div class="card-tools">
                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -70,8 +70,8 @@
                <thead>
                   <tr>
                      <th>#</th>
-                     <th style="width: 20%">Name Exam </th>
-                     <th style="width: 10%">Date Exam </th>
+                     <th style="width: 20%">Name</th>
+                     <th style="width: 10%">Date</th>
                      <th>Grade</th>
                      <th>Subject</th>
                      <th>Teacher</th>
@@ -97,10 +97,10 @@
                         <br>
                         @php
                            $currentDate = now(); // Tanggal saat ini
-                           $dateExam = $el->date_exam; // Tanggal exam dari data
+                           $dateAssessment = $el->date_exam; // Tanggal exam dari data
 
                            // Hitung selisih antara tanggal exam dengan tanggal saat ini
-                           $diff = strtotime($dateExam) - strtotime($currentDate);
+                           $diff = strtotime($dateAssessment) - strtotime($currentDate);
                            $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
                         @endphp
                         <small class="text-muted mb-0"><span class="badge badge-danger">{{$days}} days again</span></small>

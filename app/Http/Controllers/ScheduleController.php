@@ -1694,8 +1694,10 @@ class ScheduleController extends Controller
          }
          
          // dd($getGradeId);
+         $typeExam = Type_schedule::where('name', '=', 'lesson')->value('id');
          
          $gradeSchedule = Schedule::where('grade_id', $getGradeId)
+            ->where('schedules.type_schedule_id', $typeExam)
             ->join('grades', 'grades.id', '=', 'schedules.grade_id')
             ->leftJoin('teachers', function($join) {
                $join->on('teachers.id', '=', 'schedules.teacher_id')

@@ -30,22 +30,22 @@
                         <th>
                            #
                         </th>
-                        <th  style="width: 10%">
+                        <th  style="width: 15%">
                           Type Exam
                         </th>
                         <th style="width: 15%">
-                           Name Exam
+                           Name
                         </th>
                         <th style="width: 10%">
-                          Date Exam
+                          Date
                         </th>
-                        <th>
+                        <th style="width: 10%">
                            Grade
                         </th>
                         <th>
                            Subject
                         </th>
-                        <th>
+                        <th style="width: 15%">
                            Teacher
                         </th>
                         <th>
@@ -75,7 +75,7 @@
                            <a>
                               {{$el->date_exam}}
                            </a>
-                           <br>
+                           <!-- <br>
                            @php
                               $currentDate = now(); // Tanggal saat ini
                               $dateExam = $el->date_exam; // Tanggal exam dari data
@@ -84,7 +84,7 @@
                               $diff = strtotime($dateExam) - strtotime($currentDate);
                               $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
                            @endphp
-                           <small class="text-muted mb-0"><span class="badge badge-danger">{{$days}} days again</span></small>
+                           <small class="text-muted mb-0"><span class="badge badge-danger">{{$days}} days again</span></small> -->
                         </td>
                         <td>
                            {{$el->grade_name}} - {{ $el->grade_class }}
@@ -150,7 +150,7 @@
         setTimeout(() => {
            Toast.fire({
               icon: 'success',
-              title: 'Successfully created new exam in the database.',
+              title: 'Successfully created new assessment in the database.',
         });
         }, 1500);
 
@@ -175,7 +175,7 @@
       setTimeout(() => {
          Toast.fire({
             icon: 'success',
-            title: 'Successfully updated the exam in the database.',
+            title: 'Successfully updated the assessment in the database.',
       });
       }, 1500);
 
