@@ -108,13 +108,13 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/{{session('role')}}/schedules/midexams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules midexam' ? 'active' : '') : ''}}">
+            <a href="/{{session('role')}}/schedules/midexams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules mid exam' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
               <p>Mid Exam</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="/{{session('role')}}/schedules/finalexams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules finalexam' ? 'active' : '') : ''}}">
+            <a href="/{{session('role')}}/schedules/finalexams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules final exam' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
               <p>Final Exam</p>
             </a>
@@ -140,29 +140,29 @@
         </a>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-           <a href="/{{session('role')}}/dashboard/schools/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules academic' ? 'active' : '') : ''}}">
+           <a href="/{{session('role')}}/dashboard/schools" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules academic' ? 'active' : '') : ''}}">
              <i class="far fa-circle nav-icon"></i>
              <p>School</p>
            </a>
           </li>
           <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/schedules/grade/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules grade' ? 'active' : '') : ''}}">
+            <a href="/{{session('role')}}/dashboard/schedules/grade" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules grade' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
               <p>Grade</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/schedules/subject/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules subject' ? 'active' : '') : ''}}">
+            <a href="/{{session('role')}}/dashboard/schedules/subject" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules subject' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
               <p>Subject</p>
             </a>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a href="/{{session('role')}}/dashboard/schedules/companion/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules assisstant' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
               <p>Assisstant</p>
             </a>
-          </li>
+          </li> -->
         </ul>
       </li>
       @elseif (session('role') == 'student' || session('role') == 'parent')
@@ -212,13 +212,13 @@
         </a>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/report/classTeacher/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report class teacher' ? 'active' : '') : ''}}">
+            <a href="/{{session('role')}}/dashboard/report/class/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report class teacher' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
               <p>Class Teacher</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/report/subjectTeacher/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report subject teacher' ? 'active' : '') : ''}}">
+            <a href="/{{session('role')}}/dashboard/report/subject/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report subject teacher' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
               <p>Subject Teacher</p>
             </a>
@@ -247,7 +247,7 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="/{{ session('role') }}/dashboard/attendance/gradeTeacher/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'attendance class teacher' ? 'active' : '') : ''}}">
+              <a href="/{{ session('role') }}/dashboard/attendance/class/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'attendance class teacher' ? 'active' : '') : ''}}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Class Teacher</p>
               </a>
@@ -360,13 +360,13 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="/teacher/dashboard/edit/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'spesifik teachers' ? 'active' : '') : ''}}">
+              <a href="/teacher/dashboard/edit/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'spesifik teachers' ? 'active' : '') : ''}}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Edit</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/teacher/dashboard/detail/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'detail teachers' ? 'active' : '') : ''}}">
+              <a href="/teacher/dashboard/detail/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'detail teachers' ? 'active' : '') : ''}}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Detail</p>
               </a>
@@ -418,7 +418,7 @@
         </li>
       @elseif (session('role') == 'teacher')
         <li class="nav-item">
-          <a href="/teacher/dashboard/grade/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database teacher grades' ? 'active' : '') : ''}}">
+          <a href="/teacher/dashboard/grade" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database teacher grades' ? 'active' : '') : ''}}">
             <i class="nav-icon fa-solid fa-house-flag"></i>
             <p>
               Grades
@@ -510,23 +510,14 @@
             </p>
           </a>
         </li>
-      @elseif (session('role') == 'teacher')  
-        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'exams' ? 'menu-open' : '') : ''}}">
-          <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'exams' ? 'active' : '') : ''}}">
+      @elseif (session('role') == 'teacher') 
+        <li class="nav-item">
+          <a href="/{{ session('role') }}/dashboard/exam/teacher" class="nav-link {{ session('page') && session('page')->page == 'database teacher exams' ? 'active' : '' }}">
             <i class="nav-icon fa-solid fa-pencil"></i>
             <p>
               Exam
-              <i class="right fas fa-angle-left"></i>
             </p>
           </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="/teacher/dashboard/exam/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database teacher exams' ? 'active' : '') : ''}}">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Data</p>
-              </a>
-            </li>
-          </ul>
         </li>
       @elseif (session('role') == 'student' || session('role') == 'parent')  
         <li class="nav-item">

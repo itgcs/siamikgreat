@@ -478,7 +478,7 @@
                 }
             });
 
-            alert(allFilled);
+            // alert(allFilled);
             // Jika semua input terisi dan valid, submit form
             if (allFilled) {
                 document.getElementById('confirmForm').submit();

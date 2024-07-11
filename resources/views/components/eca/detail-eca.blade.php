@@ -3,6 +3,18 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
+   <div class="row">
+      <div class="col">
+      <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 ">
+            <ol class="breadcrumb mb-0">
+               <li class="breadcrumb-item">Home</li>
+               <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/eca')}}">ECA</a></li>
+               <li class="breadcrumb-item active" aria-current="page">{{ $data['eca'][0]['name'] }}</li>
+            </ol>
+      </nav>
+      </div>
+   </div>
+
    <div class="card card-dark mt-2">
       <div class="card-header">
          @foreach ($data['eca'] as $de)
@@ -47,6 +59,23 @@
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+@if(session('after_add_student_eca'))
+<script>
+   var Toast = Swal.mixin({
+         toast: true,
+         position: 'top-end',
+         showConfirmButton: false,
+         timer: 3000
+   });
+   setTimeout(() => {
+      Toast.fire({
+         icon: 'success',
+         title: 'Successfully add student eca in the database.',
+      });
+   }, 1500);
+</script>
+@endif
 
 @if(session('after_delete_student_eca'))
 <script>

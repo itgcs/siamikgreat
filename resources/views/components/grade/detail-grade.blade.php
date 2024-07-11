@@ -4,8 +4,18 @@
 @section('content')
 
 
-<div class="container-fluid mt-5">
-
+<div class="container-fluid">
+    <div class="row">
+      <div class="col">
+      <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+         <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">Home</li>
+            <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/grades')}}">Grade</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Detail {{ $data->grade['grade_name'] }} - {{ $data->grade['grade_class'] }}</li>
+         </ol>
+      </nav>
+      </div>
+   </div>
 
     <div class="row">
 
@@ -75,9 +85,9 @@
                             </td>
                             <td class="project-state">
                                 @if($el->is_active)
-                                <h1 class="badge badge-success">Active</h1>
+                                <p class="badge badge-success">Active</p>
                                 @else
-                                <h1 class="badge badge-danger">Inactive</h1>
+                                <p class="badge badge-danger">Inactive</p>
                                 @endif
                             </td>
                         </tr>
@@ -87,9 +97,8 @@
                         @endforeach
                         @else
                         <tr>
-                           <td colspan="7">
-
-                              <h1>You haven't added student data yet</h1>
+                           <td colspan="5" class="text-center">
+                              <p>You haven't added student data yet</p>
                            </td>
 
                         </tr>
@@ -167,9 +176,9 @@
                             </td>
                             <td class="project-state">
                                 @if($el->is_active)
-                                <h1 class="badge badge-success">Active</h1>
+                                <p class="badge badge-success">Active</p>
                                 @else
-                                <h1 class="badge badge-danger">Inactive</h1>
+                                <p class="badge badge-danger">Inactive</p>
                                 @endif
                             </td>
                         </tr>
@@ -179,9 +188,9 @@
                         @endforeach
                         @else
                         <tr>
-                           <td colspan="7">
+                           <td colspan="5" class="text-center">
 
-                              <h1>You haven't added Teacher data yet</h1>
+                              <p>You haven't added Teacher data yet</p>
                            </td>
 
                         </tr>
@@ -233,8 +242,8 @@
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="3">
-                                    <h1>You haven't added Subject data yet</h1>
+                                <td colspan="3" class="text-center">
+                                    <p>You haven't added Subject data yet</p>
                                 </td>
                             </tr>
                         @endif
@@ -300,9 +309,9 @@
                             </td>
                             <td class="project-state">
                                 @if($el->is_active)
-                                <h1 class="badge badge-success">Active</h1>
+                                <p class="badge badge-success">Active</p>
                                 @else
-                                <h1 class="badge badge-danger">Inactive</h1>
+                                <p class="badge badge-danger">Inactive</p>
                                 @endif
                             </td>
                         </tr>
@@ -310,8 +319,8 @@
                         @endforeach
                         @else
                         <tr>
-                           <td colspan="7">
-                              <h1>You haven't added exam data yet</h1>
+                           <td colspan="5" class="text-center">
+                              <p>You haven't added exam data yet</p>
                            </td>
                         </tr>
                         @endif

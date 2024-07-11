@@ -3,9 +3,21 @@
 
 <section class="content">
     <div class="container-fluid">
-        <div class="row d-flex justify-content-center">
+        <div class="row">
+            <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 ">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/eca')}}">ECA</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create</li>
+                </ol>
+            </nav>
+            </div>
+        </div>
+        
+        <div class="row d-flex justify-content-center mt-3">
             <!-- left column -->
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <!-- general form elements -->
                 <div>
                     @if (session('role') == 'superadmin')

@@ -34,8 +34,8 @@ class ScoreController extends Controller
    {
       try {
          session()->flash('page',  $page = (object)[
-            'page' => 'exams',
-            'child' => 'database exams score',
+            'page' => 'database teacher exams',
+            'child' => 'database teacher exams',
          ]);
 
          $checkSubject = Subject_exam::where('subject_exams.exam_id', '=', $id)->value('subject_id');

@@ -200,7 +200,7 @@ class ExamController extends Controller
             return redirect('/admin/exams');
          }
          elseif (session('role') == 'teacher') {
-            return redirect('/teacher/dashboard/exam/' . session('id_user'));
+            return redirect('/teacher/dashboard/exam/teacher');
          }
 
       } catch (Exception $err) {
@@ -275,8 +275,8 @@ class ExamController extends Controller
       try {
          //code...
          session()->flash('page',  $page = (object)[
-            'page' => 'database exam',
-            'child' => 'database exams',
+            'page' => 'database teacher exams',
+            'child' => 'database teacher exams',
          ]);
 
          $dataExam = Exam::select('exams.*', 'grades.name as grade_name', 'subjects.name_subject')
@@ -380,7 +380,7 @@ class ExamController extends Controller
             return redirect('/admin/exams');
          }
          elseif (session('role') == 'teacher') {
-            return redirect()->route('teacher.dashboard.exam', ['id' => session('id_user')]);
+            return redirect('/teacher/dashboard/exam/teacher');
          }
 
       } catch (Exception $err) {
@@ -389,15 +389,15 @@ class ExamController extends Controller
       }
    }
 
-   public function teacherExam($id)
+   public function teacherExam()
    {
       try {
          session()->flash('page',  $page = (object)[
-            'page' => 'database exam',
+            'page' => 'database teacher exams',
             'child' => 'database teacher exams',
          ]);
 
-         $getIdTeacher = Teacher::where('user_id', $id)->value('id');
+         $getIdTeacher = Teacher::where('user_id', session('id_user'))->value('id');
 
          $data = Exam::select('exams.*', 'grades.name as grade_name', 'subjects.name_subject')
             ->join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
@@ -409,7 +409,7 @@ class ExamController extends Controller
             ->where('exams.teacher_id', $getIdTeacher)
             ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
             ->orderBy('exams.created_at', 'desc')
-            ->get();
+            ->paginate(10);
 
          // dd($data);
 
@@ -448,14 +448,16 @@ class ExamController extends Controller
       }
    }
 
-   public function createTeacherExam($id)
+   public function createTeacherExam()
    {
       try {
          //code...
          session()->flash('page',  $page = (object)[
-            'page' => 'database exam',
-            'child' => 'database exam',
+            'page' => 'database teacher exams',
+            'child' => 'database teacher exams',
          ]);
+
+         $id = session('id_user');
 
          $getIdTeacher = Teacher::where('user_id', $id)->value('id');
          
@@ -466,9 +468,11 @@ class ExamController extends Controller
             ->select('subjects.*')
             ->get();
 
-         $dataGrade   = Teacher_subject::join('grades', 'grades.id', '=', 'teacher_subjects.grade_id')
+         $dataGrade = Teacher_subject::join('grades', 'grades.id', '=', 'teacher_subjects.grade_id')
             ->where('teacher_subjects.teacher_id', $getIdTeacher)
             ->select('grades.*')
+            ->distinct('grades.name')
+            ->orderBy('grades.id', 'asc')
             ->get();
 
          $dataType    = Type_exam::get();

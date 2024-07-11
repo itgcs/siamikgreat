@@ -123,7 +123,8 @@
                 @php
                     $event = [
                         'title' => $schedule->note == "" ? $schedule->subject_name : $schedule->note,
-                        'startRecur' => \Carbon\Carbon::now()->startOfWeek()->format('Y-m-d'),
+                        'startRecur' => $startSemester,
+                        'endRecur' => $endSemester,
                         'daysOfWeek' => [$schedule->day],
                         'startTime' => $schedule->start_time,
                         'endTime' => $schedule->end_time,
@@ -153,7 +154,7 @@
                             $event['color'] = 'orange';
                             break;
                         default:
-                            $event['description'] = "Teacher: {$schedule->teacher_name}<br>Grade: {$schedule->grade_name} - {$schedule->grade_class}";
+                            $event['description'] = "Teacher: {$schedule->teacher_name}<br>Assisstant: {$schedule->teacher_companion}<br>Grade: {$schedule->grade_name} - {$schedule->grade_class}";
                     }
 
                     echo json_encode($event) . ',';
@@ -175,7 +176,7 @@
             ],
             eventClick: function(info) {
                 document.getElementById('eventTitle').innerText = info.event.title;
-                document.getElementById('eventDescription').innerHTML = 'Description : ' + info.event.extendedProps.description;
+                document.getElementById('eventDescription').innerHTML = info.event.extendedProps.description;
 
                 var eventModal = new bootstrap.Modal(document.getElementById('eventModal'), {
                     keyboard: false

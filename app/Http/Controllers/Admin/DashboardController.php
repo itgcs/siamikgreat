@@ -48,7 +48,6 @@ class DashboardController extends Controller
             $studentData   = Student::where('is_active', true)
             ->join('grades', 'grades.id', '=', 'students.grade_id')
             ->select('students.*', 'grades.name as grade_name', 'grades.class as grade_class')
-            ->take(6)
             ->get();
             
             $teacherData   = Teacher::where('is_active', true)->get();

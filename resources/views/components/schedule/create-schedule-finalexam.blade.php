@@ -10,12 +10,23 @@
     @csrf
 
     <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-3">
+                    <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedules/finalexams')}}">FInal Exam Schedule</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Schedule Final Exam {{ $data['grade'][0]['name'] }} - {{ $data['grade'][0]['class'] }}</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
         <div class="row d-flex justify-content-center">
             <!-- left column -->
             <div class="col-md-12">
                 <!-- general form elements -->
                 <div style="overflow-x: auto;">
-                    <div class="card card-dark" style="width:1340px;">
+                    <div class="card card-dark">
                         <div class="card-header">
                             <h3 class="card-title">Create schedule final exam</h3>
                         </div>
@@ -61,7 +72,7 @@
                                 </div>
                                 
                                 <div class="col-md-2">
-                                    <label for="date">Date<span style="color: red"> *</span></label>
+                                    <label for="date">Start Date<span style="color: red"> *</span></label>
                                     <input name="date" type="date" class="form-control" id="date" required>
                                     @if($errors->has('date'))
                                         <p style="color: red">{{ $errors->first('date') }}</p>
@@ -69,7 +80,7 @@
                                 </div>
     
                                 <div class="col-md-2">
-                                    <label for="end_date">Until<span style="color: red"></span></label>
+                                    <label for="end_date">End Date<span style="color: red"> *</span></label>
                                     <input name="end_date" type="date" class="form-control" id="_end_date">
                                     @if($errors->has('end_date'))
                                         <p style="color: red">{{ $errors->first('end_date') }}</p>
@@ -78,15 +89,14 @@
                             </div>
 
 
-                            <table class="table table-striped table-bordered" style="width: 1300px">
+                            <table class="table table-striped table-bordered">
                                 <thead>
-                                    <th style="width: 14%;">Subject</th>
-                                    <th style="width: 18%;">Teacher</th>
-                                    <th style="width: 18%;">Teacher Companion</th>
-                                    <th style="width: 8%;">Days</th>
-                                    <th style="width: 8%;">Start Time</th>
-                                    <th style="width: 8%;">End Time</th>
-                                    <th style="width: 12%;">Notes</th>
+                                    <th>Subject</th>
+                                    <th>Teacher</th>
+                                    <th>Days</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Notes</th>
                                     <th>Action</th>
                                 </thead>
                                 <tbody id="scheduleTableBody">
@@ -99,21 +109,13 @@
                                         </td>
                                         <td>
                                             <select name="teacher_id[]" class="form-control" id="teacher_id"> 
-                                               <option value="" selected >-- SELECT TEACHERS --</option>
+                                               <option value="" selected >-- SELECT INVILAGER --</option>
+                                               @foreach ($data['teacher'] as $te)
+                                                   <option value="{{ $te->id }}">{{ $te->name }}</option>
+                                               @endforeach
                                             </select>
                                             @if($errors->has('teacher_id'))
                                             <p style="color: red">{{ $errors->first('teacher_id') }}</p>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <select name="teacher_companion[]" class="form-control" id="teacher_companion">
-                                                <option value="" selected>-- Teacher Companion --</option>
-                                                @foreach($data['teacher'] as $dt)
-                                                <option value="{{ $dt->id }}">{{ $dt->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            @if($errors->has('teacher_companion'))
-                                            <p style="color: red">{{ $errors->first('teacher_companion') }}</p>
                                             @endif
                                         </td>
                                         <td>
@@ -182,14 +184,9 @@ $(document).ready(function() {
             </td>
             <td>
                 <select name="teacher_id[]" class="form-control teacher_id">
-                    <option value="" selected > Select Teacher </option>
-                </select>
-            </td>
-            <td>
-                <select name="teacher_companion[]" class="form-control">
-                    <option value="" selected > Teacher Companion </option>
-                    @foreach($data['teacher'] as $dt)
-                    <option value="{{ $dt->id }}">{{ $dt->name }}</option>
+                    <option value="" selected > -- SELECT INVILAGER -- </option>
+                    @foreach ($data['teacher'] as $te)
+                        <option value="{{ $te->id }}">{{ $te->name }}</option>
                     @endforeach
                 </select>
             </td>
@@ -283,31 +280,6 @@ function loadSubjectOptionExam(gradeId, subjectSelect) {
         .catch(error => console.error(error));
 }
 
-function loadTeacherOption(gradeId, subjectId, teacherSelect) {
-    // Clear existing options and add the default option
-    teacherSelect.html('<option value="" selected >-- SELECT TEACHERS --</option>');
-
-    fetch(`/get-teachers/${gradeId}/${subjectId}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.length === 0) {
-                // If no teachers, add "Teacher Empty" option
-                const option = document.createElement('option');
-                option.value = '';
-                option.text = 'Teacher Empty';
-                teacherSelect.append(option);
-            } else {
-                data.forEach(teacher => {
-                    const option = document.createElement('option');
-                    option.value = teacher.id;
-                    option.text = teacher.name;
-                    teacherSelect.append(option);
-                });
-            }
-        })
-        .catch(error => console.error(error));
-}
-
 // Call loadSubjectOptionExam if grade_id is already selected
 window.onload = function() {
     const gradeSelect = document.getElementById('grade_id');
@@ -325,7 +297,7 @@ window.onload = function() {
 
 </script>
 
-@if(session('after_create_midexam_schedule')) 
+@if(session('after_create_finalexam_schedule')) 
 
    <script>
 
@@ -339,7 +311,7 @@ window.onload = function() {
       setTimeout(() => {
          Toast.fire({
             icon: 'success',
-            title: 'Successfully created new schedule in the database.',
+            title: 'Successfully created final exam schedule in the database.',
       });
       }, 1500);
 

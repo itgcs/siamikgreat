@@ -14,36 +14,37 @@
          @elseif (session('role') == 'admin')
          <form action="/admin/exams">
          @endif
-            <div class="row">
-               <div class="col">
-                  <div class="form-group">
-                     <label>Status: <span style="color: red"></span></label>
+         <div class="row">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Status: <span style="color: red"></span></label>
 
-                     @php
-                        
+                    @php
                         $selectedStatus = $form->status ? $form->status : 'true';
                         $option = $selectedStatus === 'false' ? 'true' : 'false';
+                    @endphp
 
-                     @endphp
-
-                     <select name="status" class="form-control">
-                        <option  selected value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Inactive'}}</option>
-                        <option  value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
-                     </select>                              
-                  </div>
-               </div>
+                    <select name="status" class="form-control">
+                        <option selected value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Inactive'}}</option>
+                        <option value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-               <div class="input-group input-group-lg">
-                     <input name="search" value="{{$form->search}}" type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
-                     <div class="input-group-append">
-                        <button type="submit" class="btn btn-lg btn-default">
-                           <i class="fa fa-search"></i>
-                        </button>
-                     </div>
-               </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label for="search">Search:</label>
+                    <div class="input-group input-group-lg">
+                        <input name="search" value="{{$form->search}}" type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-lg btn-default">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-         </form >
+         </div>
+      </form >
       </div>
    </div>
 

@@ -13,7 +13,7 @@
                     @elseif (session('role') == 'admin')
                         <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
                     @elseif (session('role') == 'teacher')
-                        <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report')}}">Reports</a></li>
+                        <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report/subjectTeacher/' . $data['classTeacher']['teacher_id'])}}">Reports</a></li>
                     @endif
                     <li class="breadcrumb-item active" aria-current="page">Detail Report</li>
                 </ol>

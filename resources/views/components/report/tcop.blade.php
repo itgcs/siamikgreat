@@ -30,19 +30,30 @@
 
     <div style="overflow-x: auto;">
         @if (session('role') == 'superadmin')
-            <form id="confirmForm"  method="POST" action={{route('actionPostTcopPrimary')}}>
+            <form id="confirmForm"  method="POST" action={{route('actionPostTcop')}}>
         @elseif (session('role') == 'admin')
-            <form id="confirmForm" method="POST" action={{route('actionAdminPostTcopPrimary')}}>
+            <form id="confirmForm" method="POST" action={{route('actionAdminPostTcop')}}>
         @elseif (session('role') == 'teacher')
-            <form id="confirmForm" method="POST" >
+            <form id="confirmForm" method="POST" action={{route('actionTeacherPostTcop')}}>
         @endif
         @csrf
         
-        <div class="row my-2">
-            <div class="input-group-append mx-2">
-                <button type="submit" class="btn btn-success">Acc TCOP</button>
+        @if ($data['status'] == null)
+            <div class="row my-2">
+                <div class="input-group-append mx-2">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit TCOP</button>
+                </div>
             </div>
-        </div>
+        @elseif ($data['status'] != null)        
+            <div class="row my-2">
+                <div class="input-group-append mx-2">
+                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline TCOP</a>
+                    @endif
+                </div>
+            </div>  
+        @endif
         
         <table class="table table-striped table-bordered">
             <thead>
@@ -73,7 +84,9 @@
                     @foreach ($data['students'] as $student)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $student['student_name'] }}</td>
+                            <td>{{ $student['student_name'] }}
+                            <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">    
+                            </td>
 
                             @php
                                 // Initialize variables to store scores for both semesters
@@ -103,8 +116,8 @@
                                 @endif
                             @endforeach
 
-                            <td class="text-center">{{ $student['average_final_score'] }}</td>
-                            <td class="text-center">{{ $student['marks'] }}</td>
+                            <td class="text-center">{{ $student['average_final_score'] }} <input type="number" name="final_score[]" value="{{ $student['average_final_score'] }}" class="d-none"></td>
+                            <td class="text-center">{{ $student['marks'] }} <input type="text" name="grades_final_score[]" value="{{ $student['marks'] }}" class="d-none"></td>
                             <td class="text-center">{{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</td>
                             <td class="text-left">
                                 @if ( $student['average_final_score'] > 64)
@@ -116,39 +129,114 @@
                                         Stay in {{ $data['grade']->grade_name }}-{{ $data['grade']->grade_class }}
                                     </span>
                                 @endif
-
                             </td>
                         </tr>
                     @endforeach
+                    <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
+                    <input name="class_teacher" type="number" class="form-control d-none" id="class_teacher" value="{{ $data['classTeacher']->teacher_id }}">    
                 @else
                     <p>Data Kosong</p>
                 @endif
             </tbody>
-
         </table>
-
-        <!-- Modal -->
-        <div class="modal fade" id="submitScore" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Submit Score</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-                <div class="modal-body">
-                    Are you sure want to submit score sooa?
-                </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
-                    <a class="btn btn-succes btn" href="{{url('/' . session('role') .'/reports') . '/updateSooaPrimary/' . $data['grade']->grade_id}}">Yes</a>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Submit TCOP</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                Are you sure want to submit score tcop?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
+                <button type="button" class="btn btn-primary" id="confirmTcop">Yes, Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Decline -->
+<div class="modal fade" id="modalDecline" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Decline TCOP</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">Are you sure want to decline tcop ?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a class="btn btn-danger btn" id="confirmDecline">Yes, decline</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('confirmTcop').addEventListener('click', function() {
+            document.getElementById('confirmForm').submit();
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#modalDecline').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var id = @json($data['grade']->grade_id);
+            var teacherId = @json($data['classTeacher']->teacher_id);
+
+            var confirmDecline = document.getElementById('confirmDecline');
+            confirmDecline.href = "{{ url('/' . session('role') . '/reports/tcop/decline') }}/" + id + "/" + teacherId ;
+        });
+    });
+</script>
+
+@if(session('after_post_tcop'))
+<script>
+    var Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
+    setTimeout(() => {
+        Toast.fire({
+            icon: 'success',
+            title: 'Successfully post tcop in the database.',
+        });
+    }, 1500);
+</script>
+@endif
+
+@if(session('after_decline_tcop'))
+<script>
+    var Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
+    setTimeout(() => {
+        Toast.fire({
+            icon: 'success',
+            title: 'Successfully decline tcop.',
+        });
+    }, 1500);
+</script>
+@endif
 
 @endsection

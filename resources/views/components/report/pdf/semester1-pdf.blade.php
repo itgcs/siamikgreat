@@ -13,70 +13,7 @@ $typecambridge = pathinfo($pathcambridge, PATHINFO_EXTENSION);
 $datacambridge = file_get_contents($pathcambridge);
 $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($datacambridge);
 
-// if (strtolower($student->grade_name) === "primary") {
-//     $eca = round((($sooa[0]['scores'][0]['language_and_art'])+($sooa[0]['scores'][0]['choice']))/2);
-//     if ($eca >= 95 && $eca <= 100) {
-//         $eca_grade = 'A+';
-//     } elseif ($eca >= 85 && $eca <= 94) {
-//         $eca_grade = 'A';
-//     } elseif ($eca >= 75 && $eca <= 84) {
-//         $eca_grade = 'B';
-//     } elseif ($eca >= 65 && $eca <= 74) {
-//         $eca_grade = 'C';
-//     } elseif ($eca >= 45 && $eca <= 64) {
-//         $eca_grade = 'D';
-//     } else {
-//         $eca_grade = 'R';
-//     }
-    
-//     $marks = round(($sooa[0]['scores'][0]['academic'] + $eca + $sooa[0]['scores'][0]['behavior'] + $sooa[0]['scores'][0]['attendance'] + $sooa[0]['scores'][0]['participation'])/5);
-//     if ($marks >= 95 && $marks <= 100) {
-//         $marks_grade = 'A+';
-//     } elseif ($marks >= 85 && $marks <= 94) {
-//         $marks_grade = 'A';
-//     } elseif ($marks >= 75 && $marks <= 84) {
-//         $marks_grade = 'B';
-//     } elseif ($marks >= 65 && $marks <= 74) {
-//         $marks_grade = 'C';
-//     } elseif ($marks >= 45 && $marks <= 64) {
-//         $marks_grade = 'D';
-//     } else {
-//         $marks_grade = 'R';
-//     }
-// }
-// elseif (strtolower($student->grade_name) === "secondary") {
-//     $eca = round((($sooa[0]['scores'][0]['eca_1'])+($sooa[0]['scores'][0]['eca_2']))/2);
-//     if ($eca >= 95 && $eca <= 100) {
-//         $eca_grade = 'A+';
-//     } elseif ($eca >= 85 && $eca <= 94) {
-//         $eca_grade = 'A';
-//     } elseif ($eca >= 75 && $eca <= 84) {
-//         $eca_grade = 'B';
-//     } elseif ($eca >= 65 && $eca <= 74) {
-//         $eca_grade = 'C';
-//     } elseif ($eca >= 45 && $eca <= 64) {
-//         $eca_grade = 'D';
-//     } else {
-//         $eca_grade = 'R';
-//     }
-    
-//     $marks = round(($sooa[0]['scores'][0]['academic'] + $eca + $sooa[0]['scores'][0]['behavior'] + $sooa[0]['scores'][0]['attendance'] + $sooa[0]['scores'][0]['participation'])/5);
-//     if ($marks >= 95 && $marks <= 100) {
-//         $marks_grade = 'A+';
-//     } elseif ($marks >= 85 && $marks <= 94) {
-//         $marks_grade = 'A';
-//     } elseif ($marks >= 75 && $marks <= 84) {
-//         $marks_grade = 'B';
-//     } elseif ($marks >= 65 && $marks <= 74) {
-//         $marks_grade = 'C';
-//     } elseif ($marks >= 45 && $marks <= 64) {
-//         $marks_grade = 'D';
-//     } else {
-//         $marks_grade = 'R';
-//     }
-// }
-
-
+$grade_name = $student->grade_name;
 ?>
 
 <!DOCTYPE html>
@@ -328,7 +265,7 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
                         <th colspan="8" style="text-align:center;border-top: 3px solid black;border-bottom: 3px solid black;border-right: 1px solid black;border-left: 1px solid black;">Extra-Curricular Activity</th>
                     </tr>
 
-                    @if ($student->grade_name == "primary")
+                    @if (strtolower($grade_name) == "primary")
                         <tr>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: solid 1px black;" colspan="2">ECA (Language & Art)</td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-left:8px;" colspan="2">Grade</td>
@@ -340,7 +277,7 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
                             </td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-left:8px;border-right: solid 1px black;" colspan="2">Grade</td>
                         </tr>
-                    @elseif ($student->grade_name = "secondary")
+                    @elseif (strtolower($grade_name) == "secondary")
                         <tr>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: solid 1px black;" colspan="2">
                                 ECA @if (empty($eca))
@@ -350,43 +287,31 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
                             </td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-left:8px;" colspan="2">Grade</td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;" colspan="2">
-                                ECA @if (empty($eca) || count($eca) == 2)
+                                ECA @if (empty($eca) || count($eca) == 3)
                                 @else
-                                    ({{ $eca['eca_2'] }})
+                                ({{ $eca['eca_2'] }})
                                 @endif
                             </td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-left:8px;border-right: solid 1px black;" colspan="2">Grade</td>
                         </tr>
                     @endif
                     <tr>
-                        @if ($student->grade_name === "primary" || $student->grade_name === "Primary" )
-                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: solid 1px black;" colspan="2">{{  $sooa[0]['scores'][0]['language_and_art'] }}</td>
-                        @elseif ($student->grade_name === "secondary" || $student->grade_name === "Secondary" )
-                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: solid 1px black;" colspan="2">{{  $sooa[0]['scores'][0]['eca_1'] }}</td>
-                        @endif
-
-                        @if ($student->grade_name === "primary" || $student->grade_name === "Primary" )
-                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;" colspan="2">{{  $sooa[0]['scores'][0]['grades_language_and_art'] }}</td>
-                        @elseif ($student->grade_name === "secondary" || $student->grade_name === "Secondary" )
-                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;" colspan="2">{{  $sooa[0]['scores'][0]['grades_eca_1'] }}</td>
-                        @endif
-                        
-                        @if ($student->grade_name === "primary" || $student->grade_name === "Primary" )
-                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;" colspan="2">
-                            @if ($sooa[0]['scores'][0]['choice'] == 0)
-                                -
-                            @else
-                                {{  $sooa[0]['scores'][0]['choice'] }}
-                            @endif
-                        </td>
-                        @elseif ($student->grade_name === "secondary" || $student->grade_name === "Secondary" )
-                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;" colspan="2">{{  $sooa[0]['scores'][0]['eca_2'] }}</td>
-                        @endif
-
-                        @if ($student->grade_name === "primary" || $student->grade_name === "Primary" )
-                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dottted 1px black;border-right: 1px solid black;" colspan="2">{{  $sooa[0]['scores'][0]['grades_choice'] }}</td>
-                        @elseif ($student->grade_name === "secondary" || $student->grade_name === "Secondary" )
-                        <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;border-right: 1px solid black;" colspan="2">{{  $sooa[0]['scores'][0]['grades_eca_2'] }}</td>
+                        @if (strtolower($grade_name) == "primary")
+                            <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: solid 1px black;" colspan="2">{{ $sooa[0]['scores'][0]['language_and_art'] }}</td>
+                            <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;" colspan="2">{{  $sooa[0]['scores'][0]['grades_language_and_art'] }}</td>
+                            <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;" colspan="2">
+                                @if ($sooa[0]['scores'][0]['choice'] == 0)
+                                    -
+                                @else
+                                    {{  $sooa[0]['scores'][0]['choice'] }}
+                                @endif
+                            </td>
+                            <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dottted 1px black;border-right: 1px solid black;" colspan="2">{{  $sooa[0]['scores'][0]['grades_choice'] }}</td>
+                        @elseif (strtolower($grade_name) == "secondary")
+                            <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: solid 1px black;" colspan="2">{{ $sooa[0]['scores'][0]['eca_1'] }}</td>
+                            <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;" colspan="2">{{  $sooa[0]['scores'][0]['grades_eca_1'] }}</td>
+                            <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;" colspan="2">{{  $sooa[0]['scores'][0]['eca_2'] }}</td>
+                            <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;border-right: 1px solid black;" colspan="2">{{  $sooa[0]['scores'][0]['grades_eca_2'] }}</td>
                         @endif
                     </tr>
                 <!-- END ECA -->

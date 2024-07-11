@@ -34,9 +34,9 @@
             <div class="modal-body">
                 <p id="eventTitle"></p>
                 <p id="eventDescription"></p></div>
-            <div class="modal-footer">
+            <!-- <div class="modal-footer">
                 <div id="attendanceTeacherBtnContainer"></div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
@@ -53,9 +53,13 @@ $startOfWeek = \Carbon\Carbon::now()->startOfWeek()->format('Y-m-d');
 ?>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var gradeSchedule = @json($gradeSchedule);
-    var subtituteTeacher = @json($subtituteTeacher);
-    var startOfWeek = @json($startOfWeek);
+    var gradeSchedule           = @json($gradeSchedule);
+    var subtituteTeacher        = @json($subtituteTeacher);
+    var startOfWeek             = @json($startOfWeek);
+    var endSemester             = @json($endSemester);
+    var startSemester           = @json($startSemester);
+    var assistSchedule          = @json($assistSchedule);
+    var assistSubtituteTeacher = @json($assistSubtituteTeacher);
 
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -73,35 +77,45 @@ document.addEventListener('DOMContentLoaded', function() {
         events: [
             ...gradeSchedule.map(schedule => ({
                 title: schedule.subject_name,
-                startRecur: startOfWeek,
+                startRecur: startSemester,
+                endRecur: endSemester,
                 daysOfWeek: [schedule.day],
                 startTime: schedule.start_time,
                 endTime: schedule.end_time,
-                description: `<br>Teacher : ${schedule.teacher_name}<br>Teacher Companion : ${schedule.teacher_companion} <br>Grade : ${schedule.grade_name}`,
-                color: colorGrades(schedule.grade_name),
+                description: `<br>Teacher : <span class="badge badge-primary"> ${schedule.teacher_name} </span> <br>Assisstant : ${schedule.teacher_companion} <br>Grade : ${schedule.grade_name}`,
+                color: 'blue',
                 grade_id: schedule.grade_id,
                 subject_id: schedule.subject_id,
             })),
             ...subtituteTeacher.map(subs => ({
                 title: subs.subject_name,
-                startRecur: startOfWeek,
+                startRecur: startSemester,
+                endRecur: endSemester,
                 daysOfWeek: [subs.day],
                 startTime: subs.start_time,
                 endTime: subs.end_time,
-                description: `<br>Teacher: ${subs.teacher_name}<span class='badge badge-danger'>substitute</span><br>Teacher Companion : ${subs.teacher_companion}<br>Grade: ${subs.grade_name} - ${subs.grade_class}`,
+                description: `<br>Teacher: ${subs.teacher_name}<span class='badge badge-danger'>substitute</span><br>Assisstant : ${subs.teacher_companion}<br>Grade: ${subs.grade_name} - ${subs.grade_class}`,
                 color: 'light',
                 grade_id: subs.grade_id,
                 subject_id: subs.subject_id,
+            })),
+            ...assistSchedule.map(assist => ({
+                title: assist.subject_name,
+                startRecur: startSemester,
+                endRecur: endSemester,
+                daysOfWeek: [assist.day],
+                startTime: assist.start_time,
+                endTime: assist.end_time,
+                description: `<br>Teacher : ${assist.teacher_name} <br>Assisstant :  <span class="badge badge-primary">${assist.teacher_companion} </span> <br>Grade : ${assist.grade_name}`,
+                color: 'gray',
+                grade_id: assist.grade_id,
+                subject_id: assist.subject_id,
             }))
+
         ],
         eventClick: function(info) {
             document.getElementById('eventTitle').innerText = info.event.title;
             document.getElementById('eventDescription').innerHTML = 'Description : ' + info.event.extendedProps.description;
-            
-            showAttendanceButton({
-                gradeId: info.event.extendedProps.grade_id,
-                subjectId:info.event.extendedProps.subject_id,
-            });
             
             var eventModal = new bootstrap.Modal(document.getElementById('eventModal'), {
                 keyboard: false

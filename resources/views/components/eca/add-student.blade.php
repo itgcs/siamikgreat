@@ -3,6 +3,18 @@
 
 <section class="content">
     <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 ">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/eca')}}">{{ $eca[0]['name'] }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Add Student</li>
+                </ol>
+            </nav>
+            </div>
+        </div>
+
         <div class="row d-flex justify-content-center">
             <!-- left column -->
             <div class="col-md-12">

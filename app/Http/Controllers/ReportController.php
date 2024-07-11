@@ -36,6 +36,7 @@ use App\Models\Chinese_higher;
 use App\Models\Chinese_lower;
 use App\Models\Master_academic;
 use App\Models\Type_exam;
+use App\Models\Tcop;
 
 use Barryvdh\DomPDF\PDF;
 use Dompdf\Dompdf;
@@ -1074,7 +1075,7 @@ class ReportController extends Controller
             
             $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
                 ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
-                ->select('grades.name as grade_name', 'grades.class as grade_class', 'teachers.name as teacher_name')
+                ->select('grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class', 'teachers.name as teacher_name')
                 ->where('teacher_grades.grade_id', $gradeId)
                 ->first();
 
@@ -1123,6 +1124,9 @@ class ReportController extends Controller
             })->values()->all();
 
             // dd($scoresByStudent);
+            $status = Tcop::where('grade_id', $grade->grade_id)
+                ->where('class_teacher_id', $classTeacher->teacher_id)
+                ->first();
 
             $data = [
                 'grade' => $grade,
@@ -1130,6 +1134,7 @@ class ReportController extends Controller
                 'classTeacher' => $classTeacher,
                 'semester' => $semester,
                 'promote' => $promoteGrade,
+                'status' => $status,
             ];
 
             // dd($data);
@@ -1200,18 +1205,51 @@ class ReportController extends Controller
 
             // dd($scoresByStudent);
 
+            $status = Tcop::where('grade_id', $grade->grade_id)
+            ->where('class_teacher_id', $classTeacher->teacher_id)
+            ->first();
+
             $data = [
                 'grade' => $grade,
                 'students' => $scoresByStudent,
                 'classTeacher' => $classTeacher,
                 'semester' => $semester,
                 'promote' => $promoteGrade,
+                'status' => $status
             ];
 
             // dd($data);
             
             return view('components.report.tcop')->with('data', $data);
             
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function tcopDecline($gradeId, $teacherId)
+    {
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => ' database reports',
+                'child' => 'report class teacher',
+            ]);
+
+            Tcop::where('grade_id', $gradeId)
+                ->where('class_teacher_id', $teacherId)
+                ->delete();
+
+            session()->flash('after_decline_tcop');
+
+            return redirect()->back()->with([
+                'role' => session('role'),
+                'swal' => [
+                    'type' => 'success',
+                    'title' => 'Decline TCOP',
+                    'text' => 'Succesfully decline TCOP'
+                ]
+            ]);
+
         } catch (Exception $err) {
             dd($err);
         }
@@ -1263,7 +1301,7 @@ class ReportController extends Controller
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
-                'child' => 'database reports',
+                'child' => 'report subject teacher',
             ]);
 
             $userId = session('id_user');
@@ -1720,8 +1758,6 @@ class ReportController extends Controller
                 return view('components.teacher.detail_scoring_subject_primary')->with('data', $data);
             }
            
-    
-            
         } catch (Exception $err) {
            return dd($err);
         }
@@ -2129,14 +2165,16 @@ class ReportController extends Controller
         }
     }
 
-    public function classTeacher($id){
+    public function classTeacher(){
         try {
             //code...
             session()->flash('page',  $page = (object)[
                'page' => 'reports',
                'child' => 'report class teacher',
             ]);
-   
+
+            $id = session('id_user');
+
             $getIdTeacher = Teacher::where('user_id', $id)->value('id');
    
             $classTeacher = Teacher_grade::where('teacher_id', $getIdTeacher)
@@ -2148,8 +2186,6 @@ class ReportController extends Controller
                'classTeacher' => $classTeacher,
             ];
    
-            // dd($data);
-   
             return view('components.teacher.data-report-teacher')->with('data', $data);
    
         } catch (Exception $err) {
@@ -2157,7 +2193,7 @@ class ReportController extends Controller
         }
     }
 
-    public function subjectTeacher($id)
+    public function subjectTeacher()
     {
         try {
             //code...
@@ -2166,7 +2202,7 @@ class ReportController extends Controller
                 'child' => 'report subject teacher',
             ]);
 
-            $getIdTeacher = Teacher::where('user_id', $id)->value('id');
+            $getIdTeacher = Teacher::where('user_id', session('id_user'))->value('id');
 
             $subjectTeacher = Teacher_subject::where('teacher_id', $getIdTeacher)
                 ->join('subjects', 'subjects.id', '=', 'teacher_subjects.subject_id')
@@ -3029,6 +3065,20 @@ class ReportController extends Controller
                         'English',
                         'Chinese'
                     ];
+
+                    $ecaData = Student_eca::where('student_ecas.student_id', $id)
+                        ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
+                        ->get(['student_ecas.student_id', 'ecas.name as eca_name']);
+
+                    $groupedEcaData = [];
+                    $counter = 1;
+
+                    foreach ($ecaData as $eca) {
+                        $groupedEcaData['student_id'] = $eca->student_id;
+                        $groupedEcaData['eca_' . $counter] = $eca->eca_name;
+                        $counter++;
+                    }
+
                 } elseif (strtolower($student->grade_name) === "secondary") {
                     $order = [
                         'Religion',
@@ -3044,20 +3094,22 @@ class ReportController extends Controller
                         'English',
                         'Chinese'
                     ];
-                }
 
-                $ecaData = Student_eca::where('student_ecas.student_id', $id)
+                    $ecaData = Student_eca::where('student_ecas.student_id', $id)
                     ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
                     ->get(['student_ecas.student_id', 'ecas.name as eca_name']);
 
-                $groupedEcaData = [];
-                $counter = 1;
+                    $groupedEcaData = [];
+                    $counter = 1;
 
-                foreach ($ecaData as $eca) {
-                    $groupedEcaData['student_id'] = $eca->student_id;
-                    $groupedEcaData['eca_' . $counter] = $eca->eca_name;
-                    $counter++;
+                    foreach ($ecaData as $eca) {
+                        $groupedEcaData['student_id'] = $eca->student_id;
+                        $groupedEcaData['eca_' . $counter] = $eca->eca_name;
+                        $counter++;
+                    }
                 }
+
+                
 
                 // if (empty($groupedEcaData)) {
                 //     $groupedEcaData['student_id'] = $id;
@@ -3185,7 +3237,7 @@ class ReportController extends Controller
                 'eca' => $groupedEcaData,
             ];
 
-            // dd($data);
+            // dd($student->grade_name);
 
 
             $pdf = app('dompdf.wrapper');
@@ -3316,6 +3368,7 @@ class ReportController extends Controller
             $comments = comment::where('student_id', $id)
                 ->get()
                 ->keyBy('student_id');
+
             $resultsScore = Acar::join('students', 'students.id', '=', 'acars.student_id')
                 ->leftJoin('subjects', function ($join) {
                     $join->on('subjects.id', '=', 'acars.subject_id')
@@ -3413,6 +3466,10 @@ class ReportController extends Controller
                 ];
             })->values()->all();
 
+            $tcop = Tcop::where('student_id', $id)
+                ->select('tcops.final_score as final_score', 'tcops.grades_final_score as grades_final_score')
+                ->get();
+
             $student->date_of_registration = Carbon::parse($student->date_of_registration);
 
             $academicYear = Master_academic::first()->value('academic_year');
@@ -3431,6 +3488,7 @@ class ReportController extends Controller
                 'promotionGrade' => $grade,
                 'academicYear' => $academicYear,
                 'eca' => $groupedEcaData,
+                'tcop' => $tcop
             ];
 
             // dd($data);

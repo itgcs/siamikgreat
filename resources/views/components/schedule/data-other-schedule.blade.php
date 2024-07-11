@@ -5,7 +5,19 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
 
-   <div class="card card-dark mt-5">
+   <div class="row mt-4">
+      <div class="col">
+      <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+         <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">Home</li>
+            <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedules/schools')}}">Schedule Academic</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Manage</li>
+         </ol>
+      </nav>
+      </div>
+   </div>
+
+   <div class="card card-dark ">
       <div class="card-header">
          <h3 class="card-title">Schedule</h3>
 
@@ -154,30 +166,44 @@
    </div>
 
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('.edit-schedule-btn').on('click', function() {
-            var scheduleId = $(this).data('id');
-            $.ajax({
-                url: '/get-schedule/' + scheduleId,
-                method: 'GET',
-                success: function(response) {
-                    // Isi modal dengan data yang diambil
-                    $('#type_schedule').val(response.type_schedule_id);
-                    $('#date').val(response.date);
-                    $('#_end_date').val(response.end_date);
-                    $('#notes').val(response.note);
 
-                    // Ubah atribut action dari form
-                    $('#modalEditOtherSchedule form').attr('action', '/update-schedule/' + scheduleId);
-                },
-                error: function(error) {
-                    console.error('Error fetching schedule data:', error);
-                }
-            });
-        });
-    });
+
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+      // Menggunakan event delegation untuk menambahkan event listener ke semua tombol dengan kelas 'edit-schedule-btn'
+      document.querySelectorAll('.edit-schedule-btn').forEach(function(button) {
+         button.addEventListener('click', function() {
+            var scheduleId = this.getAttribute('data-id');
+            
+            // Membuat permintaan AJAX menggunakan Fetch API
+            fetch('/get-schedule/' + scheduleId)
+               .then(function(response) {
+                  if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+               })
+               .then(function(data) {
+                  // Isi modal dengan data yang diambil
+                  document.getElementById('type_schedule').value = data.type_schedule_id;
+                  document.getElementById('date').value = data.date;
+                  document.getElementById('_end_date').value = data.end_date;
+                  document.getElementById('notes').value = data.note;
+
+                  // Ubah atribut action dari form
+                  document.querySelector('#modalEditOtherSchedule form').setAttribute('action', '/update-schedule/' + scheduleId);
+               })
+               .catch(function(error) {
+                  console.error('Error fetching schedule data:', error);
+               });
+         });
+      });
+   });
+
 </script>
 
 
@@ -242,7 +268,6 @@
          title: 'Successfully deleted the schedule in the database.',
    });
    }, 1500);
-
    
    </script>
 @endif

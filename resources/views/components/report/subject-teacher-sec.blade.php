@@ -59,7 +59,7 @@
                                     @elseif (session('role') == 'admin')
                                     <td class="project-actions text-right toastsDefaultSuccess">
                                         <a class="btn btn-primary btn"
-                                            href="{{url('admin/reports') . '/detailSubjectSec/student/' . $dg->id . '/' . $pr->id}}">
+                                            href="{{url('admin/reports') . '/detailSubjectSec/student/' . $dg->id . '/' . $pr->subject_id}}">
                                             <i class="fas fa-folder">
                                             </i>
                                             View

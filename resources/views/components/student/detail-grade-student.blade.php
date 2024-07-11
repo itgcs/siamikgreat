@@ -67,7 +67,8 @@ document.addEventListener('DOMContentLoaded', function() {
             @php
                 $event = [
                     'title' => $schedule->note == "" ? $schedule->subject_name : $schedule->note,
-                    'startRecur' => \Carbon\Carbon::now()->startOfWeek()->format('Y-m-d'),
+                    'startRecur' => $startSemester,
+                    'endRecur' => $endSemester,
                     'daysOfWeek' => [$schedule->day],
                     'startTime' => $schedule->start_time,
                     'endTime' => $schedule->end_time,

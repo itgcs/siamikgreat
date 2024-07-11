@@ -25,6 +25,7 @@ use App\Models\Score_attendance;
 use App\Models\Score_attendance_status;
 use App\Models\Nursery_toddler;
 use App\Models\Kindergarten;
+use App\Models\Tcop;
 
 use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Carbon;
@@ -104,6 +105,8 @@ class ScoringController extends Controller
                 strtolower($subject) == "religion hinduism" || 
                 strtolower($subject) == "religion confucianism") {
                 $subject_id = $getReligionId;
+            } else {
+                $subject_id = $request->subject_id;
             }
 
             for($i=0; $i < count($request->student_id); $i++){
@@ -190,7 +193,9 @@ class ScoringController extends Controller
                     strtolower($subject) == "religion confucianism") {
                     $subject_id = $getReligionId;
                 }
-            }
+            }else {
+                $subject_id = $request->subject_id;
+             }
 
 
             // dd($subject_id);
@@ -472,7 +477,6 @@ class ScoringController extends Controller
             dd($err);   
         }
     }
-    
 
     public function actionPostSooaSecondary(Request $request){
         // dd($request);
@@ -681,6 +685,35 @@ class ScoringController extends Controller
 
         } catch (Exception $err) {
             dd($err);
+        }
+    }
+
+    public function actionPostTcop(Request $request){
+        // dd($request);
+        try {
+            for($i=0; $i < count($request->student_id); $i++){
+                $data = [
+                    'student_id' => $request->student_id[$i],
+                    'grade_id' => $request->grade_id,
+                    'class_teacher_id' => $request->class_teacher,
+                    'final_score' => $request->final_score[$i],
+                    'grades_final_score' => $request->grades_final_score[$i],
+                    'promotion' => 1,
+                    'created_at' => now(),
+                ];
+
+                Tcop::updateOrCreate(
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 
+                    'class_teacher_id' => $request->class_teacher],
+                    $data
+                );
+            }
+    
+            session()->flash('after_post_tcop');
+    
+            return redirect()->back()->with('role', session('role'));
+        } catch (Exception $err) {
+            dd($err);   
         }
     }
 

@@ -348,7 +348,7 @@ class AttendanceController extends Controller
         }
     }
 
-    public function gradeTeacher($id)
+    public function gradeTeacher()
     {
         try {
             //code...
@@ -357,7 +357,7 @@ class AttendanceController extends Controller
                 'child' => 'attendance class teacher',
             ]);
 
-            $getIdTeacher = Teacher::where('user_id', $id)->value('id');
+            $getIdTeacher = Teacher::where('user_id', session('id_user'))->value('id');
 
             $gradeTeacher = Teacher_grade::where('teacher_id', $getIdTeacher)
                 ->join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
