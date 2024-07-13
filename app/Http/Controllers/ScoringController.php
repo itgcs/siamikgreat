@@ -26,6 +26,8 @@ use App\Models\Score_attendance_status;
 use App\Models\Nursery_toddler;
 use App\Models\Kindergarten;
 use App\Models\Tcop;
+use App\Models\Master_academic;
+use App\Models\Mid_kindergarten;
 
 use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Carbon;
@@ -228,6 +230,153 @@ class ScoringController extends Controller
                 
                 Acar::create($scoring);
                 Comment::create($comment);
+            }
+
+            $status = [
+                'grade_id' => $request->grade_id,
+                'subject_id' => $request->subject_id,
+                'teacher_id' => $request->subject_teacher,
+                'status' => 1,
+                'semester' => $request->semester,
+                'created_at' => now()
+            ];
+
+            Scoring_status::create($status);
+
+            session()->flash('after_post_final_score');
+
+            return redirect()->back()->with('role', session('role'));
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
+    public function actionPostKindergarten(Request $request){
+        // dd($request);
+        try {
+            $subjectName = Subject::where('id', '=', $request->subject_id)->value('name_subject');
+
+            // dd($subjectName);
+
+            for($i=0; $i < count($request->student_id); $i++){
+                $final_score = round($request->final_score[$i]);
+    
+                $grade = $this->determineGrade($final_score);
+
+                if (strtolower($subjectName) == "english") {
+                    $scoring = [
+                        'student_id' => $request->student_id[$i],
+                        'grade_id' => $request->grade_id,
+                        'class_teacher_id' => $request->subject_teacher,
+                        'semester' => $request->semester,
+                        'english' => $request->final_score[$i],
+                    ];
+                    
+                    Kindergarten::updateOrCreate(
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        $scoring
+                    );
+                }
+                elseif (strtolower($subjectName) == "mathematics") {
+                    $scoring = [
+                        'student_id' => $request->student_id[$i],
+                        'grade_id' => $request->grade_id,
+                        'class_teacher_id' => $request->subject_teacher,
+                        'semester' => $request->semester,
+                        'mathematics' => $request->final_score[$i],
+                    ];
+                    
+                    Kindergarten::updateOrCreate(
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        $scoring
+                    );
+                }
+                elseif (strtolower($subjectName) == "chinese") {
+                    $scoring = [
+                        'student_id' => $request->student_id[$i],
+                        'grade_id' => $request->grade_id,
+                        'class_teacher_id' => $request->subject_teacher,
+                        'semester' => $request->semester,
+                        'chinese' => $request->final_score[$i],
+                    ];
+                    
+                    Kindergarten::updateOrCreate(
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        $scoring
+                    );
+                }
+                elseif (strtolower($subjectName) == "science") {
+                    $scoring = [
+                        'student_id' => $request->student_id[$i],
+                        'grade_id' => $request->grade_id,
+                        'class_teacher_id' => $request->subject_teacher,
+                        'semester' => $request->semester,
+                        'science' => $request->final_score[$i],
+                    ];
+                    
+                    Kindergarten::updateOrCreate(
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        $scoring
+                    );
+                }
+                elseif (strtolower($subjectName) == "character building") {
+                    $scoring = [
+                        'student_id' => $request->student_id[$i],
+                        'grade_id' => $request->grade_id,
+                        'class_teacher_id' => $request->subject_teacher,
+                        'semester' => $request->semester,
+                        'character_building' => $request->final_score[$i],
+                    ];
+                    
+                    Kindergarten::updateOrCreate(
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        $scoring
+                    );
+                }
+                elseif (strtolower($subjectName) == "art and craft") {
+                    $scoring = [
+                        'student_id' => $request->student_id[$i],
+                        'grade_id' => $request->grade_id,
+                        'class_teacher_id' => $request->subject_teacher,
+                        'semester' => $request->semester,
+                        'art_and_craft' => $request->final_score[$i],
+                    ];
+                    
+                    Kindergarten::updateOrCreate(
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        $scoring
+                    );
+                }
+                elseif (strtolower($subjectName) == "it") {
+                    $scoring = [
+                        'student_id' => $request->student_id[$i],
+                        'grade_id' => $request->grade_id,
+                        'class_teacher_id' => $request->subject_teacher,
+                        'semester' => $request->semester,
+                        'it' => $request->final_score[$i],
+                    ];
+                    
+                    Kindergarten::updateOrCreate(
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        $scoring
+                    );
+                }
+                elseif (strtolower($subjectName) == "phonic") {
+                    $scoring = [
+                        'student_id' => $request->student_id[$i],
+                        'grade_id' => $request->grade_id,
+                        'class_teacher_id' => $request->subject_teacher,
+                        'semester' => $request->semester,
+                        'phonic' => $request->final_score[$i],
+                    ];
+                    
+                    Kindergarten::updateOrCreate(
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        $scoring
+                    );
+                }
+                
             }
 
             $status = [
@@ -828,7 +977,7 @@ class ScoringController extends Controller
             
             for($i=0; $i < count($request->student_id); $i++){
                 
-                // dd($request->student_id[$i]);
+                // dd($request->semester);
 
                 $student_id = $request->student_id[$i];
 
@@ -837,7 +986,6 @@ class ScoringController extends Controller
                     'student_id' => $request->student_id[$i],
                     'grade_id' => $request->grade_id,
                     'class_teacher_id' => $request->teacher_id,
-                    'semester' => $request->semester,
                     'songs' => $request->songs[$student_id],
                     'prayer' => $request->prayer[$student_id],
                     'colour' => $request->colour[$student_id],
@@ -853,6 +1001,7 @@ class ScoringController extends Controller
                     'demonstrates_importance_of_self_control' => $request->demonstrates_importance_of_self_control[$student_id],
                     'management_emotional_problem_solving' => $request->management_emotional_problem_solving[$student_id],
                     'remarks' => $request->remarks[$student_id],
+                    'semester' => $request->semester,
                     'created_at' => now()
                 ];
                 
@@ -885,8 +1034,9 @@ class ScoringController extends Controller
     public function actionPostReportCardNursery(Request $request)
     {
         try {
-            
-            if ($request->semester == 1) {
+            $semester = Master_academic::first()->value('now_semester');
+
+            if ($semester == 1) {
                 for($i=0; $i < count($request->student_id); $i++){
                 
                     $student_id = $request->student_id[$i];
@@ -920,7 +1070,7 @@ class ScoringController extends Controller
                     );
                 }
             }
-            elseif ($request->semester == 2) {
+            elseif ($semester == 2) {
                 for($i=0; $i < count($request->student_id); $i++){
                 
                     $student_id = $request->student_id[$i];
@@ -975,6 +1125,64 @@ class ScoringController extends Controller
         }
     }
 
+    public function actionPostMidReportCardKindergarten(Request $request)
+    {
+        // dd($request);
+        try {
+            for($i=0; $i < count($request->student_id); $i++){
+                
+                // dd($request->semester);
+
+                $student_id = $request->student_id[$i];
+
+                // dd($student_id);
+                $scoring = [
+                    'student_id' => $request->student_id[$i],
+                    'grade_id' => $request->grade_id,
+                    'class_teacher_id' => $request->teacher_id,
+                    'english_language' => $request->english_language[$student_id],
+                    'mandarin_language' => $request->mandarin_language[$student_id],
+                    'writing_skill' => $request->writing_skill[$student_id],
+                    'reading_skill' => $request->reading_skill[$student_id],
+                    'phonic' => $request->phonic[$student_id],
+                    'science' => $request->science[$student_id],
+                    'art_and_craft' => $request->art_and_craft[$student_id],
+                    'physical_education' => $request->physical_education[$student_id],
+                    'able_to_sit_quietly' => $request->able_to_sit_quietly[$student_id],
+                    'willingness_to_listen' => $request->willingness_to_listen[$student_id],
+                    'willingness_to_work' => $request->willingness_to_work[$student_id],
+                    'willingness_to_sing' => $request->willingness_to_sing[$student_id],
+                    'remarks' => $request->remarks[$student_id],
+                    'semester' => $request->semester,
+                    'created_at' => now()
+                ];
+                
+                Mid_kindergarten::updateOrCreate(
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
+                    'class_teacher_id' => $request->teacher_id],
+                    $scoring
+                );
+            }
+            
+            $status = [
+                'grade_id' => $request->grade_id,
+                'class_teacher_id' => $request->teacher_id,
+                'status' => 1,
+                'semester' => $request->semester,
+                'created_at' => now()
+            ];
+
+            Report_card_status::create($status);
+
+            // dd($request);
+            session()->flash('after_post_report_card_toddler');
+
+            return redirect()->back()->with('role', session('role'));
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
     public function actionPostReportCardKindergarten(Request $request)
     {
         // dd($request);
@@ -985,20 +1193,9 @@ class ScoringController extends Controller
                 
                     $student_id = $request->student_id[$i];
                     $scoring = [
-                        'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
-                        'class_teacher_id' => $request->teacher_id,
-                        'semester' => $request->semester,
-                        'english' => $request->english[$student_id],
-                        'mathematics' => $request->mathematics[$student_id],
-                        'chinese' => $request->chinese[$student_id],
-                        'science' => $request->science[$student_id],
-                        'character_building' => $request->character_building[$student_id],
-                        'art_&_craft' => $request->art_and_craft[$student_id],
-                        'it' => $request->it[$student_id],
                         'conduct' => $request->conduct[$student_id],
                         'remarks' => $request->remarks[$student_id],
-                        'created_at' => now()
+                        'updated_at' => now()
                     ];
                     
                     Kindergarten::updateOrCreate(
@@ -1013,21 +1210,10 @@ class ScoringController extends Controller
                 
                     $student_id = $request->student_id[$i];
                     $scoring = [
-                       'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
-                        'class_teacher_id' => $request->teacher_id,
-                        'semester' => $request->semester,
-                        'english' => $request->english[$student_id],
-                        'mathematics' => $request->mathematics[$student_id],
-                        'chinese' => $request->chinese[$student_id],
-                        'science' => $request->science[$student_id],
-                        'character_building' => $request->character_building[$student_id],
-                        'art_and_craft' => $request->art_and_craft[$student_id],
-                        'it' => $request->it[$student_id],
                         'conduct' => $request->conduct[$student_id],
                         'remarks' => $request->remarks[$student_id],
                         'promote' => 1,
-                        'created_at' => now()
+                        'updated_at' => now()
                     ];
                     
                     Kindergarten::updateOrCreate(

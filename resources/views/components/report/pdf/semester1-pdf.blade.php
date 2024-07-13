@@ -244,7 +244,7 @@ $grade_name = $student->grade_name;
                         <th style="text-align:center;border: 1px dotted black;border-left:solid 1px black;width:10%">Subjects</th>
                         <th style="text-align:center;border: 1px dotted black;width:10%">Marks</th>
                         <th style="text-align:center;border: 1px dotted black;width:10%">Grades</th>
-                        <th style="text-align:center;border: 1px dotted black;border-right:solid 1px black;width:70%" colspan="5">Strengths/Weaknesses/Next Steps</th>
+                        <th style="text-align:center;border: 1px dotted black;border-right:solid 1px black;width:70%" colspan="5">Strengths/Weakness/Next Steps</th>
                     </tr>
                 </thead>
                 <tbody>

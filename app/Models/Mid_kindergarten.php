@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Kindergarten extends Model
+class Mid_kindergarten extends Model
 {
     use HasFactory;
 
@@ -14,18 +14,20 @@ class Kindergarten extends Model
         'student_id',
         'grade_id',
         'class_teacher_id',
-        'english',
-        'mathematics',
-        'chinese',
-        'science',
-        'character_building',
-        'art_and_craft',
-        'it',
+        'english_language',
+        'mandarin_language',
+        'writing_skill',
+        'reading_skill',
         'phonic',
-        'conduct',
+        'science',
+        'art_and_craft',
+        'physical_education',
+        'able_to_sit_quietly',
+        'willingness_to_listen',
+        'willingness_to_work',
+        'willingness_to_sing',
         'remarks',
         'semester',
-        'promote',
         'created_at',
         'updated_at',
     ];

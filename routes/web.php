@@ -885,9 +885,11 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('report/detail/{id}', [ReportController::class, 'detail']);
       Route::get('report/class/teacher', [ReportController::class, 'classTeacher']);
       Route::get('report/subject/teacher', [ReportController::class, 'subjectTeacher']);
+      Route::get('report/detailSubjectKindergarten/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudentKindergartenTeacher']);
       Route::get('report/detailSubjectPrimary/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudentTeacher']);
       Route::get('report/detailSubjectSecondary/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudentSecTeacher']);
       
+      Route::post('/scoringKindergarten', [ScoringController::class, 'actionPostKindergarten'])->name('actionTeacherPostScoringKindergarten');
       Route::post('/scoringMajorPrimary', [ScoringController::class, 'actionPostMajorPrimary'])->name('actionTeacherPostScoringMajorPrimary');
       Route::post('/scoringMinorPrimary', [ScoringController::class, 'actionPostMinorPrimary'])->name('actionTeacherPostScoringMinorPrimary');
       Route::post('/scoringSecondary', [ScoringController::class, 'actionPostSecondary'])->name('actionTeacherPostScoringSecondary');
@@ -908,8 +910,11 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('report/cardSec/semestersatu/{id}', [ReportController::class, 'cardSemester1Sec']);
       Route::get('report/cardSec/semesterdua/{id}', [ReportController::class, 'cardSemester2Sec']);
       Route::get('report/cardToddler/{id}', [ReportController::class, 'cardToddler']);
+      Route::get('report/mid/cardToddler/{id}', [ReportController::class, 'cardToddlerMid']);
       Route::get('report/cardNursery/{id}', [ReportController::class, 'cardNursery']);
+      Route::get('report/mid/cardNursery/{id}', [ReportController::class, 'cardNurseryMid']);
       Route::get('report/cardKindergarten/{id}', [ReportController::class, 'cardKindergarten']);
+      Route::get('report/mid/cardKindergarten/{id}', [ReportController::class, 'cardKindergartenMid']);
       
 
       Route::get('report/tcop/detail/{id}', [ReportController::class, 'tcopPrimary']);
@@ -921,8 +926,11 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('report/semester1/print/{id}', [ReportController::class, 'downloadPDFSemester1']);
       Route::get('report/semester2/print/{id}', [ReportController::class, 'downloadPDFSemester2']);
       Route::get('report/toddler/print/{id}', [ReportController::class, 'downloadPDFToddler']);
+      Route::get('report/mid/toddler/print/{id}', [ReportController::class, 'downloadPDFToddlerMid']);
       Route::get('report/nursery/print/{id}', [ReportController::class, 'downloadPDFNursery']);
+      Route::get('report/mid/nursery/print/{id}', [ReportController::class, 'downloadPDFNurseryMid']);
       Route::get('report/kindergarten/print/{id}', [ReportController::class, 'downloadPDFKindergarten']);
+      Route::get('report/mid/kindergarten/print/{id}', [ReportController::class, 'downloadPDFKindergartenMid']);
       
 
       Route::post('report/reportCard1', [ScoringController::class, 'actionPostReportCard1'])->name('actionTeacherPostReportCard1');
@@ -930,6 +938,7 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::post('report/toddler', [ScoringController::class, 'actionPostReportCardToddler'])->name('actionTeacherPostReportCardToddler');
       Route::post('report/nursery', [ScoringController::class, 'actionPostReportCardNursery'])->name('actionTeacherPostReportCardNursery');
       Route::post('report/kindergarten', [ScoringController::class, 'actionPostReportCardKindergarten'])->name('actionTeacherPostReportCardKindergarten');
+      Route::post('report/midkindergarten', [ScoringController::class, 'actionPostMidReportCardKindergarten'])->name('actionTeacherPostMidReportCardKindergarten');
 
    
       Route::get('schedules/grade', [ScheduleController::class, 'scheduleGradeTeacher']);

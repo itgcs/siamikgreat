@@ -362,6 +362,7 @@ class AttendanceController extends Controller
             $gradeTeacher = Teacher_grade::where('teacher_id', $getIdTeacher)
                 ->join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
                 ->select('grades.*',)
+                ->orderBy('grades.id', 'asc')
                 ->get();
 
             $gradeId = Teacher_grade::where('teacher_id', $getIdTeacher)->value('grade_id');
@@ -708,7 +709,8 @@ class AttendanceController extends Controller
                 return redirect('/admin/attendances');
             }
             elseif (session('role') == 'teacher') {
-                return redirect('/teacher/dashboard/attendance/gradeTeacher/' . session('id_user'));
+                return redirect()->route('attendance.detail.teacher', ['id' => session('id_user'), 'gradeId' => $request->grade_id]);
+
             }
 
         } catch(Exception $err){

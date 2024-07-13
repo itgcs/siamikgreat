@@ -13,9 +13,9 @@
             @elseif (session('role') == 'admin')
             <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
             @elseif (session('role') == 'teacher')
-            <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report')}}">Reports</a></li>
+            <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report')}}">Reports </a></li>
             @endif
-            <li class="breadcrumb-item active" aria-current="page">Detail Report</li>
+            <li class="breadcrumb-item active" aria-current="page">Detail Report {{ $data['subject']->subject_name }}</li>
           </ol>
         </nav>
       </div>
@@ -55,7 +55,7 @@
                 <div class="input-group-append mx-2">
                     <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
                     @if (session('role') == 'superadmin' || session('role') == 'admin')
-                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline ACAR</a>
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
                     @endif
                 </div>
             </div>  

@@ -101,7 +101,19 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
         </div> -->
         <h5 style="margin-bottom:5px;"><u>REPORT CARD</u></h5>
         <h5 style="margin-bottom:2px;"><u>NURSERY</u></h5>
-        <h5><u>TERM {{ $semester }} SEMESTER {{ $semester }}/{{ $academicYear }}</u></h5>
+        @if ($mid == 0)
+            @if ($semester == 1)
+                <h5><u>TERM 2 SEMESTER {{ $semester }}/{{ $academicYear }}</u></h5>
+            @elseif ($semester == 2)
+                <h5><u>TERM 4 SEMESTER {{ $semester }}/{{ $academicYear }}</u></h5>
+            @endif
+        @else 
+            @if ($semester == 1)
+                <h5><u>TERM 1 SEMESTER {{ $semester }}/{{ $academicYear }}</u></h5>
+            @elseif ($semester == 2)
+                <h5><u>TERM 3 SEMESTER {{ $semester }}/{{ $academicYear }}</u></h5>
+            @endif
+        @endif
     </div>
 
     <div style="margin-top:5px;">
