@@ -905,8 +905,10 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::post('report/sooaSecondary', [ScoringController::class, 'actionPostSooaSecondary'])->name('actionTeacherPostScoringSooaSecondary');
       Route::post('report/updateSooaPrimary/{id}', [ScoringController::class, 'actionPostSooaPrimary'])->name('actionUpdateSooaPrimary');
       
+      Route::get('report/midcard/semestersatu/{id}', [ReportController::class, 'cardSemesterMid']);
       Route::get('report/card/semestersatu/{id}', [ReportController::class, 'cardSemester1']);
       Route::get('report/card/semesterdua/{id}', [ReportController::class, 'cardSemester2']);
+      Route::get('report/midcard/semesterdua/{id}', [ReportController::class, 'cardSemester2Mid']);
       Route::get('report/cardSec/semestersatu/{id}', [ReportController::class, 'cardSemester1Sec']);
       Route::get('report/cardSec/semesterdua/{id}', [ReportController::class, 'cardSemester2Sec']);
       Route::get('report/cardToddler/{id}', [ReportController::class, 'cardToddler']);
@@ -922,7 +924,7 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
 
       Route::post('report/tcop', [ScoringController::class, 'actionPostTcop'])->name('actionTeacherPostTcop');
 
-
+      Route::get('midreport/print/{id}', [ReportController::class, 'downloadPDFMidSemester']);
       Route::get('report/semester1/print/{id}', [ReportController::class, 'downloadPDFSemester1']);
       Route::get('report/semester2/print/{id}', [ReportController::class, 'downloadPDFSemester2']);
       Route::get('report/toddler/print/{id}', [ReportController::class, 'downloadPDFToddler']);
@@ -932,7 +934,7 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('report/kindergarten/print/{id}', [ReportController::class, 'downloadPDFKindergarten']);
       Route::get('report/mid/kindergarten/print/{id}', [ReportController::class, 'downloadPDFKindergartenMid']);
       
-
+      Route::post('report/midReportCard', [ScoringController::class, 'actionPostMidReportCard'])->name('actionTeacherPostMidReportCard');
       Route::post('report/reportCard1', [ScoringController::class, 'actionPostReportCard1'])->name('actionTeacherPostReportCard1');
       Route::post('report/reportCard2', [ScoringController::class, 'actionPostReportCard2'])->name('actionTeacherPostReportCard2');
       Route::post('report/toddler', [ScoringController::class, 'actionPostReportCardToddler'])->name('actionTeacherPostReportCardToddler');
@@ -940,10 +942,10 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::post('report/kindergarten', [ScoringController::class, 'actionPostReportCardKindergarten'])->name('actionTeacherPostReportCardKindergarten');
       Route::post('report/midkindergarten', [ScoringController::class, 'actionPostMidReportCardKindergarten'])->name('actionTeacherPostMidReportCardKindergarten');
 
-   
       Route::get('schedules/grade', [ScheduleController::class, 'scheduleGradeTeacher']);
       Route::get('schedules/gradeOther/{id}', [ScheduleController::class, 'scheduleGradeTeacherOther']);
       Route::get('schedules/subject', [ScheduleController::class, 'scheduleSubjectTeacher']);
+      Route::get('schedules/invillager', [ScheduleController::class, 'scheduleInvillagerTeacher']);
       Route::get('schedules/companion/{id}', [ScheduleController::class, 'scheduleCompanionTeacher']);
       Route::get('schools', [ScheduleController::class, 'scheduleTeacherSchools']);
       Route::get('schedules/detail/{teacherId}/{gradeId}', [ScheduleController::class, 'detailScheduleTeacher']);

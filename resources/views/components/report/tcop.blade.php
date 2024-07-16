@@ -12,8 +12,10 @@
               <li class="breadcrumb-item"><a href="{{url('/superadmin/reports')}}">Reports</a></li>
             @elseif (session('role') == 'admin')
             <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
+            @elseif (session('role') == 'teacher')
+            <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report/class/teacher')}}">Reports </a></li>    
             @endif
-            <li class="breadcrumb-item active" aria-current="page">Detail Acar</li>
+            <li class="breadcrumb-item active" aria-current="page">Detail Certification of Promotion</li>
           </ol>
         </nav>
       </div>

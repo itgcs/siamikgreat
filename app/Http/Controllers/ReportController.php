@@ -39,6 +39,7 @@ use App\Models\Type_exam;
 use App\Models\Tcop;
 use App\Models\Score_kindergarten;
 use App\Models\Mid_kindergarten;
+use App\Models\Mid_report;
 
 use Barryvdh\DomPDF\PDF;
 use Dompdf\Dompdf;
@@ -1548,7 +1549,7 @@ class ReportController extends Controller
                         'exams.type_exam as type_exam',
                         'scores.score as score',
                     )
-                    ->where('students.religion', '=', 'catholic cristianity')
+                    ->where('students.religion', '=', 'catholic christianity')
                     ->where('grades.id', $gradeId)
                     ->where('subject_exams.subject_id', $subjectId)
                     ->where('exams.semester', $semester)
@@ -1573,7 +1574,7 @@ class ReportController extends Controller
                     'exams.type_exam as type_exam',
                     'scores.score as score',
                 )
-                ->where('students.religion', '=', 'protestant cristianity')
+                ->where('students.religion', '=', 'protestant christianity')
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -2363,6 +2364,8 @@ class ReportController extends Controller
             $data = [
                'classTeacher' => $classTeacher,
             ];
+
+
    
             return view('components.teacher.data-report-teacher')->with('data', $data);
    
@@ -2410,6 +2413,82 @@ class ReportController extends Controller
         }
     }
 
+    public function cardSemesterMid($id){
+        // dd($id);
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => 'reports',
+                'child' => 'report class teacher',
+            ]);
+            
+            $gradeId = $id;
+            $semester = intval(session('semester'));
+            if ($semester == 1) {
+                $mid = 0.5;
+            }
+            elseif ($semester == 2) {
+                $mid = 1.5;
+            }
+
+            $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class', 
+                'teachers.name as teacher_name')
+                ->where('teacher_grades.grade_id', $gradeId)
+                ->first();
+
+            $classTeacher = Teacher_grade::where('grade_id', $gradeId)
+                ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+                ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
+                ->first();
+
+            $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->join('mid_reports', 'mid_reports.student_id', '=', 'students.id')
+                ->where('grades.id', $gradeId)
+                ->where('mid_reports.semester', $semester)
+                ->get();
+
+            $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->where('grades.id', $gradeId)
+                ->get();
+
+            // dd($results);
+
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
+                $student = $scores->first();
+               
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->name,
+                    'remarks' => $student->remarks,
+                ];
+            })->values()->all();
+
+            $status = Report_card_status::where('grade_id', $grade->grade_id)
+                ->where('semester', $mid)
+                ->where('class_teacher_id', $classTeacher->teacher_id)
+                ->first();
+
+            // dd($scoresByStudent);
+
+            $data = [
+                'grade' => $grade,
+                'students' => $student,
+                'result' => $scoresByStudent,
+                'classTeacher' => $classTeacher,
+                'semester' => $semester,
+                'status' => $status,
+            ];
+
+            // dd($data);
+
+            return view('components.report.mid_semester')->with('data', $data);
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
     public function cardSemester1($id){
         // dd($id);
         try {
@@ -2450,6 +2529,7 @@ class ReportController extends Controller
                 ->join('report_cards', 'report_cards.student_id', '=', 'students.id')
                 ->where('grades.id', $gradeId)
                 ->where('report_cards.semester', $semester)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -3433,6 +3513,286 @@ class ReportController extends Controller
         }
     }
 
+    public function downloadPDFMidSemester($id)
+    {
+        try {
+            $semester = session('semester');
+            $learningSkills = Report_card::where('student_id', $id)
+                ->where('semester', $semester)
+                ->first();
+
+            $gradeId = Student::where('id', $id)->value('grade_id');
+
+            $student = Student::where('students.id', $id)
+                ->join('grades', 'grades.id', '=', 'students.grade_id')
+                ->select('students.name as student_name', 'students.created_at as date_of_registration', 
+                'grades.name as grade_name', 'grades.class as grade_class', 'grades.id as grade_id')
+                ->first();
+
+            $classTeacher = Teacher_grade::where('teacher_grades.grade_id', $student->grade_id)
+                ->join('teachers', 'teachers.id', 'teacher_grades.teacher_id')
+                ->select('teachers.name as teacher_name')
+                ->first();
+
+            $remarks = Mid_report::where('mid_reports.student_id', '=', $id)->value('remarks'); 
+            $academicYear = Master_academic::first()->value('academic_year');
+            
+            $resultsAttendance = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->leftJoin('attendances', function ($join) {
+                    $join->on('attendances.student_id', '=', 'students.id');
+                })
+                ->select(
+                    'students.id as student_id',
+                    'students.name as student_name',
+                    'attendances.*',
+                )
+                ->where('grades.id', $student->grade_id)
+                ->where('students.id', $id)
+                ->where('attendances.semester', $semester)
+                ->get();
+
+            $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
+                
+                $totalPresent     = $attendances->where('present', 1)->count();
+                $totalAlpha       = $attendances->where('alpha', 1)->count();
+                $totalSick        = $attendances->where('sick', 1)->count();
+                $totalPermission  = $attendances->where('permission', 1)->count();
+                $totalLate        = $attendances->where('late', 1)->count();
+                $timesLate        = $attendances->whereNotNull('latest')->sum('latest');
+                
+                return [
+                    'present'     => $totalPresent,
+                    'days_absent' => $totalAlpha,
+                    'sick'        => $totalSick,
+                    'permission'  => $totalPermission,
+                    'late'        => $timesLate,
+                ];
+            })->values()->all();
+
+            $homework  = Type_exam::where('name', 'homework')->value('id');
+            $exercise  = Type_exam::where('name', 'exercise')->value('id');
+            $quiz      = Type_exam::where('name', 'quiz')->value('id');
+            $project   = Type_exam::where('name', 'project')->value('id');
+            $practical = Type_exam::where('name', 'practical')->value('id');
+                
+            if(strtolower($student->grade_name) === "primary"){
+                $checkReligion = Student::where('id', $id)->value('religion');
+
+                if ($checkReligion == "Islam") {
+                    $religion = "Religion Islamic";
+                }
+                elseif ($checkReligion == "Catholic Christianity") {
+                    $religion = "Religion Catholic";
+                }
+                elseif ($checkReligion == "Protestant Christianity") {
+                    $religion = "Religion Christian";
+                }
+                elseif ($checkReligion == "Buddhism") {
+                    $religion = "Religion Buddhism";
+                }
+                elseif ($checkReligion == "Hinduism") {
+                    $religion = "Religion Hinduism";
+                }
+                elseif ($checkReligion == "Confucianism") {
+                    $religion = "Religion Confucianism";
+                }
+
+                $order = [
+                    'English',
+                    'Chinese',
+                    'Mathematics',
+                    'Science',
+                    $religion,
+                    'Bahasa Indonesia',
+                    'Character Building',
+                    'PE',
+                    'IT',
+                    'General Knowledge',
+                    'PPKn',
+                    'Art and Craft',
+                    'Health Education'
+                ];
+
+                $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                    ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
+                    ->join('exams', 'exams.id', '=', 'grade_exams.exam_id')
+                    ->leftJoin('subject_exams', function($join){
+                        $join->on('subject_exams.exam_id', '=', 'exams.id');
+                    })
+                    ->leftJoin('scores', function ($join) {
+                        $join->on('scores.student_id', '=', 'students.id')
+                            ->on('scores.exam_id', '=', 'exams.id');
+                    })
+                    ->leftJoin('subjects', function($join){
+                        $join->on('subjects.id', '=', 'subject_exams.subject_id');
+                    })
+                    ->select(
+                        'students.id as student_id',
+                        'students.name as student_name',
+                        'exams.id as exam_id',
+                        'exams.type_exam as type_exam',
+                        'scores.score as score',
+                        'subjects.name_subject as subject_name',
+                    )
+                    ->where('grades.id', $gradeId)
+                    ->where('exams.semester', $semester)
+                    ->where('students.id', $id)
+                    ->whereIn('exams.type_exam', [$homework, $exercise, $quiz, $project, $practical])
+                    ->get();
+
+                $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use ($order, $homework, $exercise, $quiz, $project, $practical) {
+                    $student = $scores->first();
+                    $scoresBySubject = $scores->groupBy('subject_name')->map(function ($subjectScores) use ($homework, $exercise, $quiz, $project, $practical) {
+                
+                        $homeworkScores = $subjectScores->where('type_exam', $homework)->pluck('score');
+                        $exerciseScores = $subjectScores->where('type_exam', $exercise)->pluck('score');
+                        $quizScores = $subjectScores->where('type_exam', $quiz)->pluck('score');
+                        $projectScores = $subjectScores->where('type_exam', $project)->pluck('score');
+                        $practicalScores = $subjectScores->where('type_exam', $practical)->pluck('score');
+                
+                        return [
+                            'subject_name' => $subjectScores->first()->subject_name,
+                            'scores' => [
+                                'homework' => $homeworkScores->all(),
+                                'exercise' => $exerciseScores->all(),
+                                'quiz' => $quizScores->all(),
+                                'project' => $projectScores->all(),
+                                'practical' => $practicalScores->all()
+                            ],
+                        ];
+                    });
+                
+                    // Urutkan subjek berdasarkan urutan dalam $order
+                    $orderedSubjects = collect($order)->mapWithKeys(function ($subject) use ($scoresBySubject) {
+                        return [$subject => $scoresBySubject->get($subject, ['subject_name' => $subject, 'scores' => []])];
+                    });
+                
+                    return [
+                        'student_id' => $student->student_id,
+                        'student_name' => $student->student_name,
+                        'subjects' => $orderedSubjects->values()->all(),
+                    ];
+                })->values()->all();
+
+            } 
+            elseif (strtolower($student->grade_name) === "secondary") {
+                $chineseLower  = Chinese_lower::where('student_id', $id)->exists();
+                $chineseHigher = Chinese_higher::where('student_id', $id)->exists();
+
+                // dd($chineseHigher);
+            
+                if ($chineseLower) {
+                    $chinese = "Chinese Lower";
+                }
+                elseif ($chineseHigher) {
+                    $chinese = "Chinese Higher";
+                }
+                
+                $order = [
+                    'English',
+                    $chinese,
+                    'Mathematics',
+                    'Science',
+                    'Religion',
+                    'Bahasa Indonesia',
+                    'Character Building',
+                    'PE',
+                    'IT',
+                    'Art and Design',
+                    'PPKn',
+                    'IPS',
+                ];
+
+                $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                    ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
+                    ->join('exams', 'exams.id', '=', 'grade_exams.exam_id')
+                    ->leftJoin('subject_exams', function($join){
+                        $join->on('subject_exams.exam_id', '=', 'exams.id');
+                    })
+                    ->leftJoin('scores', function ($join) {
+                        $join->on('scores.student_id', '=', 'students.id')
+                            ->on('scores.exam_id', '=', 'exams.id');
+                    })
+                    ->leftJoin('subjects', function($join){
+                        $join->on('subjects.id', '=', 'subject_exams.subject_id');
+                    })
+                    ->select(
+                        'students.id as student_id',
+                        'students.name as student_name',
+                        'exams.id as exam_id',
+                        'exams.type_exam as type_exam',
+                        'scores.score as score',
+                        'subjects.name_subject as subject_name',
+                    )
+                    ->where('grades.id', $gradeId)
+                    ->where('exams.semester', $semester)
+                    ->where('students.id', $id)
+                    ->whereIn('exams.type_exam', [$homework, $exercise, $quiz, $project, $practical])
+                    ->get();
+
+                $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use ($order, $homework, $exercise, $quiz, $project, $practical) {
+                    $student = $scores->first();
+                    $scoresBySubject = $scores->groupBy('subject_name')->map(function ($subjectScores) use ($homework, $exercise, $quiz, $project, $practical) {
+                
+                        $homeworkScores = $subjectScores->where('type_exam', $homework)->pluck('score');
+                        $exerciseScores = $subjectScores->where('type_exam', $exercise)->pluck('score');
+                        $quizScores = $subjectScores->where('type_exam', $quiz)->pluck('score');
+                        $projectScores = $subjectScores->where('type_exam', $project)->pluck('score');
+                        $practicalScores = $subjectScores->where('type_exam', $practical)->pluck('score');
+                
+                        return [
+                            'subject_name' => $subjectScores->first()->subject_name,
+                            'scores' => [
+                                'homework' => $homeworkScores->all(),
+                                'exercise' => $exerciseScores->all(),
+                                'quiz' => $quizScores->all(),
+                                'project' => $projectScores->all(),
+                                'practical' => $practicalScores->all()
+                            ],
+                        ];
+                    });
+                
+                    // Urutkan subjek berdasarkan urutan dalam $order
+                    $orderedSubjects = collect($order)->mapWithKeys(function ($subject) use ($scoresBySubject) {
+                        return [$subject => $scoresBySubject->get($subject, ['subject_name' => $subject, 'scores' => []])];
+                    });
+                
+                    return [
+                        'student_id' => $student->student_id,
+                        'student_name' => $student->student_name,
+                        'subjects' => $orderedSubjects->values()->all(),
+                    ];
+                })->values()->all();
+            }
+
+            $data = [
+                'semester'      => $semester,
+                'student'       => $student,
+                'classTeacher'  => $classTeacher,
+                'subjectReports'=> $scoresByStudent,
+                'remarks'       => $remarks,
+                'attendance'    => $attendancesByStudent,
+                'academicYear'  => $academicYear,
+                'homework'      => $homework,
+                'exercise'      => $exercise,
+                'quiz'          => $quiz,
+                'project'       => $project,
+                'practical'     => $practical,
+            ];
+
+            // dd($data);
+
+            $pdf = app('dompdf.wrapper');
+            $pdf->set_option('isRemoteEnabled', true);
+            $pdf->set_option('isHtml5ParserEnabled', true);
+            $pdf->loadView('components.report.pdf.mid_semester-pdf', $data)->setPaper('a5', 'portrait');
+            return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
+
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
+
     public function downloadPDFSemester1($id)
     {
         try {
@@ -3585,26 +3945,28 @@ class ReportController extends Controller
                 
                 // dd($groupedEcaData);
 
-                $scoresByStudent = $resultsScore->groupBy('student_id')->map(function ($scores) use($comments, $order) {
+                $scoresByStudent = $resultsScore->groupBy('student_id')->map(function ($scores) use ($comments, $order) {
                     $student = $scores->first();
                 
-                    // Sort scores based on the custom order
-                    $sortedScores = $scores->sortBy(function($score) use ($order) {
-                        return array_search($score->name_subject, $order);
+                    // Initialize an array for each subject in the order
+                    $sortedScores = collect($order)->map(function($subject) use ($scores) {
+                        // Find the score for this subject
+                        $score = $scores->firstWhere('name_subject', $subject);
+                
+                        // Return the score details or empty values if not found
+                        return [
+                            'subject_name' => $subject,
+                            'subject_id' => $score ? $score->subject_id : null,
+                            'final_score' => $score ? $score->final_score : null,
+                            'grades' => $score ? $score->grades : null,
+                            'comment' => $score ? $score->comment : null,
+                        ];
                     });
-
+                
                     return [
                         'student_id' => $student->student_id,
                         'student_name' => $student->name,
-                        'scores' => $sortedScores->map(function ($score) {
-                            return [
-                                'subject_name' => $score->name_subject,
-                                'subject_id' => $score->subject_id,
-                                'final_score' => $score->final_score,
-                                'grades' => $score->grades,
-                                'comment' => $score->comment,
-                            ];
-                        })->all(),
+                        'scores' => $sortedScores->all(),
                     ];
                 })->values()->all();
 
@@ -3705,7 +4067,7 @@ class ReportController extends Controller
                 'eca' => $groupedEcaData,
             ];
 
-            // dd($student->grade_name);
+            // dd($data);
 
 
             $pdf = app('dompdf.wrapper');
@@ -3715,27 +4077,12 @@ class ReportController extends Controller
             return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
 
 
-            // $dompdf = new Dompdf();
-            // $html = View::make('components.report.pdf.semester1-pdf')->render();
-
-            // $dompdf->loadHtml($html);
-            
-
-            // // (Optional) Setup the paper size and orientation
-            // $dompdf->setPaper('A4', 'portrait');
-
-            // // Render the HTML as PDF
-            // $dompdf->render();
-
-            // // Output the generated PDF to Browser
-        
-            // return $dompdf->stream('tes.pdf');
-
 
         } catch (Exception $err) {
             dd($err);
         }
     }
+
     public function downloadPDFSemester2($id)
     {
         try {
@@ -3862,26 +4209,28 @@ class ReportController extends Controller
                     'Chinese'
                 ];
                 
-                $scoresByStudent = $resultsScore->groupBy('student_id')->map(function ($scores) use($comments, $order) {
+                $scoresByStudent = $resultsScore->groupBy('student_id')->map(function ($scores) use ($comments, $order) {
                     $student = $scores->first();
                 
-                    // Sort scores based on the custom order
-                    $sortedScores = $scores->sortBy(function($score) use ($order) {
-                        return array_search($score->name_subject, $order);
+                    // Initialize an array for each subject in the order
+                    $sortedScores = collect($order)->map(function($subject) use ($scores) {
+                        // Find the score for this subject
+                        $score = $scores->firstWhere('name_subject', $subject);
+                
+                        // Return the score details or empty values if not found
+                        return [
+                            'subject_name' => $subject,
+                            'subject_id' => $score ? $score->subject_id : null,
+                            'final_score' => $score ? $score->final_score : null,
+                            'grades' => $score ? $score->grades : null,
+                            'comment' => $score ? $score->comment : null,
+                        ];
                     });
-
+                
                     return [
                         'student_id' => $student->student_id,
                         'student_name' => $student->name,
-                        'scores' => $sortedScores->map(function ($score) {
-                            return [
-                                'subject_name' => $score->name_subject,
-                                'subject_id' => $score->subject_id,
-                                'final_score' => $score->final_score,
-                                'grades' => $score->grades,
-                                'comment' => $score->comment,
-                            ];
-                        })->all(),
+                        'scores' => $sortedScores->all(),
                     ];
                 })->values()->all();
 
@@ -4560,18 +4909,18 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('exams.semester', $semester)
                 ->where('students.id', $id)
+                ->whereIn('exams.type_exam', [$exercise, $quiz])
                 ->get();
 
             // dd($results);
 
-            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use ($participation, $exercise, $quiz) {
+            $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use ($exercise, $quiz) {
 
                 $student = $scores->first();
-                $scoresBySubject = $scores->groupBy('subject_name')->map(function ($subjectScores) use ($participation, $exercise, $quiz) {
+                $scoresBySubject = $scores->groupBy('subject_name')->map(function ($subjectScores) use ($exercise, $quiz) {
             
                     $exercise = $subjectScores->where('type_exam', $exercise)->pluck('score');
                     $quiz = $subjectScores->where('type_exam', $quiz)->pluck('score');
-                    $participation = $subjectScores->where('type_exam', $participation)->pluck('score');
             
                     return [
                         'subject_name' => $subjectScores->first()->subject_name,
@@ -4582,14 +4931,6 @@ class ReportController extends Controller
                                 'score' => $score->score,
                             ];
                         })->all(),
-            
-                        'percent_exercise' => round(($exercise->avg() * 0.3), 2),
-                        'percent_quiz' => round(($quiz->avg() * 0.4), 2),
-                        'percent_participation' => round(($participation->avg() * 0.3), 2),
-            
-                        'total_score' => (round(($exercise->avg() * 0.3), 2) + round(($quiz->avg() * 0.4), 2) + round(($participation->avg() * 0.3), 2)),
-                        'total_score_mark' => round(round(($exercise->avg() * 0.3), 2) + round(($quiz->avg() * 0.4), 2) + round(($participation->avg() * 0.3), 2)),
-                        'grade' => $this->determineGrade(round(round(($exercise->avg() * 0.3), 2) + round(($quiz->avg() * 0.4), 2) + round(($participation->avg() * 0.3), 2))),
                     ];
                 });
             
@@ -4645,7 +4986,9 @@ class ReportController extends Controller
                 ];
             }
 
-            dd($data);
+            // dd($data);
+            // return view('components.report.pdf.kindergartenmid-pdf')->with('data', $data);
+
 
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);

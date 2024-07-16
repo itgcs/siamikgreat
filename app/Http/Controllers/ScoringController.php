@@ -28,6 +28,7 @@ use App\Models\Kindergarten;
 use App\Models\Tcop;
 use App\Models\Master_academic;
 use App\Models\Mid_kindergarten;
+use App\Models\Mid_report;
 
 use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Carbon;
@@ -866,6 +867,56 @@ class ScoringController extends Controller
         }
     }
 
+
+
+
+    public function actionPostMidReportCard(Request $request)
+    {
+        try {
+
+            for($i=0; $i < count($request->student_id); $i++){
+
+                $scoring = [
+                    'student_id' => $request->student_id[$i],
+                    'grade_id' => $request->grade_id,
+                    'class_teacher_id' => $request->teacher_id,
+                    'semester' => $request->semester,
+                    'remarks' => $request->remarks[$i],
+                    'created_at' => now()
+                ];
+                
+                Mid_report::updateOrCreate(
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
+                    'class_teacher_id' => $request->teacher_id],
+                    $scoring
+                );
+            }
+
+            if ($request->semester == 1) {
+                $semester = 0.5;
+            }
+            elseif ($request->semester == 2) {
+                $semester = 1.5;
+            }
+            
+            $status = [
+                'grade_id' => $request->grade_id,
+                'class_teacher_id' => $request->teacher_id,
+                'status' => 1,
+                'semester' => $semester,
+                'created_at' => now()
+            ];
+
+            Report_card_status::create($status);
+
+            // dd($request);
+            session()->flash('after_post_mid_report_card');
+
+            return redirect()->back()->with('role', session('role'));
+        } catch (Exception $err) {
+            dd($err);
+        }
+    }
 
     public function actionPostReportCard1(Request $request)
     {

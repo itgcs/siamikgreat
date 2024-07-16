@@ -11,7 +11,9 @@
             @if (session('role') == 'superadmin')
               <li class="breadcrumb-item"><a href="{{url('/superadmin/reports')}}">Reports</a></li>
             @elseif (session('role') == 'admin')
-            <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
+                <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
+            @elseif (session('role') == 'teacher')
+                <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report/subject/teacher')}}">Reports </a></li>
             @endif
             <li class="breadcrumb-item active" aria-current="page">Detail Report {{ $data['subject']->subject_name }}</li>
           </ol>
@@ -145,7 +147,7 @@
 
                         <!-- COMMENT -->
                         <td class="project-actions text-left">
-                            @if ($data['status']->status == null)
+                            @if ($data['status'] == null)
                                 <div class="input-group">
                                     <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
                                     <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">  
@@ -158,7 +160,7 @@
                                         </a>
                                     </div>    
                                 </div>
-                            @elseif ($data['status']->status != null && $data['status']->status == 1)       
+                            @elseif ($data['status'] != null && $data['status']->status == 1)       
                                 {{ $student['comment'] }}
                             @endif
                         </td>

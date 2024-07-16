@@ -115,16 +115,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 $endDate = date('Y-m-d', strtotime($schedule->end_date . ' +1 day'));
 
                 $event = [
-                    'title' => $schedule->subject_name,
+                    'title' => "{$schedule->subject_name} ({$schedule->teacher_name})",
                     'startRecur' => $schedule->date,
                     'endRecur' => $endDate,
                     'daysOfWeek' => [$schedule->day],
                     'startTime' => $schedule->start_time,
                     'endTime' => $schedule->end_time,
-                    'description' => '',
                     'color' => $schedule->color,
                     'teacherId' => $schedule->teacher_id,
-                    'teacherCompanion' => $schedule->teacher_companion_id,
                     'day' => $schedule->day,
                     'description' => "<br>Invilager: {$schedule->teacher_name}<br>Grade: {$schedule->grade_name} - {$schedule->grade_class}"
                 ];
