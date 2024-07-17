@@ -50,107 +50,93 @@
                                  {{ $dgt->name }} - {{ $dgt->class }}
                               </td>
                               <td class="dgtoject-actions text-left toastsDefaultSuccess">
-                                 @if (strtolower($dgt->name) === "primary")
+                                 @if (strtolower($dgt->name) === "toddler")
+                                    <a class="btn btn-secondary btn" href="{{ url('teacher/dashboard/report/mid/cardToddler') . '/' . $dgt->id }}">
+                                       Mid Report Card
+                                    </a>
+                                    <a class="btn btn-primary btn" href="{{ url('teacher/dashboard/report/cardToddler') . '/' . $dgt->id }}">
+                                       Report Card
+                                    </a>
+                                 @elseif (strtolower($dgt->name) === "nursery")
+                                    <a class="btn btn-secondary btn" href="{{ url('teacher/dashboard/report/mid/cardNursery') . '/' . $dgt->id }}">
+                                       Mid Report Card 
+                                    </a>
+                                    <a class="btn btn-primary btn" href="{{url('teacher/dashboard/report/cardNursery') . '/' . $dgt->id }}">
+                                       Report Card
+                                    </a>
+                                 @elseif (strtolower($dgt->name) === "kindergarten")
+                                    <a class="btn btn-secondary btn" href="{{ url('teacher/dashboard/report/mid/cardKindergarten') . '/' . $dgt->id }}">
+                                       Mid Report Card 
+                                    </a>
+                                    <a class="btn btn-primary btn" href="{{ url('teacher/dashboard/report/cardKindergarten') . '/' . $dgt->id }}">
+                                       Report Card 
+                                    </a>
+                                 @elseif (strtolower($dgt->name) === "primary")
                                     <a class="btn btn-success btn"
                                        href="{{url('teacher/dashboard/report') . '/acar/detail/' . $dgt->id}}">
-                                       
-                                       </i>
                                        ACAR
                                     </a>
                                     <a class="btn btn-warning btn"
                                        href="{{url('teacher/dashboard/report') . '/sooa/detail/' . $dgt->id}}">
-                                       
-                                       </i>
                                        SOOA
                                     </a>
                                     <a class="btn btn-warning btn"
                                        href="{{url('teacher/dashboard/report') . '/tcop/detail/' . $dgt->id}}">
-                                       
-                                       </i>
                                        TCOP
+                                    </a>
+                                    @if (session('semester') == 1)
+                                    <a class="btn btn-secondary btn"
+                                       href="{{url('teacher/dashboard/report') . '/midcard/semestersatu/' . $dgt->id}}">
+                                       Mid Report Card
                                     </a>
                                     <a class="btn btn-primary btn"
                                        href="{{url('teacher/dashboard/report') . '/card/semestersatu/' . $dgt->id}}">
-                                       
-                                       </i>
-                                       SEMESTER 1
+                                       Report Card
                                     </a>
+                                    @elseif (session('semester') == 2)
+                                    <a class="btn btn-secondary btn"
+                                       href="{{url('teacher/dashboard/report') . '/midcard/semesterdua/' . $dgt->id}}">
+                                       Mid Report Card
+                                    </a>   
                                     <a class="btn btn-primary btn"
                                        href="{{url('teacher/dashboard/report') . '/card/semesterdua/' . $dgt->id}}">
-                                       
-                                       </i>
-                                       SEMESTER 2
-                                    </a>
+                                       Report Card
+                                    </a>   
+                                    @endif
+                                    
                                  @elseif (strtolower($dgt->name) === "secondary")
                                     <a class="btn btn-success btn"
                                        href="{{url('teacher/dashboard/report') . '/acar/detailSec/' . $dgt->id}}">
-                                       
-                                       </i>
                                        ACAR
                                     </a>
                                     <a class="btn btn-warning btn"
                                        href="{{url('teacher/dashboard/report') . '/sooa/detailSec/' . $dgt->id}}">
-                                       
-                                       </i>
                                        SOOA
                                     </a>
                                     <a class="btn btn-warning btn"
                                        href="{{url('teacher/dashboard/report') . '/tcop/detailSec/' . $dgt->id}}">
-                                       
-                                       </i>
                                        TCOP
                                     </a>
-                                    <a class="btn btn-primary btn"
-                                       href="{{url('teacher/dashboard/report') . '/cardSec/semestersatu/' . $dgt->id}}">
-                                       
-                                       </i>
-                                       SEMESTER 1
-                                    </a>
-                                    <a class="btn btn-primary btn"
-                                       href="{{url('teacher/dashboard/report') . '/cardSec/semesterdua/' . $dgt->id}}">
-                                       
-                                       </i>
-                                       SEMESTER 2
-                                    </a>
-                                 @elseif (strtolower($dgt->name) === "nursery")
-                                 <a class="btn btn-primary btn"
-                                    href="{{ url('teacher/dashboard/report/cardNursery') . '/' . $dgt->id }}">
-                                    
-                                    </i>
-                                    SEMESTER 1
-                                 </a>
-                                 <a class="btn btn-primary btn"
-                                    href="{{url('teacher/dashboard/report/cardNursery') . '/' . $dgt->id }}">
-                                    
-                                    </i>
-                                    SEMESTER 2
-                                 </a>
-                                 @elseif (strtolower($dgt->name) === "toddler")
-                                 <a class="btn btn-primary btn"
-                                    href="{{ url('teacher/dashboard/report/cardToddler') . '/' . $dgt->id }}">
-                                    
-                                    </i>
-                                    SEMESTER 1
-                                 </a>
-                                 <a class="btn btn-primary btn"
-                                 href="{{ url('teacher/dashboard/report/cardToddler') . '/' . $dgt->id }}">
-                                    
-                                    </i>
-                                    SEMESTER 2
-                                 </a>
-                                 @elseif (strtolower($dgt->name) === "kindergarten")
-                                 <a class="btn btn-primary btn"
-                                    href="{{ url('teacher/dashboard/report/cardKindergarten') . '/' . $dgt->id }}">
-                                    
-                                    </i>
-                                    SEMESTER 1
-                                 </a>
-                                 <a class="btn btn-primary btn"
-                                    href="{{url('teacher/dashboard/report/cardKindergarten') . '/' . $dgt->id }}">
-                                    
-                                    </i>
-                                    SEMESTER 2
-                                 </a>
+                                    @if (session('semester') == 1)
+                                       <a class="btn btn-secondary btn"
+                                          href="{{url('teacher/dashboard/report') . '/midcard/semestersatu/' . $dgt->id}}">
+                                          Mid Report Card
+                                       </a>
+                                       <a class="btn btn-primary btn"
+                                          href="{{url('teacher/dashboard/report') . '/cardSec/semestersatu/' . $dgt->id}}">
+                                          Report Card 
+                                       </a>
+                                    @endif
+                                    @if (session('semester') == 2)
+                                       <a class="btn btn-secondary btn"
+                                          href="{{url('teacher/dashboard/report') . '/midcard/semesterdua/' . $dgt->id}}">
+                                          Mid Report Card
+                                       </a>
+                                       <a class="btn btn-primary btn"
+                                          href="{{url('teacher/dashboard/report') . '/cardSec/semesterdua/' . $dgt->id}}">
+                                          Report Card
+                                       </a>                              
+                                    @endif
                                  @endif
                               </td>
                         </tr>

@@ -3,6 +3,20 @@
 
 <section class="content">
     <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 ">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/grades')}}">Grade</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/grades/edit/' . $data['grade']['id'])}}">Edit {{ $data['grade']['name'] }} - {{ $data['grade']['class'] }}</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/grades/manageSubject/' . $data['grade']['id'])}}">Manage Subject & Teacher {{ $data['grade']['name'] }} - {{ $data['grade']['class'] }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Add Subject & Teacher</li>
+                </ol>
+            </nav>
+            </div>
+        </div>
+
         <div class="row d-flex justify-content-center">
             <!-- left column -->
             <div class="col-md-12">
@@ -16,19 +30,17 @@
                         @csrf
                         <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Create subject grade</h3>
+                                <h3 class="card-title">Create Subject & Teacher </h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
                             <div class="card-body">
                                 <div class="form-group row">
                                     <div class="col-md-12">
-                                        @foreach ($data['grade'] as $dg)
                                         <label for="grade_id">Grade<span style="color: red">*</span></label>
                                         <select required name="grade_id" class="form-control" id="grade_id">
-                                            <option value="{{ $dg->id }}" selected>{{ $dg->name  }} - {{ $dg->class }}</option>
+                                            <option value="{{ $data['grade']['id'] }}" selected>{{ $data['grade']['name']  }} - {{ $data['grade']['class'] }}</option>
                                         </select>
-                                        @endforeach
                                         @if($errors->any())
                                         <p style="color: red">{{$errors->first('grade_id')}}</p>
                                         @endif
@@ -54,8 +66,8 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <select required name="teacher_subject_id[]" class="form-control" id="teacher_subject_id">
-                                                        <option value="" selected>  SELECT TEACHER </option>
+                                                    <select name="teacher_subject_id[]" class="form-control" id="teacher_subject_id">
+                                                        <option value="0" selected>  SELECT TEACHER </option>
                                                         @foreach($data['teacher'] as $el)
                                                             <option value="{{ $el->id }}">{{ $el->name }}</option>
                                                         @endforeach
@@ -111,7 +123,7 @@ $(document).ready(function() {
             </td>
             <td>
                 <select required name="teacher_subject_id[]" class="form-control" id="teacher_subject_id">
-                    <option value="" selected>  SELECT TEACHER </option>
+                    <option value="0" selected>  SELECT TEACHER </option>
                     @foreach($data['teacher'] as $el)
                         <option value="{{ $el->id }}">{{ $el->name }}</option>
                     @endforeach

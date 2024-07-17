@@ -5,13 +5,24 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
    <div class="row">
-      <a type="button" href="{{ url('/' . session('role') . '/chineseHigher/add') }}" class="btn btn-success btn mt-5 mx-2">   
+      <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 ">
+                  <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item">Home</li>
+                        <li class="breadcrumb-item active" aria-current="page">Chinese Lower</li>
+                  </ol>
+            </nav>
+      </div>
+   </div>
+   
+   <div class="row my-2">
+      <a type="button" href="{{ url('/' . session('role') . '/chineseHigher/add') }}" class="btn btn-success btn mx-2">   
          <i class="fa-solid fa-user-plus"></i>
          Add Student
       </a>
    </div>
 
-   <div class="card card-dark mt-2">
+   <div class="card card-dark">
       <div class="card-header">
          <h3 class="card-title">Student Chinese Higher</h3>
 

@@ -3,9 +3,21 @@
 
 <section class="content">
     <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/grades')}}">Grade</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit {{ $data['name'] }} - {{ $data['class'] }}</li>
+                </ol>
+            </nav>
+            </div>
+        </div>
+
         <div class="row d-flex justify-content-center">
             <! left column >
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <! general form elements >
                 <div>
                 @if (session('role') == 'superadmin')
@@ -64,7 +76,7 @@
                                           $selectedTeacher = $teacherGrade;
                                        @endphp
                                         <label for="teacher_id">Teacher class</label>
-                                        <select name="teacher_id[]" class="form-control" id="teacher_id">
+                                        <select name="teacher_id" class="form-control" id="teacher_id">
                                             <option value=""> SELECT TEACHER CLASS </option>
                                             @if(count($teacherGrade) == 0)
                                                 @foreach($teacher as $el)
@@ -185,8 +197,31 @@
     </div>
 
 </section>
-<script src="{{ asset('template/plugins/jquery/jquery.min.js') }}"></script>
 
+<script src="{{ asset('template/plugins/jquery/jquery.min.js') }}"></script>
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+@if(session('after_update_grade')) 
+    <script>
+    
+    var Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
+    setTimeout(() => {
+        Toast.fire({
+        icon: 'success',
+        title: 'Successfully updated the grade in the database.',
+    });
+    }, 1500);
+
+
+    </script>
+@endif
 
 <script>
 $(document).ready(function() {

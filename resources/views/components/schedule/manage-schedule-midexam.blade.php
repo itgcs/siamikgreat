@@ -4,10 +4,22 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
+   <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3">
+                <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedules/midexams')}}">Mid Exam Schedule</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Manage Schedule Mid Exam {{ $data[0]['grade_name'] }} - {{ $data[0]['grade_class'] }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 
-   <div class="card card-dark mt-5">
+
+   <div class="card card-dark mt-2">
       <div class="card-header">
-         <h3 class="card-title">Schedule Mid Exam</h3>
+         <h3 class="card-title">Schedule Mid Exam {{ $data[0]['grade_name'] }}-{{ $data[0]['grade_class'] }}</h3>
 
          <div class="card-tools">
                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -26,10 +38,7 @@
                         Subject
                      </th>
                      <th>
-                        Teacher
-                     </th>
-                     <th>
-                        Companion Teacher
+                        Invilager
                      </th>
                      <th>
                         Note
@@ -65,11 +74,6 @@
                      <td>
                         <a>
                            {{$el->teacher_name}}
-                        </a>
-                     </td>
-                     <td style="width:20%;">
-                        <a>
-                           {{$el->teacher_companion_name}}
                         </a>
                      </td>
                      <td>

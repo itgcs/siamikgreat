@@ -57,14 +57,18 @@
 
         @if (!empty($data['students']))
         
-        <table class="table table-striped table-bordered bg-white" style=" width: 1500px;">
+        <table class="table table-striped table-bordered bg-white" style=" width: 1800px;">
             @if ($data['status'] == null)
                 <!-- JIKA DATA BELUM DI SUBMIT OLEH TEACHER  -->
                 <thead>
                     <tr>
                         <th class="text-center" style="vertical-align : middle;text-align:center;" rowspan="2">S/N</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;" rowspan="2">First Name</th>
+                        @if (session('semester') == 1)
+                        <th class="text-left" style="vertical-align : middle;text-align:center;" colspan="8">Grades :  A+ >95-99; A >85-94; B >75-84; C >65-74; D >45-64</th>
+                        @elseif (session('semester') == 2)
                         <th class="text-left" style="vertical-align : middle;text-align:center;" colspan="7">Grades :  A+ >95-99; A >85-94; B >75-84; C >65-74; D >45-64</th>
+                        @endif
                         <th class="text-center" style="vertical-align : middle;text-align:center;" rowspan="2">Conduct</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;" rowspan="2">Remarks</th>
                     </tr>
@@ -76,6 +80,9 @@
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Character Building</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Art & Craft</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;">IT</th>
+                        @if (session('semester') == 1)
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Phonic</th>
+                        @endif
                     </tr>
                 </thead>
 
@@ -87,46 +94,40 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $student['student_name'] }}</td>
                             @foreach ($student['scores'] as $index => $score)
-                                @foreach (['english', 'mathematics', 'chinese', 'science', 'character building', 'art_and_craft', 'it', 'conduct'] as $field)
-                                    <td class="text-left text-xs">
-                                        <div class="form-check me-2 mx-2">
-                                            <input id="{{ $field }}_a+_{{ $student['student_id'] }}" name="{{ $field }}[{{ $student['student_id'] }}]" class="form-check-input status-type" type="radio" value="A+" {{ $score[$field] == 1 ? "checked" : "" }}>
-                                            <label class="form-check-label" for="{{ $field }}_a+_{{ $student['student_id'] }}">
-                                                A+
-                                            </label>
-                                        </div>
-                                        <div class="form-check me-2 mx-2">
-                                            <input id="{{ $field }}_a_{{ $student['student_id'] }}" name="{{ $field }}[{{ $student['student_id'] }}]" class="form-check-input status-type" type="radio" value="A" {{ $score[$field] == 2 ? "checked" : "" }}>
-                                            <label class="form-check-label" for="{{ $field }}_a_{{ $student['student_id'] }}">
-                                                A
-                                            </label>
-                                        </div>
-                                        <div class="form-check me-2 mx-2">
-                                            <input id="{{ $field }}_b_{{ $student['student_id'] }}" name="{{ $field }}[{{ $student['student_id'] }}]" class="form-check-input status-type" type="radio" value="B" {{ $score[$field] == 3 ? "checked" : "" }}>
-                                            <label class="form-check-label" for="{{ $field }}_b_{{ $student['student_id'] }}">
-                                                B
-                                            </label>
-                                        </div>
-                                        <div class="form-check me-2 mx-2">
-                                            <input id="{{ $field }}_b_{{ $student['student_id'] }}" name="{{ $field }}[{{ $student['student_id'] }}]" class="form-check-input status-type" type="radio" value="B" {{ $score[$field] == 3 ? "checked" : "" }}>
-                                            <label class="form-check-label" for="{{ $field }}_b_{{ $student['student_id'] }}">
-                                                C
-                                            </label>
-                                        </div>
-                                        <div class="form-check me-2 mx-2">
-                                            <input id="{{ $field }}_b_{{ $student['student_id'] }}" name="{{ $field }}[{{ $student['student_id'] }}]" class="form-check-input status-type" type="radio" value="B" {{ $score[$field] == 3 ? "checked" : "" }}>
-                                            <label class="form-check-label" for="{{ $field }}_b_{{ $student['student_id'] }}">
-                                                D
-                                            </label>
-                                        </div>
-                                    </td>
-
+                                @foreach (['english', 'mathematics', 'chinese', 'science', 'character_building', 'art_and_craft', 'it', 'phonic'] as $field)
                                     <td class="text-center">
-                                        <input name="remarks[{{ $student['student_id'] }}]" type="text" class="form-control" autocomplete="off" value="{{ $score['remarks'] }}">
+                                        {{ $score[$field] }}
                                     </td>
                                 @endforeach
                             @endforeach
-                                <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">
+
+                            <td>
+                                <div class="form-check me-2 mx-2">
+                                    <input id="conduct_excellent_{{ $student['student_id'] }}" name="conduct[{{ $student['student_id'] }}]" class="form-check-input status-type" type="radio" value="Excellent">
+                                    <label class="form-check-label" for="conduct_excellent_{{ $student['student_id'] }}">
+                                        Excellent
+                                    </label>
+                                </div>
+                                <div class="form-check me-2 mx-2">
+                                    <input id="conduct_good_{{ $student['student_id'] }}" name="conduct[{{ $student['student_id'] }}]" class="form-check-input status-type" type="radio" value="Good">
+                                    <label class="form-check-label" for="conduct_good_{{ $student['student_id'] }}">
+                                        Good
+                                    </label>
+                                </div>
+                                <div class="form-check me-2 mx-2">
+                                    <input id="conduct_weak_{{ $student['student_id'] }}" name="conduct[{{ $student['student_id'] }}]" class="form-check-input status-type" type="radio" value="Weak">
+                                    <label class="form-check-label" for="conduct_weak_{{ $student['student_id'] }}">
+                                        Weak
+                                    </label>
+                                </div>
+                            </td>
+
+            
+
+                            <td class="text-center">
+                                <input name="remarks[{{ $student['student_id'] }}]" type="text" class="form-control" autocomplete="off" value="{{ $score['remarks'] }}">
+                            </td>
+                            <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">
                         </tr>
                         @endforeach
                     </tbody>
@@ -142,65 +143,36 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $student['name'] }}</td>
 
-                        @foreach (['english', 'mathematics', 'chinese', 'science', 'character_building', 'art_and_craft', 'it'] as $field)
-                            <td class="text-left text-xs">
-                                <div class="form-check me-2 mx-2">
-                                    <input id="{{ $field }}_a+_{{ $student['id'] }}" name="{{ $field }}[{{ $student['id'] }}]" class="form-check-input status-type" type="radio" value="A+">
-                                    <label class="form-check-label" for="{{ $field }}_a+_{{ $student['id'] }}">
-                                        A+
-                                    </label>
-                                </div>
-                                <div class="form-check me-2 mx-2">
-                                    <input id="{{ $field }}_a_{{ $student['id'] }}" name="{{ $field }}[{{ $student['id'] }}]" class="form-check-input status-type" type="radio" value="A">
-                                    <label class="form-check-label" for="{{ $field }}_a_{{ $student['id'] }}">
-                                        A
-                                    </label>
-                                </div>
-                                <div class="form-check me-2 mx-2">
-                                    <input id="{{ $field }}_b_{{ $student['id'] }}" name="{{ $field }}[{{ $student['id'] }}]" class="form-check-input status-type" type="radio" value="B">
-                                    <label class="form-check-label" for="{{ $field }}_b_{{ $student['id'] }}">
-                                        B
-                                    </label>
-                                </div>
-                                <div class="form-check me-2 mx-2">
-                                    <input id="{{ $field }}_c_{{ $student['id'] }}" name="{{ $field }}[{{ $student['id'] }}]" class="form-check-input status-type" type="radio" value="C">
-                                    <label class="form-check-label" for="{{ $field }}_c_{{ $student['id'] }}">
-                                        C
-                                    </label>
-                                </div>
-                                <div class="form-check me-2 mx-2">
-                                    <input id="{{ $field }}_d_{{ $student['id'] }}" name="{{ $field }}[{{ $student['id'] }}]" class="form-check-input status-type" type="radio" value="D">
-                                    <label class="form-check-label" for="{{ $field }}_d_{{ $student['id'] }}">
-                                        D
-                                    </label>
-                                </div>
+                        @foreach (['english', 'mathematics', 'chinese', 'science', 'character_building', 'art_and_craft', 'phonic','it'] as $field)
+                            <td class="text-center">
+                                {{ $score[$field] }}
                             </td>
                         @endforeach
                         <td>
                             <div class="form-check me-2 mx-2">
-                                <input id="conduct_excellent_{{ $student['id'] }}" name="conduct[{{ $student['id'] }}]" class="form-check-input status-type" type="radio" value="Excellent">
-                                <label class="form-check-label" for="conduct_excellent_{{ $student['id'] }}">
+                                <input id="conduct_excellent_{{ $student['student_id'] }}" name="conduct[{{ $student['student_id'] }}]" class="form-check-input status-type" type="radio" value="Excellent">
+                                <label class="form-check-label" for="conduct_excellent_{{ $student['student_id'] }}">
                                     Excellent
                                 </label>
                             </div>
                             <div class="form-check me-2 mx-2">
-                                <input id="conduct_good_{{ $student['id'] }}" name="conduct[{{ $student['id'] }}]" class="form-check-input status-type" type="radio" value="Good">
-                                <label class="form-check-label" for="conduct_good_{{ $student['id'] }}">
+                                <input id="conduct_good_{{ $student['student_id'] }}" name="conduct[{{ $student['student_id'] }}]" class="form-check-input status-type" type="radio" value="Good">
+                                <label class="form-check-label" for="conduct_good_{{ $student['student_id'] }}">
                                     Good
                                 </label>
                             </div>
                             <div class="form-check me-2 mx-2">
-                                <input id="conduct_weak_{{ $student['id'] }}" name="conduct[{{ $student['id'] }}]" class="form-check-input status-type" type="radio" value="Weak">
-                                <label class="form-check-label" for="conduct_weak_{{ $student['id'] }}">
+                                <input id="conduct_weak_{{ $student['student_id'] }}" name="conduct[{{ $student['student_id'] }}]" class="form-check-input status-type" type="radio" value="Weak">
+                                <label class="form-check-label" for="conduct_weak_{{ $student['student_id'] }}">
                                     Weak
                                 </label>
                             </div>
                         </td>
 
                         <td class="text-center">
-                            <input name="remarks[{{ $student['id'] }}]" type="text" class="form-control" autocomplete="off">
+                            <input name="remarks[{{ $student['student_id'] }}]" type="text" class="form-control" autocomplete="off">
                         </td>
-                        <input name="student_id[]" type="number" class="form-control d-none" value="{{ $student['id'] }}">
+                        <input name="student_id[]" type="number" class="form-control d-none" value="{{ $student['student_id'] }}">
                     </tr>
                     @endforeach
                 </tbody>
@@ -217,9 +189,14 @@
                     <tr>
                         <th class="text-center" style="vertical-align : middle;text-align:center;" rowspan="2">S/N</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;" rowspan="2">First Name</th>
+                        @if (session('semester') == 1)
+                        <th class="text-left" style="vertical-align : middle;text-align:center;" colspan="8">Grades :  A+ >95-99; A >85-94; B >75-84; C >65-74; D >45-64</th>
+                        @elseif (session('semester') == 2)
                         <th class="text-left" style="vertical-align : middle;text-align:center;" colspan="7">Grades :  A+ >95-99; A >85-94; B >75-84; C >65-74; D >45-64</th>
+                        @endif
                         <th class="text-center" style="vertical-align : middle;text-align:center;" rowspan="2">Conduct</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;" rowspan="2">Remarks</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;" rowspan="2">Action</th>
                     </tr>
                     <tr>
                         <th class="text-center" style="vertical-align : middle;text-align:center;">English</th>
@@ -229,6 +206,9 @@
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Character Building</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Art & Craft</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;">IT</th>
+                        @if (session('semester') == 1)
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Phonic</th>
+                        @endif
                     </tr>
                 </thead>
 
@@ -239,8 +219,13 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $student['student_name'] }}</td>
                             @foreach ($student['scores'] as $index => $score)
-                                @foreach (['english', 'mathematics', 'chinese', 'science', 'character_building', 'art_and_craft', 'it'] as $field)
-                                    <td class="text-left text-xs">
+                                @php
+                                    $fields = session('semester') == 1
+                                        ? ['english', 'mathematics', 'chinese', 'science', 'character_building', 'art_and_craft', 'it', 'phonic']
+                                        : ['english', 'mathematics', 'chinese', 'science', 'character_building', 'art_and_craft', 'it'];
+                                @endphp
+                                @foreach ($fields as $field)
+                                    <td class="text-center">
                                         {{ $score[$field] }}
                                     </td>
                                 @endforeach

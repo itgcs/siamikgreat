@@ -3,6 +3,18 @@
 
 <section class="content">
     <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 ">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">Home</li>
+                            <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/chineseLower')}}">Chinese Lower</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Add Student</li>
+                        </ol>
+                </nav>
+            </div>
+        </div>
+
         <div class="row d-flex justify-content-center">
             <!-- left column -->
             <div class="col-md-12">
@@ -16,7 +28,7 @@
                         @csrf
                         <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Add Student Chinese Higher</h3>
+                                <h3 class="card-title">Add Student Chinese Lower</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->

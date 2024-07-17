@@ -97,6 +97,7 @@ class EcaController extends Controller
 
             $data = Student::leftJoin('grades', 'grades.id', '=', 'students.grade_id')
                 ->select('students.*','grades.name as grade_name', 'grades.class as grade_class')
+                ->orderBy('grade_id', 'asc')
                 ->get();
 
             $eca = Eca::where('id', $id)->get();
@@ -194,7 +195,7 @@ class EcaController extends Controller
             
             session()->flash('after_add_student_eca');
             
-            return redirect('/'. session('role') . '/eca');
+            return redirect('/'. session('role') . '/eca/view' . '/' . $request->eca);
 
         } catch (Exception $err) {
             DB::rollBack();

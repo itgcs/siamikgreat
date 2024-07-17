@@ -6,7 +6,7 @@
 <div class="container-fluid">
    
    <div class="row">
-      <a type="button" href="{{ url('/teacher/dashboard/exam/create/' . session('id_user')) }}" class="btn btn-success btn mt-5 mx-2">
+      <a type="button" href="{{ url('/teacher/dashboard/exam/create') }}" class="btn btn-success btn mt-5 mx-2">
          <i class="fa-solid fa-user-plus"></i>
          </i>   
          Add Exam
@@ -133,6 +133,115 @@
     </div>
 </div>
 
+{{-- pagination --}}
+
+<div class="d-flex justify-content-end my-5">
+
+    <nav aria-label="...">
+        <ul class="pagination" max-size="2">
+            
+            @php
+            $role = session('role');
+            $link = "/teacher/dashboard/exam/teacher?";
+            $previousLink = $link . '&page=' . ($data->currentPage() - 1);
+            $nextLink = $link . '&page=' . ($data->currentPage() + 1);
+            $firstLink = $link . '&page=1';
+            $lastLink = $link . '&page=' . $data->lastPage();
+            
+            $arrPagination = [];
+            $flag = false;
+            
+            if ($data->lastPage() - 5 > 0) {
+                if ($data->currentPage() <= 4) {
+                    for ($i = 1; $i <= 5; $i++) {
+                        $temp = (object) [
+                            'page' => $i,
+                            'link' => $link . '&page=' . $i,
+                        ];
+                        array_push($arrPagination, $temp);
+                    }
+                } else if ($data->lastPage() - $data->currentPage() > 2) {
+                    $flag = true;
+                    $idx = [$data->currentPage() - 2, $data->currentPage() - 1, $data->currentPage(), $data->currentPage() + 1, $data->currentPage() + 2];
+                    foreach ($idx as $value) {
+                        $temp = (object) [
+                            'page' => $value,
+                            'link' => $link . '&page=' . $value,
+                        ];
+                        array_push($arrPagination, $temp);
+                    }
+                } else {
+                    $arrFirst = [];
+                    for ($i = $data->currentPage(); $i <= $data->lastPage(); $i++) {
+                        $temp = (object) [
+                            'page' => $i,
+                            'link' => $link . '&page=' . $i,
+                        ];
+                        array_push($arrFirst, $temp);
+                    }
+                    
+                    $arrLast = [];
+                    $diff = $data->currentPage() - (5 - sizeof($arrFirst));
+                    for ($i = $diff; $i < $data->currentPage(); $i++) {
+                        $temp = (object) [
+                            'page' => $i,
+                            'link' => $link . '&page=' . $i,
+                        ];
+                        array_push($arrLast, $temp);
+                    }
+                    
+                    $arrPagination = array_merge($arrLast, $arrFirst);
+                }
+            } else {
+                for ($i = 1; $i <= $data->lastPage(); $i++) {
+                    $temp = (object) [
+                        'page' => $i,
+                        'link' => $link . '&page=' . $i,
+                    ];
+                    array_push($arrPagination, $temp);
+                }
+            }
+            @endphp
+
+            <li class="mr-1 page-item {{$data->previousPageUrl() ? '' : 'disabled'}}">
+                <a class="page-link" href="{{$firstLink}}" tabindex="+1">
+                    << First
+                </a>
+            </li>
+
+            <li class="page-item {{$data->previousPageUrl() ? '' : 'disabled'}}">
+                <a class="page-link" href="{{$previousLink}}" tabindex="-1">
+                    Previous
+                </a>
+            </li>
+
+            @foreach ($arrPagination as $el)
+            <li class="page-item {{$el->page === $data->currentPage() ? 'active' : ''}}">
+                <a class="page-link" href="{{$el->link}}">
+                    {{$el->page}}
+                </a>
+            </li>
+            @endforeach
+
+            <li class="page-item {{$data->nextPageUrl() ? '' : 'disabled'}}">
+                <a class="page-link" href="{{$nextLink}}" tabindex="+1">
+                    Next
+                </a>
+            </li>
+
+            <li class="ml-1 page-item {{$data->nextPageUrl() ? '' : 'disabled'}}">
+                <a class="page-link" href="{{$lastLink}}" tabindex="+1">
+                    Last >>
+                </a>
+            </li>
+
+        </ul>   
+    </nav>
+
+
+</div>
+
+
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
@@ -158,9 +267,6 @@
       </script>
 
   @endif
-
-
-  
   
   @if(session('after_update_exam')) 
       <script>

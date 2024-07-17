@@ -58,6 +58,9 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
         }
         
         .header {
+            margin: 0;
+            margin-top: 65px;
+            width: 100%;
             text-align: center;
         }
         .header h1, .header h2, .header h5, .header h4, .header h5 {
@@ -104,9 +107,9 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
 <div class="container"> 
     <!-- PAGE 1 -->
     <div class="header">
-        <div style="padding-left:30px;padding-right:30px;margin-bottom:10px;">
+        <!-- <div style="padding-left:30px;padding-right:30px;margin-bottom:10px;">
             <img src="<?= $logo ?>" style=width:100%;height:10%;" alt="Sample image">
-        </div>
+        </div> -->
         <h5 style="margin-bottom:5px;"><u>SEMESTER {{ $semester }} REPORT CARD</u></h5>
         <h5 style="margin-bottom:5px;"><u>{{ $academicYear }}</u></h5>
     </div>
@@ -132,40 +135,47 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
             </tr>
             <tr>
                 <td style="width:50%;text-align:left;border: 1px solid black;padding-left:5px;" colspan="2"><b>English</b> <span class="noto-serif-sc-chinese">英语</span></td>
-                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $score['english'] }}</b></td>
+                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $english }}</b></td>
             </tr>
             <tr>
                 <td style="width:50%;text-align:left;border: 1px solid black;padding-left:5px;" colspan="2"><b>Mathematics</b> <span class="noto-serif-sc-chinese">数学</span></td>
-                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $score['mathematics'] }}</b></td>
+                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $mathematics }}</b></td>
             </tr>
             <tr>
                 <td style="width:50%;text-align:left;border: 1px solid black;padding-left:5px;" colspan="2"><b>Chinese</b> <span class="noto-serif-sc-chinese">中文</span></td>
-                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $score['chinese'] }}</b></td>
+                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $chinese }}</b></td>
             </tr>
             <tr>
                 <td style="width:50%;text-align:left;border: 1px solid black;padding-left:5px;" colspan="2"><b>Science</b> <span class="noto-serif-sc-chinese">科学</span></td>
-                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $score['science'] }}</b></td>
+                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $science }}</b></td>
             </tr>
             <tr>
                 <td style="width:50%;text-align:left;border: 1px solid black;padding-left:5px;" colspan="2"><b>Character Building</b> <span class="noto-serif-sc-chinese">性格塑造</span></td>
-                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $score['character_building'] }}</b></td>
+                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $character_building }}</b></td>
             </tr>
             <tr>
                 <td style="width:50%;text-align:left;border: 1px solid black;padding-left:5px;" colspan="2"><b>Art & Craft</b> <span class="noto-serif-sc-chinese">艺术和工艺</span></td>
-                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $score['art_and_craft'] }}</b></td>
+                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $art_and_craft }}</b></td>
             </tr>
             <tr>
                 <td style="width:50%;text-align:left;border: 1px solid black;padding-left:5px;" colspan="2"><b>IT</b> <span class="noto-serif-sc-chinese">信息学</span></td>
-                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $score['it'] }}</b></td>
+                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $it }}</b></td>
             </tr>
+            @if ($semester == 1)
+                <tr>
+                    <td style="width:50%;text-align:left;border: 1px solid black;padding-left:5px;" colspan="2"><b>Phonic</b> <span class="noto-serif-sc-chinese">语音</span></td>
+                    <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $phonic }}</b></td>
+                </tr>
+            @else
+            @endif
             <tr>
                 <td style="width:50%;text-align:left;border: 1px solid black;padding-left:5px;" colspan="2"><b>Conduct</b> <span class="noto-serif-sc-chinese">进行</span></td>
-                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $score['conduct'] }}</b></td>
+                <td style="width:50%;text-align:center;border: 1px solid black;"><b>{{ $conduct }}</b></td>
             </tr>
             <tr>
                 <td style="text-align:justify;border: 1px solid black;padding-left:5px;padding-right:5px;" colspan="3">
                     <b>Remarks :</b> 
-                   {{$score['remarks']}}
+                        {{$score['remarks']}}
                 </td>
             </tr>
             <tr>

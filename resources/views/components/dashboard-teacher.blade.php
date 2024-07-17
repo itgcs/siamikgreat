@@ -18,10 +18,9 @@
                <p>Total Students Active</p>
              </div>
              <div class="icon">
-               {{-- <i class="ion ion-bag"></i> --}}
-               <i class="fa-solid fa-graduation-cap"></i>
+              <i class="fa-solid fa-graduation-cap"></i>
              </div>
-             <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+             <a href="/teacher/dashboard/grade" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
              <div class="small-box-footer" style="padding: 0.93rem"></div>
             </div>
          </div>
@@ -42,7 +41,7 @@
                {{-- <i class="ion ion-stats-bars"></i> --}}
                <i class="fa-solid fa-chalkboard-user"></i>
              </div>
-              <a href="/teacher/dashboard/grade/{{ session('id_user') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="/teacher/dashboard/grade" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               <div class="small-box-footer" style="padding: 0.93rem"></div>
            </div>
          </div>
@@ -83,7 +82,7 @@
                <i class="fa-solid fa-calendar-xmark"></i>
              </div>
              
-             <a href="/teacher/dashboard/exam/{{ session('id_user') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+             <a href="/teacher/dashboard/exam/teacher" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
              <div class="small-box-footer" style="padding:0.93rem;"></div>
              
            </div>

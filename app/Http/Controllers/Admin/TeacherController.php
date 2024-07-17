@@ -165,6 +165,53 @@ class TeacherController extends Controller
       }
    }
 
+   public function getByIdTeacher()
+   {
+      session()->flash('page',  $page = (object)[
+         'page' => 'teachers',
+         'child' => 'detail teachers',
+      ]);
+
+      try {
+
+         $dataTeacher = Teacher::where('user_id', session('id_user'))->first();
+         $getIdTeacher = Teacher::where('user_id', session('id_user'))->value('id');
+
+         $teacherGrade = DB::table('teacher_grades')
+            ->join('grades', 'teacher_grades.grade_id', '=', 'grades.id')
+            ->where('teacher_grades.teacher_id', $getIdTeacher)
+            ->select('grades.id','grades.name','grades.class')
+            ->get();
+
+         $teacherSubject = DB::table('teacher_subjects')
+            ->join('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
+            ->join('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
+            ->where('teacher_subjects.teacher_id', $getIdTeacher)
+            ->select('subjects.id', 'subjects.name_subject', 'grades.name', 'grades.class')
+            ->get();
+
+         $user = DB::table('teachers')
+            ->join('users', 'teachers.user_id', '=', 'users.id')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->where('teachers.id', $getIdTeacher)
+            ->select('users.*', 'roles.name as role_name')
+            ->first();
+
+         $data = [
+            'teacher' => $dataTeacher,
+            'teacherGrade' => $teacherGrade,
+            'teacherSubject' => $teacherSubject,
+            'user' => $user,
+         ];
+
+         // dd($data);
+         return view('components.teacher.detail-teacher')->with('data', $data);
+         
+      } catch (Exception $err) {
+         return dd($err);
+      }
+   }
+
    public function pagePost()
    {
       session()->flash('page',  $page = (object)[
@@ -365,6 +412,34 @@ class TeacherController extends Controller
          }
          
 
+      } catch (Exception $err) {
+         return dd($err);
+      }
+   }
+
+   public function editTeacher()
+   {
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'teachers',
+            'child' => 'spesifik teachers',
+         ]);
+
+         $teacher = Teacher::where('user_id', session('id_user'))->first();
+         $getIdTeacher = $teacher->id;
+
+         $teacherGrade = Teacher_grade::where('teacher_id', $getIdTeacher)->pluck('grade_id')->toArray();
+         $teacherSubject = Teacher_subject::where('teacher_id', $getIdTeacher)->select('subject_id', 'grade_id')->get()->toArray();
+
+         $grade = Grade::orderBy('id', 'asc')->get();
+         $subject = Subject::orderBy('id', 'asc')->get();
+
+         $data = Teacher::where('user_id', session('id_user'))->first();
+
+         // dd($teacherSubject);
+
+         return view('components.teacher.edit-teacher')->with('data', $data)->with('teacherGrade', $teacherGrade)->with('teacherSubject', $teacherSubject)->with('grade', $grade)->with('subject', $subject);
+         
       } catch (Exception $err) {
          return dd($err);
       }

@@ -16,7 +16,7 @@ $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
             <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item">Home</li>
-                <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/exam/' . session('id_user')) }}">Exams</a></li>
+                <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/exam/teacher') }}">Exam</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Detail Exam</li>
               </ol>
             </nav>

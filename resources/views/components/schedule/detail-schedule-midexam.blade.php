@@ -3,6 +3,18 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-3">
+                <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedules/midexams')}}">Mid Exam Schedule</a></li>
+                <li class="breadcrumb-item active" aria-current="page">View Schedule Mid Exam {{ $data['grade_name'] }} - {{ $data['grade_class'] }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
     @if (session('role') == 'superadmin' || session('role') == 'admin')
     <a class="btn btn-success btn"
         href="{{url('/' . session('role') .'/schedules/midexam/create') . '/' . $data['grade_id']}}">
@@ -64,11 +76,27 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
+
+    @php
+        // Calculate the overall min and max dates for validRange
+        $minDate = null;
+        $maxDate = null;
+        foreach($gradeSchedule as $schedule) {
+            $endDate = date('Y-m-d', strtotime($schedule->end_date . ' +1 day'));
+            if ($minDate === null || $schedule->date < $minDate) {
+                $minDate = $schedule->date;
+            }
+            if ($maxDate === null || $endDate > $maxDate) {
+                $maxDate = $endDate;
+            }
+        }
+    @endphp
+
     var calendar = new FullCalendar.Calendar(calendarEl, {
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
         initialView: 'timeGridWeek',
         headerToolbar: {
-            left: 'prev,next',
+            left: '',
             center: 'title',
             right: ''
         },
@@ -77,22 +105,26 @@ document.addEventListener('DOMContentLoaded', function() {
         slotMinTime: '07:00:00',
         slotMaxTime: '18:00:00',
         hiddenDays: [0, 6],
+        validRange: {
+            start: '{{ $minDate }}',
+            end: '{{ $maxDate }}'
+        },
         events: [
             @foreach($gradeSchedule as $schedule)
             @php
+                $endDate = date('Y-m-d', strtotime($schedule->end_date . ' +1 day'));
+
                 $event = [
-                    'title' => $schedule->subject_name,
+                    'title' => "{$schedule->subject_name} ({$schedule->teacher_name})",
                     'startRecur' => $schedule->date,
-                    'endRecur' => $schedule->end_date,
+                    'endRecur' => $endDate,
                     'daysOfWeek' => [$schedule->day],
                     'startTime' => $schedule->start_time,
                     'endTime' => $schedule->end_time,
-                    'description' => '',
                     'color' => $schedule->color,
                     'teacherId' => $schedule->teacher_id,
-                    'teacherCompanion' => $schedule->teacher_companion_id,
                     'day' => $schedule->day,
-                    'description' => "<br>Teacher: {$schedule->teacher_name}<br>Teacher Companion: {$schedule->teacher_companion}<br>Grade: {$schedule->grade_name} - {$schedule->grade_class}"
+                    'description' => "<br>Invilager: {$schedule->teacher_name}<br>Grade: {$schedule->grade_name} - {$schedule->grade_class}"
                 ];
 
                 echo json_encode($event) . ',';
@@ -111,7 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     calendar.render();
 });
-
 
 </script>
 

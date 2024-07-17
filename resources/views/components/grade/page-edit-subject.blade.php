@@ -3,9 +3,23 @@
 
 <section class="content">
     <div class="container-fluid">
-        <div class="row d-flex justify-content-center">
+        <div class="row">
+            <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/grades')}}">Grade</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/grades/edit/' . $data['grade_id'])}}">Edit {{ $data['grade_name'] }} - {{ $data['grade_class'] }}</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/grades/manageSubject/' . $data['grade_id'])}}">Manage Subject & Teacher {{ $data['grade_name'] }} - {{ $data['grade_class'] }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit {{ $data['subject_name'] }} {{ $data['grade_name'] }} - {{ $data['grade_class'] }}</li>
+                </ol>
+            </nav>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-center mt-3">
             <!-- left column -->
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <!-- general form elements -->
                 <div>
                     @if (session('role') == 'superadmin')
@@ -33,16 +47,13 @@
                                         <label for="name">Subject<span style="color: red"> *</span></label>
                                         <select name="subject" id="subject" class="form-control">
                                             <option value="{{ $data->subject_id }}" selected>{{ $data->subject_name }}</option>
-                                            @foreach ($subject as $sub)
-                                                <option value="{{$sub->id}}">{{ $sub->name_subject }}</option>
-                                            @endforeach
                                         </select>
                                         @if($errors->any())
                                             <p style="color: red">{{$errors->first('subject')}}</p>
                                         @endif
                                     </div>
 
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mt-2">
                                         <label for="name">Teacher<span style="color: red"> *</span></label>
                                         <select name="teacher" id="teacher" class="form-control">
                                             <option value="{{ $data->teacher_id }}" selected>{{ $data->teacher_name }}</option>
@@ -70,27 +81,28 @@
             </div>
         </div>
     </div>
-
 </section>
 
-@if(session('after_update_subject_grade')) 
-      <script>
-     
-      var Toast = Swal.mixin({
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+
+@if(session('after_update_subject_teacher')) 
+    <script>
+        var Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
             timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully updated the subject grade in the database.',
-      });
-      }, 1500);
+        });
 
-    
-      </script>
-   @endif
+        setTimeout(() => {
+            Toast.fire({
+            icon: 'success',
+            title: 'Successfully updated the subject teacher in the database.',
+        });
+        }, 1500);
+    </script>
+@endif
+
 @endsection

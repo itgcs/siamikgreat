@@ -10,6 +10,18 @@
     @csrf
 
     <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-3">
+                    <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedule/grades')}}">Master Schedule</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Schedule {{ $data['grade'][0]['name'] }} - {{ $data['grade'][0]['class'] }}</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
         <div class="row d-flex justify-content-center">
             <!-- left column -->
             <div class="col-md-12">

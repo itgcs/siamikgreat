@@ -156,10 +156,12 @@
             },
             events: [
                 ...exams.map(exam => ({
-                    title: `${exam.type_exam} (${exam.name_exam} - ${exam.grade_name})`,
+                    title: `${exam.type_exam} - (${exam.name_exam})`,
                     start: exam.date_exam,
-                    description: `<br>Teacher : ${exam.teacher_name} <br>Grade : ${exam.grade_name} - ${exam.grade_class}`,
-                    color: 'blue'
+                    description: `<br>Teacher : ${exam.teacher_name} <br>Grade : ${exam.grade_name} - ${exam.grade_class} `,
+                    color: 'red',
+                    jadwal: new Date(exam.date_exam).toLocaleDateString('id-ID', { month: 'long', day: 'numeric', year: 'numeric' }),
+                    sampai: exam.end_date ? new Date(schedule.end_date).toLocaleDateString('id-ID', { month: 'long', day: 'numeric', year: 'numeric' }) : null,
                 })),
                 ...schedules.map(schedule => ({
                     title: schedule.note,

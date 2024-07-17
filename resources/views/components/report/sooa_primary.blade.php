@@ -12,6 +12,8 @@
               <li class="breadcrumb-item"><a href="{{url('/superadmin/reports')}}">Reports</a></li>
             @elseif (session('role') == 'admin')
             <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
+            @elseif (session('role') == 'teacher')
+            <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report/class/teacher')}}">Reports </a></li>
             @endif
             <li class="breadcrumb-item active" aria-current="page">Detail Acar</li>
           </ol>
@@ -41,11 +43,11 @@
         @if ($data['status'] == null)
             <div class="row my-2">
                 <div class="input-group-append mx-2">
-                    <button type="submit" class="btn btn-success">Submit SOOA</button>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit SOOA</button>
                 </div>
             </div>
 
-            <table class="table table-striped table-bordered bg-white" style=" width: 1500px;">
+            <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
                 <thead>
                     <tr>
                         <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -109,35 +111,35 @@
                                 <td class="text-center">
                                     @if ($student['haveEca'] == 1)
                                         {{ $student['nameEca'] }}
-                                        <input name="choice[]" min="0" max="100" type="number" class="form-control" id="choice" value="{{ $score['choice'] ?: '' }}" autocomplete="off" required>
+                                        <input name="choice[]" min="0" max="100" type="number" class="form-control required-input " id="choice" value="{{ $score['choice'] ?: '' }}" autocomplete="off" required>
                                     @elseif ($student['haveEca'] == 0)
                                         {{ $student['nameEca'] }}
-                                        <input name="choice[]" min="0" max="100" type="number" class="form-control d-none" id="choice" value="0" autocomplete="off" required>
+                                        <input name="choice[]" min="0" max="100" type="number" class="form-control required-input  d-none" id="choice" value="0" autocomplete="off" required>
                                     @endif
                                 </td>
                                 <td class="text-center">{{ $score['grades_choice'] }}</td>
 
                                 <!-- Language & Art -->
                                 <td class="text-center">
-                                    <input name="language_and_art[]" min="0" max="100" type="number" class="form-control" id="language_and_art" value="{{ $score['language_and_art'] ?: '' }}" autocomplete="off" required>
+                                    <input name="language_and_art[]" min="0" max="100" type="number" class="form-control required-input " id="language_and_art" value="{{ $score['language_and_art'] ?: '' }}" autocomplete="off" required>
                                 </td>
                                 <td class="text-center">{{ $score['grades_language_and_art'] ?? '' }}</td>
 
                                 <!-- Self-Development -->
                                 <td class="text-center">
-                                    <input name="self_development[]" min="0" max="100" type="number" class="form-control" id="self_development" value="{{ $score['self_development'] ?: '' }}" autocomplete="off" required>
+                                    <input name="self_development[]" min="0" max="100" type="number" class="form-control required-input " id="self_development" value="{{ $score['self_development'] ?: '' }}" autocomplete="off" required>
                                 </td>
                                 <td class="text-center">{{ $score['grades_self_development'] ?? '' }}</td>
 
                                 <!-- ECA Aver -->
                                 <td class="text-center">
-                                    <input name="eca_aver[]" min="0" max="100" type="number" class="form-control" id="eca_aver" value="{{ $score['eca_aver'] ?: '' }}" autocomplete="off" required>
+                                    <input name="eca_aver[]" min="0" max="100" type="number" class="form-control required-input " id="eca_aver" value="{{ $score['eca_aver'] ?: '' }}" autocomplete="off" required>
                                 </td>
                                 <td class="text-center">{{ $score['grades_eca_aver'] ?? '' }}</td>
 
                                 <!-- Behavior -->
                                 <td class="text-center">
-                                    <input name="behavior[]" min="0" max="100" type="number" class="form-control" id="behavior" value="{{ $score['behavior'] ?: '' }}" autocomplete="off" required>
+                                    <input name="behavior[]" min="0" max="100" type="number" class="form-control required-input " id="behavior" value="{{ $score['behavior'] ?: '' }}" autocomplete="off" required>
                                 </td>
                                 <td class="text-center">{{ $score['grades_behavior'] ?? '' }}</td>
 
@@ -147,11 +149,11 @@
 
                                 <!-- Participation -->
                                 <td class="text-center">
-                                    <input name="participation[]"  min="0" max="100" type="number" class="form-control" id="participation"value="{{ $score['participation'] ?: '' }}" autocomplete="off" required>
+                                    <input name="participation[]"  min="0" max="100" type="number" class="form-control required-input " id="participation"value="{{ $score['participation'] ?: '' }}" autocomplete="off" required>
                                 </td>
                                 <td class="text-center">{{ $score['grades_participation'] }}</td>
 
-                                <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">
+                                <input name="student_id[]" type="number" class="form-control required-input  d-none" id="student_id" value="{{ $student['student_id'] }}">
                                                 
                                 <td class="text-center">{{ $score['final_score'] }}</td>
                                 <td class="text-center">{{ $score['grades_final_score'] }}</td>
@@ -169,7 +171,7 @@
                                     @if($score['choice'])
                                         {{ $score['choice'] }}
                                     @else
-                                        <input name="choice[]" min="0" max="100" type="number" class="form-control" id="choice" value="{{ $score['choice'] ?: '' }}" autocomplete="off" required>
+                                        <input name="choice[]" min="0" max="100" type="number" class="form-control required-input " id="choice" value="{{ $score['choice'] ?: '' }}" autocomplete="off" required>
                                     @endif
                                 </td>
                                 <td class="text-center">{{ $score['grades_choice'] }}</td>
@@ -179,7 +181,7 @@
                                     @if(isset($score['language_and_art']))
                                         {{ $score['language_and_art'] }}
                                     @else
-                                        <input name="language_and_art[]" min="0" max="100" type="number" class="form-control" id="language_and_art" value="{{ $score['language_and_art'] ?: '' }}" autocomplete="off" required>
+                                        <input name="language_and_art[]" min="0" max="100" type="number" class="form-control required-input " id="language_and_art" value="{{ $score['language_and_art'] ?: '' }}" autocomplete="off" required>
                                     @endif
                                 </td>
                                 <td class="text-center">{{ $score['grades_language_and_art'] ?? '' }}</td>
@@ -189,7 +191,7 @@
                                     @if(isset($score['self_development']))
                                         {{ $score['self_development'] }}
                                     @else
-                                        <input name="self_development[]" min="0" max="100" type="number" class="form-control" id="self_development" value="{{ $score['self_development'] ?: '' }}" autocomplete="off" required>
+                                        <input name="self_development[]" min="0" max="100" type="number" class="form-control required-input " id="self_development" value="{{ $score['self_development'] ?: '' }}" autocomplete="off" required>
                                     @endif
                                 </td>
                                 <td class="text-center">{{ $score['grades_self_development'] ?? '' }}</td>
@@ -199,7 +201,7 @@
                                     @if(isset($score['eca_aver']))
                                         {{ $score['eca_aver'] }}
                                     @else
-                                        <input name="eca_aver[]" min="0" max="100" type="number" class="form-control" id="eca_aver" value="{{ $score['eca_aver'] ?: '' }}" autocomplete="off" required>
+                                        <input name="eca_aver[]" min="0" max="100" type="number" class="form-control required-input " id="eca_aver" value="{{ $score['eca_aver'] ?: '' }}" autocomplete="off" required>
                                     @endif
                                 </td>
                                 <td class="text-center">{{ $score['grades_eca_aver'] ?? '' }}</td>
@@ -209,7 +211,7 @@
                                     @if(isset($score['behavior']))
                                         {{ $score['behavior'] }}
                                     @else
-                                        <input name="behavior[]" min="0" max="100" type="number" class="form-control" id="behavior" value="{{ $score['behavior'] ?: '' }}" autocomplete="off" required>
+                                        <input name="behavior[]" min="0" max="100" type="number" class="form-control required-input " id="behavior" value="{{ $score['behavior'] ?: '' }}" autocomplete="off" required>
                                     @endif
                                 </td>
                                 <td class="text-center">{{ $score['grades_behavior'] ?? '' }}</td>
@@ -223,11 +225,11 @@
                                     @if(isset($score['participation']))
                                         {{ $score['participation'] }}
                                     @else
-                                        <input name="participation[]"  min="0" max="100" type="number" class="form-control" id="participation"value="{{ $score['participation'] ?: '' }}" autocomplete="off" required></td>
+                                        <input name="participation[]"  min="0" max="100" type="number" class="form-control required-input " id="participation"value="{{ $score['participation'] ?: '' }}" autocomplete="off" required></td>
                                     @endif
                                 <td class="text-center">{{ $score['grades_participation'] }}</td>
 
-                                <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">
+                                <input name="student_id[]" type="number" class="form-control required-input  d-none" id="student_id" value="{{ $student['student_id'] }}">
                                                 
                                 <td class="text-center">{{ $score['final_score'] }}</td>
                                 <td class="text-center">{{ $score['grades_final_score'] }}</td>
@@ -238,9 +240,9 @@
                         <td class="text-center">{{ $student['ranking'] }}</td>
                     @endforeach
                     </tr>
-                    <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
-                    <input name="class_teacher" type="number" class="form-control d-none" id="class_teacher" value="{{ $data['classTeacher']->teacher_id }}">    
-                    <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">    
+                    <input name="grade_id" type="number" class="form-control required-input  d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
+                    <input name="class_teacher" type="number" class="form-control required-input  d-none" id="class_teacher" value="{{ $data['classTeacher']->teacher_id }}">    
+                    <input name="semester" type="number" class="form-control required-input  d-none" id="semester" value="{{ $data['semester'] }}">    
                 @else
                     <p>Data Kosong</p>
                 @endif
@@ -257,7 +259,7 @@
                 </div>
             </div>  
             
-            <table class="table table-striped table-bordered bg-white" style=" width: 200px;">
+            <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
                 <thead>
                     <tr>
                         <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -332,7 +334,7 @@
                                 @if(isset($score['language_and_art']))
                                     {{ $score['language_and_art'] }}
                                 @else
-                                    <input name="language_and_art[]" min="0" max="100" type="number" class="form-control" id="language_and_art" value="{{ $score['language_and_art'] ? : '' }}" autocomplete="off" required>
+                                    <input name="language_and_art[]" min="0" max="100" type="number" class="form-control required-input " id="language_and_art" value="{{ $score['language_and_art'] ? : '' }}" autocomplete="off" required>
                                 @endif
                             </td>
                             <td class="text-center">{{ $score['grades_language_and_art'] ?? '' }}</td>
@@ -342,7 +344,7 @@
                                 @if(isset($score['self_development']))
                                     {{ $score['self_development'] }}
                                 @else
-                                    <input name="self_development[]" min="0" max="100" type="number" class="form-control" id="self_development" value="{{ $score['self_development'] ?: '' }}" autocomplete="off" required>
+                                    <input name="self_development[]" min="0" max="100" type="number" class="form-control required-input " id="self_development" value="{{ $score['self_development'] ?: '' }}" autocomplete="off" required>
                                 @endif
                             </td>
                             <td class="text-center">{{ $score['grades_self_development'] ?? '' }}</td>
@@ -352,7 +354,7 @@
                                 @if(isset($score['eca_aver']))
                                     {{ $score['eca_aver'] }}
                                 @else
-                                    <input name="eca_aver[]" min="0" max="100" type="number" class="form-control" id="eca_aver" value="{{ $score['eca_aver'] ?: '' }}" autocomplete="off" required>
+                                    <input name="eca_aver[]" min="0" max="100" type="number" class="form-control required-input " id="eca_aver" value="{{ $score['eca_aver'] ?: '' }}" autocomplete="off" required>
                                 @endif
                             </td>
                             <td class="text-center">{{ $score['grades_eca_aver'] ?? '' }}</td>
@@ -362,7 +364,7 @@
                                 @if(isset($score['behavior']))
                                     {{ $score['behavior'] }}
                                 @else
-                                    <input name="behavior[]" min="0" max="100" type="number" class="form-control" id="behavior" value="{{ $score['behavior'] ?: '' }}" autocomplete="off" required>
+                                    <input name="behavior[]" min="0" max="100" type="number" class="form-control required-input " id="behavior" value="{{ $score['behavior'] ?: '' }}" autocomplete="off" required>
                                 @endif
                             </td>
                             <td class="text-center">{{ $score['grades_behavior'] ?? '' }}</td>
@@ -376,11 +378,11 @@
                                 @if(isset($score['participation']))
                                     {{ $score['participation'] }}
                                 @else
-                                    <input name="participation[]"  min="0" max="100" type="number" class="form-control" id="participation"value="{{ $score['participation'] ?: '' }}" autocomplete="off" required></td>
+                                    <input name="participation[]"  min="0" max="100" type="number" class="form-control required-input " id="participation"value="{{ $score['participation'] ?: '' }}" autocomplete="off" required></td>
                                 @endif
                             <td class="text-center">{{ $score['grades_participation'] }}</td>
     
-                            <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">
+                            <input name="student_id[]" type="number" class="form-control required-input  d-none" id="student_id" value="{{ $student['student_id'] }}">
                                             
                             <td class="text-center">{{ $score['final_score'] }}</td>
                             <td class="text-center">{{ $score['grades_final_score'] }}</td>
@@ -389,9 +391,9 @@
                         <td class="text-center">{{ $student['ranking'] }}</td>
                     @endforeach
                     </tr>
-                    <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
-                    <input name="class_teacher" type="number" class="form-control d-none" id="class_teacher" value="{{ $data['classTeacher']->teacher_id }}">    
-                    <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">    
+                    <input name="grade_id" type="number" class="form-control required-input  d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
+                    <input name="class_teacher" type="number" class="form-control required-input  d-none" id="class_teacher" value="{{ $data['classTeacher']->teacher_id }}">    
+                    <input name="semester" type="number" class="form-control required-input  d-none" id="semester" value="{{ $data['semester'] }}">    
                 @else
                     <p>Data Kosong</p>
                 @endif
@@ -402,7 +404,7 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="submitScore" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -449,6 +451,45 @@
             if (value < 0 || value > 100) {
                 input.value = '';
                 alert('Please enter a number between 0 and 100.');
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('confirmSooaScoring').addEventListener('click', function() {
+            // Mengambil semua input yang wajib diisi
+            var requiredInputs = document.querySelectorAll('.required-input');
+            var allFilled = true;
+
+            console.log(requiredInputs);
+
+            requiredInputs.forEach(function(input) {
+                var value = input.value.trim();
+
+                // Memeriksa apakah input tidak kosong dan apakah bernilai angka yang valid
+                if (value === '') {
+                    allFilled = false;
+                    // Menambahkan kelas untuk memberikan highlight pada input yang kosong atau tidak valid
+                    input.classList.add('is-invalid');
+                } else {
+                    // Menghapus kelas jika input tidak kosong atau tidak valid
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            // alert(allFilled);
+            // Jika semua input terisi dan valid, submit form
+            if (allFilled) {
+                document.getElementById('confirmForm').submit();
+            } else {
+                // Menampilkan pesan peringatan
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'All fields must be filled with valid values before submitting the form!',
+                });
             }
         });
     });

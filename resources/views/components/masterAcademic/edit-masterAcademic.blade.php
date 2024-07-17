@@ -2,10 +2,23 @@
 @section('content')
 
 <section class="content">
+    
     <div class="container-fluid">
+        <div class="row mt-4">
+          <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+              <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/masterAcademics')}}">Master Schedule</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+
         <div class="row d-flex justify-content-center">
             <!-- left column -->
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <!-- general form elements -->
                 <div>
                     @if (session('role') == 'superadmin')
@@ -82,7 +95,6 @@
                                     </div>
                                 </div>
                             </div>
-
 
                             <div class="row d-flex justify-content-center">
                                 <input role="button" type="submit" class="btn btn-success center col-11 m-3">

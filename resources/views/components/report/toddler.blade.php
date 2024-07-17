@@ -20,12 +20,23 @@
     </div>
 
     <div class="row">
-        <div class="col">
-            <p class="text-xs text-bold">Report Card Toddler Semester {{ $data['semester'] }}</p>
-            <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
-            <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} </p>
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
-        </div>
+        @if ($data['mid'] == 0)
+            <div class="col">
+                <p class="text-xs text-bold">Report Card Toddler Semester {{ $data['semester'] }}</p>
+                <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
+                <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</p>
+                <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
+            </div>
+        @else
+            <div class="col">
+                @if ($data['mid'] == 0.5 || $data['mid'] == 1.5)
+                    <p class="text-xs text-bold">Mid Report Card Toddler Semester {{ $data['semester'] }}</p>
+                @endif
+                <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
+                <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} </p>
+                <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
+            </div>
+        @endif
     </div>
 
     <div style="overflow-x: auto;">
@@ -41,7 +52,11 @@
         @if ($data['status'] == null)
             <div class="row my-2">
                 <div class="input-group-append mx-2">
+                    @if ($data['mid'] == 0)
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Report Card Toddler</button>
+                    @else
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Mid Report Card Toddler</button>
+                    @endif
                 </div>
             </div>
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
@@ -173,7 +188,16 @@
                 </tbody>
                 <input name="grade_id" type="number" class="form-control d-none" value="{{ $data['grade']->grade_id }}">
                 <input name="teacher_id" type="number" class="form-control d-none" value="{{ $data['classTeacher']->teacher_id }}">
-                <input name="semester" type="number" class="form-control d-none" value="{{ $data['semester'] }}">
+
+                    @if ($data['mid'] == 0)
+                    <input name="semester" type="number" class="form-control d-none" value="{{ $data['semester'] }}">
+                    @else
+                        @if ($data['mid'] == 0.5)
+                            <input name="semester" type="number" class="form-control d-none" value="0.5">
+                        @elseif ($data['mid'] == 1.5)
+                            <input name="semester" type="number" class="form-control d-none" value="1.5">
+                        @endif
+                    @endif
 
                 @endif
 
@@ -230,16 +254,25 @@
                                 @endforeach
 
                                 <td class="text-justify">
-                                    <textarea tyle="border: 1px solid #ccc; border-radius: 4px; padding: 10px; width: 100%; box-sizing: border-box; font-size: 14px; resize: vertical;" rows="4">{{ $student['remarks'] }}</textarea>
+                                    {{ $student['remarks'] }}
                                 </td>
 
                                 @if ($data['status'] !== null)
-                                <td>
-                                    <a class="btn btn-primary btn"
-                                        href="{{url('teacher/dashboard/report/toddler/print') . '/' . $student['student_id']}}">
-                                        Print
-                                    </a>
-                                </td>
+                                    @if ($data['mid'] == 0)
+                                        <td>
+                                            <a class="btn btn-primary btn"
+                                                href="{{url('teacher/dashboard/report/toddler/print') . '/' . $student['student_id']}}">
+                                                Print
+                                            </a>
+                                        </td>
+                                    @else
+                                        <td>
+                                            <a class="btn btn-primary btn"
+                                                href="{{url('teacher/dashboard/report/mid/toddler/print') . '/' . $student['student_id']}}">
+                                                Print
+                                            </a>
+                                        </td>
+                                    @endif
                                 @endif
                             @endforeach
                     @endforeach
@@ -394,7 +427,7 @@
     setTimeout(() => {
         Toast.fire({
             icon: 'success',
-            title: `Successfully post report card toddler semester ${semester} in the database.`,
+            title: `Successfully post report card toddler  in the database.`,
         });
     }, 1500);
 </script>

@@ -4,8 +4,19 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
-
-   <div class="card card-dark mt-5">
+   <div class="row">
+      <div class="col">
+         <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3">
+               <ol class="breadcrumb mb-0">
+               <li class="breadcrumb-item">Home</li>
+               <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedules/midexams')}}">Mid Exam Schedule</a></li>
+               <li class="breadcrumb-item active" aria-current="page">Manage Schedule Mid Exam {{ $data[0]['grade_name'] }} - {{ $data[0]['grade_class'] }}</li>
+               </ol>
+         </nav>
+      </div>
+   </div>
+   
+   <div class="card card-dark mt-2">
       <div class="card-header">
          <h3 class="card-title">Schedule Final Exam</h3>
 
@@ -119,7 +130,6 @@
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-
    @if(session('after_update_finalexam_schedule')) 
       <script>
      

@@ -13,9 +13,9 @@
                     @elseif (session('role') == 'admin')
                         <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
                     @elseif (session('role') == 'teacher')
-                        <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report')}}">Reports</a></li>
+                        <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report/subject/teacher')}}">Reports </a></li>
                     @endif
-                    <li class="breadcrumb-item active" aria-current="page">Detail Report</li>
+                    <li class="breadcrumb-item active" aria-current="page">Detail Report {{ $data['subject']->subject_name }}</li>
                 </ol>
             </nav>
         </div>
@@ -60,7 +60,7 @@
             </div>  
         @endif
         
-        <table class="table table-striped table-bordered" style=" width: 1400px;">
+        <table class="table table-striped table-bordered" style=" width: 2000px;">
             <thead>
                 <tr>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -254,32 +254,7 @@
 
 <script>
     document.getElementById('confirmAccScoring').addEventListener('click', function() {
-        var comments = document.querySelectorAll('input[name="comment[]"]');
-        var allFilled = true;
-        
-        // Memeriksa setiap komentar apakah kosong atau tidak
-        comments.forEach(function(comment) {
-            if (comment.value.trim() === '') {
-                allFilled = false;
-                // Menambahkan kelas untuk memberikan highlight pada input yang kosong
-                comment.classList.add('is-invalid');
-            } else {
-                // Menghapus kelas jika input tidak kosong
-                comment.classList.remove('is-invalid');
-            }
-        });
-        
-        // Jika semua komentar terisi, submit form
-        if (allFilled) {
-            document.getElementById('confirmForm').submit();
-        } else {
-            // Menampilkan pesan peringatan
-            Swal.fire({
-                icon: 'warning',
-                title: 'Oops...',
-                text: 'All comments must be filled before submitting the form!',
-            });
-        }
+        document.getElementById('confirmForm').submit();
     });
 </script>
 

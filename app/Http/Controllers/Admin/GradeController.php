@@ -76,12 +76,17 @@ class GradeController extends Controller
             'child' => 'database grades',
          ]);
 
+         $teacher = Teacher::get();
+         $subject = Subject::get();
+         $grade   = Grade::where('id', $id)->first();
+
          $data = [
-            'teacher' => Teacher::get(),
-            'subject' => Subject::get(),
-            'grade' => Grade::where('id', '=', $id)->get(),
+            'teacher' => $teacher,
+            'subject' => $subject,
+            'grade' => $grade,
          ];
 
+         // dd($data);
          return view('components.grade.add-subject-grade')->with('data', $data);
          
       } catch (Exception) {
@@ -216,6 +221,10 @@ class GradeController extends Controller
          'child' => 'database grades',
       ]);
 
+      $grade = Grade::where('id', $id)
+         ->select('grades.name as grade_name', 'grades.class as grade_class')
+         ->first();
+
       $gradeTeacher = Teacher_grade::where('grade_id',$id)
          ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
          ->get();
@@ -248,10 +257,11 @@ class GradeController extends Controller
       
       try {
          $data = (object)[
+            'grade'        => $grade,
             'gradeTeacher' => $gradeTeacher,
             'gradeStudent' => $gradeStudent,
             'gradeSubject' => $gradeSubject,
-            'gradeExam' => $gradeExam, 
+            'gradeExam'    => $gradeExam, 
             'subjectTeacher' => $subjectTeacher, 
          ];
 
@@ -328,7 +338,7 @@ class GradeController extends Controller
          $gradeId = $id;
 
 
-         // dd($subjectGrade);
+         // dd($data);
          return view('components.grade.edit-subject')->with('data', $data)->with('teacher', $teacher)->with('subject', $subject)->with('teacherGrade', $teacherGrade)->with('subjectGrade', $subjectGrade)->with('allTeacher', $allTeacher)->with('gradeId', $gradeId);
          
       } catch (Exception $err) {
@@ -354,7 +364,7 @@ class GradeController extends Controller
             ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
             ->select(
                'teacher_subjects.id as teacher_subject_id',
-               'grades.name as grade_name', 'grades.id as grade_id',
+               'grades.name as grade_name', 'grades.id as grade_id', 'grades.class as grade_class',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
                'teachers.name as teacher_name', 'teachers.id as teacher_id'
             )
@@ -363,7 +373,7 @@ class GradeController extends Controller
          $teacher = Teacher::get();
          $subject = Subject::get();
          
-         dd($data);
+         // dd($data);
          return view('components.grade.page-edit-subject')->with('data', $data)->with('subject', $subject)->with('teacher', $teacher);
          
       } catch (Exception $err) {
@@ -376,6 +386,7 @@ class GradeController extends Controller
    {
       DB::beginTransaction();
 
+      // dd($request );
       try {
          session()->flash('page',  $page = (object)[
             'page' => 'grades',
@@ -401,234 +412,97 @@ class GradeController extends Controller
          }
 
          $data = [
-            'teacher' => $request->teacher_id,
-            'subject' => $request->subject_id,
+            'teacher_id' => $request->teacher_id,
+            'grade_id' => $id,
+            'updated_at' => now(),
          ];
          
          $check = Grade::where('name', $request->name)->where('class', $request->class)->first();
 
          if($check && $check->id != $id)
          {
-
             DB::rollBack();
-            return redirect('/admin/grades/edit/' . $id)->withErrors(['name' => ["The grade " . $request->name . " with class " . $request->class ." is already created !!!"]])->withInput($rules);
+            return redirect('/'.session('role').'/grades/edit/' . $id)->withErrors(['name' => ["The grade " . $request->name . " with class " . $request->class ." is already created !!!"]])->withInput($rules);
          }
 
-
-      // HANDLE TEACHER  //
-               // Ambil semua teacher_id sebelum diupdate
-               $teacherGradesBeforeUpdate = Teacher_grade::where('grade_id', $id)->pluck('teacher_id')->toArray();
-
-               //check apakah teacher tidak kosong
-               if($request->teacher_id != null)
-               {
-                  // Loop melalui teacher_id dari form
-                  foreach ($request->teacher_id as $tc) 
-                  {
-                     // Jika teacher_id tidak ada di dalam array sebelumnya, tambahkan baru
-                     if (!in_array($tc, $teacherGradesBeforeUpdate)) {
-                        Teacher_grade::create([
-                              'grade_id' => $id,
-                              'teacher_id' => $tc,
-                        ]);
-                     }
-                  }
-                  // Hapus teacher_id yang tidak ada di dalam array yang dikirim melalui form
-                  if($request->teacher_id == null)
-                  {
-                     foreach($teacherGradesBeforeUpdate as $tg) 
-                     {
-                        Teacher_grade::where('grade_id', $id)
-                        ->where('teacher_id', $tg)
-                        ->delete();
-                     }
-                  } 
-                  else 
-                  {
-                     foreach ($teacherGradesBeforeUpdate as $tg) {
-                        if (!in_array($tg, $request->teacher_id)) {
-                           Teacher_grade::where('grade_id', $id)
-                                 ->where('teacher_id', $tg)
-                                 ->delete();
-                        }
-                     }
-                  }
-               }
-               // apabila teacher kosong
-               else 
-               {
-                  // Hapus teacher_id yang tidak ada di dalam array yang dikirim melalui form
-                  if($request->teacher_id == null)
-                  {
-                     foreach($teacherGradesBeforeUpdate as $tg) {
-                        Teacher_grade::where('grade_id', $id)
-                        ->where('teacher_id', $tg)
-                        ->delete();
-                     }
-                  } 
-                  else 
-                  {
-                     foreach ($teacherGradesBeforeUpdate as $tg) {
-                        if (!in_array($tg, $request->teacher_id)) {
-                           Teacher_grade::where('grade_id', $id)
-                                 ->where('teacher_id', $tg)
-                                 ->delete();
-                        }
-                     }
-                  }
-               }
-      // END HANDLE TEACHER //
-
-
-      // HANDLE SUBJECT //
-               $subjectGradesBeforeUpdate = Grade_subject::where('grade_id', $id)->pluck('subject_id')->toArray();
-               
-               // check apakah subject tidak kosong
-               if($request->subject_id != null)
-               {
-                  foreach($request->subject_id as $su) 
-                  {
-                     // Jika subject_id tidak ada di dalam array sebelumnya, tambahkan baru
-                     if (!in_array($su, $subjectGradesBeforeUpdate)) 
-                     {
-                        Grade_subject::create([
-                              'grade_id' => $id,
-                              'subject_id' => $su,
-                        ]);
-                     }
-                  }
-                  // Hapus subject_id yang tidak ada di dalam array yang dikirim melalui form
-                  if($request->subject_id == null)
-                  {
-                     foreach ($subjectGradesBeforeUpdate as $sg) 
-                     {
-                        Grade_subject::where('grade_id', $id)
-                        ->where('subject_id', $sg)
-                        ->delete();
-                     }
-                  }
-                  else 
-                  {
-                     foreach ($subjectGradesBeforeUpdate as $sg) 
-                     {
-                        if (!in_array($sg, $request->subject_id)) 
-                        {
-                           Grade_subject::where('grade_id', $id)
-                                 ->where('subject_id', $sg)
-                                 ->delete();
-                        }
-                     }
-                  }
-               }
-               // apabila subject kosong
-               else 
-               {
-                  // Hapus subject_id yang tidak ada di dalam array yang dikirim melalui form
-                  if($request->subject_id == null)
-                  {
-                     foreach ($subjectGradesBeforeUpdate as $sg) 
-                     {
-                        Grade_subject::where('grade_id', $id)
-                        ->where('subject_id', $sg)
-                        ->delete();
-                     }
-                  }
-                  else 
-                  {
-                     foreach ($subjectGradesBeforeUpdate as $sg) 
-                     {
-                        if (!in_array($sg, $request->subject_id)) 
-                        {
-                           Grade_subject::where('grade_id', $id)
-                                 ->where('subject_id', $sg)
-                                 ->delete();
-                        }
-                     }
-                  }
-               }
-      // END HANDLE SUBJECT //
-
+         Teacher_grade::updateOrCreate(
+            ['grade_id' => $id], // Attributes to find the record
+            $data // Attributes to update or create
+        );
          
          DB::commit();
 
          session()->flash('after_update_grade');
 
-         if(session('role') == 'superadmin'){
-            return redirect('/superadmin/grades');
-         }
-         else {
-            return redirect('/admin/grades');
-         }
+         return redirect('/' . session('role') . '/grades/edit/' . $id);
 
+
+      } catch (Exception $err) {
+         DB::rollBack();
+         // return dd($err);
+         return abort(500);
+      }
+   }
+
+   public function actionPutSubjectTeacher(Request $request, $id)
+   {
+      // dd($request);
+      DB::beginTransaction();
+
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
+
+         $rules = [
+            'subject_id' => $request->subject,
+            'teacher_id' => $request->teacher,
+            'grade_id'   => $request->grade_id,
+            'updated_at' => now(),
+         ];
+
+         $role = session('role');
+
+         Teacher_subject::where('id', $id)->update($rules);
+   
+         DB::commit();
+      
+         session()->flash('after_update_subject_teacher');
+
+         $data = Teacher_subject::where('grade_id', $request->grade_id)
+            ->where('subject_id', $request->subject)
+            ->where('teacher_id', $request->teacher)
+            ->leftJoin('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
+            ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
+            ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
+            ->select(
+               'teacher_subjects.id as teacher_subject_id',
+               'grades.name as grade_name', 'grades.id as grade_id', 'grades.class as grade_class',
+               'subjects.name_subject as subject_name', 'subjects.id as subject_id',
+               'teachers.name as teacher_name', 'teachers.id as teacher_id'
+            )
+            ->first();
+
+         $teacher = Teacher::get();
+         $subject = Subject::get();
+         
+         // dd($data);
+         return view('components.grade.page-edit-subject')->with('data', $data)->with('subject', $subject)->with('teacher', $teacher);
+         
+
+         // return redirect()->back()->with('role', session('role'))->with('data', $data);
 
       } catch (Exception $err) {
          DB::rollBack();
          return dd($err);
          // return abort(500);
       }
-   }
-
-   public function actionPutSubjectTeacher(Request $request, $id)
-   {
-         // dd($id);
-        DB::beginTransaction();
-
-        try {
-            session()->flash('page',  $page = (object)[
-                'page' => 'grades',
-                'child' => 'database grades',
-            ]);
-
-            $rules = [
-                'subject_id' => $request->subject,
-                'teacher_id' => $request->teacher,
-                'updated_at' => now(),
-            ];
-
-            $role = session('role');
-
-            if(Grade_subject::where('grade_id', $request->grade_id)
-            ->where('subject_id', $request->subject_id)
-            ->exists()){
-               DB::rollBack();
-               return redirect()->back()->with('role', session('role'))->withErrors(['subject_id' => ["The subject is already created !!!"]])->withInput($rules);
-            }
-
-            $gradeSubject = [
-               'subject_id' => $request->subject_id,
-               'updated_at' => now(),
-            ];
-
-            Grade_subject::where('grade_id', $request->grade_id)
-               ->where('subject_id', $request->before_subject_id)
-               ->update($gradeSubject);
-
-            if(Teacher_subject::where('subject_id', $request->subject_id)
-            ->where('grade_id', $request->grade_id)
-            ->exists())
-            {
-               DB::rollBack();
-               return redirect()->back()->with('role', session('role'))->withErrors(['subject_id' => ["The subject is already created !!!"]])->withInput($rules);
-            }
-
-            Teacher_subject::where('id', $id)->update($rules);
-    
-            DB::commit();
-
-            session()->flash('after_update_subject_teacher');
-
-            return redirect()->back()->with('role', session('role'));
-
-        } catch (Exception $err) {
-            DB::rollBack();
-            return dd($err);
-            // return abort(500);
-        }
     }
 
    
 
-   public function teacherGrade($id)
+   public function teacherGrade()
    {
       try {
          //code...
@@ -637,7 +511,7 @@ class GradeController extends Controller
             'child' => 'database teacher grades',
          ]);
 
-         $getIdTeacher = Teacher::where('user_id', $id)->value('id');
+         $getIdTeacher = Teacher::where('user_id', session('id_user'))->value('id');
 
          $gradeTeacher = Teacher_grade::where('teacher_id', $getIdTeacher)
             ->join('grades', 'grades.id', '=', 'teacher_grades.grade_id')

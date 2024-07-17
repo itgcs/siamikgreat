@@ -3,9 +3,21 @@
 
 <section class="content">
    <div class="container-fluid">
+      <div class="row">
+         <div class="col">
+            <nav aria-label="breadcrumb" class="bg-white rounded-3 p-3 mb-3">
+               <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item">Home</li>
+                  <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/exam/teacher')}}">Exam</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Create Exam</li>
+               </ol>
+            </nav>
+         </div>
+      </div>
+
       <div class="row d-flex justify-content-center">
          <!-- left column -->
-         <div class="col-md-6">
+         <div class="col-md-12">
             <!-- general form elements -->
             <div>
                <form method="POST" action="{{ route('actionCreateExamTeacher') }}">
@@ -19,11 +31,13 @@
                      <div class="card-body">
                         <div class="form-group row">
                            <div class="col-md-12">
-                              <label for="name">Exam Name<span style="color: red">*</span></label>
-                              <input name="name" type="text" class="form-control" id="name"
-                                    placeholder="Enter Exam Name" value="{{ old('name') }}" autocomplete="off" required>
-                              @if($errors->has('name'))
-                                    <p style="color: red">{{ $errors->first('name') }}</p>
+                              <label for="semester">Semester<span style="color: red">*</span></label>
+                              <select required name="semester" class="form-control" id="semester">
+                                       <option value="1">Semester 1</option>
+                                       <option value="2">Semester 2</option>
+                              </select>
+                              @if($errors->has('type_exam'))
+                                    <p style="color: red">{{ $errors->first('type_exam') }}</p>
                               @endif
                            </div>
                         </div>
@@ -69,18 +83,16 @@
 
                         <div class="form-group row">
                            <div class="col-md-12">
-                              <label for="semester">Semester<span style="color: red">*</span></label>
-                              <select required name="semester" class="form-control" id="semester">
-                                       <option value="1">Semester 1</option>
-                                       <option value="2">Semester 2</option>
-                              </select>
-                              @if($errors->has('type_exam'))
-                                    <p style="color: red">{{ $errors->first('type_exam') }}</p>
+                              <label for="name">Exam Name<span style="color: red">*</span></label>
+                              <input name="name" type="text" class="form-control" id="name"
+                                    placeholder="Enter Exam Name" value="{{ old('name') }}" autocomplete="off" required>
+                              @if($errors->has('name'))
+                                    <p style="color: red">{{ $errors->first('name') }}</p>
                               @endif
                            </div>
                         </div>
 
-                        <div class="form-group row">
+                        <div class="form-group row d-none">
                            <div class="col-md-12">
                               <label for="teacher_id">Teacher<span style="color: red">*</span></label>
                               <select required name="teacher_id" class="form-control" id="teacher_id">

@@ -34,8 +34,8 @@ class ScoreController extends Controller
    {
       try {
          session()->flash('page',  $page = (object)[
-            'page' => 'exams',
-            'child' => 'database exams score',
+            'page' => 'database teacher exams',
+            'child' => 'database teacher exams',
          ]);
 
          $checkSubject = Subject_exam::where('subject_exams.exam_id', '=', $id)->value('subject_id');
@@ -79,7 +79,7 @@ class ScoreController extends Controller
                      ->on('exams.id', '=', 'scores.exam_id');
                })
                ->where('exams.id', $id, 'exams.is_active')
-               ->where('students.religion', '=', 'Catholic Cristianity')
+               ->where('students.religion', '=', 'Catholic Christianity')
                ->select('exams.id as exam_id', 'exams.name_exam as exam_name', 'exams.date_exam as date_exam',
                'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
@@ -103,7 +103,7 @@ class ScoreController extends Controller
                      ->on('exams.id', '=', 'scores.exam_id');
                })
                ->where('exams.id', $id, 'exams.is_active')
-               ->where('students.religion', '=', 'Protestant Cristianity')
+               ->where('students.religion', '=', 'Protestant Christianity')
                ->select('exams.id as exam_id', 'exams.name_exam as exam_name', 'exams.date_exam as date_exam',
                'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',

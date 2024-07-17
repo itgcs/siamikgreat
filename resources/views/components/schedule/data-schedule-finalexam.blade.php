@@ -101,6 +101,16 @@
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
+   @if(session('schedule_empty'))
+      <script>
+         Swal.fire({
+               icon: 'error',
+               title: 'Oops...',
+               text: 'Schedule is empty. Please add the schedule.',
+         });
+      </script>
+   @endif
+
    @if(session('after_update_schedule')) 
       <script>
      

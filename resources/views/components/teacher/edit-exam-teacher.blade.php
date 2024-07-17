@@ -3,16 +3,28 @@
 
 <section class="content">
     <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="bg-white rounded-3 p-3 mb-3">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/exam/teacher')}}">Exam</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Exam</li>
+                </ol>
+                </nav>
+            </div>
+        </div>
+
         <div class="row d-flex justify-content-center">
             <!-- general form elements -->
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div>
                     <form method="POST" action={{route('actionUpdateExamTeacher', $data['dataExam']->id)}}>
                         @csrf
                         @method('PUT')
                         <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Update exam</h3>
+                                <h3 class="card-title">Edit exam</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->

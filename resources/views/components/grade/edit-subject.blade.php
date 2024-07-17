@@ -5,14 +5,28 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
     <div class="row">
+        <div class="col">
+        <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 ">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/grades')}}">Grade</a></li>
+                <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/grades/edit/' . $data[0]['id'])}}">Edit {{ $data[0]['name'] }} - {{ $data[0]['class'] }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Manage Subject & Teacher {{ $data[0]['name'] }} - {{ $data[0]['class'] }}</li>
+            </ol>
+        </nav>
+        </div>
+    </div>
+
+    <div class="row my-3">
     @foreach ($data as $da)
-        <a type="button" href="{{ url('/' . session('role') . '/grades/manageSubject/addSubject') . '/' . $da->id }}" class="btn btn-success btn mt-5 mx-2">   <i class="fa-solid fa-user-plus"></i>
+        <a type="button" href="{{ url('/' . session('role') . '/grades/manageSubject/addSubject') . '/' . $da->id }}" class="btn btn-success btn mx-2">   <i class="fa-solid fa-user-plus"></i>
         </i>   
         Add Subject & Teacher
         </a>
     @endforeach
    </div>
-    <div class="card card-dark mt-2">
+
+    <div class="card card-dark">
         <div class="card-header">
             @foreach ($data as $da)
                 <h3 class="card-title">Subject Teacher {{$da->name}} - {{ $da->class }}</h3>
@@ -103,18 +117,18 @@
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
 <script>
-    
-document.addEventListener('DOMContentLoaded', function() {
-    $('#modalDeleteTypeSchedule').on('show.bs.modal', function(event) {
-        var button = $(event.relatedTarget);
-        var gradeId = button.data('grade-id');
-        var subjectId = button.data('subject-id');
-        var teacherId = button.data('teacher-id');
-        var confirmDelete = document.getElementById('confirmDelete');
-        confirmDelete.href = "{{ url('/' . session('role') . '/grades/subject/delete') }}" + '/' + gradeId + '/' + subjectId + '/' + teacherId;
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#modalDeleteTypeSchedule').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var gradeId = button.data('grade-id');
+            var subjectId = button.data('subject-id');
+            var teacherId = button.data('teacher-id');
+            var confirmDelete = document.getElementById('confirmDelete');
+            confirmDelete.href = "{{ url('/' . session('role') . '/grades/subject/delete') }}" + '/' + gradeId + '/' + subjectId + '/' + teacherId;
+        });
     });
-});
 </script>
 
 @if(session('after_add_subject_grade')) 

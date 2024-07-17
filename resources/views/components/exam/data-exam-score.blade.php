@@ -3,7 +3,19 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
-    <div class="card card-dark mt-5">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-white rounded-3 p-3 mb-3">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/exam/teacher')}}">Exam</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Assessment Exam</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="card card-dark">
         <div class="card-header">
             <h3 class="card-title">Exams</h3>
 
@@ -74,6 +86,31 @@
 
 <link rel="stylesheet" href="{{ asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{ asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const scoreInput = document.getElementById('score');
+
+        scoreInput.addEventListener('input', function() {
+            let value = parseInt(this.value, 10);
+
+            if (value > 100) {
+                this.value = 100;
+            } else if (value < 0) {
+                this.value = 0;
+            }
+        });
+
+        scoreInput.addEventListener('blur', function() {
+            let value = parseInt(this.value, 10);
+
+            if (isNaN(value) || value > 100) {
+                this.value = 100;
+            } else if (value < 0) {
+                this.value = 0;
+            }
+        });
+    });
+</script>
 
 @if(session('after_create_score'))
 <script>

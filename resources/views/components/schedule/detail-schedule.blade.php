@@ -3,6 +3,18 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-3">
+                <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedules/grades')}}">Master Schedule</a></li>
+                <li class="breadcrumb-item active" aria-current="page">View Schedule {{ $data['grade_name'] }} - {{ $data['grade_class'] }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
     @if (session('role') == 'superadmin' || session('role') == 'admin')
     <a class="btn btn-success btn"
         href="{{url('/' . session('role') .'/schedules/grade/create') . '/' . $data['grade_id']}}">
