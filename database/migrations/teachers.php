@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->boolean('is_active');
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->string('unique_id')->unique();
             $table->string('name');
             $table->string('nik')->unique();
