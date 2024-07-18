@@ -3,7 +3,7 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
-
+    
     <a type="button" href="{{ url('/' . session('role') . '/masterAcademics/create') }}" class="btn btn-success  mt-5 mr-2">
         Set master academic   
     </a>
@@ -86,8 +86,19 @@
                 @endif
             </table>
         </div>
-        <!-- /.card-body -->
     </div>
+    
+    <h5>Export Data :</h5>
+    <a type="button" href="{{ url('/' . session('role') . '/export/excel') }}" class="btn btn-success mr-2">
+        <i class="fa-regular fa-file-excel"></i>
+        Excel
+    </a>
+    <a type="button" href="{{ url('/' . session('role') . '/export/pdf') }}" class="btn btn-success mr-2">
+        <i class="fa-regular fa-file-pdf"></i>
+        PDF
+    </a>
+    
+
 </div>
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">

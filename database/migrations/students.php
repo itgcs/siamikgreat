@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->boolean('is_active');
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->string('unique_id')->unique();  
             $table->string('name');
             $table->unsignedBigInteger('grade_id');
-            $table->foreign('grade_id')->references('id')->on('grades')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('grade_id')->references('id')->on('grades');
             $table->string('nisn')->nullable()->default(NULL)->unique();
             $table->string('gender');
             $table->string('religion');

@@ -3679,6 +3679,26 @@ class ReportController extends Controller
                 $chineseLower  = Chinese_lower::where('student_id', $id)->exists();
                 $chineseHigher = Chinese_higher::where('student_id', $id)->exists();
 
+                $checkReligion = Student::where('id', $id)->value('religion');
+
+                if ($checkReligion == "Islam") {
+                    $religion = "Religion Islamic";
+                }
+                elseif ($checkReligion == "Catholic Christianity") {
+                    $religion = "Religion Catholic";
+                }
+                elseif ($checkReligion == "Protestant Christianity") {
+                    $religion = "Religion Christian";
+                }
+                elseif ($checkReligion == "Buddhism") {
+                    $religion = "Religion Buddhism";
+                }
+                elseif ($checkReligion == "Hinduism") {
+                    $religion = "Religion Hinduism";
+                }
+                elseif ($checkReligion == "Confucianism") {
+                    $religion = "Religion Confucianism";
+                }
                 // dd($chineseHigher);
             
                 if ($chineseLower) {
@@ -3693,7 +3713,7 @@ class ReportController extends Controller
                     $chinese,
                     'Mathematics',
                     'Science',
-                    'Religion',
+                    $religion,
                     'Bahasa Indonesia',
                     'Character Building',
                     'PE',

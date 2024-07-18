@@ -5,11 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Master_academic;
 
+use App\Exports\DataSchoolExport;
+use App\Exports\GradeExport;
+
 use Illuminate\Support\Carbon;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+
+use Maatwebsite\Excel\Facades\Excel;
+use Exception;
 
 class MasterAcademicController extends Controller
 {
@@ -142,5 +147,12 @@ class MasterAcademicController extends Controller
         Master_academic::where('id', $id)->delete();
 
         return redirect('/superadmin/masterAcademics');
+    }
+
+    public function excel()
+    {
+        $grades = ['1', '2', '3','4', '5', '6', '7', '8', '9', '10', '11', '12', '13']; 
+
+        return Excel::download(new GradeExport($grades), 'grades.xlsx');
     }
 }

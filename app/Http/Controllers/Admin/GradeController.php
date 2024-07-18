@@ -236,14 +236,14 @@ class GradeController extends Controller
          ->get();
 
       $gradeSubject = Teacher_subject::where('grade_id', $id)
-      ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
-      ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
-      ->select(
-         'teacher_subjects.grade_id as grade_id',
-         'subjects.name_subject as subject_name', 'subjects.id as subject_id',
-         'teachers.name as teacher_name', 'teachers.id as teacher_id'
-      )
-      ->get();
+         ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
+         ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
+         ->select(
+            'teacher_subjects.grade_id as grade_id',
+            'subjects.name_subject as subject_name', 'subjects.id as subject_id',
+            'teachers.name as teacher_name', 'teachers.id as teacher_id'
+         )
+         ->get();
 
       // dd($gradeSubject);
 

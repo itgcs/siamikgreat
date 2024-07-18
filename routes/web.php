@@ -30,6 +30,7 @@ use App\Http\Controllers\ScoringController;
 use App\Http\Controllers\ColorScheduleController;
 use App\Http\Controllers\ChineseHigherController;
 use App\Http\Controllers\ChineseLowerController;
+use App\Http\Controllers\ExportController;
 
 use App\Http\Controllers\SuperAdmin\{
    SuperAdminController,
@@ -568,6 +569,9 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
 });
 
 Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(function () {
+
+   Route::get('/export/excel', [ExportController::class, 'excel']);
+   Route::get('/export/pdf', [ExportController::class, 'acar']);
 
    Route::prefix('/dashboard')->group(function () {
       Route::get('/', [DashboardController::class, 'index']);
