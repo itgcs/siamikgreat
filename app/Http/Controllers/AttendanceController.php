@@ -15,6 +15,7 @@ use App\Models\Teacher_grade;
 use App\Models\Teacher_subject;
 use App\Models\Attendance;
 use App\Models\Score_attendance_status;
+use App\Models\Master_academic;
 
 use Illuminate\Http\Request;
 use Exception;
@@ -42,8 +43,6 @@ class AttendanceController extends Controller
                 ->orderBy('grades.id', 'asc')
                 ->get();
 
-
-            // dd($data);
             return view('components.attendance.all-attendance')->with('data', $data);
         } catch (Exception $err) {
             dd($err);
@@ -149,19 +148,25 @@ class AttendanceController extends Controller
                     ->where('semester', $semester)
                     ->where('class_teacher_id', $classTeacher->teacher_id)
                     ->first();
-                
-                $data = [
-                    'classTeacher' => $classTeacher,
-                    'semester' => $semester,
-                    'students' => $attendancesByStudent,
-                    'attendancesByMonth' => $attendancesByStudent,
-                    'grade' => $grade,
-                    'totalAttendances' => $totalAttendances,
-                    'status' => $status,
-                ];
 
-            // dd($data);
-            return view('components.attendance.detail')->with('data', $data);
+                if (count($attendancesByStudent) > 0) {
+                    $data = [
+                        'classTeacher' => $classTeacher,
+                        'semester' => $semester,
+                        'students' => $attendancesByStudent,
+                        'attendancesByMonth' => $attendancesByStudent,
+                        'grade' => $grade,
+                        'totalAttendances' => $totalAttendances,
+                        'status' => $status,
+                    ];
+    
+                    return view('components.attendance.detail')->with('data', $data);            
+                }
+                else {
+                    session()->flash('data_is_empty');
+                    return redirect()->back();
+                }
+                
         } catch (Exception $err) {
             dd($err);
         }
@@ -384,7 +389,7 @@ class AttendanceController extends Controller
             return dd($err);
         }
     }
-
+    
     public function subjectTeacher($id)
     {
         try {
@@ -511,19 +516,28 @@ class AttendanceController extends Controller
                     ->where('semester', $semester)
                     ->where('class_teacher_id', $classTeacher->teacher_id)
                     ->first();
-                
-                $data = [
-                    'classTeacher' => $classTeacher,
-                    'semester' => $semester,
-                    'students' => $attendancesByStudent,
-                    'attendancesByMonth' => $attendancesByStudent,
-                    'grade' => $grade,
-                    'totalAttendances' => $totalAttendances,
-                    'status' => $status,
-                ];
 
-            // dd($data);
-            return view('components.attendance.detail')->with('data', $data);
+                // dd(count($attendancesByStudent));
+
+                if(count($attendancesByStudent) != 0)
+                {
+                    $data = [
+                        'classTeacher' => $classTeacher,
+                        'semester' => $semester,
+                        'students' => $attendancesByStudent,
+                        'attendancesByMonth' => $attendancesByStudent,
+                        'grade' => $grade,
+                        'totalAttendances' => $totalAttendances,
+                        'status' => $status,
+                    ];
+                // dd($data);
+                return view('components.attendance.detail')->with('data', $data);
+                }
+                else {
+                    session()->flash('data_is_empty');
+                    return redirect()->back();
+                }
+                
         } catch (Exception $err) {
             dd($err);
         }
@@ -612,7 +626,7 @@ class AttendanceController extends Controller
                 'totalAttendances' => $totalAttendances,
             ];
 
-            dd($data);
+            // dd($data);
             return view('components.attendance.detail')->with('data', $data);
         } catch (Exception $err) {
             dd($err);
@@ -629,7 +643,7 @@ class AttendanceController extends Controller
         ]);
  
         $getIdTeacher = Teacher::where('user_id', $userId)->value('id');
-        $student      = Student::where('grade_id', $gradeId)->get();
+        $student      = Student::where('grade_id', $gradeId)->orderBy('name', 'asc')->get();
         $grade        = Grade::where('id', $gradeId)->first();
         $teacher      = Teacher::where('id', $getIdTeacher)->value('name');
 
@@ -647,6 +661,76 @@ class AttendanceController extends Controller
  
          return view('components.attendance.detail-attendance')->with('data', $data);
  
+       } catch (Exception $err) {
+         return dd($err);
+       }
+    }
+
+    public function edit($userId, $gradeId)
+    {
+       try {
+        session()->flash('page',  $page = (object)[
+            'page' => 'attendance',
+            'child' => 'attendance class teacher',
+        ]);
+ 
+        $semester     = Master_academic::first()->value('now_semester');
+        $getIdTeacher = Teacher::where('user_id', $userId)->value('id');
+
+        $grade = Grade::where('id', $gradeId)->first();
+
+        $attendances = Attendance::where('teacher_id', $getIdTeacher)
+            ->where('grade_id', $gradeId)
+            ->where('semester', $semester)
+            ->leftJoin('grades', 'grades.id', '=', 'attendances.grade_id')
+            ->select('attendances.date as date', 'grades.id as grade_id')
+            ->distinct('date')
+            ->get();
+
+        if (count($attendances) != 0) {
+            $data = [
+               'semester' => $semester,
+               'teacher'  => $getIdTeacher,
+               'date'     => $attendances,
+               'grade'    => $grade,
+            ];
+     
+             return view('components.attendance.date')->with('data', $data);           
+        }
+        else {
+            session()->flash('data_is_empty');
+            return redirect()->back();
+        }
+
+       } catch (Exception $err) {
+         return dd($err);
+       }
+    }
+
+    public function editDetail($date, $gradeId, $teacherId, $semester)
+    {
+       try {
+        session()->flash('page',  $page = (object)[
+            'page' => 'attendance',
+            'child' => 'attendance class teacher',
+        ]);
+
+        // dd($date, $teacherId, $gradeId, $semester);
+        // dd($getIdTeacher);
+
+        $attendances = Attendance::where('teacher_id', $teacherId)
+            ->where('date', $date)
+            ->where('attendances.grade_id', $gradeId)
+            ->where('semester', session('semester'))
+            ->leftjoin('students', 'students.id', '=', 'attendances.student_id')
+            ->select('attendances.*','students.name as student_name')
+            ->get();
+
+        // dd($attendances);
+
+        return view('components.attendance.edit-attendance')->with('data', $attendances);           
+        
+
        } catch (Exception $err) {
          return dd($err);
        }
@@ -700,7 +784,7 @@ class AttendanceController extends Controller
                 Attendance::create($attend);
             }
 
-            session()->flash('after_create_attendance');
+            session()->flash('success_attend');
 
             if(session('role') == 'superadmin') {
                 return redirect('/superadmin/attendances');
@@ -710,6 +794,54 @@ class AttendanceController extends Controller
             }
             elseif (session('role') == 'teacher') {
                 return redirect()->route('attendance.detail.teacher', ['id' => session('id_user'), 'gradeId' => $request->grade_id]);
+
+            }
+
+        } catch(Exception $err){
+            dd($err);
+        }
+    }
+
+    public function postEditAttendance(Request $request){
+        try {
+
+            // dd($request);
+            session()->flash('page',  $page = (object)[
+                'page' => 'attendance',
+                'child' => 'attendance subject teacher',
+            ]);
+
+            foreach($request->status as $attendanceId => $status) {
+    
+                // Initialize attendance array
+                $attend = [
+                    'present'     => $status === 'present' ? 1 : 0,
+                    'alpha'       => $status === 'alpha' ? 1 : 0,
+                    'sick'        => $status === 'sick' ? 1 : 0,
+                    'late'        => $status === 'late' ? 1 : 0,
+                    'latest'      => $request->latest[$attendanceId] ?? 0,
+                    'permission'  => $status === 'permission' ? 1 : 0,
+                    'information' => $request->comment[$attendanceId] ?? '',
+                    'updated_at'  => now(),
+                ];
+    
+                // Save the attendance to the database
+                Attendance::updateOrCreate(
+                    ['id' => $attendanceId],
+                    $attend
+                );
+            }
+
+            session()->flash('success_edit_attend');
+
+            if(session('role') == 'superadmin') {
+                return redirect('/superadmin/attendances');
+            }
+            elseif (session('role') == 'admin') {
+                return redirect('/admin/attendances');
+            }
+            elseif (session('role') == 'teacher') {
+                return redirect()->back();
 
             }
 

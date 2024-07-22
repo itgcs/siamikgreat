@@ -23,7 +23,6 @@ class UserController extends Controller
    public function login()
    {
       try {
-         //code...
          session()->flash('preloader', true);
          Auth::logout();
          return view('layouts.login');
@@ -149,12 +148,12 @@ class UserController extends Controller
       }
    }
 
-   public function logout()
+   public function logout(Request $request)
    {
       try {
          //code...
          Auth::logout();
-         session()->flash('preloader');
+         $request->session()->flash('preloader', true);
          // return redirect('/');
          return (object) [
             'success' => true,
@@ -179,6 +178,70 @@ class UserController extends Controller
       $studentId = $request->input('studentId');
       session()->put('studentId', $studentId);
       return response()->json(['studentId' => $studentId]);
+   }
+
+   public function changePassword(Request $request, $id)
+   {
+      try {
+         //code...
+         session()->flash('preloader', false);
+         session()->flash('page',  $page = (object)[
+            'page' => 'user',
+            'child' => 'database user',
+         ]);
+         $rules = $request->only('password', 'reinputPassword');
+         
+         $validator = Validator::make($rules, [
+            'password' => 'required|min:5', 
+            'reinputPassword' => 'required|min:5',
+         ]);
+
+         if($request->password !== $request->reinputPassword)
+         {
+            session()->flash('password.success', false);
+            session()->flash('error.type.password', 'Make sure your input password is the same !!!');
+            session()->flash('error.password', false);
+            
+            if (session('role') == 'teacher') {
+               return redirect('/teacher/dashboard/detail/teacher');
+            }
+            else {
+               return redirect()->back();
+            }
+         }
+         
+         if($validator->fails())
+         {
+            session()->flash('password.success', false);
+            session()->flash('error.type.password', false);
+            session()->flash('error.password', $validator->messages());
+            
+            if (session('role') == 'teacher') {
+               return redirect('/teacher/dashboard/detail/teacher');
+            }
+            else {
+               return redirect()->back();
+            }
+         }
+         
+         
+         User::where('id', $id)->update([
+            'password' => Hash::make($request->password),
+         ]);
+         
+         session()->flash('password.success');
+         session('error.type.password', false);
+         session('error.password', false);
+         if (session('role') == 'teacher') {
+            return redirect('/teacher/dashboard/detail/teacher');
+         }
+         else {
+            return redirect()->back();
+         }
+      } catch (Exception $th) {
+         //throw $th;
+         return dd($th);
+      }
    }
 
 

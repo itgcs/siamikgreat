@@ -40,7 +40,7 @@
                         Teacher
                      </th>
                      <th>
-                        Companion Teacher
+                        Assisstant
                      </th>
                      <th>
                         Note
@@ -151,7 +151,7 @@
                         Teacher
                      </th>
                      <th style="width:20%;">
-                        Companion Teacher
+                        Assisstant
                      </th>
                      <th>
                         Date
@@ -236,88 +236,42 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
    @if(session('after_update_schedule')) 
-      <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
+      <script> 
+         Swal.fire({
             icon: 'success',
             title: 'Successfully updated the schedule in the database.',
-      });
-      }, 1500);
-
-    
+         });
       </script>
    @endif
 
    @if(session('after_edit_grade_schedule')) 
 
    <script>
-
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
+      Swal.fire({
+         icon: 'success',
+         title: 'Successfully',
+         text: 'Successfully edit data schedule in the database.',
       });
-   
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully edit data schedule in the database.',
-      });
-      }, 1500);
-
-
    </script>
 
    @endif
 
    @if(session('after_delete_schedule')) 
-      <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
+      <script>    
+         Swal.fire({
             icon: 'success',
-            title: 'Successfully deleted the schedule in the database.',
-      });
-      }, 1500);
-
-    
+            title: 'Successfully',
+            text: 'Successfully deleted the schedule in the database.',
+         });
       </script>
    @endif
 
    @if(session('after_delete_schedule_subtitute')) 
       <script>
-     
-      var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
+         Swal.fire({
             icon: 'success',
             title: 'Successfully deleted the subtitute schedule in the database.',
-      });
-      }, 1500);
-
-    
+         });
       </script>
    @endif
 

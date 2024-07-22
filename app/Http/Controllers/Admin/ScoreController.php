@@ -290,20 +290,6 @@ class ScoreController extends Controller
             'created_at' => now(),
          ];
 
-         // $validator = Validator::make($rules, [
-         //       'type_exam' => 'required|string',
-         //       'name_exam' => 'required|string',
-         //       'materi' => 'required|string',
-         //       'teacher_id' => 'required|string',
-         //    ],
-         // );
-
-         // if($validator->fails())
-         // {
-         //    DB::rollBack();
-         //    return redirect('/admin/exams/create')->withErrors($validator->messages())->withInput($rules);
-         // }
-
          $student = $request->student_id;
          $score = $request->score;
          
@@ -327,7 +313,7 @@ class ScoreController extends Controller
             return redirect('/admin/exams');
          }
          elseif (session('role') == 'teacher') {
-            return redirect('/teacher/dashboard/exam/score/' . $request->exam_id);
+            return redirect('/teacher/dashboard/exam/teacher');
          }
 
       } catch (Exception $err) {

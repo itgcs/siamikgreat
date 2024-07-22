@@ -335,14 +335,14 @@
                                     @if (session('role') == "superadmin" || session('role') == "admin")
                                         <td>
                                             <a class="btn btn-primary btn"
-                                                href="{{url(session('role') . '/reports/semester1/print') . '/' . $student['student_id']}}">
+                                                href="{{url(session('role') . '/reports/semester2/print') . '/' . $student['student_id']}}">
                                                 Print
                                             </a>
                                         </td>
                                     @elseif (session('role') == "teacher")
                                         <td>
                                             <a class="btn btn-primary btn"
-                                                href="{{url('teacher/dashboard/report/semester1/print') . '/' . $student['student_id']}}">
+                                                href="{{url('teacher/dashboard/report/semester2/print') . '/' . $student['student_id']}}">
                                                 Print
                                             </a>
                                         </td>
@@ -462,21 +462,13 @@
 </script>
 
 @if(session('after_post_report_card2'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully post report card semester 2 in the database.',
+            title: 'Successfully',
+            text: 'Successfully post report card semester 2 in the database.',
         });
-    }, 1500);
-</script>
+    </script>
 @endif
 
 

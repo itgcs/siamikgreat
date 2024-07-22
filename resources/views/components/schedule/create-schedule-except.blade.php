@@ -275,26 +275,12 @@ $(document).ready(function() {
 </script>
 
 @if(session('after_create_schedule')) 
-
-   <script>
-
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-   
-      setTimeout(() => {
-         Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
             title: 'Successfully created new schedule in the database.',
-      });
-      }, 1500);
-
-
-   </script>
-
+        });
+    </script>
 @endif
 
 @endsection

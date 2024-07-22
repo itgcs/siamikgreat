@@ -9,11 +9,61 @@
          <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3">
                <ol class="breadcrumb mb-0">
                <li class="breadcrumb-item">Home</li>
-               <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedules/midexams')}}">Mid Exam Schedule</a></li>
-               <li class="breadcrumb-item active" aria-current="page">Manage Schedule Mid Exam {{ $data[0]['grade_name'] }} - {{ $data[0]['grade_class'] }}</li>
+               <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedules/finalexams')}}">Final Exam Schedule</a></li>
+               <li class="breadcrumb-item active" aria-current="page">Manage Schedule Final Exam {{ $data[0]['grade_name'] }} - {{ $data[0]['grade_class'] }}</li>
                </ol>
          </nav>
       </div>
+   </div>
+
+   <div class="card card-dark mt-2">
+      <div class="card-header">
+         <h3 class="card-title">Date Final Exam {{ $data[0]['grade_name'] }}-{{ $data[0]['grade_class'] }}</h3>
+
+         <div class="card-tools">
+               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-minus"></i>
+               </button>
+         </div>
+      </div>
+      @if (session('role') == 'superadmin')
+      <form method="POST" action="{{ route('actionSuperEditDateFinalExam') }}">
+      @elseif (session('role') == 'admin')
+      <form method="POST" action="{{ route('actionAdminEditDateFinalExam') }}">
+      @endif
+      @csrf
+      @method('PUT')
+         <div class="card-body">
+            <table class="table table-striped projects">
+                  <thead>
+                     <tr>
+                        <th style="width: 15%;">
+                           Start Date Final Exam
+                        </th>
+                        <th style="width: 15%;">
+                           End Date Final Exam
+                        </th>
+                        <th style="width: 70%;">
+                           Action
+                        </th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>
+                           <input name="date" type="date" class="form-control" id="date" value="{{$date['date']}}" required>
+                        </td>
+                        <td>
+                           <input name="end_date" type="date" class="form-control" id="_end_date" value="{{$date['end_date']}}" required>
+                        </td>
+                        <td class="project-actions text-left toastsDefaultSuccess">
+                           <input role="button" type="submit" class="btn btn-success center">   
+                        </td>
+                     </tr>
+                  </tbody>
+            </table>
+         </div>
+      </form>
    </div>
    
    <div class="card card-dark mt-2">
@@ -37,13 +87,7 @@
                         Subject
                      </th>
                      <th>
-                        Teacher
-                     </th>
-                     <th>
-                        Companion Teacher
-                     </th>
-                     <th>
-                        Note
+                        Invigilater
                      </th>
                      <th>
                         Day
@@ -53,9 +97,6 @@
                      </th>
                      <th>
                         End_time
-                     </th>
-                     <th>
-                        Semester
                      </th>
                      <th style="width: 25%;">
                         Action
@@ -78,29 +119,26 @@
                            {{$el->teacher_name}}
                         </a>
                      </td>
-                     <td style="width:20%;">
+                     <td>
                         <a>
-                           {{$el->teacher_companion_name}}
+                           @if ($el->day == 1)
+                              Monday
+                           @elseif ($el->day == 2)
+                              Thursday
+                           @elseif ($el->day == 3)
+                              Wednesday
+                           @elseif ($el->day == 4)
+                              Tuesday
+                           @elseif ($el->day == 5)
+                              Friday
+                           @endif
                         </a>
                      </td>
                      <td>
-                        <a>
-                           {{$el->note}}
-                        </a>
-                     </td>
-                     <td  class="text-center">
-                        <a>
-                           {{$el->day}}
-                        </a>
-                     </td>
-                     <td  class="text-center">
                         {{$el->start_time}}
                      </td>
-                     <td  class="text-center">
+                     <td>
                         {{$el->end_time}}
-                     </td>
-                     <td class="text-center">
-                        {{$el->semester}}
                      </td>
                      
                      <td class="project-actions text-left toastsDefaultSuccess">
@@ -130,89 +168,44 @@
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-   @if(session('after_update_finalexam_schedule')) 
-      <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully updated the mid exam schedule in the database.',
-      });
-      }, 1500);
 
-    
-      </script>
+   @if(session('after_update_finalexam_schedule'))
+      <script>
+         Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully updated data final exam schedule in the database.',
+         });    
+      </script> 
    @endif
 
    @if(session('after_edit_finalexam_schedule')) 
-
-   <script>
-
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-   
-      setTimeout(() => {
-         Toast.fire({
+      <script>
+         Swal.fire({
             icon: 'success',
-            title: 'Successfully edit data mid exam schedule in the database.',
-      });
-      }, 1500);
-
-
-   </script>
-
+            title: 'Successfully',
+            text: 'Successfully edit data final exam schedule in the database.',
+         });    
+      </script>
    @endif
 
    @if(session('after_delete_finalexam')) 
       <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
+         Swal.fire({
             icon: 'success',
-            title: 'Successfully deleted mid exam schedule in the database.',
-      });
-      }, 1500);
-
-    
+            title: 'Successfully',
+            text: 'Successfully deleted final exam schedule in the database.',
+         });    
       </script>
    @endif
 
-   @if(session('after_delete_schedule_subtitute')) 
+   @if(session('after_edit_finalexam_date_schedule')) 
       <script>
-     
-      var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
+         Swal.fire({
             icon: 'success',
-            title: 'Successfully deleted the subtitute schedule in the database.',
-      });
-      }, 1500);
-
-    
+            title: 'Successfully',
+            text: 'Successfully edit date final exam schedule in the database.',
+         });    
       </script>
    @endif
 
