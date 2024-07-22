@@ -23,7 +23,7 @@
         </div>
         <div class="row d-flex justify-content-center">
             <!-- left column -->
-            <div class="col-md-12">
+            <div class="col-md-8">
                 <!-- general form elements -->
                 <div style="overflow-x: auto;">
                     <div class="card card-dark">
@@ -34,12 +34,12 @@
                         <!-- form start -->
                         <div class="card-body">
                             <div class="row mb-2">
-                                <div class="col-md-2">
+                                <div class="col-md-2 d-none">
                                     <label for="semester">Semester<span style="color: red"> *</span></label>
                                     <select required name="semester" class="form-control">
                                         <option value="">-- Select Semester -- </option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
+                                        <option value="1" {{ session('semester') == '1' ? "selected" : "" }}>Semester 1</option>
+                                        <option value="2" {{ session('semester') == '2' ? "selected" : "" }}>Semester 2</option>
                                     </select>
 
                                     @if($errors->has('semester'))
@@ -47,7 +47,7 @@
                                     @endif
                                 </div>
 
-                                <div class="col-md-2">
+                                <div class="col-md-2 d-none">
                                     <label for="type_schedule">Type Schedule<span style="color: red"> *</span></label>
                                     <select required name="type_schedule" class="form-control" id="type_schedule">
                                         @foreach($data['typeSchedule'] as $el)
@@ -59,7 +59,7 @@
                                     @endif
                                 </div>
 
-                                <div class="col-md-2">
+                                <div class="col-md-2 d-none">
                                     <label for="grade_id">Grade<span style="color: red"> *</span></label>
                                     <select required name="grade_id" class="form-control" id="grade_id">
                                         @foreach($data['grade'] as $el)
@@ -71,16 +71,16 @@
                                     @endif
                                 </div>
                                 
-                                <div class="col-md-2">
-                                    <label for="date">Start Date<span style="color: red"> *</span></label>
+                                <div class="col-md-4">
+                                    <label for="date">Start Date Final Exam<span style="color: red"> *</span></label>
                                     <input name="date" type="date" class="form-control" id="date" required>
                                     @if($errors->has('date'))
                                         <p style="color: red">{{ $errors->first('date') }}</p>
                                     @endif
                                 </div>
     
-                                <div class="col-md-2">
-                                    <label for="end_date">End Date<span style="color: red"> *</span></label>
+                                <div class="col-md-4">
+                                    <label for="end_date">End Date Final Exam<span style="color: red"> *</span></label>
                                     <input name="end_date" type="date" class="form-control" id="_end_date">
                                     @if($errors->has('end_date'))
                                         <p style="color: red">{{ $errors->first('end_date') }}</p>
@@ -88,16 +88,15 @@
                                 </div>
                             </div>
 
-
                             <table class="table table-striped table-bordered">
                                 <thead>
-                                    <th>Subject</th>
-                                    <th>Teacher</th>
-                                    <th>Days</th>
-                                    <th>Start Time</th>
-                                    <th>End Time</th>
-                                    <th>Notes</th>
-                                    <th>Action</th>
+                                    <th style="font-size:11px;">Subject</th>
+                                    <th style="font-size:11px;">Invigilater</th>
+                                    <th style="font-size:11px;">Days</th>
+                                    <th style="font-size:11px;">Start Time</th>
+                                    <th style="font-size:11px;">End Time</th>
+                                    <th style="font-size:11px;">Notes</th>
+                                    <th style="font-size:11px;">Action</th>
                                 </thead>
                                 <tbody id="scheduleTableBody">
                                     <tr>
@@ -109,7 +108,7 @@
                                         </td>
                                         <td>
                                             <select name="teacher_id[]" class="form-control" id="teacher_id"> 
-                                               <option value="" selected >-- SELECT INVILAGER --</option>
+                                               <option value="" selected >-- Invigilater --</option>
                                                @foreach ($data['teacher'] as $te)
                                                    <option value="{{ $te->id }}">{{ $te->name }}</option>
                                                @endforeach
@@ -165,12 +164,58 @@
                     </div>
                 </div>
             </div>
+
+            <!-- right column -->
+            <div class="col-md-4">
+            <!-- general form elements -->
+                <div>
+                    <div class="card card-dark">
+                        <div class="card-header">
+                            <h3 class="card-title">See Schedule Mid Exam</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <div class="card-body" style="height:340px;overflow-y:auto;">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>Teacher: <span style="color: red"></span></label>
+                                        <select id="teacher-select" name="teacher_select" class="form-control">
+                                            <option value="" selected>-- Select Teacher --</option>
+                                            @foreach ($data['teacher'] as $tc)
+                                                <option value="{{ $tc->id }}">{{ $tc->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>Grade: <span style="color: red"></span></label>
+                                        <select id="grade-select" name="grade_select" class="form-control">
+                                            <option value="" selected>-- Select Grade --</option>
+                                            @foreach ($data['grades'] as $gr)
+                                                <option value="{{ $gr->id }}">{{ $gr->name }} - {{ $gr->class }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="scheduleTeacher"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{{ asset('template/plugins/jquery/jquery.min.js') }}"></script>
 
 <script>
 $(document).ready(function() {
@@ -184,7 +229,7 @@ $(document).ready(function() {
             </td>
             <td>
                 <select name="teacher_id[]" class="form-control teacher_id">
-                    <option value="" selected > -- SELECT INVILAGER -- </option>
+                    <option value="" selected > -- Invigilater -- </option>
                     @foreach ($data['teacher'] as $te)
                         <option value="{{ $te->id }}">{{ $te->name }}</option>
                     @endforeach
@@ -297,27 +342,91 @@ window.onload = function() {
 
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const teacherSelect = document.getElementById('teacher-select');
+        const gradeSelect = document.getElementById('grade-select');
+        const scheduleTeacherDiv = document.getElementById('scheduleTeacher');
+
+        teacherSelect.addEventListener('change', validateAndFetchSchedule);
+        gradeSelect.addEventListener('change', validateAndFetchSchedule);
+
+        function validateAndFetchSchedule() {
+            const teacher = teacherSelect.value || 'null';
+            const grade = gradeSelect.value || 'null';
+
+            fetchTeacherSchedule(teacher, grade);
+        }
+
+        function fetchTeacherSchedule(teacher, grade) {
+            fetch(`/get-schedulefinalexam-edit/${teacher}/${grade}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderScheduleTable(data, scheduleTeacherDiv);
+                })
+                .catch(error => console.error('Error fetching schedule:', error));
+        }
+
+        function renderScheduleTable(data, container) {
+            let table = '<table class="table table-bordered">';
+            table += `
+                <thead>
+                    <tr>
+                        <th style="font-size:11px;">Grade</th>
+                        <th style="font-size:11px;">Subject</th>
+                        <th style="font-size:11px;">Invigilator</th>
+                        <th style="font-size:11px;">Day</th>
+                        <th style="font-size:11px;">Start Time</th>
+                        <th style="font-size:11px;">End Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+
+            const getDayName = (day) => {
+                switch(day) {
+                    case 1:
+                        return "Monday";
+                    case 2:
+                        return "Tuesday";
+                    case 3:
+                        return "Wednesday";
+                    case 4:
+                        return "Thursday";
+                    case 5:
+                        return "Friday";
+                    default:
+                        return "";
+                }
+            }
+
+            data.forEach((item, index) => {
+                table += `
+                    <tr>
+                        <td style="font-size:11px;">${item.grade_name || ''}</td>
+                        <td style="font-size:11px;">${item.subject_name}</td>
+                        <td style="font-size:11px;">${item.teacher_name}</td>
+                        <td style="font-size:11px;">${getDayName(item.day)}</td>
+                        <td style="font-size:11px;">${item.start_time}</td>
+                        <td style="font-size:11px;">${item.end_time}</td>
+                    </tr>
+                `;
+            });
+
+            table += '</tbody></table>';
+            container.innerHTML = table;
+        }
+    });
+</script>
+
 @if(session('after_create_finalexam_schedule')) 
-
    <script>
-
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-   
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully created final exam schedule in the database.',
-      });
-      }, 1500);
-
-
+    Swal.fire({
+        icon: 'success',
+        title: 'Successfully',
+        text: 'Successfully created final exam schedule in the database.',
+    });
    </script>
-
 @endif
 
 @endsection

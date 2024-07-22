@@ -338,19 +338,11 @@
 
 @if(session('after_decline_acar'))
 <script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
+    Swal.fire({
+        icon: 'success',
+        title: 'Successfully',
+        text: 'Successfully decline ACAR.',
     });
-
-    setTimeout(() => {
-        Toast.fire({
-            icon: 'success',
-            title: 'Successfully decline ACAR.',
-        });
-    }, 1500);
 </script>
 @endif
 

@@ -3,9 +3,21 @@
 
 <section class="content">
    <div class="container-fluid">
-      <div class="row d-flex justify-content-center">
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-3">
+                    <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedules/finalexams')}}">Final Exam Schedule</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedules/manage/finalexam/' . $data[0]['grade_id'])}}">Manage Schedule Final Exam {{ $data[0]['grade_name'] }}-{{ $data[0]['grade_class'] }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Schedule Final Exam</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
          <!-- left column -->
-         <div class="col-md-6">
+         <div class="col-md-12">
             <!-- general form elements -->
             <div>
                 @if (session('role') == 'superadmin')
@@ -62,31 +74,17 @@
 
                     <div class="form-group row">
                         <div class="col-md-12">
-                            <label for="teacher_id">Teacher<span style="color: red"> *</span></label>
+                            <label for="teacher_id">Invigilater<span style="color: red"> *</span></label>
                             <select name="teacher_id" class="form-control" id="teacher_id">
-                                @foreach($data as $el)
-                                    <option value="{{ $el->teacher_id }}" selected>{{ $el->teacher_name }}</option>
+                                @foreach ($teacher as $teacher)
+                                    <option value="{{ $teacher->id }}" {{ $teacher->id == $data[0]->teacher_id ? "selected" : "" }}>{{ $teacher->name }}</option>
                                 @endforeach
+                                <!-- @foreach($data as $el)
+                                    <option value="{{ $el->teacher_id }}" selected>{{ $el->teacher_name }}</option>
+                                @endforeach -->
                             </select>
                             @if($errors->has('teacher_id'))
                                 <p style="color: red">{{ $errors->first('teacher_id') }}</p>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <div class="col-md-12">
-                            <label for="teacher_companion">Companion Teacher<span style="color: red"> *</span></label>
-                            <select name="teacher_companion" class="form-control" id="teacher_companion">
-                                @foreach($data as $el)
-                                    <option value="{{ $el->teacher_companion_id }}" selected>{{ $el->teacher_companion_name }}</option>
-                                @endforeach
-                                @foreach($teacher as $el)
-                                    <option value="{{ $el->id }}" >{{ $el->name }}</option>
-                                @endforeach
-                            </select>
-                            @if($errors->has('teacher_companion_id'))
-                                <p style="color: red">{{ $errors->first('teacher_companion_id') }}</p>
                             @endif
                         </div>
                     </div>
@@ -132,7 +130,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group row">
+                    <div class="form-group row d-none">
                         <div class="col-md-12">
                             <label for="notes">Notes<span style="color: red"> *</span></label>
                             <textarea name="notes" class="form-control" id="notes" cols="10" rows="1">{{$data[0]->note}}</textarea>
@@ -233,24 +231,12 @@
 </script>
 
 @if(session('after_edit_midexam_schedule')) 
-
    <script>
-
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-   
-      setTimeout(() => {
-         Toast.fire({
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully edit mid exam schedule in the database.',
-      });
-      }, 1500);
-
-
+            title: 'Successfully',
+            text: 'Successfully edit mid exam schedule in the database.',
+        });
    </script>
 
 @endif

@@ -82,26 +82,13 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
    @if(session('after_create_attendance')) 
-
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully upload attendance in the database.',
-        });
-        }, 1500);
-
-
+         Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully upload attendance in the database.',
+         });
       </script>
-
    @endif
 
    @if(session('after_update_attendance')) 
@@ -119,10 +106,21 @@
             icon: 'success',
             title: 'Successfully updated attendance in the database.',
       });
-      }, 1500);
+      }, 500);
 
     
       </script>
    @endif
+
+   @if(session('data_is_empty')) 
+      <script> 
+         Swal.fire({
+            icon: 'failed',
+            title: 'Oops..',
+            text: 'Data Attendance is Empty !!!',
+         });
+      </script>
+   @endif
+
 
 @endsection

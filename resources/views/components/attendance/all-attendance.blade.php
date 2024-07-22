@@ -122,4 +122,15 @@
       </script>
    @endif
 
+   @if(session('data_is_empty')) 
+      <script> 
+         setTimeout(() => {
+            Swal.fire({
+               icon: 'error',
+               title: 'Data Attendance is Empty !!!',
+            });
+         }, 500);
+      </script>
+   @endif
+
 @endsection

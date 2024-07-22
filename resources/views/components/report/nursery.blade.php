@@ -430,21 +430,13 @@
 @endif
 
 @if(session('after_decline_report_card'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully decline report card toddler.',
+            title: 'Successfully',
+            text: 'Successfully decline report card toddler.',
         });
-    }, 1500);
-</script>
+    </script>
 @endif
 
 

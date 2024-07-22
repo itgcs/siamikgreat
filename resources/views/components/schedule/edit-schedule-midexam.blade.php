@@ -228,26 +228,24 @@
 </script>
 
 @if(session('after_edit_midexam_schedule')) 
-
    <script>
-
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-   
-      setTimeout(() => {
-         Toast.fire({
+        Toast.fire({
             icon: 'success',
             title: 'Successfully edit mid exam schedule in the database.',
-      });
-      }, 1500);
-
-
+        });
    </script>
+@endif
 
+@if(session('schedule_error'))
+    <script>
+        setTimeout(() => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: "{{ session('schedule_error') }}",
+            });
+        }, 1500);
+</script>
 @endif
 
 @endsection

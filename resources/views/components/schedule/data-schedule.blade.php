@@ -108,22 +108,21 @@
 
    @if(session('after_update_schedule')) 
       <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
+         Swal.fire({
             icon: 'success',
-            title: 'Successfully updated the schedule in the database.',
-      });
-      }, 1500);
+            title: 'Successfully',
+            text: 'Successfully updated the schedule in the database.',
+         });
+      </script>
+   @endif
 
-    
+   @if(session('schedule_empty'))
+      <script>
+         Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Schedule is empty. Please add the schedule.',
+         });
       </script>
    @endif
 

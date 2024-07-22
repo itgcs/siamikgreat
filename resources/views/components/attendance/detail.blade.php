@@ -12,6 +12,8 @@
                         <li class="breadcrumb-item"><a href="{{url('/superadmin/attendances')}}">Attendances</a></li>
                     @elseif (session('role') == 'admin')
                         <li class="breadcrumb-item"><a href="{{url('/admin/attendances')}}">Attendances</a></li>
+                    @elseif (session('role') == 'teacher')
+                        <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/attendance/class/teacher')}}">Attendances</a></li>
                     @endif
                     <li class="breadcrumb-item active" aria-current="page">Detail Attendances</li>
                 </ol>
@@ -153,7 +155,7 @@
                                                                 P
                                                             @else
                                                                 @if($attendance['attendances_alpha'])
-                                                                    A <small>({{ $attendance['attendances_information'] }})</small>
+                                                                    A 
                                                                 @elseif($attendance['attendances_sick'])
                                                                     S <small>({{ $attendance['attendances_information'] }})</small>
                                                                 @elseif($attendance['attendances_permission'])
@@ -218,21 +220,25 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
 @if(session('after_post_attendance_score'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully post attendance score report in the database.',
+            title: 'Successfully',
+            text: 'Successfully post attendance score report in the database.',
         });
-    }, 1500);
-</script>
+    </script>
 @endif
+
+@if(session('success_attend'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully attendance student',
+        });
+    </script>
+@endif
+
+
 
 @endsection

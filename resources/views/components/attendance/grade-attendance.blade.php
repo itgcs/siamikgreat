@@ -55,15 +55,21 @@
                                     <td>
                                        <a class="btn btn-primary btn-sm"
                                           href="{{url('/' . session('role') . '/dashboard/attendance') . '/' . session('id_user') . '/' . $el->id}}">
-                                          <i class="fas fa-folder">
+                                          <i class="fas fa-paper-plane">
                                           </i>
                                           Attend
                                        </a>
-                                       <a class="btn btn-primary btn-sm"
+                                       <a class="btn btn-secondary btn-sm"
                                           href="{{ route('attendance.detail.teacher', ['id' => session('id_user'), 'gradeId' => $el->id]) }}">
-                                          <i class="fas fa-folder">
+                                          <i class="fas fa-eye">
                                           </i>
                                           View
+                                       </a>
+                                       <a class="btn btn-warning btn-sm"
+                                          href="{{url('/' . session('role') . '/dashboard/attendance/edit') . '/' . session('id_user') . '/' . $el->id}}">
+                                          <i class="fas fa-pencil">
+                                          </i>
+                                          Edit
                                        </a>
                                     </td>
                               </tr>
@@ -127,24 +133,13 @@
 
    @endif
 
-   @if(session('after_update_attendance')) 
+   @if(session('data_is_empty')) 
       <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully updated attendance in the database.',
-      });
-      }, 1500);
-
-    
+         Swal.fire({
+               icon: 'error',
+               title: 'Oops...',
+               text: 'Data Attendance is empty !!!',
+         });
       </script>
    @endif
 

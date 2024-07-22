@@ -511,62 +511,63 @@ class TeacherController extends Controller
 
          // dd($teacherSubjectBeforeUpdate[0]['subject_id']);
 
-         if(empty($teacherGradesBeforeUpdate) && empty($teacherSubjectBeforeUpdate)){
-            for($i = 0; $i < count($request->grade_id); $i++){
-               $teacher_grade_ids = $request->grade_id[$i];
-               $subjects = $request->subject_id[$i];
+         // if(empty($teacherGradesBeforeUpdate) && empty($teacherSubjectBeforeUpdate)){
+         //    for($i = 0; $i < count($request->grade_id); $i++){
+         //       $teacher_grade_ids = $request->grade_id[$i];
+         //       $subjects = $request->subject_id[$i];
            
-               // Simpan data guru dan kelasnya
-               foreach ($teacher_grade_ids as $teacher_grade_id) {
-                  $credentials_teacher_grade = [
-                     'teacher_id' => $id,
-                     'grade_id'   => $teacher_grade_id,
-                     'created_at' => now(),
-                  ];
-                  $dataTeacherGrade = Teacher_grade::create($credentials_teacher_grade);
-               }
+         //       // Simpan data guru dan kelasnya
+         //       foreach ($teacher_grade_ids as $teacher_grade_id) {
+         //          $credentials_teacher_grade = [
+         //             'teacher_id' => $id,
+         //             'grade_id'   => $teacher_grade_id,
+         //             'created_at' => now(),
+         //          ];
+         //          $dataTeacherGrade = Teacher_grade::create($credentials_teacher_grade);
+         //       }
            
-               // Simpan data subjek dan kelasnya
-               foreach ($subjects as $subject) {
-                  foreach ($teacher_grade_ids as $teacher_grade_id) {
-                        $credentials_teacher_subject = [
-                           'teacher_id' => $id,
-                           'subject_id' => $subject,
-                           'grade_id'   => $teacher_grade_id,
-                           'created_at' => now(),
-                       ];
-                       $dataTeacherSubject = Teacher_subject::create($credentials_teacher_subject);
-                  }
-               }
-            }   
-         } else {
-            for($i = 0; $i < count($request->grade_id); $i++) {
-               $teacherGradeId = $request->grade_id[$i];
-               $subject = $request->subject_id[$i];
+         //       // Simpan data subjek dan kelasnya
+         //       foreach ($subjects as $subject) {
+         //          foreach ($teacher_grade_ids as $teacher_grade_id) {
+         //                $credentials_teacher_subject = [
+         //                   'teacher_id' => $id,
+         //                   'subject_id' => $subject,
+         //                   'grade_id'   => $teacher_grade_id,
+         //                   'created_at' => now(),
+         //               ];
+         //               $dataTeacherSubject = Teacher_subject::create($credentials_teacher_subject);
+         //          }
+         //       }
+         //    }   
+         // } else {
+         //    for($i = 0; $i < count($request->grade_id); $i++) {
+         //       $teacherGradeId = $request->grade_id[$i];
+         //       $subject = $request->subject_id[$i];
        
-               foreach ($subject as $su) {
-                   // Cek apakah ada perubahan pada grade dan subject
-                  if(!in_array($teacherGradeId, $teacherGradesBeforeUpdate) || !in_array($su, $teacherSubjectBeforeUpdate)) {
+         //       foreach ($subject as $su) {
+         //           // Cek apakah ada perubahan pada grade dan subject
+         //          if(!in_array($teacherGradeId, $teacherGradesBeforeUpdate) || !in_array($su, $teacherSubjectBeforeUpdate)) {
                     
-                     // dd($teacherGradesBeforeUpdate);
-                     foreach($teacherGradeId as $teacher_grade_id){
-                        $credentials_teacher_subject = [
-                           'teacher_id' => $id,
-                           'subject_id' => $su,
-                           'grade_id'   => $teacher_grade_id,
-                           'updated_at' => now(),
-                        ];  
-                        // Lakukan update pada tabel teacher_subjects
-                        Teacher_subject::where('teacher_id', $id)
-                           ->where('grade_id', $teacher_grade_id)
-                           ->where('subject_id', $su)
-                           ->update($credentials_teacher_subject);
-                     }
-                  }
-               }
-            }
-         }
+         //             // dd($teacherGradesBeforeUpdate);
+         //             foreach($teacherGradeId as $teacher_grade_id){
+         //                $credentials_teacher_subject = [
+         //                   'teacher_id' => $id,
+         //                   'subject_id' => $su,
+         //                   'grade_id'   => $teacher_grade_id,
+         //                   'updated_at' => now(),
+         //                ];  
+         //                // Lakukan update pada tabel teacher_subjects
+         //                Teacher_subject::where('teacher_id', $id)
+         //                   ->where('grade_id', $teacher_grade_id)
+         //                   ->where('subject_id', $su)
+         //                   ->update($credentials_teacher_subject);
+         //             }
+         //          }
+         //       }
+         //    }
+         // }
 
+         Teacher::where('id', $id)->update($credentials);
                   
          DB::commit();
 
@@ -580,7 +581,7 @@ class TeacherController extends Controller
             return redirect('/admin/teachers/detail/' . $target->unique_id);
          }
          elseif (session('role') == 'teacher') {
-            return redirect('/teacher/dashboard/detail/' . $target->user_id);
+            return redirect('/teacher/dashboard/detail/teacher');
          }
          
       } catch (Exception $err) {
@@ -688,7 +689,4 @@ class TeacherController extends Controller
          return redirect('/superadmin/teachers')->with('error', 'Terjadi kesalahan saat menghapus data guru.');
       }
    }
-
-   
-
 }

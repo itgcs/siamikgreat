@@ -411,39 +411,23 @@
 </script>
 
 @if(session('after_post_mid_report_card_kindergarten'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: `Successfully post mid report card kindergarten in the database.`,
+            title: 'Successfully',
+            text: 'Successfully post mid report card kindergarten in the database.',
         });
-    }, 1500);
-</script>
+    </script>
 @endif
 
 @if(session('after_decline_report_card'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully decline report card kindergarten.',
+            title: 'Successfully',
+            text: 'Successfully decline report card kindergarten.',
         });
-    }, 1500);
-</script>
+    </script>
 @endif
 
 

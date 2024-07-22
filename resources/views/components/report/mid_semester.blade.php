@@ -238,39 +238,23 @@
 </script>
 
 @if(session('after_post_mid_report_card'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully post mid report card in the database.',
+            title: 'Successfully',
+            text: 'Successfully post mid report card in the database.',
         });
-    }, 1500);
-</script>
+    </script>
 @endif
 
 @if(session('after_decline_mid_report_card'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully decline mid report card semester',
+            title: 'Successfully',
+            text: 'Successfully decline mid report card semester',
         });
-    }, 1500);
-</script>
+    </script>
 @endif
 
 

@@ -514,40 +514,24 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
 @if(session('after_post_sooa'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully post sooa in the database.',
+            title: 'Successfully',
+            text: 'Successfully post sooa in the database.',
         });
-    }, 1500);
-</script>
+    </script>
 @endif
 
 
 @if(session('after_decline_sooa'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully decline SOOA.',
+            title: 'Successfully',
+            text: 'Successfully decline SOOA.',
         });
-    }, 1500);
-</script>
+    </script>
 @endif
 
 @endsection

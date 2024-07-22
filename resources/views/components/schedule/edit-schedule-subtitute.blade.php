@@ -217,7 +217,7 @@
                 <div>
                     <div class="card card-dark">
                         <div class="card-header">
-                            <h3 class="card-title">See Teacher Companion Schedule</h3>
+                            <h3 class="card-title">See Assisstant Schedule</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                                     <i class="fas fa-minus"></i>
@@ -232,7 +232,7 @@
                                     <div class="form-group">
                                         <label>Teacher: <span style="color: red"></span></label>
                                         <select id="teacher-companion" name="teacher_companion" class="form-control">
-                                            <option value="" selected>-- Select Teacher Companion --</option>
+                                            <option value="" selected>-- Select Assisstant --</option>
                                             @foreach ($teacher as $tc)
                                                 <option value="{{ $tc->id }}">{{ $tc->name }}</option>
                                             @endforeach
