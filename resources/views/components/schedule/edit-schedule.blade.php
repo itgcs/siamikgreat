@@ -7,8 +7,8 @@
             <div class="col">
             <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-3">
                 <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">Home</li>
-                <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/masterAcademics')}}">Master Schedule</a></li>
+                <li class="breadcrumb-item">Schedules</li>
+                <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedules/grades')}}">Grades</a></li>
                 <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/schedules/manage/' .$data[0]['grade_id'])}}">Schedule {{ $data[0]['grade_name'] }}-{{ $data[0]['grade_class'] }}</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Edit</li>
                 </ol>

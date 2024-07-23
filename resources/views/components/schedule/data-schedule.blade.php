@@ -138,4 +138,16 @@
       </script>
    @endif
 
+   @if(session('after_delete_schedule')) 
+      <script>
+         Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully delete the schedule in the database.',
+         });
+      </script>
+   @endif
+
+   
+
 @endsection
