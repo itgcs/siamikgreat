@@ -185,16 +185,20 @@
                         <!-- COMMENT -->
                         <td class="project-actions text-right">
                             <div class="input-group">
-                                <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
                                 <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">  
                                 <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $student['total_score'] }}">  
-                                <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">  
+                                <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}"> 
+                                @if ($data['status'] == null) 
+                                <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
                                 <div class="input-group-append">
                                     <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
                                         <i class="fas fa-pen"></i>
                                         Edit
                                     </a>
                                 </div>
+                                @else
+                                {{ $student['comment'] }}
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -264,18 +268,11 @@
 
 @if(session('after_post_final_score')) 
     <script>
-        var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully post final score major subject in the database.',
         });
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully post final score major subject in the database.',
-            });
-        }, 1500);
     </script>
 @endif
 

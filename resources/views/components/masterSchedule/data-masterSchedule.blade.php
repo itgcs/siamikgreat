@@ -98,55 +98,31 @@
 
 @if(session('after_create_masterSchedule'))
     <script>
-        var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully created new type schedule in the database.'
         });
-
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully created new type schedule in the database.'
-            });
-        }, 1500);
     </script>
 @endif
 
 @if(session('after_update_masterSchedule'))
     <script>
-        var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully updated the type schedule in the database.'
         });
-
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully updated the type schedule in the database.'
-            });
-        }, 1500);
     </script>
 @endif
 
 @if(session('after_delete_masterSchedule'))
     <script>
-        var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully deleted the type schedule in the database.'
         });
-
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully deleted the type schedule in the database.'
-            });
-        }, 1500);
     </script>
 @endif
 

@@ -4,10 +4,20 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
+   <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item active" aria-current="page">Grades</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
    <!-- START TABEL -->
    @if (sizeof($data['gradeTeacher']) != 0)
       @foreach ($data['gradeTeacher'] as $dgt)
-         <div class="card card-dark mt-5">
+         <div class="card card-dark">
                <div class="card-header">
                   <h3 class="card-title">{{ $dgt->name . ' - ' . $dgt->class }}</h3>
                   <div class="card-tools">

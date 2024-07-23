@@ -220,7 +220,7 @@
             <hr>
             <div class="row">
               <div class="col-sm-4">
-                  <p class="mb-0">Grade Taught</p>
+                  <p class="mb-0">Class Teacher</p>
               </div>
               <div class="col-sm-8">
                   @if(sizeof($data['teacherGrade']))
@@ -235,7 +235,7 @@
             <hr>
             <div class="row">
               <div class="col-sm-4">
-                <p class="mb-0">Subject Taught</p>
+                <p class="mb-0">Subject Teacher</p>
               </div>
               <div class="col-sm-8">
                   @if(sizeof($data['teacherSubject']))

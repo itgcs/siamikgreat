@@ -3,11 +3,22 @@
 
 
 <!-- Content Wrapper. Contains page content -->
+ 
 <div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item active" aria-current="page">Exams</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
    
    <div class="row">
-      <a type="button" href="{{ url('/teacher/dashboard/exam/create') }}" class="btn btn-success btn mt-5 mx-2">
-         <i class="fa-solid fa-user-plus"></i>
+      <a type="button" href="{{ url('/teacher/dashboard/exam/create') }}" class="btn btn-secondary btn mx-2">
+         <i class="fa-solid fa-plus"></i>
          </i>   
          Add Exam
       </a>
@@ -105,18 +116,15 @@
                         <td class="project-actions text-right toastsDefaultSuccess">
                            <a class="btn btn-primary btn"
                               href="{{url('teacher/dashboard/exam') . '/detail/' . $el->id}}">
-                              <i class="fas fa-folder">
-                              </i>
+                              <i class="fas fa-eye"></i>
                               View
                            </a>
-                           <a class="btn btn-info btn"
+                           <a class="btn btn-warning btn"
                               href="{{url('teacher/dashboard/exam') . '/edit/' . $el->id}}">
-                              {{-- <i class="fa-solid fa-user-graduate"></i> --}}
-                              <i class="fas fa-pencil-alt">
-                              </i>
+                              <i class="fas fa-pencil-alt"></i>
                               Edit
                            </a>
-                           <a class="btn btn-primary btn"
+                           <a class="btn btn-success btn"
                               href="{{url('teacher/dashboard/exam') . '/score/' . $el->id}}">
                               <i class="fas fa-book">
                               </i>
@@ -245,48 +253,33 @@
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
-   @if(session('after_create_exam')) 
-
-      <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully created new assessment in the database.',
-        });
-        }, 1500);
-
-
-      </script>
-
-  @endif
+    @if(session('after_create_exam')) 
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully',
+                text: 'Successfully created new assessment in the database.',
+            });
+        </script>
+    @endif
   
-  @if(session('after_update_exam')) 
-      <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully updated the assessment in the database.',
-      });
-      }, 1500);
-
-    
-    </script>
+    @if(session('after_update_exam')) 
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully',
+                text: 'Successfully updated the assessment in the database.',
+            });
+        </script>
    @endif
 
+    @if(session('after_update_score')) 
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Successfully',
+                    text: 'Successfully update score exam',
+                });
+            </script>
+    @endif
 @endsection

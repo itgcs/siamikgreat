@@ -151,15 +151,13 @@ class UserController extends Controller
    public function logout(Request $request)
    {
       try {
-         //code...
          Auth::logout();
          $request->session()->flash('preloader', true);
-         // return redirect('/');
+
          return (object) [
             'success' => true,
          ];
       } catch (Exception $err) {
-         //throw $th;
          return (object) [
             'success' => false,
          ];

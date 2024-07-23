@@ -105,58 +105,32 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
 @if(session('after_create_typeExam')) 
-
     <script>
-        var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully created new type exam in the database.',
         });
-        
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully created new type exam in the database.',
-        });
-        }, 1500);
     </script>
-
 @endif
 
 @if(session('after_update_typeExam')) 
     <script>
-        var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully updated the type exam in the database.',
         });
-    
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully updated the type exam in the database.',
-        });
-        }, 1500);
     </script>
 @endif
 
 @if(session('after_delete_type_exam')) 
     <script>
-        var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully deleted type exam in the database.',
         });
-    
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully deleted type exam in the database.',
-        });
-        }, 1500);
     </script>
 @endif
 
