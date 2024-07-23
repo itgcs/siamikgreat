@@ -5,8 +5,20 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
    <div class="row">
-      <a type="button" href="{{ url('/' . session('role') . '/supplementarySubjects/create') }}" class="btn btn-success btn mt-5 mx-2">   <i class="fa-solid fa-user-plus"></i>
-         </i>   
+      <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+               <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item">Home</li>
+                  <li class="breadcrumb-item">Subjects</li>
+                  <li class="breadcrumb-item active" aria-current="page">Supplementary Subject</li>
+               </ol>
+            </nav>
+      </div>
+   </div>  
+
+   <div class="row">
+      <a type="button" href="{{ url('/' . session('role') . '/supplementarySubjects/create') }}" class="btn btn-success btn mx-2">   
+         <i class="fa-solid fa-book"></i>
          Add Supplementary subject
       </a>
    </div>

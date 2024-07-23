@@ -160,7 +160,7 @@
           <li class="nav-item">
             <a href="/{{session('role')}}/dashboard/schedules/invillager" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules invillager' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
-              <p>Invillager</p>
+              <p>Invigilater</p>
             </a>
           </li>
           <!-- <li class="nav-item">
@@ -499,7 +499,7 @@
           <a href="/{{ session('role') }}/eca" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database eca' ? 'active' : '') : ''}}">
             <i class="nav-icon fa-solid fa-people-group"></i>
             <p>
-              Extra Culicular Academic
+              Ekstra Culicular Academy
             </p>
           </a>
         </li>
@@ -571,12 +571,12 @@
           <p>User</p>
         </a>
       </li>
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a href="{{url('/superadmin/users/change-password')}}" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'admin' ? 'active' : '') : ''}}">
           <i class="nav-icon fas fa-solid fa-lock"></i>
           <p>Change my password</p>
         </a>
-      </li>
+      </li> -->
     </li>
     @endif
    </ul>

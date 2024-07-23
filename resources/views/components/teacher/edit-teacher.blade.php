@@ -3,6 +3,17 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-3">
+                    <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item"><a href="admin/teachers/">Teachers</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Teacher</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="row">
             <!-- left column -->
             <div class="col-md-12">
                 <!-- general form elements -->

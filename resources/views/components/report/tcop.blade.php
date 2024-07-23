@@ -206,39 +206,23 @@
 </script>
 
 @if(session('after_post_tcop'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully post tcop in the database.',
+            title: 'Successfully',
+            text: 'Successfully post tcop in the database.',
         });
-    }, 1500);
-</script>
+    </script>
 @endif
 
 @if(session('after_decline_tcop'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
+            title: 'Successfully',
             title: 'Successfully decline tcop.',
         });
-    }, 1500);
-</script>
+    </script>
 @endif
 
 @endsection

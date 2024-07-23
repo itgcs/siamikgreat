@@ -320,22 +320,13 @@
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
-
 @if(session('after_post_final_score')) 
     <script>
-    var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-    });
-    
-    setTimeout(() => {
-        Toast.fire({
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully post score academic assessment secondary in the database.',
-    });
-    }, 1500);
+            title: 'Successfully',
+            text: 'Successfully post score academic assessment secondary in the database.',
+        });
     </script>
 @endif
 

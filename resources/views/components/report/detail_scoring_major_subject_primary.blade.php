@@ -299,43 +299,22 @@
 </script>
 
 @if(session('after_post_final_score')) 
-
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully post final score major subject in the database.',
-        });
-        }, 1500);
-
-
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully',
+                text: 'Successfully post final score major subject in the database.',
+            });
       </script>
-
   @endif
 
   @if(session('after_decline_scoring'))
         <script>
-            var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully',
+                text: 'Successfully decline scoring.',
             });
-
-            setTimeout(() => {
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Successfully decline scoring.',
-                });
-            }, 1500);
         </script>
     @endif
 

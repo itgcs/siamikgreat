@@ -4,10 +4,20 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
-
-   <div class="card card-dark mt-5">
+   <div class="row">
+      <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+               <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item">Home</li>
+                  <li class="breadcrumb-item">Schedules</li>
+                  <li class="breadcrumb-item active" aria-current="page">Final Exam</li>
+               </ol>
+            </nav>
+      </div>
+   </div>
+   <div class="card card-dark">
       <div class="card-header">
-         <h3 class="card-title">Schedule Mid Exam</h3>
+         <h3 class="card-title">Schedule Final Exam</h3>
 
          <div class="card-tools">
                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -113,22 +123,20 @@
 
    @if(session('after_update_schedule')) 
       <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
+         Swal.fire({
             icon: 'success',
             title: 'Successfully updated the schedule in the database.',
+         });
+      </script>
+   @endif
+   
+   @if(session('after_delete_finalexam')) 
+      <script>
+      Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully deleted final exam schedule in the database.'
       });
-      }, 1500);
-
-    
       </script>
    @endif
 

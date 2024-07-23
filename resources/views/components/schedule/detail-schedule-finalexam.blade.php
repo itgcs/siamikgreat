@@ -147,26 +147,13 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 @if(session('after_create_finalexam_schedule')) 
-
    <script>
-
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-   
-      setTimeout(() => {
-         Toast.fire({
+         Swal.fire({
             icon: 'success',
-            title: 'Successfully created final exam schedule in the database.',
+            title: 'Successfully',
+            text: 'Successfully created final exam schedule in the database.',
       });
-      }, 1500);
-
-
    </script>
-
 @endif
 
 @endsection

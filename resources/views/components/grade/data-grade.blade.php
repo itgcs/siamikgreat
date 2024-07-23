@@ -5,9 +5,20 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
    <div class="row">
-      <a type="button" href="{{ url('/' . session('role') . '/grades/create') }}" class="btn btn-success btn mt-5 mx-2">   <i class="fa-solid fa-user-plus"></i>
-         </i>   
-         Add grade
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item active" aria-current="page">Grades</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+   <div class="row">
+      <a type="button" href="{{ url('/' . session('role') . '/grades/create') }}" class="btn btn-success btn mx-2">   
+         <i class="fa-solid fa-user-plus"></i>
+         Add Grade
       </a>
    </div>
 
@@ -44,6 +55,7 @@
                         Total exam
                      </th>
                      <th style="width: 30%">
+                        Action
                      </th>
                   </tr>
                </thead>
@@ -77,19 +89,19 @@
                         {{$el->active_exam_count}}
                      </td>
                      
-                     <td class="project-actions text-right toastsDefaultSuccess">
+                     <td class="project-actions text-left toastsDefaultSuccess">
                         <a class="btn btn-primary btn"
                            href="{{url('/' . session('role') .'/grades') . '/' . $el->id}}">
-                           <i class="fas fa-folder">
+                           <i class="fas fa-eye">
                            </i>
                            View
                         </a>
-                        <a class="btn btn-info btn"
+                        <a class="btn btn-warning btn"
                            href="{{url('/' . session('role') .'/grades') . '/edit/' . $el->id}}">
                            {{-- <i class="fa-solid fa-user-graduate"></i> --}}
                            <i class="fas fa-pencil-alt">
                            </i>
-                           Edit
+                           Manage
                         </a>
                         @if (session('role') == 'superadmin')
                         <a class="btn btn-danger btn"

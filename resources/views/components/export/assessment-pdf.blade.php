@@ -93,20 +93,20 @@
                     <th colspan="2">{{ $scores }}</th>
                 </tr>
                 <tr>
-                    <td>Student</td>
+                    <td>Student Name</td>
                     <td>Id</td>
                 </tr>
                 @if (count($value) > 0)
-                    @foreach ($value as $student)
-                        <tr>
-                            <td>{{ $student['student_name'] }}</td>
-                            <td>{{ $student['student_id'] }}</td>
-                        </tr>
-                    @endforeach
+                @foreach ($value as $student)
+                <tr>
+                    <td>{{ $student['student_name'] }}</td>
+                    <td>{{ $student['student_id'] }}</td>
+                </tr>
+                @endforeach
                 @else
-                    <tr>    
-                        <td colspan="2" style="text-align:center">Data empty</td>
-                    </tr>
+                <tr>    
+                    <td colspan="2" style="text-align:center">Data empty</td>
+                </tr>
                 @endif
             </table>
             <br><br>

@@ -6,7 +6,7 @@
 <div class="container-fluid">
    <div class="row">
       <div class="col">
-        <nav aria-label="breadcrumb" class="bg-light rounded-3 mb-4">
+        <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
           <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item">Home</li>
             @if (session('role') == 'superadmin')
@@ -18,6 +18,7 @@
         </nav>
       </div>
    </div>
+
    <div class="form-group row">
       <div class="col-md-2">
          <select required name="semester" class="form-control" id="semester" onchange="saveSemesterToSession()">

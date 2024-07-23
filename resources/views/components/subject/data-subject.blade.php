@@ -5,8 +5,20 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
    <div class="row">
-      <a type="button" href="{{ url('/' . session('role') . '/subjects/create') }}" class="btn btn-success btn mt-5 mx-2">   <i class="fa-solid fa-user-plus"></i>
-         </i>   
+      <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+               <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item">Home</li>
+                  <li class="breadcrumb-item">Subjects</li>
+                  <li class="breadcrumb-item active" aria-current="page">Data</li>
+               </ol>
+            </nav>
+      </div>
+   </div>  
+
+   <div class="row">
+      <a type="button" href="{{ url('/' . session('role') . '/subjects/create') }}" class="btn btn-success btn mx-2">   
+         <i class="fa-solid fa-book"></i> 
          Add subject
       </a>
    </div>
@@ -32,6 +44,7 @@
                            Subjects
                         </th>
                         <th style="width: 80%">
+                           Action
                         </th>
                     </tr>
                 </thead>
@@ -48,7 +61,7 @@
                         </td>
                         
                         <td class="project-actions text-left toastsDefaultSuccess">
-                           <a class="btn btn-info btn"
+                           <a class="btn btn-warning btn"
                               href="{{url('/' . session('role') .'/subjects') . '/edit/' . $el->id}}">
                               {{-- <i class="fa-solid fa-user-graduate"></i> --}}
                               <i class="fas fa-pencil-alt">
@@ -94,73 +107,34 @@
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-
    @if(session('after_create_subject')) 
-
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully created new subject in the database.',
-        });
-        }, 1500);
-
-
-      </script>
-
-  @endif
-
-
-  
-  @if(session('after_update_subject')) 
-      <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
+         Swal.fire({
             icon: 'success',
-            title: 'Successfully updated the subject in the database.',
-      });
-      }, 1500);
+            title: 'Successfully',
+            text: 'Successfully created new subject in the database.',
+        });
+      </script>
+   @endif
 
-    
-    </script>
+   @if(session('after_update_subject')) 
+      <script>
+         Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully updated the subject in the database.'
+         });
+      </script>
    @endif
 
    @if(session('after_delete_subject')) 
-
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
+            Swal.fire({
               icon: 'success',
-              title: 'Successfully deleted subject in the database.',
+              title: 'Successfully',
+              text: 'Successfully deleted subject in the database.',
         });
-        }, 1500);
-
       </script>
-
   @endif
 
 @endsection

@@ -3,23 +3,33 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    @if(session('role') == 'admin')
+                        <li class="breadcrumb-item"><a href="{{url('/admin/masterAcademics')}}">Master Academic</a></li>
+                    @elseif (session('role') == 'teacher')
+                        <li class="breadcrumb-item"><a href="{{url('/teacher/masterAcademics')}}">Master Academic</a></li>
+                    @endif
+                </ol>
+            </nav>
+        </div>
+    </div>
     
-    <a type="button" href="{{ url('/' . session('role') . '/masterAcademics/create') }}" class="btn btn-success  mt-5 mr-2">
+    <a type="button" href="{{ url('/' . session('role') . '/masterAcademics/create') }}" class="btn btn-success  mr-2">
+        <i class="fas fa-calendar-plus"></i>
         Set master academic   
     </a>
-    <a type="button" href="{{url('/' . session('role') .'/masterAcademics') . '/edit'}}" class="btn btn-warning mt-5">
+    <a type="button" href="{{url('/' . session('role') .'/masterAcademics') . '/edit'}}" class="btn btn-warning">
+        <i class="fas fa-solid fa-pencil"></i>
         Edit
     </a>
 
     <div class="card card-dark mt-2">
         <div class="card-header">
             <h3 class="card-title">Master Academics</h3>
-
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-minus"></i>
-                </button>
-            </div>
         </div>
         <div class="card-body p-0">
             <table class="table table-striped projects">

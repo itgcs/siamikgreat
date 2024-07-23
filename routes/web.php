@@ -43,9 +43,10 @@ use App\Models\Grade_subject;
 use App\Models\Teacher_subject;
 use App\Models\Teacher_grade;
 use App\Models\Schedule;
+use App\Models\Type_schedule;
 use Illuminate\Notifications\Notification;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,7 +61,7 @@ use Illuminate\Support\Facades\Mail;
 
 Route::get('/', [UserController::class, 'login']);
 Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin');
-Route::get('/logout', [UserController::class, 'logout']);
+Route::post('/logout', [UserController::class, 'logout']);
 Route::get('/counter', Counter::class);
 
 // Route untuk mengambil data subject
@@ -98,39 +99,70 @@ Route::get('/get-grades/{teacherId}', function($teacherId) {
 });
 
 // Route untuk mengambil data schedule teacher
-Route::get('/get-schedule/{day}/{startTime}/{endTime}', function($day, $startTime, $endTime) {
-   $teacher = request('teacher');
-   $grade = request('grade');
+Route::get('/get-schedule-filter/{teacher?}/{grade?}/{day?}', function($teacher = null, $grade = null, $day = null) {
+   $lesson = Type_schedule::where('name', '=', 'Lesson')->value('id');
 
-   $query = Schedule::where('day', $day)
-       ->where('start_time', '>=', '08:00')
-       ->where('end_time', '<', '14:00')
-       ->where('note', '=', NULL)
-       ->where('start_time', '!=', $startTime)
-       ->where('end_time', '!=', $endTime)
-       ->leftJoin('teachers', 'schedules.teacher_id', '=', 'teachers.id')
-       ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
-       ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
-       ->select(
-           'schedules.*',
-           'teachers.id as teacher_id',
-           'teachers.name as teacher_name',
-           'grades.id as grade_id',
-           'grades.name as grade_name',
-           'grades.class as grade_class',
-           'subjects.id as subject_id',
-           'subjects.name_subject as subject_name'
-       );
+   $query = Schedule::leftJoin('teachers', 'schedules.teacher_id', '=', 'teachers.id')
+      ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
+      ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
+      ->where('type_schedule_id', $lesson)
+      ->where('semester', session('semester'))
+      ->orderBy('grade_id', 'asc')
+      ->orderBy('day', 'asc')
+      ->orderBy('start_time', 'asc');
 
-   if ($teacher) {
-       $query->where('teachers.id', $teacher);
+   if ($teacher !== 'null') {
+      $query->where('teacher_id', $teacher);
    }
 
-   if ($grade) {
-       $query->where('grades.id', $grade);
+   if ($grade !== 'null') {
+      $query->where('grade_id', $grade);
    }
 
-   $schedules = $query->get();
+   if ($day !== 'null') {
+      $query->where('day', $day);
+   }
+
+   $schedules = $query->select(
+      'schedules.*',
+      'teachers.name as teacher_name',
+      DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"),
+      'subjects.name_subject as subject_name'
+   )->get();
+
+   return response()->json($schedules);
+});
+
+Route::get('/get-schedule-assist-filter/{teacher?}/{grade?}/{day?}', function($teacher = null, $grade = null, $day = null) {
+   $lesson = Type_schedule::where('name', '=', 'Lesson')->value('id');
+
+   $query = Schedule::leftJoin('teachers', 'schedules.teacher_companion', '=', 'teachers.id')
+      ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
+      ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
+      ->where('type_schedule_id', $lesson)
+      ->where('semester', session('semester'))
+      ->orderBy('grade_id', 'asc')
+      ->orderBy('day', 'asc')
+      ->orderBy('start_time', 'asc');
+
+   if ($teacher !== 'null') {
+      $query->where('teacher_companion', $teacher);
+   }
+
+   if ($grade !== 'null') {
+      $query->where('grade_id', $grade);
+   }
+
+   if ($day !== 'null') {
+      $query->where('day', $day);
+   }
+
+   $schedules = $query->select(
+      'schedules.*',
+      'teachers.name as teacher_name',
+      DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"),
+      'subjects.name_subject as subject_name'
+   )->get();
 
    return response()->json($schedules);
 });
@@ -172,34 +204,6 @@ Route::get('/get-schedule-companion/{day}/{startTime}/{endTime}', function($day,
    return response()->json($schedules);
 });
 
-Route::get('/get-schedule-filter/{teacher}/{grade}', function($teacher, $grade) {
-   $query = Schedule::leftJoin('teachers', 'schedules.teacher_id', '=', 'teachers.id')
-       ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
-       ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
-       ->select(
-           'schedules.*',
-           'teachers.id as teacher_id',
-           'teachers.name as teacher_name',
-           'grades.id as grade_id',
-           'grades.name as grade_name',
-           'grades.class as grade_class',
-           'subjects.id as subject_id',
-           'subjects.name_subject as subject_name'
-       );
-
-   if ($teacher !== 'null') {
-       $query->where('teachers.id', $teacher);
-   }
-
-   if ($grade !== 'null') {
-       $query->where('grades.id', $grade);
-   }
-
-   $schedules = $query->get();
-
-   return response()->json($schedules);
-});
-
 Route::get('/get-schedule-companion-filter/{teacher}/{grade}', function($teacher, $grade) {
    $query = Schedule::leftJoin('teachers', 'schedules.teacher_companion', '=', 'teachers.id')
        ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
@@ -228,31 +232,54 @@ Route::get('/get-schedule-companion-filter/{teacher}/{grade}', function($teacher
    return response()->json($schedules);
 });
 
-Route::get('/get-schedule-edit/{day}/{teacher}/{grade}', function($day, $teacher, $grade) {
+Route::get('/get-schedulemidexam-edit/{teacher?}/{grade?}', function($teacher = null, $grade = null) {
+   $exam = session('semester') == 1 ? "mid exam semester 1" : "mid exam semester 2";
+
    $query = Schedule::leftJoin('teachers', 'schedules.teacher_id', '=', 'teachers.id')
-       ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
-       ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
-       ->where('schedules.day', '=', $day)
-       ->select(
-           'schedules.*',
-           'teachers.id as teacher_id',
-           'teachers.name as teacher_name',
-           'grades.id as grade_id',
-           'grades.name as grade_name',
-           'grades.class as grade_class',
-           'subjects.id as subject_id',
-           'subjects.name_subject as subject_name'
-       );
+      ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
+      ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
+      ->where('note', $exam);
 
    if ($teacher !== 'null') {
-       $query->where('teachers.id', $teacher);
+      $query->where('teacher_id', $teacher);
    }
 
    if ($grade !== 'null') {
-       $query->where('grades.id', $grade);
+      $query->where('grade_id', $grade);
    }
 
-   $schedules = $query->get();
+   $schedules = $query->select(
+      'schedules.*',
+      'teachers.name as teacher_name',
+      DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"),
+      'subjects.name_subject as subject_name'
+   )->get();
+
+   return response()->json($schedules);
+});
+
+Route::get('/get-schedulefinalexam-edit/{teacher?}/{grade?}', function($teacher = null, $grade = null) {
+   $exam = session('semester') == 1 ? "final exam semester 1" : "final exam semester 2";
+
+   $query = Schedule::leftJoin('teachers', 'schedules.teacher_id', '=', 'teachers.id')
+      ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
+      ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
+      ->where('note', $exam);
+
+   if ($teacher !== 'null') {
+      $query->where('teacher_id', $teacher);
+   }
+
+   if ($grade !== 'null') {
+      $query->where('grade_id', $grade);
+   }
+
+   $schedules = $query->select(
+      'schedules.*',
+      'teachers.name as teacher_name',
+      DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"),
+      'subjects.name_subject as subject_name'
+   )->get();
 
    return response()->json($schedules);
 });
@@ -338,8 +365,8 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::get('/register-user', [SuperAdminController::class, 'registerUser']);
       Route::get('/{id}', [SuperAdminController::class, 'getById']);
       Route::post('/register-action', [SuperAdminController::class, 'registerUserAction']);
-      Route::put('/change-password',[SuperAdminController::class, 'changePassword'])->name('user.editPassword');
-      Route::delete('{id}', [SuperAdminController::class, 'deleteUser']);
+      Route::post('/change-password/{id}',[SuperAdminController::class, 'changePassword'])->name('user.editPassword');
+      Route::get('delete/{id}', [SuperAdminController::class, 'deleteUser']);
    });
 
    Route::prefix('/register')->group(function () {
@@ -469,11 +496,13 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       
       Route::get('tcop/detail/{id}', [ReportController::class, 'tcopPrimary']);
 
+      Route::get('midcard/semestersatu/{id}', [ReportController::class, 'cardSemesterMid']);
       Route::get('semestersatu/detail/{id}', [ReportController::class, 'cardSemester1']);
       Route::get('semesterdua/detail/{id}', [ReportController::class, 'cardSemester2']);
       Route::get('semestersatu/detailSec/{id}', [ReportController::class, 'cardSemester1Sec']);
       Route::get('semesterdua/detailSec/{id}', [ReportController::class, 'cardSemester2Sec']);
       
+      Route::get('midreport/print/{id}', [ReportController::class, 'downloadPDFMidSemester']);
       Route::get('semester1/print/{id}', [ReportController::class, 'downloadPDFSemester1']);
       Route::get('semester2/print/{id}', [ReportController::class, 'downloadPDFSemester2']);
       Route::get('toddler/print/{id}', [ReportController::class, 'downloadPDFToddler']);
@@ -496,7 +525,34 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::put('/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateGradeSchedule'])->name('actionSuperEditSchedule');
       Route::put('subtitute/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateGradeScheduleSubtitute'])->name('actionSuperEditScheduleSubtitute');
 
+      Route::get('/midexam/create/{id}', [ScheduleController::class, 'createMidExam']);
+      Route::post('/midExam', [ScheduleController::class, 'actionCreateMidExam'])->name('actionSuperCreateMidExam');
+      Route::get('/midexams', [ScheduleController::class, 'scheduleMidExams']);
+      Route::get('/manage/midexam/{id}', [ScheduleController::class, 'managePageMidExam']);
+      Route::get('/detail/midexam/{id}', [ScheduleController::class, 'detailMidExam']);
+      Route::get('/edit/midexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPageMidExam']);
+      Route::put('/midexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateMidExam'])->name('actionSuperEditMidExam');
+      Route::put('/edit/date', [ScheduleController::class, 'actionUpdateDateMidExam'])->name('actionSuperEditDateMidExam');
+      Route::get('/delete/midexam/{id}', [ScheduleController::class, 'deleteMidExam']);
+      
+      Route::get('/finalexam/create/{id}', [ScheduleController::class, 'createFinalExam']);
+      Route::post('/finalExam', [ScheduleController::class, 'actionCreateFinalExam'])->name('actionSuperCreateFinalExam');
+      Route::get('/finalexams', [ScheduleController::class, 'scheduleFinalExams']);
+      Route::get('/manage/finalexam/{id}', [ScheduleController::class, 'managePageFinalExam']);
+      Route::get('/detail/finalexam/{id}', [ScheduleController::class, 'detailFinalExam']);
+      Route::get('/edit/finalexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPageFinalExam']);
+      Route::put('/finalexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateFinalExam'])->name('actionSuperEditFinalExam');
+      Route::put('/manage/finalexam/edit/date', [ScheduleController::class, 'actionUpdateDateFinalExam'])->name('actionSuperEditDateFinalExam');
+      Route::get('/delete/finalexam/{id}', [ScheduleController::class, 'deleteFinalExam']);
+
       Route::get('/delete/{id}', [ScheduleController::class, 'delete']);
+      Route::get('/deleteSubtitute/{id}', [ScheduleController::class, 'deleteSubtitute']);
+      Route::get('/otherSchedule/delete/{id}', [ScheduleController::class, 'deleteOtherSchedule']);
+
+      Route::get('/schools/manage/otherSchedule', [ScheduleController::class, 'manageOtherSchedulePage']);  
+      Route::get('/editSubtitute/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPageSubtitute']);
+      Route::put('/subtitute/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateGradeScheduleSubtitute'])->name('actionSuperEditScheduleSubtitute');
+
       Route::get('/deleteSubtitute/{id}', [ScheduleController::class, 'deleteSubtitute']);
       Route::get('/otherSchedule/delete/{id}', [ScheduleController::class, 'deleteOtherSchedule']);
    });
@@ -587,15 +643,6 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/{id}', [StudentController::class, 'detail']);
    });
 
-   Route::prefix('/users')->group(function () {
-      Route::get('/', [SuperAdminController::class, 'getUser']);
-      Route::get('/register-user', [SuperAdminController::class, 'registerUser']);
-      Route::get('/{id}', [SuperAdminController::class, 'getById']);
-      Route::post('/register-action', [SuperAdminController::class, 'registerUserAction']);
-      Route::put('/change-password',[SuperAdminController::class, 'changePassword'])->name('user.editPassword');
-      Route::delete('{id}', [SuperAdminController::class, 'deleteUser']);
-   });
-
    Route::prefix('/register')->group(function () {
       Route::get('/', [RegisterController::class, 'index']);
       Route::post('/post', [RegisterController::class, 'register'])->name('actionRegisterAdmin');Route::get('/imports', [Import::class, 'index']);
@@ -618,7 +665,7 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::post('/', [TeacherController::class, 'actionPost'])->name('actionAdminRegisterTeacher');
       Route::put('/{id}', [TeacherController::class, 'actionEdit'])->name('actionAdminUpdateTeacher');
       Route::get('/register', [TeacherController::class, 'pagePost']);
-      Route::get('/{id}', [TeacherController::class, 'editPage']);
+      Route::get('/edit/{id}', [TeacherController::class, 'editPage']);
       Route::get('/detail/{id}', [TeacherController::class, 'getById']);
    });
 
@@ -706,12 +753,13 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('reportCard/decline/{gradeId}/{teacherId}/{semester}', [ReportController::class, 'reportCardDecline']);
       Route::get('tcop/decline/{gradeId}/{teacherId}', [ReportController::class, 'reportCardDecline']);
 
+      Route::get('midcard/semestersatu/{id}', [ReportController::class, 'cardSemesterMid']);
       Route::get('semestersatu/detail/{id}', [ReportController::class, 'cardSemester1']);
       Route::get('semesterdua/detail/{id}', [ReportController::class, 'cardSemester2']);
       Route::get('semestersatu/detailSec/{id}', [ReportController::class, 'cardSemester1Sec']);
       Route::get('semesterdua/detailSec/{id}', [ReportController::class, 'cardSemester2Sec']);
       
-
+      Route::get('midreport/print/{id}', [ReportController::class, 'downloadPDFMidSemester']);
       Route::get('semester1/print/{id}', [ReportController::class, 'downloadPDFSemester1']);
       Route::get('semester2/print/{id}', [ReportController::class, 'downloadPDFSemester2']);
       Route::get('toddler/print/{id}', [ReportController::class, 'downloadPDFToddler']);
@@ -740,6 +788,7 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/detail/midexam/{id}', [ScheduleController::class, 'detailMidExam']);
       Route::get('/edit/midexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPageMidExam']);
       Route::put('/midexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateMidExam'])->name('actionAdminEditMidExam');
+      Route::put('/manage/midexam/edit/date', [ScheduleController::class, 'actionUpdateDateMidExam'])->name('actionAdminEditDateMidExam');
       Route::get('/delete/midexam/{id}', [ScheduleController::class, 'deleteMidExam']);
       
       Route::get('/finalexam/create/{id}', [ScheduleController::class, 'createFinalExam']);
@@ -749,6 +798,7 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/detail/finalexam/{id}', [ScheduleController::class, 'detailFinalExam']);
       Route::get('/edit/finalexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'editPageFinalExam']);
       Route::put('/finalexam/{gradeId}/{scheduleId}', [ScheduleController::class, 'actionUpdateFinalExam'])->name('actionAdminEditFinalExam');
+      Route::put('/manage/finalexam/edit/date', [ScheduleController::class, 'actionUpdateDateFinalExam'])->name('actionAdminEditDateFinalExam');
       Route::get('/delete/finalexam/{id}', [ScheduleController::class, 'deleteFinalExam']);
 
       Route::post('/schedules/schools', [ScheduleController::class, 'actionCreateOther'])->name('actionAdminCreateOtherSchedule');
@@ -861,15 +911,19 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('/detail/teacher', [TeacherController::class, 'getByIdTeacher']);
       Route::get('/edit/teacher', [TeacherController::class, 'editTeacher']);
       Route::put('/edit/{id}', [TeacherController::class, 'actionEdit'])->name('actionUpdateSelfTeacher');
+      Route::post('/change-password/{id}',[UserController::class, 'changePassword'])->name('user.changePassword');
       
 
       Route::get('attendance/{id}', [AttendanceController::class, 'attendTeacher']);
       Route::get('attendance/class/teacher', [AttendanceController::class, 'gradeTeacher']);
-      // Route::get('attendance/subjectTeacher/{id}', [AttendanceController::class, 'subjectTeacher']);
       Route::get('attendance/{id}/{gradeId}', [AttendanceController::class, 'detail'])->name('attendanceSubject');
+      Route::get('attendance/edit/{id}/{gradeId}', [AttendanceController::class, 'edit']);
+      Route::get('attendance/edit/detail/{date}/{gradeId}/{teacherId}/{semester}', [AttendanceController::class, 'editDetail']);
       Route::get('attendance/teacher/grade/subject', [AttendanceController::class, 'detailAttendTeacher'])->name('attendance.detail.teacher');
       Route::get('attendance/view/student/{id}/{gradeId}/{subjectId}', [AttendanceController::class, 'detailViewAttendTeacher']);
+      
       Route::post('/', [AttendanceController::class, 'postAttendance'])->name('actionUpdateAttendanceStudent');
+      Route::post('/editAttendance', [AttendanceController::class, 'postEditAttendance'])->name('actionEditAttendanceStudent');
       Route::post('/postScoreAttendance', [ScoringController::class, 'actionPostScoreAttendance'])->name('actionTeacherPostScoringAttendance');
 
       Route::get('/grade', [GradeController::class, 'teacherGrade']);
@@ -912,7 +966,6 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('report/midcard/semestersatu/{id}', [ReportController::class, 'cardSemesterMid']);
       Route::get('report/card/semestersatu/{id}', [ReportController::class, 'cardSemester1']);
       Route::get('report/card/semesterdua/{id}', [ReportController::class, 'cardSemester2']);
-      Route::get('report/midcard/semesterdua/{id}', [ReportController::class, 'cardSemester2Mid']);
       Route::get('report/cardSec/semestersatu/{id}', [ReportController::class, 'cardSemester1Sec']);
       Route::get('report/cardSec/semesterdua/{id}', [ReportController::class, 'cardSemester2Sec']);
       Route::get('report/cardToddler/{id}', [ReportController::class, 'cardToddler']);
