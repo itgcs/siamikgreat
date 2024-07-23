@@ -3,15 +3,26 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item">Schedules</li>
+                    <li class="breadcrumb-item active" aria-current="page">School</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 
     @if (session('role') == 'superadmin' || session('role') == 'admin')
-    <a type="button" data-toggle="modal" data-target="#modalAddOtherSchedule" class="btn btn-success btn mt-5 ">   
+    <a type="button" data-toggle="modal" data-target="#modalAddOtherSchedule" class="btn btn-success btn">   
         <i class="fa-solid fa-calendar-plus"></i>
         </i>   
-        Add Other Schedule
+        Add Schedule
     </a>
-    <a href="{{url('/' . session('role') .'/schedules/schools/manage/otherSchedule') }}" class="btn btn-warning btn mt-5">   
-        <i class="fa-solid fa-file"></i>
+    <a href="{{url('/' . session('role') .'/schedules/schools/manage/otherSchedule') }}" class="btn btn-warning btn">   
+        <i class="fa-solid fa-pencil"></i>
         </i>   
         Manage
     </a>

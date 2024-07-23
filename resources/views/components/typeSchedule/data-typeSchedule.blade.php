@@ -5,9 +5,21 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
     <div class="row">
-        <a type="button" href="{{ url('/' . session('role') . '/typeSchedules/create') }}" class="btn btn-success btn mt-5 mx-2">   <i class="fa-solid fa-user-plus"></i>
-           </i>   
-           Add type schedule
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item">Schedules</li>
+                    <li class="breadcrumb-item active" aria-current="page">Type Schedules</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <a type="button" href="{{ url('/' . session('role') . '/typeSchedules/create') }}" class="btn btn-success btn mx-2">   
+            <i class="fa-solid fa-user-plus"></i>
+            Add type schedule
         </a>
     </div>
 
@@ -51,7 +63,7 @@
                            </a>
                         </td>
                         <td>
-                           <a>
+                           <a style="color:{{$el->color}}">
                                 {{$el->color}}
                            </a>
                         </td>
@@ -114,66 +126,32 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
     @if(session('after_create_typeSchedule')) 
-
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully created new type schedule in the database.',
         });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully created new type schedule in the database.',
-        });
-        }, 1500);
-
-
       </script>
-
     @endif
   
     @if(session('after_update_typeSchedule')) 
         <script>
-     
-        var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
-        });
-  
-        setTimeout(() => {
-            Toast.fire({
+            Swal.fire({
                 icon: 'success',
-                title: 'Successfully updated the type schedule in the database.',
-        });
-        }, 1500);
-
+                title: 'Successfully',
+                text: 'Successfully updated the type schedule in the database.',
+            });
         </script>
     @endif
 
     @if(session('after_delete_typeSchedule')) 
         <script>
-        
-        var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
-        });
-    
-        setTimeout(() => {
-            Toast.fire({
+            Swal.fire({
                 icon: 'success',
-                title: 'Successfully delete the type schedule in the database.',
-        });
-        }, 1500);
-
-        
+                title: 'Successfully',
+                text: 'Successfully delete the type schedule in the database.',
+            });
         </script>
     @endif
 

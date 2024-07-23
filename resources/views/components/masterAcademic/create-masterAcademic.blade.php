@@ -5,10 +5,10 @@
     <div class="container-fluid">
         <div class="row mt-4">
           <div class="col">
-            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item">Home</li>
-                <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/masterAcademics')}}">Master Schedule</a></li>
+                <li class="breadcrumb-item"><a href="{{url('' .session('role'). '/masterAcademics')}}">Master Academic</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Create</li>
               </ol>
             </nav>

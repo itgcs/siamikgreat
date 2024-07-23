@@ -5,8 +5,19 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
     <div class="row">
-        <a type="button" href="{{ url('/' . session('role') . '/typeExams/create') }}" class="btn btn-success btn mt-5 mx-2">   <i class="fa-solid fa-user-plus"></i>
-        </i>   
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item active" aria-current="page">Type Exams</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <a type="button" href="{{ url('/' . session('role') . '/typeExams/create') }}" class="btn btn-success btn mx-2">   
+            <i class="fa-solid fa-user-plus"></i>
         Add type exam
         </a>
     </div>
@@ -49,7 +60,7 @@
                         </td>
                         
                         <td class="project-actions text-left toastsDefaultSuccess">
-                           <a class="btn btn-info btn"
+                           <a class="btn btn-warning btn"
                               href="{{url('/' . session('role') .'/typeExams') . '/edit/' . $el->id}}">
                               {{-- <i class="fa-solid fa-user-graduate"></i> --}}
                               <i class="fas fa-pencil-alt">

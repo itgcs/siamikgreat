@@ -499,7 +499,7 @@
           <a href="/{{ session('role') }}/eca" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database eca' ? 'active' : '') : ''}}">
             <i class="nav-icon fa-solid fa-people-group"></i>
             <p>
-              Extra Culicular Academic
+              Ekstra Culicular Academy
             </p>
           </a>
         </li>

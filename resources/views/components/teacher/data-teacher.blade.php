@@ -3,94 +3,95 @@
 
    <!-- Content Wrapper. Contains page content -->
    <div class="container-fluid">
-        <h2 class="text-center">Teacher Search</h2>
-        <form class="mt-5" action="/admin/teachers">
-            <div class="row">
-                <div class="col-md-10 offset-md-1">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label>Result Type:</label>
-                                @php
-                                    
-                                    $selectedType = $form && $form->type ? $form->type : 'name';
-
-                                @endphp
-                                <select name="type" class="form-control" required>
-                                    <option {{$selectedType === 'name' ? 'selected' : ''}} value="name">Name</option>
-                                    <option {{$selectedType === 'place_birth' ? 'selected' : ''}} value="place_birth">Place Birth</option>
-                                    <option {{$selectedType === 'nationality' ? 'selected' : ''}} value="nationality">Nationality</option>
-                                </select>
-                                
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="form-group">
-
-                                @php
-                                    
-                                    $selectedSort = $form->sort ? $form->sort : 'desc';
-
-                                @endphp
-
-                            <label>Sort order: <span style="color: red"></span></label>
-                            <select name="sort" class="form-control">
-                                <option value="desc" {{$selectedSort === 'desc' ? 'selected' : ''}}>Descending</option>
-                                <option value="asc" {{$selectedSort === 'asc' ? 'selected' : ''}}>Ascending</option>
-                            </select>                              
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="form-group">
-
-                            @php
-
-                                $selectedOrder = $form->order? $form->order : 'created_at';
-
-                            @endphp
-
-                                <label>Sort by:</label>
-                                <select name="order" class="form-control">
-                                        <option {{$selectedOrder === 'created_at'? 'selected' : ''}} value="created_at">Register</option>
-                                        <option {{$selectedOrder === 'name'? 'selected' : ''}} value="name">Name</option>
-                                        <option {{$selectedOrder === 'gender'? 'selected' : ''}} value="gender">Gender</option>
-                                        <option {{$selectedOrder === 'place_birth'? 'selected' : ''}} value="place_birth">Place Birth</option>
-                                        <option {{$selectedOrder === 'status'? 'selected' : ''}} value="status">Status</option>
-                                </select>
-                                
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="form-group">
-                            <label>Status: <span style="color: red"></span></label>
-
+        
+    <h2 class="text-center">Teacher Search</h2>
+    <form class="mt-5" action="/admin/teachers">
+        <div class="row">
+            <div class="col-md-10 offset-md-1">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label>Result Type:</label>
                             @php
                                 
-                                $selectedStatus = $form->status ? $form->status : 'true';
-                                $option = $selectedStatus === 'false' ? 'true' : 'false';
+                                $selectedType = $form && $form->type ? $form->type : 'name';
 
                             @endphp
-
-                            <select name="status" class="form-control">
-                                <option  selected value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Inactive'}}</option>
-                                <option  value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
-                            </select>                              
-                            </div>
+                            <select name="type" class="form-control" required>
+                                <option {{$selectedType === 'name' ? 'selected' : ''}} value="name">Name</option>
+                                <option {{$selectedType === 'place_birth' ? 'selected' : ''}} value="place_birth">Place Birth</option>
+                                <option {{$selectedType === 'nationality' ? 'selected' : ''}} value="nationality">Nationality</option>
+                            </select>
+                            
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="input-group input-group-lg">
-                            <input name="search" value="{{$form->search}}" type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-lg btn-default">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </div>
+                    <div class="col-2">
+                        <div class="form-group">
+
+                            @php
+                                
+                                $selectedSort = $form->sort ? $form->sort : 'desc';
+
+                            @endphp
+
+                        <label>Sort order: <span style="color: red"></span></label>
+                        <select name="sort" class="form-control">
+                            <option value="desc" {{$selectedSort === 'desc' ? 'selected' : ''}}>Descending</option>
+                            <option value="asc" {{$selectedSort === 'asc' ? 'selected' : ''}}>Ascending</option>
+                        </select>                              
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-group">
+
+                        @php
+
+                            $selectedOrder = $form->order? $form->order : 'created_at';
+
+                        @endphp
+
+                            <label>Sort by:</label>
+                            <select name="order" class="form-control">
+                                    <option {{$selectedOrder === 'created_at'? 'selected' : ''}} value="created_at">Register</option>
+                                    <option {{$selectedOrder === 'name'? 'selected' : ''}} value="name">Name</option>
+                                    <option {{$selectedOrder === 'gender'? 'selected' : ''}} value="gender">Gender</option>
+                                    <option {{$selectedOrder === 'place_birth'? 'selected' : ''}} value="place_birth">Place Birth</option>
+                                    <option {{$selectedOrder === 'status'? 'selected' : ''}} value="status">Status</option>
+                            </select>
+                            
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-group">
+                        <label>Status: <span style="color: red"></span></label>
+
+                        @php
+                            
+                            $selectedStatus = $form->status ? $form->status : 'true';
+                            $option = $selectedStatus === 'false' ? 'true' : 'false';
+
+                        @endphp
+
+                        <select name="status" class="form-control">
+                            <option  selected value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Inactive'}}</option>
+                            <option  value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
+                        </select>                              
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group input-group-lg">
+                        <input name="search" value="{{$form->search}}" type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-lg btn-default">
+                                <i class="fa fa-search"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </form >
+        </div>
+    </form >
 
     @if (sizeof($data) == 0 && ($form->type || $form->sort || $form->order || $form->status || $form->search))
          
@@ -113,8 +114,9 @@
         </div>
     </div>
 
-     @else
+    @else
 
+    
     <div class="row">
         <a type="button" href="teachers/register" id="#" class="btn btn-success btn mx-2">
            <i class="fa-solid fa-user-plus"></i>
@@ -124,148 +126,133 @@
     </div>
 
     <div class="card card-dark mt-2">
-       <div class="card-header">
-         <h3 class="card-title">Teacher</h3>
+        <div class="card-header">
+            <h3 class="card-title">Teacher</h3>
 
-         <div class="card-tools">
-           <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-             <i class="fas fa-minus"></i>
-           </button>
-         </div>
-       </div>
-       <div class="card-body p-0">
-         <table class="table table-striped projects">
-             <thead>
-                 <tr>
-                     <th style="width: 3%">
-                         #
-                     </th>
-                     <th>
-                           Teacher Name
-                     </th>
-                     <th>
-                           Place of birth
-                     </th>
-                     <th>
-                           Nationality
-                     </th>
-                     <th>
-                           Gender
-                     </th>
-                     <th>
-                           Total Class
-                     </th>
-                     <th>
-                           Total Subject
-                     </th>
-                     <th>
-                           Total Exam
-                     </th>
-                     <th>
-                           Register at
-                     </th>
-                     <th >
-                           Status
-                     </th>
-                     <th style="width: 35%">
-                     </th>
-                 </tr>
-             </thead>
-             <tbody>
-               <tr>
-                  @foreach($data as $el)
-                  <tr id="{{'index_teacher_' . $el->id}}">
-                      <td>{{$loop->index + 1}}</td>
-                      <td>
-                                <a>
-                                    {{$el->name}}
-                                </a>
-                                <br/>
-                                <small>
-                                    @php
-                                    
-                                    $birthDate = explode("-", $el->date_birth);
-                                    
-                                    $age = (date("md", date("U", mktime(0, 0, 0, $birthDate[2], $birthDate[1], $birthDate[0]))) > date("md") 
-                                    ? ((date("Y")-$birthDate[0])-1):(date("Y")-$birthDate[0]));
-                                    @endphp
-                                    {{$age}} years old
-                                </small>
-                            </td>
-                            <td>{{$el->place_birth}}</td>
-                            <td>{{$el->nationality}}</td>
-                            <td>{{$el->gender}}</td>
+            <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-striped projects">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Teacher Name</th>
+                        <th>Place of birth</th>
+                        <th>Nationality</th>
+                        <th>Gender</th>
+                        <!-- <th>
+                            Total Class
+                        </th>
+                        <th>
+                            Total Subject
+                        </th>
+                        <th>
+                            Total Exam
+                        </th> -->
+                        <th>Register at</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    @foreach($data as $el)
+                    <tr id="{{'index_teacher_' . $el->id}}">
+                        <td>{{$loop->index + 1}}</td>
+                        <td>
+                                    <a>
+                                        {{$el->name}}
+                                    </a>
+                                    <br/>
+                                    <small>
+                                        @php
+                                        
+                                        $birthDate = explode("-", $el->date_birth);
+                                        
+                                        $age = (date("md", date("U", mktime(0, 0, 0, $birthDate[2], $birthDate[1], $birthDate[0]))) > date("md") 
+                                        ? ((date("Y")-$birthDate[0])-1):(date("Y")-$birthDate[0]));
+                                        @endphp
+                                        {{$age}} years old
+                                    </small>
+                                </td>
+                                <td>{{$el->place_birth}}</td>
+                                <td>{{$el->nationality}}</td>
+                                <td>{{$el->gender}}</td>
 
-                        
-                            <td class="text-center">{{ $count[$loop->index]->active_grade_count }}</td>
-                            <td class="text-center">{{ $count[$loop->index]->active_subject_count }}</td>
-                            <td class="text-center">{{ $count[$loop->index]->active_exam_count }}</td>
-                                                        
-                            <td>{{date('d/m/Y', strtotime($el->created_at))}}</td>
-                            <td>
-                                @if($el->is_active)
-                                <h1 class="badge badge-success">Active</h1>
-                                @else
-                                <h1 class="badge badge-danger">Inactive</h1>
-                                @endif
-                                
-                            </td>
-                            <td class="project-actions text-right toastsDefaultSuccess">
-                                <a class="btn btn-primary btn-sm" title="View" href="teachers/detail/{{$el->unique_id}}">
-                                    <i class="fas fa-folder">
-                                    </i>
-                                    
-                                </a>
-                                <a class="btn btn-info btn-sm" title="Edit" href="teachers/{{$el->id}}">
-                                    <i class="fas fa-pencil-alt">
-                                    </i>
-                                    
-                                </a>
-                                @if(session('role') == 'superadmin')
-                                <a class="btn btn-info btn-sm" title="Hapus" data-toggle="modal" data-target="#modalDeleteTeacher">
-                                    <i class="fas fa-trash">
-                                    </i>
-                                </a>
-                                    @if (!$el->is_active)
-                                        <a href="javascript:void(0)" id="active-teacher" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-success btn-sm">
-                                        <i class="fas fa fa-ban"></i>
-                                        Activate
-                                        </a>
+                            
+                                <!-- <td class="text-center">{{ $count[$loop->index]->active_grade_count }}</td>
+                                <td class="text-center">{{ $count[$loop->index]->active_subject_count }}</td>
+                                <td class="text-center">{{ $count[$loop->index]->active_exam_count }}</td> -->
+                                                            
+                                <td>{{date('d/m/Y', strtotime($el->created_at))}}</td>
+                                <td>
+                                    @if($el->is_active)
+                                    <h1 class="badge badge-success">Active</h1>
                                     @else
-                                        <a href="javascript:void(0)" id="delete-teacher" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-danger btn-sm">
-                                        <i class="fas fa fa-ban"></i>
-                                        Deactive
-                                        </a>
+                                    <h1 class="badge badge-danger">Inactive</h1>
                                     @endif
-                                @endif
-                            </td>
-                        </tr>  
+                                    
+                                </td>
+                                <td class="project-actions text-left toastsDefaultSuccess">
+                                    <a class="btn btn-primary btn-sm" title="View" href="teachers/detail/{{$el->unique_id}}">
+                                        <i class="fas fa-eye">
+                                        </i>
+                                        
+                                    </a>
+                                    <a class="btn btn-info btn-sm" title="Edit" href="teachers/edit/{{$el->unique_id}}">
+                                        <i class="fas fa-pencil-alt">
+                                        </i>
+                                        
+                                    </a>
+                                    @if(session('role') == 'superadmin')
+                                    <a class="btn btn-info btn-sm" title="Hapus" data-toggle="modal" data-target="#modalDeleteTeacher">
+                                        <i class="fas fa-trash">
+                                        </i>
+                                    </a>
+                                        @if (!$el->is_active)
+                                            <a href="javascript:void(0)" id="active-teacher" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-success btn-sm">
+                                            <i class="fas fa fa-ban"></i>
+                                            Activate
+                                            </a>
+                                        @else
+                                            <a href="javascript:void(0)" id="delete-teacher" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-danger btn-sm">
+                                            <i class="fas fa fa-ban"></i>
+                                            Deactive
+                                            </a>
+                                        @endif
+                                    @endif
+                                </td>
+                            </tr>  
 
-                        <!-- Modal -->
-                        <div class="modal fade" id="modalDeleteTeacher" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLongTitle">Delete teacher</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure want to delete this teacher?
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
-                                <a class="btn btn-danger btn"  href="{{url('/' . session('role') .'/teachers') . '/delete/' . $el->id}}">Yes delete</a>
+                            <!-- Modal -->
+                            <div class="modal fade" id="modalDeleteTeacher" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Delete teacher</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure want to delete this teacher?
+                                    </div>
+                                    <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
+                                    <a class="btn btn-danger btn"  href="{{url('/' . session('role') .'/teachers') . '/delete/' . $el->id}}">Yes delete</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                  @endforeach
-               </tr>
-             </tbody>
-         </table>
-       </div>
-       <!-- /.card-body -->
+                    @endforeach
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- /.card-body -->
         </div>
     </div>
     @include('components.super.delete-teacher')

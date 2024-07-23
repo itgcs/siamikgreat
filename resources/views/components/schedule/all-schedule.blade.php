@@ -3,7 +3,19 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
-    <div class="card card-dark mt-5">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item">Schedules</li>
+                    <li class="breadcrumb-item active" aria-current="page">All Schedules</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="card card-dark">
         <div class="card-header header-elements-inline">
             <h5 class="card-title">All Schedules Schools</h5>
 
@@ -246,19 +258,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 @if(session('after_create_otherSchedule')) 
     <script>
-        var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully'
+            text: 'Succesfully created new schedule academic in the database'
         });
-      
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully created new other schedule in the database.'
-            });
-        }, 1500);
     </script>
 @endif
 

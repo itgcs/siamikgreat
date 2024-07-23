@@ -141,11 +141,15 @@
                              <span class="text text-sm">( {{$el->type_exam_name}} ) {{$el->name_exam}} ({{ $el->subject }}) ({{ $el->grade_name .'-'. $el->grade_class }})</span>
 
                              <span>
-                                @if ($el->date_exam == now())
-                                  $currentDate = now(); // Tanggal saat ini
-                                  $dateExam = $el->date_exam; // Tanggal exam dari data
-                                  $diff = strtotime($dateExam) - strtotime($currentDate);
-                                  $days = floor($diff / (60 * 60 * 24));
+                              <?php 
+                              ?>
+                                @if ($el->is_active)
+                                  @php
+                                    $currentDate = now(); // Tanggal saat ini
+                                    $dateExam = $el->date_exam; // Tanggal exam dari data
+                                    $diff = strtotime($dateExam) - strtotime($currentDate);
+                                    $days = floor($diff / (60 * 60 * 24));  
+                                  @endphp
                                   
                                   <span class="badge badge-warning">{{$days}} days again</span>
                                 @else
@@ -258,6 +262,7 @@
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Name</th>
+                    <th scope="col">Grade</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -265,6 +270,7 @@
                   <tr>
                     <td scope="row">{{$loop->index+1}}</td>
                     <td>{{$el->name_subject}}</td>
+                    <td>{{$el->grade_name}}</td>
                   </tr>
                 @endforeach  
               @else
@@ -291,7 +297,7 @@
               </div>
               <!-- /.card-tools -->
             </div>
-            <div class="card-body">
+            <div class="card-body" style="position: relative; height: 500px; overflow-y: auto;">
              <table class="table table-borderless">
                <thead>
                  <tr>

@@ -5,8 +5,19 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
    <div class="row">
-      <a type="button" href="{{ url('/' . session('role') . '/eca/create') }}" class="btn btn-success btn mt-5 mx-2">   <i class="fa-solid fa-user-plus"></i>
-         </i>   
+      <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+               <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item">Home</li>
+                  <li class="breadcrumb-item active" aria-current="page">Ekstra Culicular Academy</li>
+               </ol>
+            </nav>
+      </div>
+   </div>  
+
+   <div class="row">
+      <a type="button" href="{{ url('/' . session('role') . '/eca/create') }}" class="btn btn-success btn mx-2">   
+         <i class="fa-solid fa-people-group"></i>
          Add eca
       </a>
    </div>
@@ -62,11 +73,11 @@
                         </i>
                         Edit
                      </a> -->
-                     <a class="btn btn-success btn"
+                     <a class="btn btn-warning btn"
                         href="{{url('/' . session('role') .'/eca') . '/view/' . $el->id}}">
-                        <i class="fas fa-eye">
+                        <i class="fas fa-pencil">
                         </i>
-                        View
+                        Manage
                      </a>
                      @if (session('role') == 'superadmin' || session('role') == 'admin')
                         <a class="btn btn-danger btn" href="{{url('/' . session('role') .'/eca') . '/delete/' . $el->id}}">
