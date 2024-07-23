@@ -56,10 +56,6 @@ class AdminController extends Controller
       session()->flash('preloader', true);
 
       try {
-         //code...
-
-         
-
          $user = Auth::user();
 
          if(!$user)
