@@ -62,16 +62,16 @@
                                     </div>
     
                                     <div class="col-md-2 d-none">
-                                        <label for="grade_id">Grade<span style="color: red"> *</span></label>
-                                        <select required name="grade_id" class="form-control" id="grade_id">
-                                            @foreach($data['grade'] as $el)
-                                            <option value="{{ $el->id }}" selected>{{ $el->name }} - {{ $el->class}}</option>
-                                            @endforeach
-                                        </select>
-                                        @if($errors->has('grade_id'))
-                                        <p style="color: red">{{ $errors->first('grade_id') }}</p>
-                                        @endif
-                                    </div>
+                                    <label for="grade_id">Grade<span style="color: red"> *</span></label>
+                                    <select required name="grade_id" class="form-control" id="grade_id">
+                                        @foreach($data['grade'] as $el)
+                                        <option value="{{ $el->id }}" selected>{{ $el->name }} - {{ $el->class}}</option>
+                                        @endforeach
+                                    </select>
+                                    @if($errors->has('grade_id'))
+                                    <p style="color: red">{{ $errors->first('grade_id') }}</p>
+                                    @endif
+                                </div>
                                 </div>
     
                                 <table class="table table-striped table-bordered">
@@ -94,8 +94,8 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <select name="teacher_id[]" class="form-control" id="teacher_id"> 
-                                                    <option value="" selected >-- Teacher --</option>
+                                                <select name="teacher_id[]" class="form-control" id="teacher_id">
+                                                    <option value="">-- Teacher --</option>
                                                 </select>
                                                 @if($errors->has('teacher_id'))
                                                 <p style="color: red">{{ $errors->first('teacher_id') }}</p>
@@ -286,37 +286,26 @@
     $(document).ready(function() {
         // Function to add a new row
         function addRow() {
-            var rowCount = $('#scheduleTableBody tr').length;
             var newRow = `<tr>
                 <td>
-                    <select name="subject_id[${rowCount}]" class="form-control subject_id">
-                        <option value="" selected > Select Subject</option>
+                    <select name="subject_id[]" class="form-control subject_id">
                     </select>
-                    @if($errors->has('subject_id[[${rowCount}]'))
-                    <p style="color: red">{{ $errors->first('subject_id[[${rowCount}]') }}</p>
-                    @endif
                 </td>
                 <td>
-                    <select name="teacher_id[${rowCount}]" class="form-control teacher_id">
-                        <option value="" selected > Select Teacher </option>
+                    <select name="teacher_id[]" class="form-control teacher_id">
+                        <option value="" selected >-- Teacher --</option>
                     </select>
-                    @if($errors->has('teacher_id[${rowCount}]'))
-                    <p style="color: red">{{ $errors->first('teacher_id[${rowCount}]') }}</p>
-                    @endif
                 </td>
                 <td>
-                    <select name="teacher_companion[${rowCount}]" class="form-control">
-                        <option value="" selected > Assistant </option>
+                    <select name="teacher_companion[]" class="form-control">
+                        <option value="" selected >-- Assistant --</option>
                         @foreach($data['teacher'] as $dt)
                         <option value="{{ $dt->id }}">{{ $dt->name }}</option>
                         @endforeach
                     </select>
-                    @if($errors->has('teacher_companion[${rowCount}]'))
-                    <p style="color: red">{{ $errors->first('teacher_companion[${rowCount}]') }}</p>
-                    @endif
                 </td>
                 <td>
-                    <select required name="day[${rowCount}]" class="form-control">
+                    <select required name="day[]" class="form-control">
                         <option value="" class="text-xs">Day</option>
                         <option value="1">Monday</option>
                         <option value="2">Tuesday</option>
@@ -324,27 +313,15 @@
                         <option value="4">Thursday</option>
                         <option value="5">Friday</option>
                     </select>
-                    @if($errors->has('day[${rowCount}]'))
-                    <p style="color: red">{{ $errors->first('day[${rowCount}]') }}</p>
-                    @endif
                 </td>
                 <td>
-                    <input type="time" class="form-control" name="start_time[${rowCount}]">
-                    @if($errors->has('start_time[${rowCount}]'))
-                    <p style="color: red">{{ $errors->first('start_time[${rowCount}]') }}</p>
-                    @endif
+                    <input type="time" class="form-control" name="start_time[]">
                 </td>
                 <td>
-                    <input type="time" class="form-control" name="end_time[${rowCount}]">
-                    @if($errors->has('end_time[${rowCount}]'))
-                    <p style="color: red">{{ $errors->first('end_time[${rowCount}]') }}</p>
-                    @endif
+                    <input type="time" class="form-control" name="end_time[]">
                 </td>
                 <td>
-                    <textarea name="notes[${rowCount}]" class="form-control" cols="10" rows="1"></textarea>
-                    @if($errors->has('notes_${rowCount}'))
-                    <p style="color: red">{{ $errors->first('notes_${rowCount}') }}</p>
-                    @endif
+                    <textarea name="notes[]" class="form-control" cols="10" rows="1"></textarea>
                 </td>
                 <td>
                     <button type="button" class="btn btn-success btn-sm btn-tambah mt-1" title="Tambah Data"><i class="fa fa-plus"></i></button>
@@ -394,7 +371,7 @@
 
     function loadSubjectOptionExam(gradeId, subjectSelect) {
         // Clear existing options and add the default option
-        subjectSelect.html('<option value="" selected >Subject</option>');
+        subjectSelect.html('<option value="" selected >-- Subject --</option>');
 
         fetch(`/get-subjects/${gradeId}`)
             .then(response => response.json())
@@ -445,14 +422,14 @@
     // Call loadSubjectOptionExam if grade_id is already selected
     window.onload = function() {
         const gradeSelect = document.getElementById('grade_id');
-        const subjectSelect = document.getElementById('subject_id_0');
+        const subjectSelect = document.getElementById('subject_id');
 
         if (gradeSelect.value) {
             loadSubjectOptionExam(gradeSelect.value, $(subjectSelect));
         }
 
         $(subjectSelect).change(function() {
-            const teacherSelect = document.getElementById('teacher_id_0');
+            const teacherSelect = document.getElementById('teacher_id');
             loadTeacherOption(gradeSelect.value, $(this).val(), $(teacherSelect));
         });
     };

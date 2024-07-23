@@ -102,7 +102,7 @@ class SuperAdminController extends Controller
             session()->flash('error.type.password', 'Make sure your input password is the same !!!');
             session()->flash('error.password', false);
             
-            return redirect('/admin/user');
+            return redirect('/superadmin/users');
          }
          
          if($validator->fails())
@@ -111,7 +111,7 @@ class SuperAdminController extends Controller
             session()->flash('error.type.password', false);
             session()->flash('error.password', $validator->messages());
             
-            return redirect('/admin/user');
+            return redirect('/superadmin/users');
          }
          
          
@@ -122,7 +122,7 @@ class SuperAdminController extends Controller
          session()->flash('password.success');
          session('error.type.password', false);
          session('error.password', false);
-         return redirect('/admin/user');
+         return redirect('/superadmin/users');
       } catch (Exception $th) {
          //throw $th;
          return dd($th);

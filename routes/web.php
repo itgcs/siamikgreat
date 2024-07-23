@@ -365,7 +365,7 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::get('/register-user', [SuperAdminController::class, 'registerUser']);
       Route::get('/{id}', [SuperAdminController::class, 'getById']);
       Route::post('/register-action', [SuperAdminController::class, 'registerUserAction']);
-      Route::post('/change-password/{id}',[SuperAdminController::class, 'changePassword'])->name('user.editPassword');
+      Route::put('/change-password/{id}',[SuperAdminController::class, 'changePassword'])->name('user.editPassword');
       Route::get('delete/{id}', [SuperAdminController::class, 'deleteUser']);
    });
 
