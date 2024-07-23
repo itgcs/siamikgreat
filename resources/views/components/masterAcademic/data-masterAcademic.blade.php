@@ -116,55 +116,31 @@
 
 @if(session('after_create_masterAcademic'))
     <script>
-        var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully created new master academic in the database.'
         });
-
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully created new master academic in the database.'
-            });
-        }, 1500);
     </script>
 @endif
 
 @if(session('after_update_masterAcademic'))
     <script>
-        var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully updated the master academic in the database.'
         });
-
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully updated the master academic in the database.'
-            });
-        }, 1500);
     </script>
 @endif
 
 @if(session('after_delete_masterAcademic'))
     <script>
-        var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully deleted the type schedule in the database.'
         });
-
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully deleted the type schedule in the database.'
-            });
-        }, 1500);
     </script>
 @endif
 

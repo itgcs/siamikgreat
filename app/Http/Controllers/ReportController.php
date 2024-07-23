@@ -1529,6 +1529,7 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.teacher_id', $teacherId)
+                ->orderBy('students.name', 'asc')
                 ->get();
             }
             elseif (strtolower($subject->subject_name) == "religion catholic") {
@@ -1554,6 +1555,7 @@ class ReportController extends Controller
                     ->where('subject_exams.subject_id', $subjectId)
                     ->where('exams.semester', $semester)
                     ->where('exams.teacher_id', $teacherId)
+                    ->orderBy('students.name', 'asc')
                     ->get();
             }
             elseif (strtolower($subject->subject_name) == "religion christian") {
@@ -1579,6 +1581,7 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.teacher_id', $teacherId)
+                ->orderBy('students.name', 'asc')
                 ->get();
             }
             elseif (strtolower($subject->subject_name) == "religion buddhism") {
@@ -1604,6 +1607,7 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.teacher_id', $teacherId)
+                ->orderBy('students.name', 'asc')
                 ->get();
             }
             elseif (strtolower($subject->subject_name) == "religion hinduism") {
@@ -1629,6 +1633,7 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.teacher_id', $teacherId)
+                ->orderBy('students.name', 'asc')
                 ->get();
             }
             elseif (strtolower($subject->subject_name) == "religion confucianism") {
@@ -1654,6 +1659,7 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.teacher_id', $teacherId)
+                ->orderBy('students.name', 'asc')
                 ->get();
             }
             else{
@@ -1678,6 +1684,7 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.teacher_id', $teacherId)
+                ->orderBy('students.name', 'asc')
                 ->get();
             }
 
