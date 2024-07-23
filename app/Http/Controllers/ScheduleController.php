@@ -1198,7 +1198,7 @@ class ScheduleController extends Controller
             ->get();
 
          $grade = Grade::where('id', $id)->get();
-         $grades = Grade::whereNotIn('name', ['Toddler', 'Nursery', 'Kindergarten', 'IGCSE'])->get();
+         $grades = Grade::whereNotIn('name', ['IGCSE'])->get();
          $teacher = Teacher::get();
          $subject = Subject::get();
 
@@ -1312,6 +1312,7 @@ class ScheduleController extends Controller
    // Menambahkan jadwal grade
    public function actionCreate(Request $request)
    {
+      // dd($request);
       try {
          session()->flash('page', (object)[
             'page' => 'schedules',
@@ -1319,82 +1320,60 @@ class ScheduleController extends Controller
          ]);
 
          $role = session('role');
-         $errors = [];
 
-         // dd($request);
-
-         for ($i = 0; $i < count($request->notes); $i++) {
-               $subjectId = $request->input("subject_id_$i");
-               $teacherId = $request->input("teacher_id_$i");
-               $teacherCompanion = $request->input("teacher_companion_$i");
-               $day = $request->input("day_$i");
-               $startTime = $request->input("start_time_$i");
-               $endTime = $request->input("end_time_$i");
-               $note = $request->input("notes.$i");
-
-               // dd($subjectId);
-
-               if ($teacherId && $teacherCompanion) {
-                  if (Schedule::where('day', $day)
-                     ->where('teacher_id', $teacherId)
-                     ->where('start_time', $startTime)
-                     ->where('end_time', $endTime)
-                     ->exists()) {
-                     $errors["notes.$i"] = 'Teacher Subject has same schedules in other grade.';
-                  }
-                  elseif (Schedule::where('day', $day)
-                     ->where('teacher_companion', $teacherCompanion)
-                     ->where('start_time', $startTime)
-                     ->where('end_time', $endTime)
-                     ->exists()) {
-                     $errors["notes.$i"] = 'Assistan Teacher has same schedules in other grade.';
-                  }
+         for ($i=0; $i < count($request->notes) ; $i++) { 
+            if ($request->teacher_id[$i] && $request->teacher_companion[$i]) {
+               if (Schedule::where('day', $request->day[$i])
+               ->where('teacher_id', $request->teacher_id[$i])
+               ->where('teacher_companion', $request->teacher_companion[$i])
+               ->where('start_time', $request->start_time[$i])
+               ->where('end_time', $request->end_time[$i])
+               ->exists()) {
+                  return redirect('/' . $role . '/schedules/grade/create/' . $request->grade_id)
+                  ->withErrors(['notes' => 'Teacher Subject Or Teacher Companion has same schedules in other grade.'])
+                  ->withInput();
                }
-
-               if (Schedule::where('day', $day)
+            }
+            
+            if(Schedule::where('day', $request->day[$i])
                   ->where('grade_id', $request->grade_id)
-                  ->where('subject_id', $subjectId)
-                  ->where('teacher_id', $teacherId)
-                  ->where('teacher_companion', $teacherCompanion)
-                  ->where('start_time', $startTime)
-                  ->where('end_time', $endTime)
+                  ->where('subject_id', $request->subject_id[$i])
+                  ->where('teacher_id', $request->teacher_id[$i])
+                  ->where('teacher_companion', $request->teacher_companion[$i])
+                  ->where('start_time', $request->start_time[$i])
+                  ->where('end_time', $request->end_time[$i])
                   ->where('semester', $request->semester)
                   ->exists()) {
-                  $errors["notes.$i"] = 'Schedules has already been created for this day.';
-               }
-
-               // dd($errors);
-
-               if (!empty($errors)) {
                   return redirect('/' . $role . '/schedules/grade/create/' . $request->grade_id)
-                     ->withErrors($errors)
-                     ->withInput($errors);
-               }
+                     ->withErrors(['notes' => 'Schedules has already been created for this day.'])
+                     ->withInput();
+            }
 
-               $post = [
-                  'grade_id' => $request->grade_id,
-                  'subject_id' => $subjectId,
-                  'teacher_id' => $teacherId,
-                  'teacher_companion' => $teacherCompanion,
-                  'type_schedule_id' => $request->type_schedule,
-                  'note' => $note,
-                  'day' => $day,
-                  'semester' => $request->semester,
-                  'start_time' => $startTime,
-                  'end_time' => $endTime,
-               ];
-
-               DB::beginTransaction();
-
-               Schedule::create($post);
-
-               DB::commit();
-         }
+            $post = [
+               'grade_id' => $request->grade_id,
+               'subject_id' => $request->subject_id[$i],
+               'teacher_id' => $request->teacher_id[$i],
+               'teacher_companion' => $request->teacher_companion[$i],
+               'type_schedule_id' => $request->type_schedule,
+               'note' => $request->notes[$i],
+               'day' => $request->day[$i],
+               'semester' => $request->semester,
+               'start_time' => $request->start_time[$i],
+               'end_time' => $request->end_time[$i],
+            ];
+            
+            DB::beginTransaction();
+            
+            Schedule::create($post);
+            
+            DB::commit();
+         } 
 
          session()->flash('after_create_grade_schedule');
 
          return redirect('/' . $role . '/schedules/detail/' . $request->grade_id);
       } catch (Exception $err) {
+         dd($err);
          return redirect()->back()->withErrors(['error' => $err->getMessage()])->withInput();
       }
    }
@@ -2093,6 +2072,17 @@ class ScheduleController extends Controller
          $gradeId = Schedule::where('id', $id)->value('grade_id');
          Schedule::where('id', $id)->delete();
 
+         $schedule = Schedule::where('grade_id', $gradeId)
+            ->get();
+
+         if (count($schedule) > 0) {
+            session()->flash('after_delete_schedule');
+            return redirect('/'. session('role') .'/schedules/manage/'. $gradeId);
+         }
+         else{
+            session()->flash('after_delete_schedule');
+            return redirect('/admin/schedules/grades');
+         }
 
          return redirect('/'. session('role') .'/schedules/manage/'. $gradeId);
       } 

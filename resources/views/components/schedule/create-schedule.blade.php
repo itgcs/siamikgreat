@@ -86,65 +86,62 @@
                                         <th>Action</th>
                                     </thead>
                                     <tbody id="scheduleTableBody">
-                                        @for($i = 0; $i < count(old('subject_id', [''])); $i++)
                                         <tr>
                                             <td>
-                                                <select name="subject_id[{{ $i }}]" class="form-control" id="subject_id_{{ $i }}">
-                                                    <!-- Options loaded dynamically -->
-                                                </select>
-                                                @if($errors->has("subject_id.$i"))
-                                                <p style="color: red">{{ $errors->first("subject_id.$i") }}</p>
+                                                <select name="subject_id[]" class="form-control" id="subject_id"></select>
+                                                @if($errors->has('subject_id'))
+                                                <p style="color: red">{{ $errors->first('subject_id') }}</p>
                                                 @endif
                                             </td>
                                             <td>
-                                                <select name="teacher_id[{{ $i }}]" class="form-control" id="teacher_id_{{ $i }}">
-                                                    <option value="" selected>-- Teacher --</option>
-                                                    <!-- Options loaded dynamically -->
+                                                <select name="teacher_id[]" class="form-control" id="teacher_id"> 
+                                                    <option value="" selected >-- Teacher --</option>
                                                 </select>
-                                                @if($errors->has("teacher_id.$i"))
-                                                <p style="color: red">{{ $errors->first("teacher_id.$i") }}</p>
+                                                @if($errors->has('teacher_id'))
+                                                <p style="color: red">{{ $errors->first('teacher_id') }}</p>
                                                 @endif
                                             </td>
                                             <td>
-                                                <select name="teacher_companion[{{ $i }}]" class="form-control" id="teacher_companion_{{ $i }}">
+                                                <select name="teacher_companion[]" class="form-control" id="teacher_companion">
                                                     <option value="" selected>-- Assistant --</option>
                                                     @foreach($data['teacher'] as $dt)
-                                                    <option value="{{ $dt->id }}" {{ old("teacher_companion.$i") == $dt->id ? 'selected' : '' }}>{{ $dt->name }}</option>
+                                                    <option value="{{ $dt->id }}">{{ $dt->name }}</option>
                                                     @endforeach
                                                 </select>
-                                                @if($errors->has("teacher_companion.$i"))
-                                                <p style="color: red">{{ $errors->first("teacher_companion.$i") }}</p>
+                                                @if($errors->has('teacher_companion'))
+                                                <p style="color: red">{{ $errors->first('teacher_companion') }}</p>
                                                 @endif
                                             </td>
                                             <td>
-                                                <select name="day[{{ $i }}]" class="form-control">
+                                                <select required name="day[]" class="form-control">
                                                     <option value="" class="text-xs">Day</option>
-                                                    <option value="1" {{ old("day.$i") == 1 ? 'selected' : '' }}>Monday</option>
-                                                    <option value="2" {{ old("day.$i") == 2 ? 'selected' : '' }}>Tuesday</option>
-                                                    <option value="3" {{ old("day.$i") == 3 ? 'selected' : '' }}>Wednesday</option>
-                                                    <option value="4" {{ old("day.$i") == 4 ? 'selected' : '' }}>Thursday</option>
-                                                    <option value="5" {{ old("day.$i") == 5 ? 'selected' : '' }}>Friday</option>
+                                                    <option value="1">Monday</option>
+                                                    <option value="2">Tuesday</option>
+                                                    <option value="3">Wednesday</option>
+                                                    <option value="4">Thursday</option>
+                                                    <option value="5">Friday</option>
                                                 </select>
-                                                @if($errors->has("day.$i"))
-                                                <p style="color: red">{{ $errors->first("day.$i") }}</p>
+    
+                                                @if($errors->has('day'))
+                                                <p style="color: red">{{ $errors->first('day') }}</p>
                                                 @endif
                                             </td>
                                             <td>
-                                                <input type="time" class="form-control" id="start_time_{{ $i }}" name="start_time[{{ $i }}]" value="{{ old("start_time.$i") }}">
-                                                @if($errors->has("start_time.$i"))
-                                                <p style="color: red">{{ $errors->first("start_time.$i") }}</p>
+                                                <input type="time" class="form-control" id="start_time" name="start_time[]">
+                                                @if($errors->has('start_time'))
+                                                <p style="color: red">{{ $errors->first('start_time') }}</p>
                                                 @endif
                                             </td>
                                             <td>
-                                                <input type="time" class="form-control" id="end_time_{{ $i }}" name="end_time[{{ $i }}]" value="{{ old("end_time.$i") }}">
-                                                @if($errors->has("end_time.$i"))
-                                                <p style="color: red">{{ $errors->first("end_time.$i") }}</p>
+                                                <input type="time" class="form-control" id="end_time" name="end_time[]">
+                                                @if($errors->has('end_time'))
+                                                <p style="color: red">{{ $errors->first('end_time') }}</p>
                                                 @endif
                                             </td>
                                             <td>
-                                                <textarea name="notes[{{ $i }}]" class="form-control" id="notes_{{ $i }}" cols="10" rows="1">{{ old("notes.$i") }}</textarea>
-                                                @if($errors->has("notes.$i"))
-                                                <p style="color: red">{{ $errors->first("notes.$i") }}</p>
+                                                <textarea name="notes[]" class="form-control" id="notes" cols="10" rows="1"></textarea>
+                                                @if($errors->has('notes'))
+                                                <p style="color: red">{{ $errors->first('notes') }}</p>
                                                 @endif
                                             </td>
                                             <td>
@@ -152,7 +149,6 @@
                                                 <button type="button" class="btn btn-danger btn-sm btn-hapus mt-1 d-none" title="Hapus Baris" id="hapus"><i class="fa fa-times"></i></button>
                                             </td>
                                         </tr>
-                                        @endfor
                                     </tbody>
                                 </table>
                             </div>

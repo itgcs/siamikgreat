@@ -4,6 +4,17 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item active" aria-current="page">Attendances</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
     <div class="card card-dark">
         <div class="card-header">
             <h3 class="card-title">Attendance</h3>
@@ -51,7 +62,7 @@
                             <td class="project-actions text-left toastsDefaultSuccess">
                                 <a class="btn btn-primary btn"
                                     href="{{ route('super.attendance.detail', ['id' => session('id_user'), 'gradeId' => $el->id]) }}">
-                                        <i class="fas fa-folder"> </i>
+                                        <i class="fas fa-eye"> </i>
                                         View
                                 </a>
                             </td>   
@@ -59,7 +70,7 @@
                             <td class="project-actions text-left toastsDefaultSuccess">
                             <a class="btn btn-primary btn"
                                 href="{{ route('attendance.detail', ['id' => session('id_user'), 'gradeId' => $el->id]) }}">
-                                    <i class="fas fa-folder"> </i>
+                                    <i class="fas fa-eye"> </i>
                                     View
                             </a>
                             </td> 
@@ -78,56 +89,13 @@
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
-   @if(session('after_create_grade')) 
-
-      <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully created new grade in the database.',
-        });
-        }, 1500);
-
-
-      </script>
-
-   @endif
-
-   @if(session('after_update_grade')) 
-      <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully updated the grade in the database.',
-      });
-      }, 1500);
-
-    
-      </script>
-   @endif
-
    @if(session('data_is_empty')) 
       <script> 
          setTimeout(() => {
             Swal.fire({
                icon: 'error',
-               title: 'Data Attendance is Empty !!!',
+               title: 'Oops..',
+               text: 'Data Attendance is Empty !!!',
             });
          }, 500);
       </script>

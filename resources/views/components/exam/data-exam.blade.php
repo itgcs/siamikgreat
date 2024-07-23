@@ -4,155 +4,215 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
-   <div class="col">
-      <div class="text-center">
-         <h2 class="text-center">Exam Search</h2>
-      </div>
-      <div class="row">
-         @if (session('role') == 'superadmin')
-         <form action="/superadmin/exams">
-         @elseif (session('role') == 'admin')
-         <form action="/admin/exams">
-         @endif
-         <div class="row">
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label>Status: <span style="color: red"></span></label>
+    <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item active" aria-current="page">Exam</li>
+                </ol>
+            </nav>
+        </div>
+   </div>  
 
-                    @php
-                        $selectedStatus = $form->status ? $form->status : 'true';
-                        $option = $selectedStatus === 'false' ? 'true' : 'false';
-                    @endphp
+    <h2 class="text-center">Exam Search</h2>
+        @if (session('role') == 'superadmin')
+        <form class="mt-5" action="/superadmin/exams">
+        @elseif (session('role') == 'admin')
+        <form class="mt-5" action="/admin/exams">
+        @endif
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Result Type:</label>
+                                @php
+                                    
+                                    $selectedType = $form && $form->type ? $form->type : 'name';
 
-                    <select name="status" class="form-control">
-                        <option selected value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Inactive'}}</option>
-                        <option value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label for="search">Search:</label>
-                    <div class="input-group input-group-lg">
-                        <input name="search" value="{{$form->search}}" type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-lg btn-default">
-                                <i class="fa fa-search"></i>
-                            </button>
+                                @endphp
+                                <select name="type" class="form-control" required>
+                                    <option {{$selectedType === 'name' ? 'selected' : ''}} value="name">Name</option>
+                                    <option {{$selectedType === 'place_birth' ? 'selected' : ''}} value="place_birth">Place Birth</option>
+                                    <option {{$selectedType === 'nationality' ? 'selected' : ''}} value="nationality">Nationality</option>
+                                </select>
+                                
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group">
+
+                                @php
+                                    
+                                    $selectedSort = $form->sort ? $form->sort : 'desc';
+
+                                @endphp
+
+                            <label>Sort order: <span style="color: red"></span></label>
+                            <select name="sort" class="form-control">
+                                <option value="desc" {{$selectedSort === 'desc' ? 'selected' : ''}}>Descending</option>
+                                <option value="asc" {{$selectedSort === 'asc' ? 'selected' : ''}}>Ascending</option>
+                            </select>                              
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group">
+
+                            @php
+
+                                $selectedOrder = $form->order? $form->order : 'created_at';
+
+                            @endphp
+
+                                <label>Sort by:</label>
+                                <select name="order" class="form-control">
+                                        <option {{$selectedOrder === 'created_at'? 'selected' : ''}} value="created_at">Register</option>
+                                        <option {{$selectedOrder === 'name'? 'selected' : ''}} value="name">Name</option>
+                                        <option {{$selectedOrder === 'gender'? 'selected' : ''}} value="gender">Gender</option>
+                                        <option {{$selectedOrder === 'place_birth'? 'selected' : ''}} value="place_birth">Place Birth</option>
+                                        <option {{$selectedOrder === 'status'? 'selected' : ''}} value="status">Status</option>
+                                </select>
+                                
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group">
+                            <label>Status: <span style="color: red"></span></label>
+
+                            @php
+                                
+                                $selectedStatus = $form->status ? $form->status : 'true';
+                                $option = $selectedStatus === 'false' ? 'true' : 'false';
+
+                            @endphp
+
+                            <select name="status" class="form-control">
+                                <option  selected value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Inactive'}}</option>
+                                <option  value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
+                            </select>                              
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-lg">
+                            <input name="search" value="{{$form->search}}" type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-lg btn-default">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-         </div>
-      </form >
-      </div>
-   </div>
+        </form >
 
-   <div class="row">
-      <a type="button" href="{{url('/' . session('role') . '/exams/create')}}" class="btn btn-success btn mx-2">
-         <i class="fa-solid fa-user-plus"></i>
-         </i>   
-         Add Exam
-      </a>
-   </div>
+    <div class="row">
+        <a type="button" href="{{url('/' . session('role') . '/exams/create')}}" class="btn btn-success btn mx-2">
+            <i class="fa-solid fa-user-plus"></i>
+            </i>   
+            Add Exam
+        </a>
+    </div>
    
-   <div class="card card-dark mt-2">
-      <div class="card-header">
-         <h3 class="card-title">Exams</h3>
+    <div class="card card-dark mt-2">
+        <div class="card-header">
+            <h3 class="card-title">Exams</h3>
 
-         <div class="card-tools">
-               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                  <i class="fas fa-minus"></i>
-               </button>
-         </div>
-      </div>
-      <div class="card-body p-0">
-         <table class="table table-striped projects">
-               <thead>
-                  <tr>
-                     <th>#</th>
-                     <th style="width: 20%">Name</th>
-                     <th style="width: 10%">Date</th>
-                     <th style="width: 10%">Grade</th>
-                     <th style="width: 15%">Subject</th>
-                     <th style="width: 15%">Teacher</th>
-                     <th style="width: 10%">Status</th>
-                     <th style="width: 20%">Action</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  @foreach ($data as $el)
-                  <tr id={{'index_grade_' . $el->id}}>
-                     <td>
-                           {{ $loop->index + 1 }}
-                     </td>
-                     <td>
-                        <a>
-                           {{$el->name_exam}}
-                        </a>
-                     </td>
-                     <td>
-                        <a>
-                           {{$el->date_exam}}
-                        </a>
-                        <br>
-                        @php
-                           $currentDate = now(); // Tanggal saat ini
-                           $dateExam = $el->date_exam; // Tanggal exam dari data
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-striped projects">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th style="width: 20%">Name</th>
+                        <th style="width: 10%">Date</th>
+                        <th style="width: 10%">Grade</th>
+                        <th style="width: 15%">Subject</th>
+                        <th style="width: 15%">Teacher</th>
+                        <th style="width: 10%">Status</th>
+                        <th style="width: 20%">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($data as $el)
+                    <tr id={{'index_grade_' . $el->id}}>
+                        <td>
+                            {{ $loop->index + 1 }}
+                        </td>
+                        <td>
+                            <a>
+                            {{$el->name_exam}}
+                            </a>
+                        </td>
+                        <td>
+                            <a>
+                            {{$el->date_exam}}
+                            </a>
+                            <br>
+                            @php
+                            $currentDate = now(); // Tanggal saat ini
+                            $dateExam = $el->date_exam; // Tanggal exam dari data
 
-                           // Hitung selisih antara tanggal exam dengan tanggal saat ini
-                           $diff = strtotime($dateExam) - strtotime($currentDate);
-                           $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
-                        @endphp
-                        @if($el->is_active)
-                           <small class="text-muted mb-0"><span class="badge badge-danger">{{$days}} days again</span></small>
-                        @else
-                        @endif
-                     </td>
-                     <td>
-                        {{$el->grade_name}} - {{ $el->grade_class }}
-                     </td>
-                     <td>
-                        {{$el->subject_name}}
-                     </td>
-                     <td>
-                        {{$el->teacher_name}}
-                     </td>
-                     <td>
-                        @if($el->is_active)
-                        <span class="badge badge-success"> Active </span>
-                        @else
-                        <span class="badge badge-danger"> Done </span>
-                        @endif
-                     </td>
-                     <td class="project-actions text-left toastsDefaultSuccess">
-                        <a class="btn btn-primary btn-sm"
-                           href="{{url('/' . session('role') . '/exams') . '/' . $el->id}}">
-                           <i class="fas fa-folder">
-                           </i>
-                           View
-                        </a>
-                        <a class="btn btn-info btn-sm"
-                           href="{{url('/' . session('role') . '/exams') . '/edit/' . $el->id}}">
-                           <i class="fas fa-pencil-alt">
-                           </i>
-                           Edit
-                        </a>
-                        <!-- <a class="btn btn-success btn-sm"
-                           href="{{url('/' . session('role') . '/exams') . '/done/' . $el->id}}">
-                           <i class="fas fa-check">
-                           </i>
-                           Done
-                        </a> -->
-                     </td>
-                  </tr>
+                            // Hitung selisih antara tanggal exam dengan tanggal saat ini
+                            $diff = strtotime($dateExam) - strtotime($currentDate);
+                            $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
+                            @endphp
+                            @if($el->is_active)
+                            <small class="text-muted mb-0"><span class="badge badge-danger">{{$days}} days again</span></small>
+                            @else
+                            @endif
+                        </td>
+                        <td>
+                            {{$el->grade_name}} - {{ $el->grade_class }}
+                        </td>
+                        <td>
+                            {{$el->subject_name}}
+                        </td>
+                        <td>
+                            {{$el->teacher_name}}
+                        </td>
+                        <td>
+                            @if($el->is_active)
+                            <span class="badge badge-success"> Active </span>
+                            @else
+                            <span class="badge badge-danger"> Done </span>
+                            @endif
+                        </td>
+                        <td class="project-actions text-left toastsDefaultSuccess">
+                            <a class="btn btn-primary btn-sm"
+                            href="{{url('/' . session('role') . '/exams') . '/' . $el->id}}">
+                            <i class="fas fa-eye">
+                            </i>
+                            View
+                            </a>
+                            <a class="btn btn-warning btn-sm"
+                            href="{{url('/' . session('role') . '/exams') . '/edit/' . $el->id}}">
+                            <i class="fas fa-pencil-alt">
+                            </i>
+                            Edit
+                            </a>
+                            <!-- <a class="btn btn-success btn-sm"
+                            href="{{url('/' . session('role') . '/exams') . '/done/' . $el->id}}">
+                            <i class="fas fa-check">
+                            </i>
+                            Done
+                            </a> -->
+                        </td>
+                    </tr>
 
-                  @endforeach
-               </tbody>
-         </table>
-      </div>
-      <!-- /.card-body -->
-   </div>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        <!-- /.card-body -->
+    </div>
 </div>
 
 {{-- pagination --}}

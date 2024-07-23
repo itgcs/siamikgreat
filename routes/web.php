@@ -665,7 +665,7 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::post('/', [TeacherController::class, 'actionPost'])->name('actionAdminRegisterTeacher');
       Route::put('/{id}', [TeacherController::class, 'actionEdit'])->name('actionAdminUpdateTeacher');
       Route::get('/register', [TeacherController::class, 'pagePost']);
-      Route::get('/{id}', [TeacherController::class, 'editPage']);
+      Route::get('/edit/{id}', [TeacherController::class, 'editPage']);
       Route::get('/detail/{id}', [TeacherController::class, 'getById']);
    });
 

@@ -55,7 +55,12 @@
               {{-- <i class="ion ion-bag"></i> --}}
               <i class="fa-solid fa-graduation-cap"></i>
             </div>
-            <a href="/teacher/students" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @if (session('role') == 'superadmin')
+            <a href="/superadmin/list" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @elseif (session('role') == 'admin')
+            <a href="/admin/list" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @endif
+           
             <div class="small-box-footer" style="padding: 0.93rem"></div>
           </div>
         </div>
@@ -76,7 +81,12 @@
               {{-- <i class="ion ion-stats-bars"></i> --}}
               <i class="fa-solid fa-chalkboard-user"></i>
             </div>
-            <a href="/teacher/grades" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @if (session('role') == 'superadmin')
+            <a href="/superadmin/teachers" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @elseif (session('role') == 'admin')
+            <a href="/admin/teachers" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @endif
+            
             <div class="small-box-footer" style="padding: 0.93rem"></div>
           </div>
         </div>
@@ -97,7 +107,11 @@
               {{-- <i class="ion ion-person-add"></i> --}}
               <i class="fa-solid fa-receipt"></i>
             </div>
-            <a href="/teacher/subject" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @if (session('role') == 'superadmin')
+            <a href="/superadmin/grades" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @elseif (session('role') == 'admin')
+            <a href="/admin/grades" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @endif
             <div class="small-box-footer" style="padding:0.93rem;"></div>
           </div>
         </div>
@@ -117,7 +131,11 @@
               <i class="fa-solid fa-calendar-xmark"></i>
             </div>
             
-            <a href="/teacher/exam" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @if (session('role') == 'superadmin')
+            <a href="/superadmin/exams" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @elseif (session('role') == 'admin')
+            <a href="/admin/exams" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            @endif
             <div class="small-box-footer" style="padding:0.93rem;"></div>
             
           </div>

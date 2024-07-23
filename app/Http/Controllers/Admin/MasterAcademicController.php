@@ -42,8 +42,8 @@ class MasterAcademicController extends Controller
         try {
             //code...
             session()->flash('page',  $page = (object)[
-            'page' => 'master schedules',
-            'child' => 'master schedules',
+            'page' => 'master academic',
+            'child' => 'master academic',
             ]);
             return view('components.masterAcademic.create-masterAcademic');
             
@@ -109,8 +109,8 @@ class MasterAcademicController extends Controller
 
         try {
             session()->flash('page',  $page = (object)[
-                'page' => 'master schedules',
-                'child' => 'master schedules',
+                'page' => 'master academic',
+                'child' => 'master academic',
             ]);
 
             $rules = [

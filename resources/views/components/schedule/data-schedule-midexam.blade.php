@@ -4,8 +4,19 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
+<div class="row">
+      <div class="col">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+               <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item">Home</li>
+                  <li class="breadcrumb-item">Schedules</li>
+                  <li class="breadcrumb-item active" aria-current="page">Mid Exam</li>
+               </ol>
+            </nav>
+      </div>
+   </div>
 
-   <div class="card card-dark mt-5">
+   <div class="card card-dark">
       <div class="card-header">
          <h3 class="card-title">Schedule Mid Exam</h3>
 

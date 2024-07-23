@@ -175,6 +175,7 @@
                                 Status
                             </th>
                             <th style="width: 25%">
+                                Action
                             </th>
                         </tr>
                     </thead>
@@ -230,14 +231,14 @@
 
                             @endif
                             </td>
-                                <td class="project-actions text-right toastsDefaultSuccess">
+                                <td class="project-actions text-left toastsDefaultSuccess">
                                 <a class="btn btn-primary {{session('role') == 'admin'? 'btn' : 'btn-sm'}}" href="list/detail/{{$el->unique_id}}">
-                                    <i class="fas fa-folder">
+                                    <i class="fas fa-eye">
                                     </i>
                                     View
                                 </a>
                         @if($el->is_active)
-                            <a class="btn btn-info {{session('role') == 'admin'? 'btn' : 'btn-sm'}}" href="update/{{$el->unique_id}}">
+                            <a class="btn btn-warning {{session('role') == 'admin'? 'btn' : 'btn-sm'}}" href="update/{{$el->unique_id}}">
                                 <i class="fas fa-pencil-alt">
                                 </i>
                                 Edit

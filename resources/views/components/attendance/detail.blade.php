@@ -5,7 +5,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col">
-            <nav aria-label="breadcrumb" class="bg-light rounded-3 mb-4">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item">Home</li>
                     @if (session('role') == 'superadmin')
@@ -23,7 +23,7 @@
 
     <div class="row">
         <div class="col">
-            <p class="text-xs text-bold">Data Attendance</p>
+            <p class="text-xs text-bold">Detail Attendance</p>
             <p class="text-xs">Semester: {{ $data['semester']}}</p> 
             <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</p>
             <p class="text-xs">Class Teacher: {{ $data['classTeacher']->teacher_name }}</p>
