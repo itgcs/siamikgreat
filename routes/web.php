@@ -61,7 +61,7 @@ use Illuminate\Support\Facades\DB;
 
 Route::get('/', [UserController::class, 'login']);
 Route::post('/login', [UserController::class, 'actionLogin'])->name('actionLogin');
-Route::post('/logout', [UserController::class, 'logout']);
+Route::get('/logout', [UserController::class, 'logout']);
 Route::get('/counter', Counter::class);
 
 // Route untuk mengambil data subject

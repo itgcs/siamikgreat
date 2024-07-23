@@ -21,7 +21,7 @@ $(document).ready(() => {
                         mycustomtype: "application/x-some-custom-type",
                     },
                     url: `/logout`,
-                    type: "POST",
+                    type: "GET",
                     cache: false,
                     // data: {
                     //     id: value,

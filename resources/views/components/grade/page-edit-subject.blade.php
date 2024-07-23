@@ -89,19 +89,11 @@
 
 @if(session('after_update_subject_teacher')) 
     <script>
-        var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-        });
-
-        setTimeout(() => {
-            Toast.fire({
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully updated the subject teacher in the database.',
+            title: 'Successfully',
+            text: 'Successfully updated the subject teacher in the database.',
         });
-        }, 1500);
     </script>
 @endif
 
