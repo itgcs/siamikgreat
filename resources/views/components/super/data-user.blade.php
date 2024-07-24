@@ -2,10 +2,6 @@
 
 @section('content')
 
-{{-- ajax handler --}}
-{{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
-
 <!-- Content Wrapper. Contains page content -->
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 <div class="container-fluid">
@@ -118,81 +114,51 @@
 </div>
 
 @include('components.super.delete-user')
+
 <!-- sweetalert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
 @if(session('password.success'))
-
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Success update password',
+            title: 'Successfuly',
+            text: 'Success update password',
         });
-    }, 1500);
-
-</script>
-
+    </script>
 @endif
 
 
 @if(session('register.success'))
-
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Success add users',
+            title: 'Successfully',
+            text: 'Success add users',
         });
-    }, 1500);
-
-</script>
+    </script>
 @endif
 
 
 @if(session('error.type.password'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 6000
-    });
-    Toast.fire({
-        icon: 'error',
-        title: 'Make sure your input password is the same !!!',
-    });
-
-</script>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Make sure your input password is the same !!!',
+        });
+    </script>
 @endif
 
 @if(session('error.password'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 6000
-    });
-    Toast.fire({
-        icon: 'error',
-        title: 'The password must be at least 5 !!!',
-    });
-
-</script>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'The password must be at least 5 !!!',
+        });
+    </script>
 @endif
 
 @include('components.super.delete-user')

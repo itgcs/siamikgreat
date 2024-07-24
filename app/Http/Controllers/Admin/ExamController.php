@@ -46,6 +46,7 @@ class ExamController extends Controller
             'type' => $request->type? $request->type:  null,
          ];
 
+         $sort = $request->sort ? $request->sort : 'asc';
          $status = $request->status? ($request->status == 'true' ? true : false) : true;
 
          $data = Exam::join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
@@ -55,6 +56,7 @@ class ExamController extends Controller
             ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
             ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
             ->where('exams.is_active', $status)
+            
             ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
             ->paginate(15);
 

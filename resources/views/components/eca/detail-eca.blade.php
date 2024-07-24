@@ -61,37 +61,23 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
 @if(session('after_add_student_eca'))
-<script>
-   var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 3000
-   });
-   setTimeout(() => {
-      Toast.fire({
+   <script>
+      Swal.fire({
          icon: 'success',
-         title: 'Successfully add student eca in the database.',
+         title: 'Successfully',
+         text: 'Successfully add student eca in the database.',
       });
-   }, 1500);
-</script>
+   </script>
 @endif
 
 @if(session('after_delete_student_eca'))
-<script>
-   var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 3000
-   });
-   setTimeout(() => {
-      Toast.fire({
+   <script>
+      Swal.fire({
          icon: 'success',
-         title: 'Successfully deleted student eca in the database.',
+         title: 'Successfully',
+         text: 'Successfully deleted student eca in the database.',
       });
-   }, 1500);
-</script>
+   </script>
 @endif
 
 @endsection

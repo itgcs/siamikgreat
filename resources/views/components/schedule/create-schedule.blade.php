@@ -280,6 +280,8 @@
     </div>
 </section>
 
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 <script src="{{ asset('template/plugins/jquery/jquery.min.js') }}"></script>
 
 <script>
@@ -597,10 +599,20 @@
 
 @if(session('after_create_schedule')) 
    <script>
-    Toast.fire({
+    Swal.fire({
         icon: 'success',
         text: 'Successfully',
         title: 'Successfully created new schedule in the database.',
+    });
+   </script>
+@endif
+
+@if(session('same_schedule')) 
+   <script>
+    Swal.fire({
+        icon: 'error',
+        text: 'Oops...',
+        title: 'Schedule have same schedule with another schedule.',
     });
    </script>
 @endif

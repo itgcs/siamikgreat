@@ -220,6 +220,8 @@
         </div>
     </div>
 </div>
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
 <script>
     document.getElementById('confirmAccScoring').addEventListener('click', function() {
@@ -252,31 +254,14 @@
     });
 </script>
 
-<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-
-
 @if(session('after_post_final_score')) 
-
-      <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully post final score major subject in the database.',
         });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully post final score major subject in the database.',
-        });
-        }, 1500);
-
-
-      </script>
-
-  @endif
+    </script>
+@endif
 
 @endsection

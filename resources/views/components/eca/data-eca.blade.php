@@ -105,92 +105,43 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
    @if(session('after_create_eca')) 
-
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
+         Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully created new eca in the database.',
         });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully created new eca in the database.',
-        });
-        }, 1500);
-
-
       </script>
-
   @endif
 
   @if(session('after_add_student_eca')) 
-
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully add student eca in the database.',
-        });
-        }, 1500);
-
-
+         Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully add student eca in the database.',
+         });
       </script>
-
   @endif
 
   @if(session('after_update_eca')) 
       <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
+         Swal.fire({
             icon: 'success',
-            title: 'Successfully updated the eca in the database.',
-      });
-      }, 1500);
-
-    
-    </script>
+            title: 'Successfully',
+            text: 'Successfully updated the eca in the database.',
+         });
+      </script>
    @endif
 
    @if(session('after_delete_eca')) 
-
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
+         Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully deleted eca in the database.',
         });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully deleted eca in the database.',
-        });
-        }, 1500);
-
       </script>
-
   @endif
 
 @endsection

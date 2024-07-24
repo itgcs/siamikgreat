@@ -103,48 +103,23 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
 @if(session('after_create_supplementarySubject')) 
-
-<script>
-
-   var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 3000
-   });
-
-   setTimeout(() => {
-      Toast.fire({
+   <script>
+      Swal.fire({
          icon: 'success',
-         title: 'Successfully created new supplementary subject in the database.',
-   });
-   }, 1500);
-
-
-</script>
-
+         title: 'Successfully',
+         text: 'Successfully created new supplementary subject in the database.',
+      });
+   </script>
 @endif
 
 @if(session('after_delete_subject')) 
-
-<script>
-
-   var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 3000
-   });
-
-   setTimeout(() => {
-      Toast.fire({
+   <script>
+      Swal.fire({
          icon: 'success',
-         title: 'Successfully deleted supplementary subject in the database.',
-   });
-   }, 1500);
-
-</script>
-
+         title: 'Successfully',
+         text: 'Successfully deleted supplementary subject in the database.',
+      });
+   </script>
 @endif
 
 @endsection

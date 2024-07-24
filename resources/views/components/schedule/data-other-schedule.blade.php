@@ -207,69 +207,34 @@
 </script>
 
 
-
-@if(session('after_update_schedule')) 
-   <script>
-   
-   var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 3000
-   });
-
-   setTimeout(() => {
-      Toast.fire({
-         icon: 'success',
-         title: 'Successfully updated the schedule in the database.',
-   });
-   }, 1500);
-
-   
-   </script>
-@endif
-
-@if(session('after_edit_schedule')) 
-
-   <script>
-
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-   
-      setTimeout(() => {
-         Toast.fire({
+   @if(session('after_update_schedule')) 
+      <script>
+         Swal.fire({
             icon: 'success',
-            title: 'Successfully edit schedule in the database.',
-      });
-      }, 1500);
+            title: 'Successfully',
+            text: 'Successfully updated the schedule in the database.',
+         });
+      </script>
+   @endif
 
+   @if(session('after_edit_schedule')) 
+      <script>
+         Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully edit schedule in the database.',
+         });
+      </script>
+   @endif
 
-   </script>
-
-@endif
-
-@if(session('after_delete_schedule')) 
-   <script>
-   
-   var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 3000
-   });
-
-   setTimeout(() => {
-      Toast.fire({
-         icon: 'success',
-         title: 'Successfully deleted the schedule in the database.',
-   });
-   }, 1500);
-   
-   </script>
-@endif
+   @if(session('after_delete_schedule')) 
+      <script>
+         Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully deleted the schedule in the database.',
+         });
+      </script>
+   @endif
 
 @endsection

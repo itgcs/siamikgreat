@@ -345,6 +345,8 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::get('/detail/{id}', [TeacherController::class, 'getById']);
       Route::get('/delete/{id}', [TeacherController::class, 'delete'])->name('delete-teacher');
       Route::get('/teachers/{teacherId}/{gradeId}/{subjectId}', [TeacherController::class, 'deleteGradeSubject'])->name('deleteGradeSubject');
+      Route::put('/deactivated/{id}', [TeacherController::class, 'deactivated']);
+      Route::put('/activated/{id}', [TeacherController::class, 'activated']);
    });
    
    Route::prefix('/dashboard')->group(function () {
@@ -667,6 +669,8 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/register', [TeacherController::class, 'pagePost']);
       Route::get('/edit/{id}', [TeacherController::class, 'editPage']);
       Route::get('/detail/{id}', [TeacherController::class, 'getById']);
+      Route::put('/deactivated/{id}', [TeacherController::class, 'deactivated']);
+      Route::put('/activated/{id}', [TeacherController::class, 'activated']);
    });
 
    Route::prefix('/relations')->group(function () {

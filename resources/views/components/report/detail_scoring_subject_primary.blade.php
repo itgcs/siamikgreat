@@ -218,7 +218,7 @@
 
 @if(session('after_post_final_score')) 
     <script>
-        Toast.fire({
+        Swal.fire({
             icon: 'success',
             title: 'Successfully',
             text: 'Successfully post final score subject in the database.',
