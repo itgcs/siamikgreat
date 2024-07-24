@@ -101,7 +101,6 @@
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
-
 @if ($totalClass === 1)
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -190,51 +189,24 @@
     </script>
 @endif
 
+    @if(session('after_create_grade_schedule')) 
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully',
+                text: 'Successfully created new grade schedule in the database.',
+            });
+        </script>
+    @endif
 
-@if(session('after_create_grade_schedule')) 
-
-   <script>
-
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-   
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully created new grade schedule in the database.',
-      });
-      }, 1500);
-
-
-   </script>
-
-@endif
-
-@if(session('after_subtitute_teacher_schedule')) 
-
-   <script>
-
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-   
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully subtitute teacher schedule in the database.',
-      });
-      }, 1500);
-
-
-   </script>
-
-@endif
+    @if(session('after_subtitute_teacher_schedule')) 
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully',
+                text: 'Successfully subtitute teacher schedule in the database.',
+            });
+        </script>
+    @endif
 
 @endsection

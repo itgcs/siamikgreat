@@ -135,49 +135,23 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 @if(session('after_create_grade_schedule')) 
-
-   <script>
-
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-   
-      setTimeout(() => {
-         Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully created new grade schedule in the database.',
-      });
-      }, 1500);
-
-
-   </script>
-
+            title: 'Successfully',
+            text: 'Successfully created new grade schedule in the database.',
+        });
+    </script>
 @endif
 
 @if(session('after_subtitute_teacher_schedule')) 
-
-   <script>
-
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-   
-      setTimeout(() => {
-         Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully subtitute teacher schedule in the database.',
-      });
-      }, 1500);
-
-
-   </script>
-
+            title: 'Successfully',
+            text: 'Successfully subtitute teacher schedule in the database.',
+        });
+    </script>
 @endif
 
 @endsection

@@ -113,22 +113,11 @@
    @if(session('after_create_attendance')) 
 
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully upload attendance in the database.',
-        });
-        }, 1500);
-
-
+           Swal.fire({
+               icon: 'success',
+               title: 'Successfully',
+               text: 'Successfully upload attendance in the database.',
+            });
       </script>
 
    @endif

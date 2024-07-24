@@ -96,48 +96,23 @@
 
 
   @if(session('after_add_student_chinese_higher')) 
-
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
+         Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully add student chinese higher in the database.',
         });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully add student chinese higher in the database.',
-        });
-        }, 1500);
-
-
       </script>
-
   @endif
 
    @if(session('after_delete_student_chinese_higher')) 
-
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
+         Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully deleted student chinese higher in the database.',
         });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully deleted student chinese higher in the database.',
-        });
-        }, 1500);
-
       </script>
-
   @endif
 
 @endsection

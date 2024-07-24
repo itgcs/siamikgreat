@@ -75,6 +75,12 @@ class MasterAcademicController extends Controller
             Master_academic::create($post);
 
             DB::commit();
+
+            $semester = Master_academic::first()->value('now_semester');
+
+            session()->put([
+                'semester' => $semester,
+             ]);    
             
             return redirect('/'.  $role .'/masterAcademics');
 
@@ -128,6 +134,12 @@ class MasterAcademicController extends Controller
             Master_academic::where('id', $id)->update($rules);
     
             DB::commit();
+
+            $semester = Master_academic::first()->value('now_semester');
+
+            session()->put([
+                'semester' => $semester,
+             ]);   
 
             session()->flash('after_update_masterAcademic');
 

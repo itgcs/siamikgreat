@@ -33,8 +33,8 @@
                            <div class="col-md-12">
                               <label for="semester">Semester<span style="color: red">*</span></label>
                               <select required name="semester" class="form-control" id="semester">
-                                       <option value="1">Semester 1</option>
-                                       <option value="2">Semester 2</option>
+                                 <option value="1" {{ session('semester') == '1' ? "selected" : "" }}>Semester 1</option>
+                                 <option value="2" {{ session('semester') == '2' ? "selected" : "" }}>Semester 2</option>
                               </select>
                               @if($errors->has('type_exam'))
                                     <p style="color: red">{{ $errors->first('type_exam') }}</p>

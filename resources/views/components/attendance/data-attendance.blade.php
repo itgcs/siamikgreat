@@ -93,22 +93,11 @@
 
    @if(session('after_update_attendance')) 
       <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
+         Swal.fire({
             icon: 'success',
-            title: 'Successfully updated attendance in the database.',
-      });
-      }, 500);
-
-    
+            title: 'Successfully',
+            text: 'Successfully updated attendance in the database.',
+         });
       </script>
    @endif
 

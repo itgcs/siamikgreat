@@ -257,45 +257,48 @@
   </div>
 </section>
 
-  <!-- Modal -->
-  <div class="modal fade" id="{{'changePassword' . $data['user']->id}}" data-backdrop="static"
-    data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Change password - {{$data['user']->username}}
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" action={{ route('user.changePassword', $data['user']->id) }}
-                    enctype="multipart/form-data">
-                    @csrf
-                    @method('POST')
-                    <div class="form-group">
-                        <label for="exampleInputPassword1">Password</label>
-                        <input name="password" type="password" class="form-control"
-                            id="exampleInputPassword1" aria-describedby="emailHelp">
-                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputPassword2">Reinput password</label>
-                        <input name="reinputPassword" type="password" class="form-control"
-                            id="exampleInputPassword2">
-                    </div>
+<!-- Modal -->
+@if ($data['user'] !== null)
+<div class="modal fade" id="{{'changePassword' . $data['user']->id}}" data-backdrop="static"
+  data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Change password - {{$data['user']->username}}
+              </h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <form method="POST" action={{ route('user.changePassword', $data['user']->id) }}
+                  enctype="multipart/form-data">
+                  @csrf
+                  @method('POST')
+                  <div class="form-group">
+                      <label for="exampleInputPassword1">Password</label>
+                      <input name="password" type="password" class="form-control"
+                          id="exampleInputPassword1" aria-describedby="emailHelp">
+                      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                  </div>
+                  <div class="form-group">
+                      <label for="exampleInputPassword2">Reinput password</label>
+                      <input name="reinputPassword" type="password" class="form-control"
+                          id="exampleInputPassword2">
+                  </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary"
+                          data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
 </div>
+@else
+@endif
 
 @if(session('password.success'))
 <script>

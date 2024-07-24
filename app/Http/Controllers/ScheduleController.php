@@ -579,6 +579,7 @@ class ScheduleController extends Controller
                      't2.id as teacher_companion_id',
                      't2.name as teacher_companion_name',   
                      'subjects.name_subject as subject_name')
+            ->where('semester', session('semester'))
             ->get();
 
          $dataSubtitute = Subtitute_teacher::where('grade_id', $gradeId)
@@ -1328,7 +1329,9 @@ class ScheduleController extends Controller
                ->where('teacher_companion', $request->teacher_companion[$i])
                ->where('start_time', $request->start_time[$i])
                ->where('end_time', $request->end_time[$i])
+               ->where('semester', $request->semester)
                ->exists()) {
+                  session()->flash('same_schedule');
                   return redirect('/' . $role . '/schedules/grade/create/' . $request->grade_id)
                   ->withErrors(['notes' => 'Teacher Subject Or Teacher Companion has same schedules in other grade.'])
                   ->withInput();

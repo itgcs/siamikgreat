@@ -241,64 +241,6 @@
                                         @endif
                                     </div>
                                 </div>
-
-                                <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <label for="grade_id">Class Teacher</label>
-                                        <select name="class_id[]" class="js-select2 form-control grade" id="class_teacher" multiple="multiple">
-                                            <option value=""> -- SELECTED CLASS --</option>
-                                            @foreach($gradeSubject as $el)
-                                                <option value="{{$el->id}}">{{$el->name}} - {{$el->class}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div id="teacher_grade_subject">
-                                    @for($i = 0; $i < count($gradeSubject); $i++)
-                                        <div class="form-group row row-status row-status{{ $i }}">
-                                            <!-- SELECT GRADE -->
-                                            <div class="col-md-5">
-                                                <label for="grade_id">Teacher Grade</label>
-                                                <select name="grade_id[{{ $i }}][]" class="js-select2 form-control grade" id="teacher_grade_id_{{ $i }}" multiple="multiple">
-                                                    <option value=""> -- SELECTED TEACHER GRADE --</option>
-                                                    @foreach($gradeSubject as $el)
-                                                        <option value="{{$el->id}}">{{$el->name}} - {{$el->class}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <!-- END SELECT GRADE -->
-
-                                            <!-- SELECT SUBJECT -->
-                                            <div class="col-md-5">
-                                                <label for="subject_id">Subject Class</label>
-                                                <select name="subject_id[{{ $i }}][]" class="js-select2 form-control subject" id="teacher_subject_id_{{ $i }}" multiple="multiple">
-                                                    <option value=""> -- SELECTED SUBJECT --</option>
-                                                        @foreach ($subject as $es)
-                                                            <option value="{{$es->id}}">{{$es->name_subject}}</option> 
-                                                        @endforeach
-                                                </select>
-
-                                                @if($errors->any())
-                                                    <p style="color: red">{{$errors->first('subject_id')}}</p>
-                                                @endif
-                                            </div>
-
-                                            <!-- END SUBJECT -->
-
-                                            <!-- BUTTON ADD  -->
-                                            <div class="col-md-2">
-                                                <label style="color:white;">Action</label>
-                                                <div class="form-group">
-                                                    <button type="button" class="btn btn-success btn-sm btn-tambah mt-1" title="Tambah Data" id="tambah_{{ $i }}"><i class="fa fa-plus"></i></button>
-                                                    <button type="button" class="btn btn-danger btn-sm btn-hapus mt-1" title="Hapus Baris"  id="hapus_{{ $i }}"><i class="fa fa-times"></i></button>
-                                                </div>
-                                            </div>
-                                            <!-- END BUTTON ADD -->
-                                        </div>
-                                    @endfor
-                                </div>
-                                
                         </div>
                         <!-- /.card-body students -->
 

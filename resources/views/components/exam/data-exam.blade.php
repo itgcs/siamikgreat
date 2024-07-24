@@ -34,8 +34,6 @@
                                 @endphp
                                 <select name="type" class="form-control" required>
                                     <option {{$selectedType === 'name' ? 'selected' : ''}} value="name">Name</option>
-                                    <option {{$selectedType === 'place_birth' ? 'selected' : ''}} value="place_birth">Place Birth</option>
-                                    <option {{$selectedType === 'nationality' ? 'selected' : ''}} value="nationality">Nationality</option>
                                 </select>
                                 
                             </div>
@@ -51,8 +49,8 @@
 
                             <label>Sort order: <span style="color: red"></span></label>
                             <select name="sort" class="form-control">
-                                <option value="desc" {{$selectedSort === 'desc' ? 'selected' : ''}}>Descending</option>
                                 <option value="asc" {{$selectedSort === 'asc' ? 'selected' : ''}}>Ascending</option>
+                                <option value="desc" {{$selectedSort === 'desc' ? 'selected' : ''}}>Descending</option>
                             </select>                              
                             </div>
                         </div>
@@ -67,10 +65,10 @@
 
                                 <label>Sort by:</label>
                                 <select name="order" class="form-control">
-                                        <option {{$selectedOrder === 'created_at'? 'selected' : ''}} value="created_at">Register</option>
-                                        <option {{$selectedOrder === 'name'? 'selected' : ''}} value="name">Name</option>
-                                        <option {{$selectedOrder === 'gender'? 'selected' : ''}} value="gender">Gender</option>
-                                        <option {{$selectedOrder === 'place_birth'? 'selected' : ''}} value="place_birth">Place Birth</option>
+                                        <option {{$selectedOrder === 'created_at'? 'selected' : ''}} value="date">Date</option>
+                                        <option {{$selectedOrder === 'name'? 'selected' : ''}} value="grade">Grade</option>
+                                        <option {{$selectedOrder === 'gender'? 'selected' : ''}} value="subject">Subject</option>
+                                        <option {{$selectedOrder === 'place_birth'? 'selected' : ''}} value="teacher">Teacher</option>
                                         <option {{$selectedOrder === 'status'? 'selected' : ''}} value="status">Status</option>
                                 </select>
                                 
@@ -131,13 +129,14 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th style="width: 20%">Name</th>
+                        <th style="width: 15%">Name</th>
+                        <th style="width: 10%">Type Exam</th>
                         <th style="width: 10%">Date</th>
-                        <th style="width: 10%">Grade</th>
+                        <th style="width: 15%">Grade</th>
                         <th style="width: 15%">Subject</th>
                         <th style="width: 15%">Teacher</th>
-                        <th style="width: 10%">Status</th>
-                        <th style="width: 20%">Action</th>
+                        <th style="width: 5%">Status</th>
+                        <th style="width: 15%">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -149,6 +148,11 @@
                         <td>
                             <a>
                             {{$el->name_exam}}
+                            </a>
+                        </td>
+                        <td>
+                            <a>
+                            {{$el->type_exam}}
                             </a>
                         </td>
                         <td>
@@ -327,71 +331,33 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
    @if(session('after_create_exam')) 
-
-      <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully created new exam in the database.',
-        });
-        }, 1500);
-
-
-      </script>
-
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully',
+                text: 'Successfully created new exam in the database.',
+            });
+        </script>
   @endif
 
-
-  
-  
    @if(session('after_update_exam')) 
-      <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully updated the exam in the database.',
-      });
-      }, 1500);
-
-    
-      </script>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully',
+                text: 'Successfully updated the exam in the database.',
+            });
+        </script>
    @endif
 
    @if(session('after_done_exam')) 
-      <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
-            icon: 'success',
-            title: 'Successfully done exam in the database.',
-      });
-      }, 1500);
-
-    
-    </script>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully',
+                text: 'Successfully done exam in the database.',
+            });
+        </script>
    @endif
 
 @endsection

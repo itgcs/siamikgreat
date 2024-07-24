@@ -150,6 +150,9 @@
    </div>
 </section>
 
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
 <script>
     var gradeSelect   = document.getElementById("grade_id");
     var subjectSelect = document.getElementById("subject_id");
@@ -229,9 +232,10 @@
 
 @if(session('after_edit_midexam_schedule')) 
    <script>
-        Toast.fire({
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully edit mid exam schedule in the database.',
+            title: 'Successfully',
+            text: 'Successfully edit mid exam schedule in the database.',
         });
    </script>
 @endif
