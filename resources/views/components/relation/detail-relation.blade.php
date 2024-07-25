@@ -204,43 +204,27 @@ if(isset($data) && $data != null) {
 }
 @endphp
 
-@if(session('after_create_teacher'))
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-<script>
-  var Toast = Swal.mixin({
-     toast: true,
-     position: 'top-end',
-     showConfirmButton: false,
-     timer: 3000
-  });
 
-  setTimeout(() => {
-    Toast.fire({
-       icon: 'success',
-       title: 'Successfully registered the teacher in the database !!!',
+@if(session('after_create_teacher'))
+  <script>
+    Swal.fire({
+      icon: 'success',
+      title: 'Successfull',
+      text: 'Successfully registered the teacher in the database !!!',
     });
-  }, 1500);
-</script>
+  </script>
 @endif
 
 @if (session('after_update_teacher'))
-<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-<script>
-  var Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000
-  });
-
-  setTimeout(() => {
-    Toast.fire({
+  <script>
+    Swal.fire({
       icon: 'success',
+      title: 'Successfully',
       title: 'Successfully updated the teacher in the database !!!',
     });
-  }, 1500);
-</script>
+  </script>
 @endif
+
 @endsection

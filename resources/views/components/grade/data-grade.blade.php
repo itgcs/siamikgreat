@@ -1,7 +1,6 @@
 @extends('layouts.admin.master')
 @section('content')
 
-
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
    <div class="row">
@@ -125,50 +124,24 @@
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
-   @if(session('after_create_grade')) 
+@if(session('after_create_grade')) 
+   <script>
+      Swal.fire({
+         icon: 'success',
+         title: 'Successfully',
+         title: 'Successfully created new grade in the database.',
+      });
+   </script>
+@endif
 
-      <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully created new grade in the database.',
-        });
-        }, 1500);
-
-
-      </script>
-
-   @endif
-
-   @if(session('after_delete_grade')) 
-
-      <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully delete grade in the database.',
-        });
-        }, 1500);
-
-
-      </script>
-
-   @endif
+@if(session('after_delete_grade')) 
+   <script>
+      Swal.fire({
+         icon: 'success',
+         title: 'Successfully',
+         text: 'Successfully delete grade in the database.',
+      });
+   </script>
+@endif
 
 @endsection

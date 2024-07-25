@@ -168,26 +168,13 @@
 
 
    @if(session('failed_attend')) 
-
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-        });
-      
-        setTimeout(() => {
-           Toast.fire({
+           Swal.fire({
               icon: 'error',
-              title: 'Attendance already recorded for this day.',
+              title: 'Oops..',
+              text: 'Attendance already recorded for this day.',
         });
-        }, 1500);
-
-
       </script>
-
    @endif
 
    @if(session('success_attend')) 

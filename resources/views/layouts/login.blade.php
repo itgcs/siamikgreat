@@ -1,14 +1,12 @@
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../css/app.css">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" type="text/css" href={{ URL::asset('style.css'); }} >
-    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous"> --}}
-    
-    <link rel="stylesheet" href="{{asset('template')}}/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../css/app.css">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href={{ URL::asset('style.css'); }} >
+  <link rel="stylesheet" href="{{asset('template')}}/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+ 
   <!-- iCheck -->
   <link rel="stylesheet" href="{{asset('template')}}/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- JQVMap -->
@@ -31,7 +29,6 @@
       </symbol>
     </svg>
 
-    
     <section class="vh-100">
        <div class="container-fluid h-custom">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -40,10 +37,15 @@
              class="img-fluid" alt="Sample image">
           </div>
           <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+            @if ($data !== null)
+              <div class="d-flex align-items-center justify-items-center justify-content-center my-4 text-center">
+                <h5 class="text-center text-orange fw-bold mx-3 mb-0">ACADEMIC YEAR {{ $data->academic_year }} SEMESTER {{ $data->now_semester }}</h5>
+              </div>
+            @endif
             <form method="POST" action="{{ route('actionLogin') }}">
                @csrf
                
-               <div class="divider d-flex align-items-center my-4">
+              <div class="divider d-flex align-items-center my-4">
                 <p class="text-center fw-bold mx-3 mb-0">Login</p>
               </div>
     
@@ -98,75 +100,54 @@
   <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
   @if ($errors->any())
-
     @if($errors->first('invalid'))
       <script>
-
         Swal.fire({
-            icon: "error",
-            title: "Invalid username or password",
-            text: "Make sure your input is correctly !!!"
-      });
-      
+          icon: "error",
+          title: "Invalid username or password",
+          text: "Make sure your input is correctly !!!"
+        });
       </script>
     @endif
     
     @if($errors->first('credentials'))
       <script>
-
-      Swal.fire({
-            icon: "error",
-            title: "Invalid credentials",
-            text: "Make sure you login first !!!"
-      });
-                    
+        Swal.fire({
+          icon: "error",
+          title: "Invalid credentials",
+          text: "Make sure you login first !!!"
+        });      
       </script>
     @endif
 
     @if ($errors->first('username'))
     <script>
-
         Swal.fire({
           icon: "error",
           title: "Username is required !!!",
         });
-    
     </script>
     @elseif ($errors->first('password'))
     <script>
-
       Swal.fire({
         icon: "error",
         title: "Password is required !!!",
       });
-  
   </script>
     @endif
   @endif
 
 
   @if(session('success.update.password'))
-
    <script>
-
-   var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 8000
-   });
-
-   setTimeout(() => {
-      Toast.fire({
-         icon: 'success',
-         title: 'Success update password, please login again !!!',
-   });
-   }, 1500);
-
-
-  </script>
-
+      Swal.fire({
+        icon: 'success',
+        title: 'Successfully',
+        text: 'Success update password, please login again !!!',
+      });
+    </script>
    @endif
+
 </body>
 
 </html>

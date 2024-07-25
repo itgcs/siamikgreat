@@ -20,6 +20,7 @@ class Exam extends Model
         'teacher_id',
         'created_at',
         'updated_at',
+        'academic_year',
     ];
 
     public function grade(){

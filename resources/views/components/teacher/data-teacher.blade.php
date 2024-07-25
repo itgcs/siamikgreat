@@ -2,10 +2,14 @@
 @section('content')
 
    <!-- Content Wrapper. Contains page content -->
-   <div class="container-fluid">
+<div class="container-fluid">
         
     <h2 class="text-center">Teacher Search</h2>
+    @if (session('role') == 'superadmin')
+    <form class="mt-5" action="/superadmin/teachers">
+    @elseif (session('role') == 'admin')
     <form class="mt-5" action="/admin/teachers">
+    @endif
         <div class="row">
             <div class="col-md-10 offset-md-1">
                 <div class="row">
@@ -14,10 +18,11 @@
                             <label>Result Type:</label>
                             @php
                                 
-                                $selectedType = $form && $form->type ? $form->type : 'name';
+                                $selectedType = $form && $form->type ? $form->type : '';
 
                             @endphp
                             <select name="type" class="form-control" required>
+                                <option value="" selected>--Select Result Type--</option>
                                 <option {{$selectedType === 'name' ? 'selected' : ''}} value="name">Name</option>
                                 <option {{$selectedType === 'place_birth' ? 'selected' : ''}} value="place_birth">Place Birth</option>
                                 <option {{$selectedType === 'nationality' ? 'selected' : ''}} value="nationality">Nationality</option>
@@ -30,12 +35,13 @@
 
                             @php
                                 
-                                $selectedSort = $form->sort ? $form->sort : 'desc';
+                                $selectedSort = $form->sort ? $form->sort : '';
 
                             @endphp
 
                         <label>Sort order: <span style="color: red"></span></label>
                         <select name="sort" class="form-control">
+                            <option value="" selected>--Select Sort Order--</option>
                             <option value="desc" {{$selectedSort === 'desc' ? 'selected' : ''}}>Descending</option>
                             <option value="asc" {{$selectedSort === 'asc' ? 'selected' : ''}}>Ascending</option>
                         </select>                              
@@ -46,12 +52,13 @@
 
                         @php
 
-                            $selectedOrder = $form->order? $form->order : 'created_at';
+                            $selectedOrder = $form->order? $form->order : '';
 
                         @endphp
 
                             <label>Sort by:</label>
                             <select name="order" class="form-control">
+                                    <option value="" selected>--Select Sort By--</option>
                                     <option {{$selectedOrder === 'created_at'? 'selected' : ''}} value="created_at">Register</option>
                                     <option {{$selectedOrder === 'name'? 'selected' : ''}} value="name">Name</option>
                                     <option {{$selectedOrder === 'gender'? 'selected' : ''}} value="gender">Gender</option>
@@ -66,15 +73,15 @@
                         <label>Status: <span style="color: red"></span></label>
 
                         @php
-                            
+                              
                             $selectedStatus = $form->status ? $form->status : 'true';
                             $option = $selectedStatus === 'false' ? 'true' : 'false';
 
                         @endphp
 
                         <select name="status" class="form-control">
-                            <option  selected value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Inactive'}}</option>
-                            <option  value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
+                            <option value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Active'}}</option>
+                            <option value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
                         </select>                              
                         </div>
                     </div>
@@ -199,13 +206,11 @@
                                 </td>
                                 <td class="project-actions text-left toastsDefaultSuccess">
                                     <a class="btn btn-primary btn-sm" title="View" href="teachers/detail/{{$el->unique_id}}">
-                                        <i class="fas fa-eye">
-                                        </i>
+                                        <i class="fas fa-eye"></i>
                                         
                                     </a>
                                     <a class="btn btn-info btn-sm" title="Edit" href="teachers/edit/{{$el->unique_id}}">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
+                                        <i class="fas fa-pencil-alt"></i>
                                         
                                     </a>
                                     @if(session('role') == 'superadmin')
@@ -213,17 +218,17 @@
                                         <i class="fas fa-trash">
                                         </i>
                                     </a>
-                                        @if (!$el->is_active)
-                                            <a href="javascript:void(0)" id="active-teacher" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-success btn-sm">
-                                            <i class="fas fa fa-ban"></i>
-                                            Activate
-                                            </a>
-                                        @else
-                                            <a href="javascript:void(0)" id="delete-teacher" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-danger btn-sm">
-                                            <i class="fas fa fa-ban"></i>
-                                            Deactive
-                                            </a>
-                                        @endif
+                                    @endif
+                                    @if (!$el->is_active)
+                                        <a href="javascript:void(0)" id="active-teacher" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-success btn-sm">
+                                        <i class="fas fa fa-check"></i>
+                                        Activate
+                                        </a>
+                                    @else
+                                        <a href="javascript:void(0)" id="delete-teacher" data-id="{{ $el->id }}" data-name="{{ $el->name }}" class="btn btn-danger btn-sm">
+                                        <i class="fas fa fa-ban"></i>
+                                        Deactive
+                                        </a>
                                     @endif
                                 </td>
                             </tr>  
@@ -399,84 +404,42 @@
     </div>
 </div>
     
-    @endif
+@endif
 
-    @if(session('after_create_teacher')) 
-    
-      {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
-    
-      <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-      <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-
-      <script>
-        var Toast = Swal.mixin({
-           toast: true,
-           position: 'top-end',
-           showConfirmButton: false,
-           timer: 3000
-        });
-      
-        setTimeout(() => {
-        Toast.fire({
-           icon: 'success',
-           title: 'Successfully registered the teacher in the database !!!',
-        });
-        }, 1500);
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
 
-      </script>
-        
-    @endif 
-
-
-    @if (session('after_update_teacher'))
-      
-    <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-    <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-
+@if(session('after_create_teacher')) 
     <script>
-      var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 3000
-      });
-    
-      setTimeout(() => {
-      Toast.fire({
-         icon: 'success',
-         title: 'Successfully updated the teacher in the database !!!',
-      });
-      }, 1500);
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully registered the teacher in the database !!!',
+        });
+    </script>
+@endif 
 
 
+@if (session('after_update_teacher'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully updated the teacher in the database !!!',
+        });
     </script>
 
-    @endif
+@endif
 
-    @if (session('after_delete_teacher'))
-      
-    <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-    <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-
+@if (session('after_delete_teacher'))
     <script>
-      var Toast = Swal.mixin({
-         toast: true,
-         position: 'top-end',
-         showConfirmButton: false,
-         timer: 3000
-      });
-    
-      setTimeout(() => {
-      Toast.fire({
-         icon: 'success',
-         title: 'Successfully delete teacher in the database !!!',
-      });
-      }, 1500);
-
-
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully delete teacher in the database !!!',
+        });
     </script>
-
-    @endif
+@endif
 
 @endsection

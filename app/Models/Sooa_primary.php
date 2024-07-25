@@ -36,5 +36,6 @@ class Sooa_primary extends Model
         'semester',
         'created_at',
         'updated_at',
+        'academic_year',
     ];
 }

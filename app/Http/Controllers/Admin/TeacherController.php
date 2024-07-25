@@ -37,12 +37,12 @@ class TeacherController extends Controller
 
          $data = [];
 
-         $order = $request->sort ? $request->sort : 'desc';
+         $order = $request->sort ? $request->sort : 'asc';
          $status = $request->status? ($request->status == 'true' ? true : false) : true;
          
          if($request->type && $request->search && $request->order)
          {
-            $data = Teacher::where('is_active', $status)->where($request->type,'LIKE','%'. $request->search .'%')->orderBy($request->order, $order)->paginate(15);
+            $data = Teacher::where($request->type,'LIKE','%'. $request->search .'%')->orderBy($request->order, $order)->paginate(15);
             $count = Teacher::with(['subject', 'grade', 'exam'])
                ->withCount(['subject as active_subject_count', 'grade as active_grade_count', 'exam as active_exam_count'])
                ->orderBy($request->order, $order)
@@ -50,7 +50,7 @@ class TeacherController extends Controller
          } 
          else if($request->type && $request->search)
          {
-            $data = Teacher::where('is_active', $status)->where($request->type,'LIKE','%'. $request->search .'%')->orderBy('created_at', $order)->paginate(15);
+            $data = Teacher::where($request->type,'LIKE','%'. $request->search .'%')->orderBy('created_at', $order)->paginate(15);
             $count = Teacher::with(['subject', 'grade', 'exam'])
                ->withCount(['subject as active_subject_count', 'grade as active_grade_count', 'exam as active_exam_count'])
                ->orderBy('created_at', $order)
@@ -58,7 +58,7 @@ class TeacherController extends Controller
          }
          else if($request->order) 
          {
-            $data  = Teacher::where('is_active', $status)->orderBy($request->order, $order)->paginate(15);
+            $data  = Teacher::orderBy($request->order, $order)->paginate(15);
             $count = Teacher::with(['subject', 'grade', 'exam'])
                ->withCount(['subject as active_subject_count', 'grade as active_grade_count', 'exam as active_exam_count'])
                ->orderBy($request->order, $order)
@@ -66,11 +66,11 @@ class TeacherController extends Controller
          } 
          else 
          {
-            $data = Teacher::where('is_active', $status)->orderBy('name', 'asc')->paginate(15);
+            $data = Teacher::orderBy('name', 'asc')->paginate(15);
             $count = Teacher::with(['subject', 'grade', 'exam'])
-            ->withCount(['subject as active_subject_count', 'grade as active_grade_count', 'exam as active_exam_count'])
-            ->orderBy('name', 'asc')
-            ->get();
+               ->withCount(['subject as active_subject_count', 'grade as active_grade_count', 'exam as active_exam_count'])
+               ->orderBy('name', 'asc')
+               ->get();
          }
 
          return view('components.teacher.data-teacher')->with('data', $data)->with('count', $count)->with('form', $form);
@@ -301,50 +301,6 @@ class TeacherController extends Controller
          }
 
          $data = Teacher::create($credentials);
-   
-         
-         // Input data teacher grade & subject ke database
-         $getIdLastTeacher = DB::table('teachers')->latest('id')->value('id');
-
-
-         // menyimpan class teacher
-         if($request->class_id){
-            for($i = 0; $i < count($request->class_id); $i++){
-               $credentials_teacher_grade = [
-                  'teacher_id' => $getIdLastTeacher,
-                  'grade_id'   => $request->class_id[$i],
-                  'created_at' => now(),
-               ];
-      
-               $dataTeacherGrade = Teacher_grade::create($credentials_teacher_grade);
-            }
-         }
-
-         // $grade = array_filter($request->grade_id, function($value) {
-         //    return $value !== null;
-         // });
-
-
-         // menyimpan grade & subject teacher
-         // if(!empty($grade)){
-         //    for($i = 0; $i < count($request->grade_id); $i++){
-         //       $teacher_grade_ids = $request->grade_id[$i];
-         //       $subjects = $request->subject_id[$i];
-           
-         //       // Simpan data subjek dan kelasnya
-         //       foreach ($subjects as $subject) {
-         //           foreach ($teacher_grade_ids as $teacher_grade_id) {
-         //               $credentials_teacher_subject = [
-         //                   'teacher_id' => $getIdLastTeacher,
-         //                   'subject_id' => $subject,
-         //                   'grade_id'   => $teacher_grade_id,
-         //                   'created_at' => now(),
-         //               ];
-         //               $dataTeacherSubject = Teacher_subject::create($credentials_teacher_subject);
-         //           }
-         //       }
-         //    }   
-         // }
 
          session()->flash('after_create_teacher', (object) [
             'name' => $data->name,

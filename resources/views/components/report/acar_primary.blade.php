@@ -319,31 +319,23 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
 @if(session('after_post_final_score'))
-<script>
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
+    <script>
+        Swal.fire({
             icon: 'success',
-            title: 'Successfully post score academic assessment secondary report in the database.',
+            title: 'Successfully',
+            text: 'Successfully post score academic assessment secondary report in the database.',
         });
-    }, 1500);
-</script>
+    </script>
 @endif
 
 @if(session('after_decline_acar'))
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: 'Successfully',
-        text: 'Successfully decline ACAR.',
-    });
-</script>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully decline ACAR.',
+        });
+    </script>
 @endif
 
 <script>

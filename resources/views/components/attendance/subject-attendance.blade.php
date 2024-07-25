@@ -90,46 +90,22 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
    @if(session('after_create_attendance')) 
-
       <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
+         Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully upload attendance in the database.',
         });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully upload attendance in the database.',
-        });
-        }, 1500);
-
-
       </script>
-
    @endif
 
    @if(session('after_update_attendance')) 
       <script>
-     
-      var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-      });
-  
-      setTimeout(() => {
-         Toast.fire({
+         Swal.fire({
             icon: 'success',
-            title: 'Successfully updated attendance in the database.',
+            title: 'Successfully',
+            text: 'Successfully updated attendance in the database.',
       });
-      }, 1500);
-
-    
       </script>
    @endif
 

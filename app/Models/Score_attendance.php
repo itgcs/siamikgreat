@@ -18,5 +18,6 @@ class Score_attendance extends Model
       'semester',
       'created_at',
       'updated_at',
+      'academic_year',
     ];
 }

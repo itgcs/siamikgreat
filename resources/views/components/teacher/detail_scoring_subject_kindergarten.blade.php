@@ -213,26 +213,13 @@
 
 
 @if(session('after_post_final_score')) 
-
-      <script>
-
-        var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully post final score kindergarten subject in the database.',
         });
-      
-        setTimeout(() => {
-           Toast.fire({
-              icon: 'success',
-              title: 'Successfully post final score kindergarten subject in the database.',
-        });
-        }, 1500);
-
-
-      </script>
-
-  @endif
+    </script>
+@endif
 
 @endsection

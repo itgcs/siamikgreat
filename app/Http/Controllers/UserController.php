@@ -24,8 +24,11 @@ class UserController extends Controller
    {
       try {
          session()->flash('preloader', true);
+
+         $data = Master_academic::first();
+
          Auth::logout();
-         return view('layouts.login');
+         return view('layouts.login')->with('data', $data);
       } catch (Exception $err) {
          
          return dd($err);
@@ -105,12 +108,14 @@ class UserController extends Controller
             ]);        
          } else {
             $semester = Master_academic::first()->value('now_semester');
+            $academic_year = Master_academic::first()->value('academic_year');
    
             session()->put([
                'role' => $nameRoles->name,
                'id_user' => $user['id'],
                'name_user' => $nameUser,
                'semester' => $semester,
+               'academic_year' => $academic_year,
             ]);        
          }
 

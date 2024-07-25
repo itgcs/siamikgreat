@@ -17,5 +17,6 @@ class Report_card_status extends Model
         'semester',
         'created_at',
         'updated_at',
+        'academic_year',
     ];
 }

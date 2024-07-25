@@ -195,33 +195,11 @@
             </div>
         </div>
     </div>
-
 </section>
 
 <script src="{{ asset('template/plugins/jquery/jquery.min.js') }}"></script>
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-
-@if(session('after_update_grade')) 
-    <script>
-    
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
-
-    setTimeout(() => {
-        Toast.fire({
-        icon: 'success',
-        title: 'Successfully updated the grade in the database.',
-    });
-    }, 1500);
-
-
-    </script>
-@endif
 
 <script>
 $(document).ready(function() {
@@ -295,7 +273,16 @@ $(document).ready(function() {
     // Initial call to update the visibility of the "Hapus" buttons
     updateHapusButtons();
 });
-
 </script>
+
+@if(session('after_update_grade')) 
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully updated the grade in the database.',
+        });
+    </script>
+@endif
 
 @endsection

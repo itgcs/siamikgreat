@@ -15,5 +15,6 @@ class Subject_grade_exam extends Model
         'exam_id',
         'created_at',
         'updated_at',
+        'academic_year',
     ];
 }

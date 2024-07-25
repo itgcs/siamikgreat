@@ -25,6 +25,7 @@ class Attendance extends Model
         'semester',
         'created_at',
         'updated_at',
+        'academic_year',
     ];
 
     public function student()

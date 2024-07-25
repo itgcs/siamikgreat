@@ -98,7 +98,44 @@ Route::get('/get-grades/{teacherId}', function($teacherId) {
    return response()->json($grades);
 });
 
-// Route untuk mengambil data schedule teacher
+// Untuk melihat filter di add schedule subject teacher di menu grade
+Route::get('/get-all-schedule-filter/{teacher?}/{grade?}/{day?}', function($teacher = null, $grade = null, $day = null) {
+   $lesson = Type_schedule::where('name', '=', 'Lesson')->value('id');
+
+   $query = Schedule::leftJoin('teachers', 'schedules.teacher_id', '=', 'teachers.id')
+      ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
+      ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
+      ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
+      ->where('type_schedule_id', $lesson)
+      ->where('semester', session('semester'))
+      ->orderBy('grade_id', 'asc')
+      ->orderBy('day', 'asc')
+      ->orderBy('start_time', 'asc');
+
+   if ($teacher !== 'null') {
+      $query->where('teacher_id', $teacher);
+   }
+
+   if ($grade !== 'null') {
+      $query->where('grade_id', $grade);
+   }
+
+   if ($day !== 'null') {
+      $query->where('day', $day);
+   }
+
+   $schedules = $query->select(
+      'schedules.*',
+      'teachers.name as teacher_name',
+      't2.name as assisstant',
+      DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"),
+      'subjects.name_subject as subject_name'
+   )->get();
+
+   return response()->json($schedules);
+});
+
+
 Route::get('/get-schedule-filter/{teacher?}/{grade?}/{day?}', function($teacher = null, $grade = null, $day = null) {
    $lesson = Type_schedule::where('name', '=', 'Lesson')->value('id');
 
@@ -141,6 +178,7 @@ Route::get('/get-schedule-assist-filter/{teacher?}/{grade?}/{day?}', function($t
       ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
       ->where('type_schedule_id', $lesson)
       ->where('semester', session('semester'))
+      ->where('academic_year', session('academic_year'))
       ->orderBy('grade_id', 'asc')
       ->orderBy('day', 'asc')
       ->orderBy('start_time', 'asc');
@@ -166,6 +204,43 @@ Route::get('/get-schedule-assist-filter/{teacher?}/{grade?}/{day?}', function($t
 
    return response()->json($schedules);
 });
+// END
+
+// Untuk filter data awal schedule substitute
+Route::get('/get-schedule-teacher/{day}/{startTime}/{endTime}', function($day, $startTime, $endTime) {
+   $teacher = request('teacher');
+   $grade = request('grade');
+
+   $query = Schedule::where('day', $day)
+       ->where('start_time', '>=', '08:00')
+       ->where('end_time', '<', '14:00')
+       ->where('note', '=', NULL)
+       ->leftJoin('teachers', 'schedules.teacher_id', '=', 'teachers.id')
+       ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
+       ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
+       ->select(
+           'schedules.*',
+           'teachers.id as teacher_id',
+           'teachers.name as teacher_name',
+           'grades.id as grade_id',
+           'grades.name as grade_name',
+           'grades.class as grade_class',
+           'subjects.id as subject_id',
+           'subjects.name_subject as subject_name'
+       );
+
+   if ($teacher) {
+       $query->where('teachers.id', $teacher);
+   }
+
+   if ($grade) {
+       $query->where('grades.id', $grade);
+   }
+
+   $schedules = $query->get();
+
+   return response()->json($schedules);
+});
 
 Route::get('/get-schedule-companion/{day}/{startTime}/{endTime}', function($day, $startTime, $endTime) {
    $teacher = request('teacher');
@@ -175,8 +250,7 @@ Route::get('/get-schedule-companion/{day}/{startTime}/{endTime}', function($day,
        ->where('start_time', '>=', '08:00')
        ->where('end_time', '<', '14:00')
        ->where('note', '=', NULL)
-       ->where('start_time', '!=', $startTime)
-       ->where('end_time', '!=', $endTime)
+       ->where('teacher_companion', '!=', null)
        ->leftJoin('teachers', 'schedules.teacher_companion', '=', 'teachers.id')
        ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
        ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
@@ -203,28 +277,37 @@ Route::get('/get-schedule-companion/{day}/{startTime}/{endTime}', function($day,
 
    return response()->json($schedules);
 });
+// END
 
-Route::get('/get-schedule-companion-filter/{teacher}/{grade}', function($teacher, $grade) {
-   $query = Schedule::leftJoin('teachers', 'schedules.teacher_companion', '=', 'teachers.id')
-       ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
-       ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
-       ->select(
-           'schedules.*',
-           'teachers.id as teacher_id',
-           'teachers.name as teacher_companion',
-           'grades.id as grade_id',
-           'grades.name as grade_name',
-           'grades.class as grade_class',
-           'subjects.id as subject_id',
-           'subjects.name_subject as subject_name'
-       );
+
+// Untuk filter berdasarkan teacher / grade saat substitute teacher
+Route::get('/get-schedule-subtitute-filter/{day}/{teacher?}/{grade?}', function($day, $teacher = null, $grade = null) {
+   $query = Schedule::leftJoin('teachers', 'schedules.teacher_id', '=', 'teachers.id')
+      ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
+      ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
+      ->select(
+         'schedules.*',
+         'teachers.id as teacher_id',
+         'teachers.name as teacher_name',
+         'grades.id as grade_id',
+         'grades.name as grade_name',
+         'grades.class as grade_class',
+         'subjects.id as subject_id',
+         'subjects.name_subject as subject_name'
+      )
+      ->where('semester', session('semester'))
+      ->where('academic_year', session('academic_year'))
+      ->where('day', $day)
+      ->orderBy('grade_id', 'asc')
+      ->orderBy('day', 'asc')
+      ->orderBy('start_time', 'asc');
 
    if ($teacher !== 'null') {
-       $query->where('teachers.id', $teacher);
+      $query->where('teacher_id', $teacher);
    }
 
    if ($grade !== 'null') {
-       $query->where('grades.id', $grade);
+      $query->where('grade_id', $grade);
    }
 
    $schedules = $query->get();
@@ -232,6 +315,41 @@ Route::get('/get-schedule-companion-filter/{teacher}/{grade}', function($teacher
    return response()->json($schedules);
 });
 
+Route::get('/get-schedule-companion-filter/{teacher?}/{grade?}', function($teacher = null, $grade = null) {
+   $query = Schedule::leftJoin('teachers', 'schedules.teacher_companion', '=', 'teachers.id')
+      ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
+      ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
+      ->select(
+         'schedules.*',
+         'teachers.id as teacher_id',
+         'teachers.name as teacher_companion',
+         'grades.id as grade_id',
+         'grades.name as grade_name',
+         'grades.class as grade_class',
+         'subjects.id as subject_id',
+         'subjects.name_subject as subject_name'
+      )
+      ->where('semester', session('semester'))
+      ->where('academic_year', session('academic_year'))
+      ->orderBy('grade_id', 'asc')
+      ->orderBy('day', 'asc')
+      ->orderBy('start_time', 'asc');
+
+   if ($teacher !== 'null') {
+      $query->where('teacher_id', $teacher);
+   }
+
+   if ($grade !== 'null') {
+      $query->where('grade_id', $grade);
+   }
+
+   $schedules = $query->get();
+
+   return response()->json($schedules);
+});
+// END
+
+// Filter di mid & final exam
 Route::get('/get-schedulemidexam-edit/{teacher?}/{grade?}', function($teacher = null, $grade = null) {
    $exam = session('semester') == 1 ? "mid exam semester 1" : "mid exam semester 2";
 
@@ -283,6 +401,8 @@ Route::get('/get-schedulefinalexam-edit/{teacher?}/{grade?}', function($teacher 
 
    return response()->json($schedules);
 });
+// END
+
 
 Route::get('/get-schedule-companion-edit/{day}/{teacher}/{grade}', function($day, $teacher, $grade) {
    $query = Schedule::leftJoin('teachers', 'schedules.teacher_companion', '=', 'teachers.id')
@@ -345,6 +465,8 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::get('/detail/{id}', [TeacherController::class, 'getById']);
       Route::get('/delete/{id}', [TeacherController::class, 'delete'])->name('delete-teacher');
       Route::get('/teachers/{teacherId}/{gradeId}/{subjectId}', [TeacherController::class, 'deleteGradeSubject'])->name('deleteGradeSubject');
+      Route::put('/deactivated/{id}', [TeacherController::class, 'deactivated']);
+      Route::put('/activated/{id}', [TeacherController::class, 'activated']);
    });
    
    Route::prefix('/dashboard')->group(function () {
@@ -667,6 +789,8 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/register', [TeacherController::class, 'pagePost']);
       Route::get('/edit/{id}', [TeacherController::class, 'editPage']);
       Route::get('/detail/{id}', [TeacherController::class, 'getById']);
+      Route::put('/deactivated/{id}', [TeacherController::class, 'deactivated']);
+      Route::put('/activated/{id}', [TeacherController::class, 'activated']);
    });
 
    Route::prefix('/relations')->group(function () {

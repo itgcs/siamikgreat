@@ -133,37 +133,21 @@
 
 @if(session('after_add_subject_grade')) 
     <script>
-        var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully created new subject grade in the database.',
         });
-
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully created new subject grade in the database.',
-        });
-        }, 1500);
     </script>
 @endif
 
 @if(session('after_delete_subject_grade')) 
     <script>
-        var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully delete subject grade in the database.',
         });
-
-        setTimeout(() => {
-            Toast.fire({
-                icon: 'success',
-                title: 'Successfully delete subject grade in the database.',
-        });
-        }, 1500);
     </script>
 @endif
 
