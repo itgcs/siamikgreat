@@ -390,7 +390,7 @@
 
   @if(session('after_update_student')) 
     <script>
-      Toast.fire({
+      S.fire({
         icon: 'success',
         title: 'Successfully',
         text: 'Successfully update the students in the database !!!',

@@ -50,24 +50,26 @@ class ScoringController extends Controller
                 $grade = $this->determineGrade($final_score);
 
                 $scoring = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
-                    'subject_id' => $request->subject_id,
+                    'student_id'         => $request->student_id[$i],
+                    'grade_id'           => $request->grade_id,
+                    'subject_id'         => $request->subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
-                    'semester' => $request->semester,
-                    'comment' => $request->comment[$i],
-                    'grades' => $grade,
-                    'final_score' => $request->final_score[$i],
+                    'semester'           => $request->semester,
+                    'academic_year'      => session('academic_year',)
+                    'comment'            => $request->comment[$i],
+                    'grades'             => $grade,
+                    'final_score'        => $request->final_score[$i],
                 ];
 
                 $comment = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
-                    'subject_id' => $request->subject_id,
+                    'student_id'         => $request->student_id[$i],
+                    'grade_id'           => $request->grade_id,
+                    'subject_id'         => $request->subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
-                    'semester' => $request->semester,
-                    'type' => $type,
-                    'comment' => $request->comment[$i],
+                    'semester'           => $request->semester,
+                    'academic_year'      => session('academic_year'),
+                    'type'               => $type,
+                    'comment'            => $request->comment[$i],
                 ];
                 
                 Acar::create($scoring);
@@ -75,12 +77,13 @@ class ScoringController extends Controller
             }
 
             $status = [
-                'grade_id' => $request->grade_id,
-                'subject_id' => $request->subject_id,
-                'teacher_id' => $request->subject_teacher,
-                'status' => 1,
-                'semester' => $request->semester,
-                'created_at' => now()
+                'grade_id'      => $request->grade_id,
+                'subject_id'    => $request->subject_id,
+                'teacher_id'    => $request->subject_teacher,
+                'status'        => 1,
+                'semester'      => $request->semester,
+                'academic_year' => session('academic_year'),
+                'created_at'    => now()
             ];
 
             Scoring_status::create($status);
@@ -117,27 +120,28 @@ class ScoringController extends Controller
 
                 $grade = $this->determineGrade($final_score);
 
-                // dd($grade);
-
                 $scoring = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
-                    'subject_id' => $subject_id,
+                    'student_id'         => $request->student_id[$i],
+                    'grade_id'           => $request->grade_id,
+                    'subject_id'         => $subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
-                    'semester' => $request->semester,
-                    'comment' => $request->comment[$i],
-                    'grades' => $grade,
-                    'final_score' => $request->final_score[$i],
+                    'semester'           => $request->semester,
+                    'academic_year'      => session('academic_year'),
+                    'comment'            => $request->comment[$i],
+                    'grades'             => $grade,
+                    'final_score'        => $request->final_score[$i],
+                    ;
                 ];
 
                 $comment = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
-                    'subject_id' => $request->subject_id,
+                    'student_id'         => $request->student_id[$i],
+                    'grade_id'           => $request->grade_id,
+                    'subject_id'         => $request->subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
-                    'semester' => $request->semester,
-                    'type' => $type,
-                    'comment' => $request->comment[$i],
+                    'semester'           => $request->semester,
+                    'academic_year'      => session('academic_year'),
+                    'type'               => $type,
+                    'comment'            => $request->comment[$i],
                 ];
 
                 Acar::create($scoring);
@@ -145,12 +149,13 @@ class ScoringController extends Controller
             }
 
             $status = [
-                'grade_id' => $request->grade_id,
-                'subject_id' => $request->subject_id,
-                'teacher_id' => $request->subject_teacher,
-                'status' => 1,
-                'semester' => $request->semester,
-                'created_at' => now()
+                'grade_id'      => $request->grade_id,
+                'subject_id'    => $request->subject_id,
+                'teacher_id'    => $request->subject_teacher,
+                'status'        => 1,
+                'semester'      => $request->semester,
+                'academic_year' => session('academic_year'),
+                'created_at'    => now()
             ];
 
             Scoring_status::create($status);
@@ -200,33 +205,32 @@ class ScoringController extends Controller
                 $subject_id = $request->subject_id;
              }
 
-
-            // dd($subject_id);
-            
             for($i=0; $i < count($request->student_id); $i++){
                 $final_score = round($request->final_score[$i]);
     
                 $grade = $this->determineGrade($final_score);
 
                 $scoring = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
-                    'subject_id' => $subject_id,
+                    'student_id'         => $request->student_id[$i],
+                    'grade_id'           => $request->grade_id,
+                    'subject_id'         => $subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
-                    'semester' => $request->semester,
-                    'comment' => $request->comment[$i],
-                    'grades' => $grade,
-                    'final_score' => $request->final_score[$i],
+                    'semester'           => $request->semester,
+                    'academic_year'      => session('academic_year'),
+                    'comment'            => $request->comment[$i],
+                    'grades'             => $grade,
+                    'final_score'        => $request->final_score[$i],
                 ];
 
                 $comment = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
-                    'subject_id' => $request->subject_id,
+                    'student_id'         => $request->student_id[$i],
+                    'grade_id'           => $request->grade_id,
+                    'subject_id'         => $request->subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
-                    'semester' => $request->semester,
-                    'type' => $type,
-                    'comment' => $request->comment[$i],
+                    'semester'           => $request->semester,
+                    'academic_year'      => session('academic_year'),
+                    'type'               => $type,
+                    'comment'            => $request->comment[$i],
                 ];
                 
                 Acar::create($scoring);
@@ -234,12 +238,13 @@ class ScoringController extends Controller
             }
 
             $status = [
-                'grade_id' => $request->grade_id,
-                'subject_id' => $request->subject_id,
-                'teacher_id' => $request->subject_teacher,
-                'status' => 1,
-                'semester' => $request->semester,
-                'created_at' => now()
+                'grade_id'      => $request->grade_id,
+                'subject_id'    => $request->subject_id,
+                'teacher_id'    => $request->subject_teacher,
+                'status'        => 1,
+                'semester'      => $request->semester,
+                'academic_year' => session('academic_year'),
+                'created_at'    => now()
             ];
 
             Scoring_status::create($status);
@@ -254,11 +259,8 @@ class ScoringController extends Controller
     }
 
     public function actionPostKindergarten(Request $request){
-        // dd($request);
         try {
             $subjectName = Subject::where('id', '=', $request->subject_id)->value('name_subject');
-
-            // dd($subjectName);
 
             for($i=0; $i < count($request->student_id); $i++){
                 $final_score = round($request->final_score[$i]);
@@ -267,113 +269,121 @@ class ScoringController extends Controller
 
                 if (strtolower($subjectName) == "english") {
                     $scoring = [
-                        'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
-                        'class_teacher_id' => $request->subject_teacher,
-                        'semester' => $request->semester,
-                        'english' => $request->final_score[$i],
+                        'student_id'        => $request->student_id[$i],
+                        'grade_id'          => $request->grade_id,
+                        'class_teacher_id'  => $request->subject_teacher,
+                        'semester'          => $request->semester,
+                        'english'           => $request->final_score[$i],
+                        'academic_year'     => session('academic_year'),
                     ];
                     
                     Kindergarten::updateOrCreate(
-                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                         $scoring
                     );
                 }
                 elseif (strtolower($subjectName) == "mathematics") {
                     $scoring = [
-                        'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
+                        'student_id'       => $request->student_id[$i],
+                        'grade_id'         => $request->grade_id,
                         'class_teacher_id' => $request->subject_teacher,
-                        'semester' => $request->semester,
-                        'mathematics' => $request->final_score[$i],
+                        'semester'         => $request->semester,
+                        'mathematics'      => $request->final_score[$i],
+                        'academic_year'    => session('academic_year'),
                     ];
                     
                     Kindergarten::updateOrCreate(
-                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                         $scoring
                     );
                 }
                 elseif (strtolower($subjectName) == "chinese") {
                     $scoring = [
-                        'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
+                        'student_id'       => $request->student_id[$i],
+                        'grade_id'         => $request->grade_id,
                         'class_teacher_id' => $request->subject_teacher,
-                        'semester' => $request->semester,
-                        'chinese' => $request->final_score[$i],
+                        'semester'         => $request->semester,
+                        'chinese'          => $request->final_score[$i],
+                        'academic_year'    => session('academic_year'),
                     ];
                     
                     Kindergarten::updateOrCreate(
-                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')]
                         $scoring
                     );
                 }
                 elseif (strtolower($subjectName) == "science") {
                     $scoring = [
-                        'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
+                        'student_id'       => $request->student_id[$i],
+                        'grade_id'         => $request->grade_id,
                         'class_teacher_id' => $request->subject_teacher,
-                        'semester' => $request->semester,
-                        'science' => $request->final_score[$i],
+                        'semester'         => $request->semester,
+                        'science'          => $request->final_score[$i],
+                        'academic_year'    => session('academic_year'),
                     ];
                     
                     Kindergarten::updateOrCreate(
-                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year', session('academic_year')],
                         $scoring
                     );
                 }
                 elseif (strtolower($subjectName) == "character building") {
                     $scoring = [
-                        'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
-                        'class_teacher_id' => $request->subject_teacher,
-                        'semester' => $request->semester,
+                        'student_id'         => $request->student_id[$i],
+                        'grade_id'           => $request->grade_id,
+                        'class_teacher_id'   => $request->subject_teacher,
+                        'semester'           => $request->semester,
                         'character_building' => $request->final_score[$i],
+                        'academic_year'      => session('academic_year'),
                     ];
                     
                     Kindergarten::updateOrCreate(
-                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                         $scoring
                     );
                 }
                 elseif (strtolower($subjectName) == "art and craft") {
                     $scoring = [
-                        'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
+                        'student_id'       => $request->student_id[$i],
+                        'grade_id'         => $request->grade_id,
                         'class_teacher_id' => $request->subject_teacher,
-                        'semester' => $request->semester,
-                        'art_and_craft' => $request->final_score[$i],
+                        'semester'         => $request->semester,
+                        'art_and_craft'    => $request->final_score[$i],
+                        'academic_year'    => session('academic_year'),
                     ];
                     
                     Kindergarten::updateOrCreate(
-                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                         $scoring
                     );
                 }
                 elseif (strtolower($subjectName) == "it") {
                     $scoring = [
-                        'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
+                        'student_id'       => $request->student_id[$i],
+                        'grade_id'         => $request->grade_id,
                         'class_teacher_id' => $request->subject_teacher,
-                        'semester' => $request->semester,
-                        'it' => $request->final_score[$i],
+                        'semester'         => $request->semester,
+                        'it'               => $request->final_score[$i],
+                        'academic_year'    => session('academic_year'),
                     ];
                     
                     Kindergarten::updateOrCreate(
-                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                         $scoring
                     );
                 }
                 elseif (strtolower($subjectName) == "phonic") {
                     $scoring = [
-                        'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
+                        'student_id'       => $request->student_id[$i],
+                        'grade_id'         => $request->grade_id,
                         'class_teacher_id' => $request->subject_teacher,
-                        'semester' => $request->semester,
-                        'phonic' => $request->final_score[$i],
+                        'semester'         => $request->semester,
+                        'phonic'           => $request->final_score[$i],
+                        'academic_year'    => session('academic_year'),
                     ];
                     
                     Kindergarten::updateOrCreate(
-                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                         $scoring
                     );
                 }
@@ -381,12 +391,13 @@ class ScoringController extends Controller
             }
 
             $status = [
-                'grade_id' => $request->grade_id,
-                'subject_id' => $request->subject_id,
-                'teacher_id' => $request->subject_teacher,
-                'status' => 1,
-                'semester' => $request->semester,
-                'created_at' => now()
+                'grade_id'      => $request->grade_id,
+                'subject_id'    => $request->subject_id,
+                'teacher_id'    => $request->subject_teacher,
+                'status'        => 1,
+                'semester'      => $request->semester,
+                'academic_year' => session('academic_year'),
+                'created_at'    => now()
             ];
 
             Scoring_status::create($status);
@@ -402,7 +413,6 @@ class ScoringController extends Controller
 
     public function actionPostAcarPrimary(Request $request){
         try {
-            // dd($request);
             for($i=0; $i < count($request->student_id); $i++){
                 $final_score = $request->final_score[$i];
     
@@ -410,40 +420,43 @@ class ScoringController extends Controller
                 $type = "academic_assessment_report";
     
                 $scoring = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
+                    'student_id'       => $request->student_id[$i],
+                    'grade_id'         => $request->grade_id,
                     'class_teacher_id' => $request->class_teacher,
-                    'semester' => $request->semester,
-                    'academic' => $request->final_score[$i],
-                    'grades_academic' => $grade,
+                    'semester'         => $request->semester,
+                    'academic_year'    => session('academic_year'),
+                    'academic'         => $request->final_score[$i],
+                    'grades_academic'  => $grade,
                 ];
     
                 $comment = [
                     'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
+                    'grade_id'         => $request->grade_id,
                     'class_teacher_id' => $request->class_teacher,
-                    'semester' => $request->semester,
-                    'type' => $type,
-                    'comment' => $request->comment[$i],
+                    'semester'         => $request->semester,
+                    'academic_year'    => session('academic_year'),
+                    'type'             => $type,
+                    'comment'          => $request->comment[$i],
                 ];
     
                 Sooa_primary::updateOrCreate(
-                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                     $scoring
                 );
 
                 Acar_comment::updateOrCreate(
-                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year'    => session('academic_year')],
                     $comment
                 );
             }
 
             $status = [
-                'grade_id' => $request->grade_id,
+                'grade_id'         => $request->grade_id,
                 'class_teacher_id' => $request->class_teacher,
-                'status' => 1,
-                'semester' => $request->semester,
-                'created_at' => now()
+                'status'           => 1,
+                'semester'         => $request->semester,
+                'academic_year'    => session('academic_year'),
+                'created_at'       => now()
             ];
 
             Acar_status::create($status);
@@ -467,40 +480,43 @@ class ScoringController extends Controller
                 $type = "academic_assessment_report";
     
                 $scoring = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
+                    'student_id'       => $request->student_id[$i],
+                    'grade_id'         => $request->grade_id,
                     'class_teacher_id' => $request->class_teacher,
-                    'semester' => $request->semester,
-                    'academic' => $request->final_score[$i],
-                    'grades_academic' => $grade,
+                    'semester'         => $request->semester,
+                    'academic_year'    => session('academic_year'),
+                    'academic'         => $request->final_score[$i],
+                    'grades_academic'  => $grade,
                 ];
     
                 $comment = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
+                    'student_id'       => $request->student_id[$i],
+                    'grade_id'         => $request->grade_id,
                     'class_teacher_id' => $request->class_teacher,
-                    'semester' => $request->semester,
-                    'type' => $type,
-                    'comment' => $request->comment[$i],
+                    'semester'         => $request->semester,
+                    'academic_year'    => session('academic_year'),
+                    'type'             => $type,
+                    'comment'          => $request->comment[$i],
                 ];
     
                 Sooa_secondary::updateOrCreate(
-                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                     $scoring
                 );
 
                 Acar_comment::updateOrCreate(
-                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                     $comment
                 );
             }
 
             $status = [
-                'grade_id' => $request->grade_id,
+                'grade_id'         => $request->grade_id,
                 'class_teacher_id' => $request->class_teacher,
-                'status' => 1,
-                'semester' => $request->semester,
-                'created_at' => now()
+                'status'           => 1,
+                'semester'         => $request->semester,
+                'academic_year'    => session('academic_year'),
+                'created_at'       => now()
             ];
 
             Acar_status::create($status);
@@ -520,11 +536,15 @@ class ScoringController extends Controller
                 $academic = Sooa_primary::where('sooa_primaries.grade_id', $request->grade_id)
                     ->where('sooa_primaries.class_teacher_id', $request->class_teacher)
                     ->where('student_id', $request->student_id[$i])
+                    ->where('semester', session('semester'))
+                    ->where('academic_year', session('academic_year'))
                     ->value('academic');
 
                 $attendance = Sooa_primary::where('sooa_primaries.grade_id', $request->grade_id)
                     ->where('sooa_primaries.class_teacher_id', $request->class_teacher)
                     ->where('student_id', $request->student_id[$i])
+                    ->where('semester', session('semester'))
+                    ->where('academic_year', session('academic_year'))
                     ->value('attendance');
 
                 if ($request->choice[$i] == 0) {
@@ -541,6 +561,7 @@ class ScoringController extends Controller
                         'grade_id' => $request->grade_id,
                         'class_teacher_id' => $request->class_teacher,
                         'semester' => $request->semester,
+                        'academic_year' => session('academic_year'),
                         'choice' => 0,
                         'grades_choice' => "-",
                         'language_and_art' => $request->language_and_art[$i],
@@ -573,6 +594,7 @@ class ScoringController extends Controller
                         'grade_id' => $request->grade_id,
                         'class_teacher_id' => $request->class_teacher,
                         'semester' => $request->semester,
+                        'academic_year' => session('academic_year'),
                         'choice' => $request->choice[$i],
                         'grades_choice' => $this->determineGrade($request->choice[$i]),
                         'language_and_art' => $request->language_and_art[$i],
@@ -592,13 +614,14 @@ class ScoringController extends Controller
                 }
                 
                 Sooa_primary::updateOrCreate(
-                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year'),],
                     $scoring
                 );
             }
     
             $allScores = Sooa_primary::where('grade_id', $request->grade_id)
                 ->where('semester', $request->semester)
+                ->where('academic_year', session('academic_year'))
                 ->orderBy('final_score', 'desc')
                 ->get();
     
@@ -608,15 +631,16 @@ class ScoringController extends Controller
             }
             
             $status = [
-                'grade_id' => $request->grade_id,
+                'grade_id'         => $request->grade_id,
                 'class_teacher_id' => $request->class_teacher,
-                'semester' => $request->semester,
-                'status' => 1,
-                'created_at' => now()
+                'semester'         => $request->semester,
+                'academic_year'    => session('academic_year'),
+                'status'           => 1,
+                'created_at'       => now()
             ];
     
             Sooa_status::updateOrCreate(
-                ['grade_id' => $request->grade_id, 'class_teacher_id' => $request->class_teacher, 'semester' => $request->semester],
+                ['grade_id' => $request->grade_id, 'class_teacher_id' => $request->class_teacher, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                 $status
             );
     
@@ -635,11 +659,15 @@ class ScoringController extends Controller
                 $academic = Sooa_secondary::where('sooa_secondaries.grade_id', $request->grade_id)
                     ->where('sooa_secondaries.class_teacher_id', $request->class_teacher)
                     ->where('student_id', $request->student_id[$i])
+                    ->where('semester', session('semester'))
+                    ->where('academic_year', session('academic_year'))
                     ->value('academic');
 
                 $attendance = Sooa_secondary::where('sooa_secondaries.grade_id', $request->grade_id)
                     ->where('sooa_secondaries.class_teacher_id', $request->class_teacher)
                     ->where('student_id', $request->student_id[$i])
+                    ->where('semester', session('semester'))
+                    ->where('academic_year', session('academic_year'))
                     ->value('attendance');
 
 
@@ -656,6 +684,7 @@ class ScoringController extends Controller
                         'grade_id' => $request->grade_id,
                         'class_teacher_id' => $request->class_teacher,
                         'semester' => $request->semester,
+                        'academic_year' => session('academic_year'),
                         'eca_1' => 0,
                         'grades_eca_1' => "-",
                         'eca_2' => 0,
@@ -687,6 +716,7 @@ class ScoringController extends Controller
                         'grade_id' => $request->grade_id,
                         'class_teacher_id' => $request->class_teacher,
                         'semester' => $request->semester,
+                        'academic_year' => session('academic_year'),
                         'eca_1' => $request->eca_1[$i],
                         'grades_eca_1' => $this->determineGrade($request->eca_1[$i]),
                         'eca_2' => 0,
@@ -719,6 +749,7 @@ class ScoringController extends Controller
                         'grade_id' => $request->grade_id,
                         'class_teacher_id' => $request->class_teacher,
                         'semester' => $request->semester,
+                        'academic_year' => session('academic_year'),
                         'eca_1' => $request->eca_1[$i],
                         'grades_eca_1' => $this->determineGrade($request->eca_1[$i]),
                         'eca_2' => $request->eca_2[$i],
@@ -738,12 +769,14 @@ class ScoringController extends Controller
                 }
                 
                 Sooa_secondary::updateOrCreate(
-                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester],
+                    ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                     $scoring
                 );
             }
     
             $allScores = Sooa_secondary::where('grade_id', $request->grade_id)
+                ->where('semester', $request->semester)
+                ->where('academic_year', session('academic_year'))
                 ->orderBy('final_score', 'desc')
                 ->get();
     
@@ -753,15 +786,16 @@ class ScoringController extends Controller
             }
             
             $status = [
-                'grade_id' => $request->grade_id,
+                'grade_id'         => $request->grade_id,
                 'class_teacher_id' => $request->class_teacher,
-                'semester' => $request->semester,
-                'status' => 1,
-                'created_at' => now()
+                'semester'         => $request->semester,
+                'academic_year'    => session('academic_year'),
+                'status'           => 1,
+                'created_at'       => now()
             ];
     
             Sooa_status::updateOrCreate(
-                ['grade_id' => $request->grade_id, 'class_teacher_id' => $request->class_teacher, 'semester' => $request->semester],
+                ['grade_id' => $request->grade_id, 'class_teacher_id' => $request->class_teacher, 'semester' => $request->semester, 'academic_year', => session('academic_year')],
                 $status
             );
     
@@ -780,17 +814,16 @@ class ScoringController extends Controller
                 'child' => 'attendance class teacher',
             ]);
 
-            // dd($request);
-
             $getGrade = Grade::where('id', $request->grade_id)->value('name');
 
             for($i=0; $i < count($request->student_id); $i++){
                 $score = [
-                    'grade_id' => $request->grade_id,
-                    'teacher_id' => $request->class_teacher,
-                    'student_id' => $request->student_id[$i],
-                    'score' => $request->final_score[$i],
-                    'semester' => $request->semester,
+                    'grade_id'      => $request->grade_id,
+                    'teacher_id'    => $request->class_teacher,
+                    'student_id'    => $request->student_id[$i],
+                    'score'         => $request->final_score[$i],
+                    'semester'      => $request->semester,
+                    'academic_year' => session('academic_year'),
                 ];
                 
                 if (strtolower($getGrade) == "primary") {
@@ -801,7 +834,8 @@ class ScoringController extends Controller
 
                     Sooa_primary::updateOrCreate(
                         ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id,
-                        'semester' => $request->semester, 'class_teacher_id' => $request->class_teacher], 
+                        'semester' => $request->semester, 'class_teacher_id' => $request->class_teacher, 
+                        'academic_year' => session('academic_year')], 
                         $scoring
                     );
                 }
@@ -813,7 +847,8 @@ class ScoringController extends Controller
 
                     Sooa_secondary::updateOrCreate(
                         ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id,
-                        'semester' => $request->semester, 'class_teacher_id' => $request->class_teacher], 
+                        'semester' => $request->semester, 'class_teacher_id' => $request->class_teacher,
+                        'academic_year' => session('academic_year')], 
                         $scoring
                     );
                 }
@@ -822,10 +857,11 @@ class ScoringController extends Controller
             }
 
             $status = [
-                'grade_id' => $request->grade_id,
+                'grade_id'         => $request->grade_id,
                 'class_teacher_id' => $request->class_teacher,
-                'semester' => $request->semester,
-                'status' => 1,
+                'semester'         => $request->semester,
+                'academic_year'    => session('academic_year'),
+                'status'           => 1,
             ];
 
             Score_attendance_status::create($status);
@@ -843,18 +879,19 @@ class ScoringController extends Controller
         try {
             for($i=0; $i < count($request->student_id); $i++){
                 $data = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
-                    'class_teacher_id' => $request->class_teacher,
-                    'final_score' => $request->final_score[$i],
+                    'student_id'         => $request->student_id[$i],
+                    'grade_id'           => $request->grade_id,
+                    'class_teacher_id'   => $request->class_teacher,
+                    'final_score'        => $request->final_score[$i],
                     'grades_final_score' => $request->grades_final_score[$i],
-                    'promotion' => 1,
-                    'created_at' => now(),
+                    'promotion'          => 1,
+                    'academic_year'      => session('academic_year'),
+                    'created_at'         => now(),
                 ];
 
                 Tcop::updateOrCreate(
                     ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 
-                    'class_teacher_id' => $request->class_teacher],
+                    'class_teacher_id' => $request->class_teacher, 'academic_year', => session('academic_year')],
                     $data
                 );
             }
@@ -877,17 +914,18 @@ class ScoringController extends Controller
             for($i=0; $i < count($request->student_id); $i++){
 
                 $scoring = [
-                    'student_id' => $request->student_id[$i],
-                    'grade_id' => $request->grade_id,
+                    'student_id'       => $request->student_id[$i],
+                    'grade_id'         => $request->grade_id,
                     'class_teacher_id' => $request->teacher_id,
-                    'semester' => $request->semester,
-                    'remarks' => $request->remarks[$i],
-                    'created_at' => now()
+                    'semester'         => $request->semester,
+                    'academic_year'    => session('academic_year'),
+                    'remarks'          => $request->remarks[$i],
+                    'created_at'       => now()
                 ];
                 
                 Mid_report::updateOrCreate(
                     ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
-                    'class_teacher_id' => $request->teacher_id],
+                    'class_teacher_id' => $request->teacher_id], 'academic_year' => session('academic_year'),
                     $scoring
                 );
             }
@@ -900,16 +938,16 @@ class ScoringController extends Controller
             }
             
             $status = [
-                'grade_id' => $request->grade_id,
+                'grade_id'         => $request->grade_id,
                 'class_teacher_id' => $request->teacher_id,
-                'status' => 1,
-                'semester' => $semester,
-                'created_at' => now()
+                'status'           => 1,
+                'semester'         => $semester,
+                'academic_year'    => session('academic_year'),
+                'created_at'       => now()
             ];
 
             Report_card_status::create($status);
 
-            // dd($request);
             session()->flash('after_post_mid_report_card');
 
             return redirect()->back()->with('role', session('role'));
@@ -921,14 +959,13 @@ class ScoringController extends Controller
     public function actionPostReportCard1(Request $request)
     {
         try {
-
             for($i=0; $i < count($request->student_id); $i++){
-
                 $scoring = [
                     'student_id' => $request->student_id[$i],
                     'grade_id' => $request->grade_id,
                     'class_teacher_id' => $request->teacher_id,
                     'semester' => $request->semester,
+                    'academic_year' => session('academic_year'),
                     'independent_work' => $request->independent_work[$i],
                     'initiative' => $request->initiative[$i],
                     'homework_completion' => $request->homework_completion[$i],
@@ -946,22 +983,22 @@ class ScoringController extends Controller
                 
                 Report_card::updateOrCreate(
                     ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
-                    'class_teacher_id' => $request->teacher_id],
+                    'class_teacher_id' => $request->teacher_id, 'academic_year' => session('academic_year')],
                     $scoring
                 );
             }
             
             $status = [
-                'grade_id' => $request->grade_id,
+                'grade_id'         => $request->grade_id,
                 'class_teacher_id' => $request->teacher_id,
-                'status' => 1,
-                'semester' => $request->semester,
-                'created_at' => now()
+                'status'           => 1,
+                'semester'         => $request->semester,
+                'academic_year'    => session('academic_year'),
+                'created_at'       => now()
             ];
 
             Report_card_status::create($status);
 
-            // dd($request);
             session()->flash('after_post_report_card1');
 
             return redirect()->back()->with('role', session('role'));
@@ -981,6 +1018,7 @@ class ScoringController extends Controller
                     'grade_id' => $request->grade_id,
                     'class_teacher_id' => $request->teacher_id,
                     'semester' => $request->semester,
+                    'academic_year' => session('academic_year'),
                     'independent_work' => $request->independent_work[$i],
                     'initiative' => $request->initiative[$i],
                     'homework_completion' => $request->homework_completion[$i],
@@ -998,22 +1036,22 @@ class ScoringController extends Controller
                 
                 Report_card::updateOrCreate(
                     ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
-                    'class_teacher_id' => $request->teacher_id],
+                    'class_teacher_id' => $request->teacher_id, 'academic_year' => session('academic_year')],
                     $scoring
                 );
             }
             
             $status = [
-                'grade_id' => $request->grade_id,
+                'grade_id'         => $request->grade_id,
                 'class_teacher_id' => $request->teacher_id,
-                'status' => 1,
-                'semester' => $request->semester,
-                'created_at' => now()
+                'status'           => 1,
+                'semester'         => $request->semester,
+                'academic_year'    => session('academic_year'),
+                'created_at'       => now()
             ];
 
             Report_card_status::create($status);
 
-            // dd($request);
             session()->flash('after_post_report_card2');
 
             return redirect()->back()->with('role', session('role'));
@@ -1027,12 +1065,9 @@ class ScoringController extends Controller
         try {
             
             for($i=0; $i < count($request->student_id); $i++){
-                
-                // dd($request->semester);
 
                 $student_id = $request->student_id[$i];
 
-                // dd($student_id);
                 $scoring = [
                     'student_id' => $request->student_id[$i],
                     'grade_id' => $request->grade_id,
@@ -1053,27 +1088,28 @@ class ScoringController extends Controller
                     'management_emotional_problem_solving' => $request->management_emotional_problem_solving[$student_id],
                     'remarks' => $request->remarks[$student_id],
                     'semester' => $request->semester,
+                    'academic_year' => session('academic_year'),
                     'created_at' => now()
                 ];
                 
                 Nursery_toddler::updateOrCreate(
                     ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
-                    'class_teacher_id' => $request->teacher_id],
+                    'class_teacher_id' => $request->teacher_id, 'academic_year' => session('academic_year')],
                     $scoring
                 );
             }
             
             $status = [
-                'grade_id' => $request->grade_id,
+                'grade_id'         => $request->grade_id,
                 'class_teacher_id' => $request->teacher_id,
-                'status' => 1,
-                'semester' => $request->semester,
-                'created_at' => now()
+                'status'           => 1,
+                'semester'         => $request->semester,
+                'academic_year'    => session('academic_year'),
+                'created_at'       => now()
             ];
 
             Report_card_status::create($status);
 
-            // dd($request);
             session()->flash('after_post_report_card_toddler');
 
             return redirect()->back()->with('role', session('role'));
@@ -1096,6 +1132,7 @@ class ScoringController extends Controller
                         'grade_id' => $request->grade_id,
                         'class_teacher_id' => $request->teacher_id,
                         'semester' => $request->semester,
+                        'academic_year' => session('academic_year'),
                         'songs' => $request->songs[$student_id],
                         'prayer' => $request->prayer[$student_id],
                         'colour' => $request->colour[$student_id],
@@ -1116,7 +1153,7 @@ class ScoringController extends Controller
                     
                     Nursery_toddler::updateOrCreate(
                         ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
-                        'class_teacher_id' => $request->teacher_id],
+                        'class_teacher_id' => $request->teacher_id, 'academic_year' => session('academic_year')],
                         $scoring
                     );
                 }
@@ -1130,6 +1167,7 @@ class ScoringController extends Controller
                         'grade_id' => $request->grade_id,
                         'class_teacher_id' => $request->teacher_id,
                         'semester' => $request->semester,
+                        'academic_year' => session('academic_year'),
                         'songs' => $request->songs[$student_id],
                         'prayer' => $request->prayer[$student_id],
                         'colour' => $request->colour[$student_id],
@@ -1151,23 +1189,23 @@ class ScoringController extends Controller
                     
                     Nursery_toddler::updateOrCreate(
                         ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
-                        'class_teacher_id' => $request->teacher_id],
+                        'class_teacher_id' => $request->teacher_id, 'academic_year' => session('academic_year')],
                         $scoring
                     );
                 }
             }
 
             $status = [
-                'grade_id' => $request->grade_id,
+                'grade_id'         => $request->grade_id,
                 'class_teacher_id' => $request->teacher_id,
-                'status' => 1,
-                'semester' => $request->semester,
-                'created_at' => now()
+                'status'           => 1,
+                'semester'         => $request->semester,
+                'academic_year'    => session('academic_year')
+                'created_at'       => now()
             ];
 
             Report_card_status::create($status);
 
-            // dd($request);
             session()->flash('after_post_report_card_nursery');
 
             return redirect()->back()->with('role', session('role'));
@@ -1182,11 +1220,8 @@ class ScoringController extends Controller
         try {
             for($i=0; $i < count($request->student_id); $i++){
                 
-                // dd($request->semester);
-
                 $student_id = $request->student_id[$i];
 
-                // dd($student_id);
                 $scoring = [
                     'student_id' => $request->student_id[$i],
                     'grade_id' => $request->grade_id,
@@ -1205,27 +1240,28 @@ class ScoringController extends Controller
                     'willingness_to_sing' => $request->willingness_to_sing[$student_id],
                     'remarks' => $request->remarks[$student_id],
                     'semester' => $request->semester,
+                    'academic_year' => session('academic_year'),
                     'created_at' => now()
                 ];
                 
                 Mid_kindergarten::updateOrCreate(
                     ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
-                    'class_teacher_id' => $request->teacher_id],
+                    'class_teacher_id' => $request->teacher_id, 'academic_year' => session('academic_year')],
                     $scoring
                 );
             }
             
             $status = [
-                'grade_id' => $request->grade_id,
+                'grade_id'         => $request->grade_id,
                 'class_teacher_id' => $request->teacher_id,
-                'status' => 1,
-                'semester' => $request->semester,
-                'created_at' => now()
+                'status'           => 1,
+                'semester'         => $request->semester,
+                'academic_year'    => session('academic_year'),
+                'created_at'       => now()
             ];
 
             Report_card_status::create($status);
 
-            // dd($request);
             session()->flash('after_post_report_card_toddler');
 
             return redirect()->back()->with('role', session('role'));
@@ -1236,9 +1272,7 @@ class ScoringController extends Controller
 
     public function actionPostReportCardKindergarten(Request $request)
     {
-        // dd($request);
-        try {
-            
+        try {       
             if ($request->semester == 1) {
                 for($i=0; $i < count($request->student_id); $i++){
                 
@@ -1251,7 +1285,7 @@ class ScoringController extends Controller
                     
                     Kindergarten::updateOrCreate(
                         ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
-                        'class_teacher_id' => $request->teacher_id],
+                        'class_teacher_id' => $request->teacher_id, 'academic_year' => session('academic_year')],
                         $scoring
                     );
                 }
@@ -1269,23 +1303,23 @@ class ScoringController extends Controller
                     
                     Kindergarten::updateOrCreate(
                         ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
-                        'class_teacher_id' => $request->teacher_id],
+                        'class_teacher_id' => $request->teacher_id, 'academic_year' => session('academic_year')],
                         $scoring
                     );
                 }
             }
 
             $status = [
-                'grade_id' => $request->grade_id,
+                'grade_id'         => $request->grade_id,
                 'class_teacher_id' => $request->teacher_id,
-                'status' => 1,
-                'semester' => $request->semester,
-                'created_at' => now()
+                'status'           => 1,
+                'semester'         => $request->semester,
+                'academic_year'    => session('academic_year'),
+                'created_at'       => now()
             ];
 
             Report_card_status::create($status);
 
-            // dd($request);
             session()->flash('after_post_report_card_kindergarten');
 
             return redirect()->back()->with('role', session('role'));

@@ -37,10 +37,15 @@
              class="img-fluid" alt="Sample image">
           </div>
           <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+            @if ($data !== null)
+              <div class="d-flex align-items-center justify-items-center justify-content-center my-4 text-center">
+                <h5 class="text-center text-orange fw-bold mx-3 mb-0">ACADEMIC YEAR {{ $data->academic_year }} SEMESTER {{ $data->now_semester }}</h5>
+              </div>
+            @endif
             <form method="POST" action="{{ route('actionLogin') }}">
                @csrf
                
-               <div class="divider d-flex align-items-center my-4">
+              <div class="divider d-flex align-items-center my-4">
                 <p class="text-center fw-bold mx-3 mb-0">Login</p>
               </div>
     
@@ -142,7 +147,7 @@
       });
     </script>
    @endif
-   
+
 </body>
 
 </html>

@@ -17,5 +17,6 @@ class Score_attendance_status extends Model
         'status',
         'created_at',
         'updated_at',
+        'academic_year',
     ];
 }
