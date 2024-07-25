@@ -32,7 +32,10 @@ class ExportController extends Controller
 {
     private function assessmentStudent($grade)
     {
-        $semester  = Master_academic::first()->value('now_semester');
+        $semester      = Master_academic::first()->value('now_semester');
+        $academic_year = Master_academic::first()->value('academic_year');
+
+
         $homework  = Type_exam::where('name', 'homework')->value('id');
         $exercise  = Type_exam::where('name', 'exercise')->value('id');
         $quiz      = Type_exam::where('name', 'quiz')->value('id');
@@ -110,6 +113,7 @@ class ExportController extends Controller
                 )
                 ->where('grades.id', $grade)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->whereIn('exams.type_exam', [$homework, $exercise, $quiz, $project, $practical])
                 ->get();
 
@@ -219,6 +223,7 @@ class ExportController extends Controller
                 )
                 ->where('grades.id', $grade)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->whereIn('exams.type_exam', [$homework, $exercise, $quiz, $project, $practical])
                 ->get();
 
@@ -293,6 +298,7 @@ class ExportController extends Controller
                 )
                 ->where('grades.id', $grade)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->whereIn('exams.type_exam', [$homework, $exercise, $quiz, $project, $practical])
                 ->get();
 
@@ -336,12 +342,14 @@ class ExportController extends Controller
     private function acarStudent($grade)
     {
         $semester  = Master_academic::first()->value('now_semester');
+        $academic_year = Master_academic::first()->value('academic_year';)
         $grade_name = Grade::where('id', $grade)->value('name');
 
         if(strtolower($grade_name) === "primary"){
             $results = Acar::join('students', 'students.id', '=', 'acars.student_id')
                 ->where('acars.grade_id', $grade)
                 ->where('acars.semester', $semester)
+                ->where('acars.academic_year', $academic_year)
                 ->get();
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -379,6 +387,7 @@ class ExportController extends Controller
             $results = Acar::join('students', 'students.id', '=', 'acars.student_id')
                 ->where('acars.grade_id', $grade)
                 ->where('acars.semester', $semester)
+                ->where('acars.academic_year', $academic_year)
                 ->get();
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -417,12 +426,14 @@ class ExportController extends Controller
     private function sooaStudent($grade)
     {
         $semester  = Master_academic::first()->value('now_semester');
+        $academic_year = Master_academic::first()->value('academic_year');
         $grade_name = Grade::where('id', $grade)->value('name');
 
         if(strtolower($grade_name) === "primary"){
             $results = Sooa_primary::leftJoin('students', 'students.id', '=', 'sooa_primaries.student_id')
                 ->where('sooa_primaries.grade_id', $grade)
                 ->where('sooa_primaries.semester', $semester)
+                ->where('sooa_primaries.academic_year', $academic_year)
                 ->get();
     
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -474,6 +485,7 @@ class ExportController extends Controller
             $results = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
                 ->where('sooa_secondaries.grade_id', $grade)
                 ->where('sooa_secondaries.semester', $semester)
+                ->where('sooa_secondaries.academic_year', $academic_year)
                 ->get();
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -544,11 +556,13 @@ class ExportController extends Controller
     private function tcopStudent($grade)
     {
         $semester  = Master_academic::first()->value('now_semester');
+        $academic_year = Master_academic::first()->value('academic_year');
         $grade_name = Grade::where('id', $grade)->value('name');
 
         if(strtolower($grade_name) === "primary"){
             $results = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
                 ->where('sooa_primaries.grade_id', $grade)
+                ->where('sooa_primaries.academic_year', $academic_year)
                 ->get();
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -584,6 +598,7 @@ class ExportController extends Controller
         elseif (strtolower($grade_name) === "secondary") {
             $results = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
                 ->where('sooa_secondaries.grade_id', $grade)
+                ->where('sooa_secondaries.academic_year', $academic_year)
                 ->get();
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -621,11 +636,13 @@ class ExportController extends Controller
     private function reportStudent($grade)
     {
         $semester  = Master_academic::first()->value('now_semester');
+        $academic_year = Master_academic::first()->value('academic_year');
         $grade_name = Grade::where('id', $grade)->value('name');
 
         if(strtolower($grade_name) === "primary"){
             $results = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
                 ->where('sooa_primaries.grade_id', $grade)
+                ->where('sooa_primaries.academic_year', $academic_year)
                 ->get();
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -661,6 +678,7 @@ class ExportController extends Controller
         elseif (strtolower($grade_name) === "secondary") {
             $results = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
                 ->where('sooa_secondaries.grade_id', $grade)
+                ->where('sooa_secondaries.academic_year', $academic_year)
                 ->get();
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -789,7 +807,7 @@ class ExportController extends Controller
             'academicYear' => $academic->academic_year,
         ];
 
-        dd($data);
+        // dd($data);
 
         $pdf = app('dompdf.wrapper');
         $pdf->set_option('isRemoteEnabled', true);

@@ -18,5 +18,6 @@ class Mid_report extends Model
         'semester',
         'created_at',
         'updated_at',
+        'academic_year',
     ];
 }

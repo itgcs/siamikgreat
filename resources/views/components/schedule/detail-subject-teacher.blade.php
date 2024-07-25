@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var endSemester             = @json($endSemester);
     var startSemester           = @json($startSemester);
     var assistSchedule          = @json($assistSchedule);
-    var assistSubtituteTeacher = @json($assistSubtituteTeacher);
+    var assistSubtituteTeacher  = @json($assistSubtituteTeacher);
 
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
         hiddenDays: [0, 6],
         events: [
             ...gradeSchedule.map(schedule => ({
-                title: schedule.subject_name,
+                title: `${schedule.grade_name} (${schedule.subject_name})`,
                 startRecur: startSemester,
                 endRecur: endSemester,
                 daysOfWeek: [schedule.day],

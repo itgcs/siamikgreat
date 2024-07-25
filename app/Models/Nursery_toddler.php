@@ -33,5 +33,6 @@ class Nursery_toddler extends Model
         'promote',
         'created_at',
         'updated_at',
+        'academic_year',
     ];
 }

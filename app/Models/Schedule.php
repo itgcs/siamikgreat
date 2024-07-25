@@ -25,6 +25,7 @@ class Schedule extends Model
         'semester',
         'created_at',
         'updated_at',
+        'academic_year',
     ];
 
     public function grade()

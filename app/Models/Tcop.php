@@ -19,5 +19,6 @@ class Tcop extends Model
         'promotion',
         'created_at',
         'updated_at',
+        'academic_year',
     ];
 }

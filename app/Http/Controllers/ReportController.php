@@ -272,6 +272,7 @@ class ReportController extends Controller
             ->first();
 
             $semester = session('semester');
+            $academic_year = session('academic_year');
 
             $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
@@ -293,6 +294,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $subjectTeacher->teacher_id)
                 ->get();
 
@@ -407,6 +409,7 @@ class ReportController extends Controller
             $status = Scoring_status::where('grade_id', $gradeId)
                 ->where('subject_id', $subject->subject_id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('teacher_id', $subjectTeacher->teacher_id)
                 ->first();
 
@@ -442,11 +445,13 @@ class ReportController extends Controller
                 'child' => 'report class teacher',
             ]);
 
+            $academic_year = session('academic_year');
 
             Scoring_status::where('grade_id', $gradeId)
                 ->where('subject_id', $subjectId)
                 ->where('teacher_id', $teacherId)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->delete();
 
             session()->flash('after_decline_scoring');
@@ -532,6 +537,7 @@ class ReportController extends Controller
             ->first();
 
             $semester = session('semester');
+            $academic_year = session('academic_year');
 
             $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
@@ -553,6 +559,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $subjectTeacher->teacher_id)
                 ->get();
 
@@ -563,6 +570,7 @@ class ReportController extends Controller
                 ->where('subject_id', $subjectId)
                 ->where('subject_teacher_id', $subjectTeacher->teacher_id)
                 ->where('type', $type)
+                ->where('academic_year', $academic_year)
                 ->get()
                 ->keyBy('student_id');
 
@@ -637,6 +645,7 @@ class ReportController extends Controller
             ]);
 
             $semester = session('semester');
+            $academic_year = session('academic_year');
             
             $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
                 ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
@@ -653,11 +662,13 @@ class ReportController extends Controller
             $results = Acar::join('students', 'students.id', '=', 'acars.student_id')
                 ->where('acars.grade_id', $gradeId)
                 ->where('acars.semester', $semester)
+                ->where('acars.academic_year', $academic_year)
                 ->get();
 
             $comments = Acar_comment::where('grade_id', $gradeId)
                 ->where('type', 'academic_assessment_report')
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->get()
                 ->keyBy('student_id');
 
@@ -695,6 +706,7 @@ class ReportController extends Controller
 
             $status = Acar_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
 
@@ -725,6 +737,7 @@ class ReportController extends Controller
             ]);
 
             $semester = session('semester');
+            $academic_year = session('academic_year');
             
             $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
                 ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
@@ -737,15 +750,16 @@ class ReportController extends Controller
                 ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
                 ->first();
 
-
             $results = Acar::join('students', 'students.id', '=', 'acars.student_id')
                 ->where('acars.grade_id', $gradeId)
                 ->where('acars.semester', $semester)
+                ->where('acars.academic_year', $academic_year)
                 ->get();
 
             $comments = Acar_comment::where('grade_id', $gradeId)
                 ->where('type', 'academic_assessment_report')
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->get()
                 ->keyBy('student_id');
 
@@ -783,6 +797,7 @@ class ReportController extends Controller
 
             $status = Acar_status::where('grade_id', $grade->grade_id)
             ->where('semester', $semester)
+            ->where('academic_year', $academic_year)
             ->where('class_teacher_id', $classTeacher->teacher_id)
             ->first();
 
@@ -813,9 +828,12 @@ class ReportController extends Controller
                 'child' => 'report class teacher',
             ]);
 
+            $academic_year = session('academic_year');
+
             Acar_status::where('grade_id', $gradeId)
                 ->where('class_teacher_id', $teacherId)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->delete();
 
             session()->flash('after_decline_acar');
@@ -845,6 +863,7 @@ class ReportController extends Controller
             ]);
 
             $semester = session('semester');
+            $academic_year = sesion('academic_year');
             
             $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
                 ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
@@ -860,6 +879,7 @@ class ReportController extends Controller
             $results = Sooa_primary::leftJoin('students', 'students.id', '=', 'sooa_primaries.student_id')
                 ->where('sooa_primaries.grade_id', $gradeId)
                 ->where('sooa_primaries.semester', $semester)
+                ->where('sooa_primaries.academic_year', $academic_year)
                 ->get();
     
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -908,6 +928,7 @@ class ReportController extends Controller
     
             $status = Sooa_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
 
@@ -936,6 +957,7 @@ class ReportController extends Controller
             ]);
             
             $semester = session('semester');
+            $academic_year = session('academic_year');
 
             $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
                 ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
@@ -951,6 +973,7 @@ class ReportController extends Controller
             $results = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
                 ->where('sooa_secondaries.grade_id', $gradeId)
                 ->where('sooa_secondaries.semester', $semester)
+                ->where('sooa_secondaries.academic_year', $academic_year)
                 ->get();
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -1017,6 +1040,7 @@ class ReportController extends Controller
 
             $status = Sooa_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
 
@@ -1045,9 +1069,12 @@ class ReportController extends Controller
                 'child' => 'report class teacher',
             ]);
 
+            $academic_year = session('academic_year');
+
             Sooa_status::where('grade_id', $gradeId)
                 ->where('class_teacher_id', $teacherId)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->delete();
 
             session()->flash('after_decline_sooa');
@@ -1075,6 +1102,8 @@ class ReportController extends Controller
                 'page' => 'reports',
                 'child' => 'database reports',
             ]);
+
+            $academic_year = session('academic_year');
             
             $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
                 ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
@@ -1083,16 +1112,15 @@ class ReportController extends Controller
                 ->first();
 
             $promoteGrade = Grade::where('id', $gradeId + 1)->first();
-
                 
             $classTeacher = Teacher_grade::where('grade_id', $gradeId)
                 ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
                 ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
                 ->first();
 
-
             $results = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
                 ->where('sooa_primaries.grade_id', $gradeId)
+                ->where('sooa_primaries.academic_year', $academic_year)
                 ->get();
 
             $semester = session('semester');
@@ -1129,6 +1157,7 @@ class ReportController extends Controller
             // dd($scoresByStudent);
             $status = Tcop::where('grade_id', $grade->grade_id)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
+                ->where('academic_year', $academic_year)
                 ->first();
 
             $data = [
@@ -1162,17 +1191,17 @@ class ReportController extends Controller
                 ->where('teacher_grades.grade_id', $gradeId)
                 ->first();
 
-            $promoteGrade = Grade::where('id', $gradeId + 1)->first();
-
+            $promoteGrade  = Grade::where('id', $gradeId + 1)->first();
+            $academic_year = session('academic_year');
                 
             $classTeacher = Teacher_grade::where('grade_id', $gradeId)
                 ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
                 ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
                 ->first();
 
-
             $results = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
                 ->where('sooa_secondaries.grade_id', $gradeId)
+                ->where('sooa_secondaries.academic_year', $academic_year)
                 ->get();
 
             $semester = session('semester');
@@ -1209,8 +1238,9 @@ class ReportController extends Controller
             // dd($scoresByStudent);
 
             $status = Tcop::where('grade_id', $grade->grade_id)
-            ->where('class_teacher_id', $classTeacher->teacher_id)
-            ->first();
+                ->where('class_teacher_id', $classTeacher->teacher_id)
+                ->where('academic_year', $academic_year)
+                ->first();
 
             $data = [
                 'grade' => $grade,
@@ -1238,8 +1268,11 @@ class ReportController extends Controller
                 'child' => 'report class teacher',
             ]);
 
+            $academic_year = session('academic_year');
+
             Tcop::where('grade_id', $gradeId)
                 ->where('class_teacher_id', $teacherId)
+                ->where('academic_year', $academic_year)
                 ->delete();
 
             session()->flash('after_decline_tcop');
@@ -1283,12 +1316,12 @@ class ReportController extends Controller
                 })
                 ->where('scores.student_id', $id)
                 ->select('exams.id as exam_id', 'exams.name_exam as exam_name', 'exams.date_exam as date_exam',
-                 'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
-                 'subjects.name_subject as subject_name', 'subjects.id as subject_id',
-                 'teachers.name as teacher_name', 'teachers.id as teacher_id', 
-                 'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
-                 'students.id as student_id', 'students.name as student_name',
-                 'scores.score as score')
+                    'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
+                    'subjects.name_subject as subject_name', 'subjects.id as subject_id',
+                    'teachers.name as teacher_name', 'teachers.id as teacher_id', 
+                    'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
+                    'students.id as student_id', 'students.name as student_name',
+                    'scores.score as score')
                 ->paginate(15);
 
 
@@ -1307,9 +1340,10 @@ class ReportController extends Controller
                 'child' => 'report subject teacher',
             ]);
 
-            $userId = session('id_user');
-            $teacherId = Teacher::where('user_id', $userId)->value('id');
-            $semester = session('semester');
+            $userId        = session('id_user');
+            $teacherId     = Teacher::where('user_id', $userId)->value('id');
+            $semester      = session('semester');
+            $academic_year = session('academic_year');
 
             $subjectTeacher = Teacher_subject::where('grade_id', $gradeId)
                 ->where('subject_id', $subjectId)
@@ -1350,25 +1384,27 @@ class ReportController extends Controller
                         $subQuery->where('subject_id', $subjectId);
                     })
                     ->where('type_exam', $exercise)
-                    ->where('semester', $semester);
+                    ->where('semester', $semester)
+                    ->where('academic_year', $academic_year);
                 },
                 'exam as total_quiz' => function ($query) use ($subjectId, $quiz, $semester) {
                     $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                         $subQuery->where('subject_id', $subjectId);
                     })
                     ->where('type_exam', $quiz)
-                    ->where('semester', $semester);
+                    ->where('semester', $semester)
+                    ->where('academic_year', $academic_year);
                 },
                 'exam as total_participation' => function ($query) use ($subjectId, $participation, $semester) {
                     $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                         $subQuery->where('subject_id', $subjectId);
                     })
                     ->where('type_exam', $participation)
-                    ->where('semester', $semester);
+                    ->where('semester', $semester)
+                    ->where('academic_year', $academic_year);
                 },
             ])
-            ->first();
-            // 
+            ->first(); 
 
             $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
@@ -1390,6 +1426,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
 
@@ -1431,6 +1468,7 @@ class ReportController extends Controller
             
             $status = Scoring_status::where('grade_id', $gradeId)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('teacher_id', $subjectTeacher->teacher_id)
                 ->where('subject_id', $subject->subject_id)
                 ->first();
@@ -1472,8 +1510,6 @@ class ReportController extends Controller
             $userId = session('id_user');
             $teacherId = Teacher::where('user_id', $userId)->value('id');
 
-            // dd($teacherId);
-
             $subjectTeacher = Teacher_subject::where('grade_id', $gradeId)
                 ->where('subject_id', $subjectId)
                 ->join('teachers', 'teachers.id', '=', 'teacher_subjects.teacher_id')
@@ -1502,7 +1538,8 @@ class ReportController extends Controller
                 ->pluck('id')
                 ->toArray();
 
-            $semester = session('semester');
+            $semester       = session('semester');
+            $academic_year  = session('academic_year');
 
             // dd($subject->subject_name);
 
@@ -1528,6 +1565,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->orderBy('students.name', 'asc')
                 ->get();
@@ -1554,6 +1592,7 @@ class ReportController extends Controller
                     ->where('grades.id', $gradeId)
                     ->where('subject_exams.subject_id', $subjectId)
                     ->where('exams.semester', $semester)
+                    ->where('exams.academic_year', $academic_year)
                     ->where('exams.teacher_id', $teacherId)
                     ->orderBy('students.name', 'asc')
                     ->get();
@@ -1580,6 +1619,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->orderBy('students.name', 'asc')
                 ->get();
@@ -1606,6 +1646,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->orderBy('students.name', 'asc')
                 ->get();
@@ -1632,6 +1673,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->orderBy('students.name', 'asc')
                 ->get();
@@ -1658,6 +1700,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->orderBy('students.name', 'asc')
                 ->get();
@@ -1683,12 +1726,12 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->orderBy('students.name', 'asc')
                 ->get();
             }
 
-            // dd($results);
 
             if ($isMajorSubject) {
                 $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalExam) {
@@ -1703,35 +1746,40 @@ class ReportController extends Controller
                             $subQuery->where('subject_id', $subjectId);
                         })
                         ->where('type_exam', $homework)
-                        ->where('semester', $semester);
+                        ->where('semester', $semester)
+                        ->where('academic_year', $academic_year);
                     },
                     'exam as total_exercise' => function ($query) use ($subjectId, $exercise, $semester) {
                         $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                             $subQuery->where('subject_id', $subjectId);
                         })
                         ->where('type_exam', $exercise)
-                        ->where('semester', $semester);
+                        ->where('semester', $semester)
+                        ->where('academic_year', $academic_year);
                     },
                     'exam as total_quiz' => function ($query) use ($subjectId, $quiz, $semester) {
                         $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                             $subQuery->where('subject_id', $subjectId);
                         })
                         ->where('type_exam', $quiz)
-                        ->where('semester', $semester);
+                        ->where('semester', $semester)
+                        ->where('academic_year', $academic_year);
                     },
                     'exam as total_final_exam' => function ($query) use ($subjectId, $finalExam, $semester) {
                         $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                             $subQuery->where('subject_id', $subjectId);
                         })
                         ->where('type_exam', $finalExam)
-                        ->where('semester', $semester);
+                        ->where('semester', $semester)
+                        ->where('academic_year', $academic_year);
                     },
                     'exam as total_participation' => function ($query) use ($subjectId, $participation, $semester) {
                         $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                             $subQuery->where('subject_id', $subjectId);
                         })
                         ->where('type_exam', $participation)
-                        ->where('semester', $semester);
+                        ->where('semester', $semester)
+                        ->where('academic_year', $academic_year);
                     },
                 ])
                 ->first();
@@ -1741,6 +1789,8 @@ class ReportController extends Controller
                 $comments = Comment::where('grade_id', $gradeId)
                     ->where('subject_id', $subjectId)
                     ->where('subject_teacher_id', $subjectTeacher->teacher_id)
+                    ->where('semester', $semester)
+                    ->where('academic_year', $academic_year)
                     ->where('type', $type)
                     ->get()
                     ->keyBy('student_id');
@@ -1799,35 +1849,40 @@ class ReportController extends Controller
                             $subQuery->where('subject_id', $subjectId);
                         })
                         ->where('type_exam', $homework)
-                        ->where('semester', $semester);
+                        ->where('semester', $semester)
+                        ->where('academic_year', $academic_year);
                     },
                     'exam as total_exercise' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment, $semester) {
                         $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                             $subQuery->where('subject_id', $subjectId);
                         })
                         ->where('type_exam', $exercise)
-                        ->where('semester', $semester);
+                        ->where('semester', $semester)
+                        ->where('academic_year', $academic_year);
                     },
                     'exam as total_quiz' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment, $semester) {
                         $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                             $subQuery->where('subject_id', $subjectId);
                         })
                         ->where('type_exam', $quiz)
-                        ->where('semester', $semester);
+                        ->where('semester', $semester)
+                        ->where('academic_year', $academic_year);
                     },
                     'exam as total_final_exam' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment, $semester) {
                         $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                             $subQuery->where('subject_id', $subjectId);
                         })
                         ->whereIn('type_exam', $finalAssessment)
-                        ->where('semester', $semester);
+                        ->where('semester', $semester)
+                        ->where('academic_year', $academic_year);
                     },
                     'exam as total_participation' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment, $semester) {
                         $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                             $subQuery->where('subject_id', $subjectId);
                         })
                         ->where('type_exam', $participation)
-                        ->where('semester', $semester);
+                        ->where('semester', $semester)
+                        ->where('academic_year', $academic_year);
                     },
                 ])
                 ->first();
@@ -1837,6 +1892,8 @@ class ReportController extends Controller
                 $comments = Comment::where('grade_id', $gradeId)
                     ->where('subject_id', $subjectId)
                     ->where('subject_teacher_id', $subjectTeacher->teacher_id)
+                    ->where('semester', $semester)
+                    ->where('academic_year', $academic_year);
                     ->where('type', $type)
                     ->get()
                     ->keyBy('student_id');
@@ -1904,6 +1961,7 @@ class ReportController extends Controller
             $status = Scoring_status::where('grade_id', $gradeId)
                 ->where('subject_id', $subjectId)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year);
                 ->where('teacher_id', $subjectTeacher->teacher_id)
                 ->first();
 
@@ -1956,6 +2014,7 @@ class ReportController extends Controller
             $userId = session('id_user');
             $teacherId = Teacher::where('user_id', $userId)->value('id');
             $semester = session('semester');
+            $academic_year = session('academic_year');
 
             $subjectTeacher = Teacher_subject::where('grade_id', $gradeId)
                 ->where('subject_id', $subjectId)
@@ -1994,21 +2053,24 @@ class ReportController extends Controller
                         $subQuery->where('subject_id', $subjectId);
                     })
                     ->whereIn('type_exam', $tasks)
-                    ->where('semester', $semester);
+                    ->where('semester', $semester)
+                    ->where('academic_year', $academic_year);
                 },
                 'exam as total_mid' => function ($query) use ($subjectId, $mid, $semester) {
                     $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                         $subQuery->where('subject_id', $subjectId);
                     })
                     ->whereIn('type_exam', $mid)
-                    ->where('semester', $semester);
+                    ->where('semester', $semester)
+                    ->where('academic_year', $academic_year);
                 },
                 'exam as total_final_exam' => function ($query) use ($subjectId, $finalExam, $semester) {
                     $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                         $subQuery->where('subject_id', $subjectId);
                     })
                     ->whereIn('type_exam', $finalExam)
-                    ->where('semester', $semester);
+                    ->where('semester', $semester)
+                    ->where('academic_year', $academic_year);
                 },
             ])
             ->first();
@@ -2035,6 +2097,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
@@ -2060,6 +2123,7 @@ class ReportController extends Controller
                     ->where('grades.id', $gradeId)
                     ->where('subject_exams.subject_id', $subjectId)
                     ->where('exams.semester', $semester)
+                    ->where('exams.academic_year', $academic_year)
                     ->where('exams.teacher_id', $teacherId)
                     ->get();
             }
@@ -2085,6 +2149,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
@@ -2110,6 +2175,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
@@ -2135,6 +2201,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
@@ -2160,6 +2227,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
@@ -2187,6 +2255,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
@@ -2214,6 +2283,7 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
@@ -2238,16 +2308,18 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
-
             
             $type = "subject_assessment_secondary";
 
             $comments = Comment::where('grade_id', $gradeId)
                 ->where('subject_id', $subjectId)
                 ->where('subject_teacher_id', $subjectTeacher->teacher_id)
+                ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('type', $type)
                 ->get()
                 ->keyBy('student_id');
@@ -2287,6 +2359,7 @@ class ReportController extends Controller
             // dd($scoresByStudent);
             $status = Scoring_status::where('grade_id', $gradeId)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('teacher_id', $subjectTeacher->teacher_id)
                 ->where('subject_id', $subject->subject_id)
                 ->first();
@@ -2430,6 +2503,8 @@ class ReportController extends Controller
             
             $gradeId = $id;
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
+
             if ($semester == 1) {
                 $mid = 0.5;
             }
@@ -2453,6 +2528,7 @@ class ReportController extends Controller
                 ->join('mid_reports', 'mid_reports.student_id', '=', 'students.id')
                 ->where('grades.id', $gradeId)
                 ->where('mid_reports.semester', $semester)
+                ->where('mid_reporst.academic_year', $academic_year)
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -2473,6 +2549,7 @@ class ReportController extends Controller
 
             $status = Report_card_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $mid)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
 
@@ -2506,6 +2583,7 @@ class ReportController extends Controller
             
             $gradeId = $id;
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
 
             // dd($semester);
 
@@ -2536,6 +2614,7 @@ class ReportController extends Controller
                 ->join('report_cards', 'report_cards.student_id', '=', 'students.id')
                 ->where('grades.id', $gradeId)
                 ->where('report_cards.semester', $semester)
+                ->where('report_cards.academic_year', $academic_year)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
@@ -2571,6 +2650,7 @@ class ReportController extends Controller
 
             $status = Report_card_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
 
@@ -2603,6 +2683,7 @@ class ReportController extends Controller
 
             $gradeId = $id;
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
 
             if ($semester !== 2) {
                 return redirect()->back()->with([
@@ -2631,6 +2712,7 @@ class ReportController extends Controller
                 ->join('report_cards', 'report_cards.student_id', '=', 'students.id')
                 ->where('grades.id', $gradeId)
                 ->where('report_cards.semester', $semester)
+                ->where('report_cards.academic_year', $academic_year)
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -2665,6 +2747,7 @@ class ReportController extends Controller
 
             $status = Report_card_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
 
@@ -2698,6 +2781,7 @@ class ReportController extends Controller
             
             $gradeId = $id;
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
 
             // dd($semester);
 
@@ -2728,6 +2812,7 @@ class ReportController extends Controller
                 ->join('report_cards', 'report_cards.student_id', '=', 'students.id')
                 ->where('grades.id', $gradeId)
                 ->where('report_cards.semester', $semester)
+                ->where('report_cards.academic_year', $academic_year)
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -2762,6 +2847,7 @@ class ReportController extends Controller
 
             $status = Report_card_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
 
@@ -2794,6 +2880,7 @@ class ReportController extends Controller
 
             $gradeId = $id;
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
 
             if ($semester !== 2) {
                 return redirect()->back()->with([
@@ -2822,6 +2909,7 @@ class ReportController extends Controller
                 ->join('report_cards', 'report_cards.student_id', '=', 'students.id')
                 ->where('grades.id', $gradeId)
                 ->where('report_cards.semester', $semester)
+                ->where('report_cards.academic_year', $academic_year)
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -2856,6 +2944,7 @@ class ReportController extends Controller
 
             $status = Report_card_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $semester)
+                ->where('acadmeic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
 
@@ -2889,9 +2978,8 @@ class ReportController extends Controller
             
             $gradeId = $id;
 
-            // dd($gradeId);
-
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
 
             // dd($semester);
 
@@ -2922,6 +3010,7 @@ class ReportController extends Controller
                 ->join('nursery_toddlers', 'nursery_toddlers.student_id', '=', 'students.id')
                 ->where('grades.id', $gradeId)
                 ->where('nursery_toddlers.semester', $semester)
+                ->where('nursery_toddlers.academic_year', $academic_year)
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -2961,6 +3050,7 @@ class ReportController extends Controller
 
             $status = Report_card_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
 
@@ -2994,10 +3084,9 @@ class ReportController extends Controller
             ]);
             
             $gradeId = $id;
-
-            // dd($gradeId);
-
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
+
             if ($semester == 1) {
                 $mid = 0.5;
             }
@@ -3034,6 +3123,7 @@ class ReportController extends Controller
                 ->join('nursery_toddlers', 'nursery_toddlers.student_id', '=', 'students.id')
                 ->where('grades.id', $gradeId)
                 ->where('nursery_toddlers.semester', $mid)
+                ->where('nursery_toddlers.academic_year', $academic_year)
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -3073,11 +3163,9 @@ class ReportController extends Controller
 
             $status = Report_card_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $mid)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
-
-            // dd($scoresByStudent);
-            
 
             $data = [
                 'grade' => $grade,
@@ -3099,7 +3187,6 @@ class ReportController extends Controller
     }
 
     public function cardNursery($id){
-        // dd($id);
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
@@ -3107,10 +3194,8 @@ class ReportController extends Controller
             ]);
             
             $gradeId = $id;
-
-            // dd($gradeId);
-
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
 
             $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
                 ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
@@ -3128,6 +3213,7 @@ class ReportController extends Controller
                 ->join('nursery_toddlers', 'nursery_toddlers.student_id', '=', 'students.id')
                 ->where('grades.id', $gradeId)
                 ->where('nursery_toddlers.semester', $semester)
+                ->where('nursery_toddlers.academic_year', $academic_year)
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -3167,10 +3253,9 @@ class ReportController extends Controller
 
             $status = Report_card_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
-
-            // dd($scoresByStudent);
 
             $data = [
                 'grade' => $grade,
@@ -3192,7 +3277,6 @@ class ReportController extends Controller
     }
 
     public function cardNurseryMid($id){
-        // dd($id);
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
@@ -3200,10 +3284,9 @@ class ReportController extends Controller
             ]);
             
             $gradeId = $id;
-
-            // dd($gradeId);
-
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
+
             if ($semester == 1) {
                 $mid = 0.5;
             }
@@ -3227,13 +3310,12 @@ class ReportController extends Controller
                 ->join('nursery_toddlers', 'nursery_toddlers.student_id', '=', 'students.id')
                 ->where('grades.id', $gradeId)
                 ->where('nursery_toddlers.semester', $mid)
+                ->where('nursery_toddlers.academic_year', $academic_year)
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
                 ->get();
-
-            // dd($results);
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
                 $student = $scores->first();
@@ -3266,10 +3348,9 @@ class ReportController extends Controller
 
             $status = Report_card_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $mid)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
-
-            // dd($scoresByStudent);
 
             $data = [
                 'grade' => $grade,
@@ -3291,7 +3372,6 @@ class ReportController extends Controller
     }
 
     public function cardKindergarten($id){
-        // dd($id);
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
@@ -3299,10 +3379,8 @@ class ReportController extends Controller
             ]);
             
             $gradeId = $id;
-
-            // dd($gradeId);
-
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
 
             $grade = Teacher_grade::join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
                 ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
@@ -3320,13 +3398,12 @@ class ReportController extends Controller
                 ->join('kindergartens', 'kindergartens.student_id', '=', 'students.id')
                 ->where('grades.id', $gradeId)
                 ->where('kindergartens.semester', $semester)
+                ->where('kindergartens.academic_year', $academic_year)
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
                 ->get();
-
-            // dd($results);
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
                 $student = $scores->first();
@@ -3354,10 +3431,9 @@ class ReportController extends Controller
 
             $status = Report_card_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
-
-            // dd($status);
 
             $data = [
                 'grade' => $grade,
@@ -3368,8 +3444,6 @@ class ReportController extends Controller
                 'status' => $status,
             ];
 
-            // dd($data);
-
             return view('components.report.kindergarten')->with('data', $data);
 
         } catch (Exception $err) {
@@ -3378,7 +3452,6 @@ class ReportController extends Controller
     }
 
     public function cardKindergartenMid($id){
-        // dd($id);
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
@@ -3386,10 +3459,9 @@ class ReportController extends Controller
             ]);
             
             $gradeId = $id;
-
-            // dd($gradeId);
-
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
+
             if ($semester == 1) {
                 $mid = 0.5;
             }
@@ -3413,6 +3485,7 @@ class ReportController extends Controller
                 ->join('mid_kindergartens', 'mid_kindergartens.student_id', '=', 'students.id')
                 ->where('grades.id', $gradeId)
                 ->where('mid_kindergartens.semester', $semester)
+                ->where('mid_kindergartens.academic_year', $academic_year)
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -3449,6 +3522,7 @@ class ReportController extends Controller
 
             $status = Report_card_status::where('grade_id', $grade->grade_id)
                 ->where('semester', $mid)
+                ->where('academic_year', $academic_year)
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
 
@@ -3484,6 +3558,7 @@ class ReportController extends Controller
             Report_card_status::where('grade_id', $gradeId)
                 ->where('class_teacher_id', $teacherId)
                 ->where('semester', $semester)
+                ->where('academic_year', session('academic_year'))
                 ->delete();
 
             session()->flash('after_decline_report_card');
@@ -3524,6 +3599,8 @@ class ReportController extends Controller
     {
         try {
             $semester = session('semester');
+            $academic_year = session('academic_year');
+
             $learningSkills = Report_card::where('student_id', $id)
                 ->where('semester', $semester)
                 ->first();
@@ -3643,6 +3720,7 @@ class ReportController extends Controller
                     )
                     ->where('grades.id', $gradeId)
                     ->where('exams.semester', $semester)
+                    ->where('exams.academic_year', $academic_year)
                     ->where('students.id', $id)
                     ->whereIn('exams.type_exam', [$homework, $exercise, $quiz, $project, $practical])
                     ->get();
@@ -3753,6 +3831,7 @@ class ReportController extends Controller
                     )
                     ->where('grades.id', $gradeId)
                     ->where('exams.semester', $semester)
+                    ->where('exams.academic_year', $academic_year)
                     ->where('students.id', $id)
                     ->whereIn('exams.type_exam', [$homework, $exercise, $quiz, $project, $practical])
                     ->get();
@@ -3824,6 +3903,8 @@ class ReportController extends Controller
     {
         try {
             $semester = session('semester');
+            $academic_year = session('academic_year');
+
             $learningSkills = Report_card::where('student_id', $id)
                 ->where('semester', $semester)
                 ->first();
@@ -3876,6 +3957,7 @@ class ReportController extends Controller
                 ->where('grades.id', $student->grade_id)
                 ->where('students.id', $id)
                 ->where('attendances.semester', $semester)
+                ->where('attendances.academic_year', $academic_year)
                 ->get();
 
             $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
@@ -3902,6 +3984,7 @@ class ReportController extends Controller
                 })
                 ->where('acars.student_id', $id)
                 ->where('acars.semester', $semester)
+                ->where('acars.academic_year', $academic_year)
                 ->get();
                 
                 if(strtolower($student->grade_name) === "primary")
@@ -3964,14 +4047,6 @@ class ReportController extends Controller
                     }
                 }
 
-                
-
-                // if (empty($groupedEcaData)) {
-                //     $groupedEcaData['student_id'] = $id;
-                // }
-                
-                // dd($groupedEcaData);
-
                 $scoresByStudent = $resultsScore->groupBy('student_id')->map(function ($scores) use ($comments, $order) {
                     $student = $scores->first();
                 
@@ -4002,6 +4077,7 @@ class ReportController extends Controller
                 $resultsSooa = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
                     ->where('sooa_primaries.student_id', $id)
                     ->where('sooa_primaries.semester', $semester)
+                    ->where('sooa_primaries.academic_year', $academic_year)
                     ->get();
 
                 $scoresByStudentSooa = $resultsSooa->groupBy('student_id')->map(function ($scores) {
@@ -4040,6 +4116,7 @@ class ReportController extends Controller
                 $resultsSooa = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
                     ->where('sooa_secondaries.student_id', $id)
                     ->where('sooa_secondaries.semester', $semester)
+                    ->where('sooa_secondaries.academic_year', $academic_year)
                     ->get();
 
                 $scoresByStudentSooa = $resultsSooa->groupBy('student_id')->map(function ($scores) {
@@ -4079,8 +4156,6 @@ class ReportController extends Controller
 
             $academicYear = Master_academic::first()->value('academic_year');
 
-            // dd($learningSkills);
-
             $data = [
                 'student' => $student,
                 'classTeacher' => $classTeacher,
@@ -4094,16 +4169,11 @@ class ReportController extends Controller
                 'eca' => $groupedEcaData,
             ];
 
-            // dd($data);
-
-
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);
             $pdf->set_option('isHtml5ParserEnabled', true);
             $pdf->loadView('components.report.pdf.semester1-pdf', $data)->setPaper('a5', 'portrait');
             return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
-
-
 
         } catch (Exception $err) {
             dd($err);
@@ -4114,6 +4184,8 @@ class ReportController extends Controller
     {
         try {
             $semester = session('semester');
+            $academic_year = session('academic_year');
+
             $learningSkills = Report_card::where('student_id', $id)
                 ->where('semester', $semester)
                 ->first();
@@ -4192,6 +4264,7 @@ class ReportController extends Controller
                 ->where('grades.id', $student->grade_id)
                 ->where('students.id', $id)
                 ->where('attendances.semester', $semester)
+                ->where('attendances.academic_year', $academic_year)
                 ->get();
 
             $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
@@ -4218,8 +4291,8 @@ class ReportController extends Controller
                 })
                 ->where('acars.student_id', $id)
                 ->where('acars.semester', $semester)
+                ->where('acars.academic_year', $academic_year)
                 ->get();
-                
                 
                 $order = [
                     'Religion',
@@ -4268,16 +4341,18 @@ class ReportController extends Controller
                 $resultsSooa = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
                     ->where('sooa_primaries.student_id', $id)
                     ->where('sooa_primaries.semester', $semester)
+                    ->where('sooa_primaries.academic_year', $academic_year)
                     ->get();
             }
             elseif (strtolower($student->grade_name) === "secondary") {
                 $resultsSooa = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
                     ->where('sooa_secondaries.student_id', $id)
                     ->where('sooa_secondaries.semester', $semester)
+                    ->where('sooa_secondaries.academic_year', $academic_year)
                     ->get();
             }
     
-    
+
             $scoresByStudentSooa = $resultsSooa->groupBy('student_id')->map(function ($scores) {
                 $student = $scores->first();
     
@@ -4311,14 +4386,13 @@ class ReportController extends Controller
             })->values()->all();
 
             $tcop = Tcop::where('student_id', $id)
+                ->where('academic_year', $academic_year)
                 ->select('tcops.final_score as final_score', 'tcops.grades_final_score as grades_final_score')
                 ->get();
 
             $student->date_of_registration = Carbon::parse($student->date_of_registration);
 
             $academicYear = Master_academic::first()->value('academic_year');
-
-            // dd($learningSkills);
 
             $data = [
                 'student' => $student,
@@ -4335,30 +4409,11 @@ class ReportController extends Controller
                 'tcop' => $tcop
             ];
 
-            // dd($data);
-
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);
             $pdf->set_option('isHtml5ParserEnabled', true);
             $pdf->loadView('components.report.pdf.semester2-pdf', $data)->setPaper('a5', 'portrait');
             return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
-
-            // $dompdf = new Dompdf();
-            // $html = View::make('components.report.pdf.semester1-pdf')->render();
-
-            // $dompdf->loadHtml($html);
-            
-
-            // // (Optional) Setup the paper size and orientation
-            // $dompdf->setPaper('A4', 'portrait');
-
-            // // Render the HTML as PDF
-            // $dompdf->render();
-
-            // // Output the generated PDF to Browser
-        
-            // return $dompdf->stream('tes.pdf');
-
 
         } catch (Exception $err) {
             dd($err);
@@ -4369,9 +4424,11 @@ class ReportController extends Controller
     {
         try {
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
 
             $score = Nursery_toddler::where('student_id', $id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->first();
     
             $gradeId = Student::where('id', $id)->value('grade_id');
@@ -4414,6 +4471,7 @@ class ReportController extends Controller
                 ->where('grades.id', $student->grade_id)
                 ->where('students.id', $id)
                 ->where('attendances.semester', $semester)
+                ->where('attendances.academic_year', $academic_year)
                 ->get();
 
             $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
@@ -4430,8 +4488,6 @@ class ReportController extends Controller
             })->values()->all();
 
             $academicYear = Master_academic::first()->value('academic_year');
-
-            // dd($learningSkills);
 
             if ($semester == 1) {
                 $data = [
@@ -4456,8 +4512,6 @@ class ReportController extends Controller
                     'academicYear' => $academicYear,
                 ];
             }
-
-            // dd($data);
 
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);
@@ -4474,6 +4528,8 @@ class ReportController extends Controller
     {
         try {
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
+
             if ($semester == 1) {
                 $mid = 0.5;
             }
@@ -4483,6 +4539,7 @@ class ReportController extends Controller
 
             $score = Nursery_toddler::where('student_id', $id)
                 ->where('semester', $mid)
+                ->where('academic_year', $academic_year)
                 ->first();
     
             $gradeId = Student::where('id', $id)->value('grade_id');
@@ -4525,6 +4582,7 @@ class ReportController extends Controller
                 ->where('grades.id', $student->grade_id)
                 ->where('students.id', $id)
                 ->where('attendances.semester', $semester)
+                ->where('attendances.academic_year', $academic_year)
                 ->get();
 
             $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
@@ -4541,8 +4599,6 @@ class ReportController extends Controller
             })->values()->all();
 
             $academicYear = Master_academic::first()->value('academic_year');
-
-            // dd($learningSkills);
 
             if ($semester == 1) {
                 $data = [
@@ -4567,8 +4623,6 @@ class ReportController extends Controller
                     'academicYear' => $academicYear,
                 ];
             }
-
-            // dd($data);
 
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);
@@ -4585,9 +4639,11 @@ class ReportController extends Controller
     {
         try {
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
 
             $score = Nursery_toddler::where('student_id', $id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->first();
     
             $gradeId = Student::where('id', $id)->value('grade_id');
@@ -4635,6 +4691,7 @@ class ReportController extends Controller
                 ->where('grades.id', $student->grade_id)
                 ->where('students.id', $id)
                 ->where('attendances.semester', $semester)
+                ->where('attendances.academic_year', $academic_year)
                 ->get();
 
             $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
@@ -4651,8 +4708,6 @@ class ReportController extends Controller
             })->values()->all();
 
             $academicYear = Master_academic::first()->value('academic_year');
-
-            // dd($learningSkills);
 
             if ($semester == 1) {
                 $data = [
@@ -4686,23 +4741,6 @@ class ReportController extends Controller
             $pdf->set_option('isHtml5ParserEnabled', true);
             $pdf->loadView('components.report.pdf.nursery-pdf', $data)->setPaper('a5', 'portrait');
             return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
-
-            // $dompdf = new Dompdf();
-            // $html = View::make('components.report.pdf.semester1-pdf')->render();
-
-            // $dompdf->loadHtml($html);
-            
-
-            // // (Optional) Setup the paper size and orientation
-            // $dompdf->setPaper('A4', 'portrait');
-
-            // // Render the HTML as PDF
-            // $dompdf->render();
-
-            // // Output the generated PDF to Browser
-        
-            // return $dompdf->stream('tes.pdf');
-
 
         } catch (Exception $err) {
             dd($err);
@@ -4713,6 +4751,8 @@ class ReportController extends Controller
     {
         try {
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
+
             if ($semester == 1) {
                 $mid = 0.5;
             }
@@ -4722,6 +4762,7 @@ class ReportController extends Controller
 
             $score = Nursery_toddler::where('student_id', $id)
                 ->where('semester', $mid)
+                ->where('academic_year', $academic_year)
                 ->first();
     
             $gradeId = Student::where('id', $id)->value('grade_id');
@@ -4769,6 +4810,7 @@ class ReportController extends Controller
                 ->where('grades.id', $student->grade_id)
                 ->where('students.id', $id)
                 ->where('attendances.semester', $semester)
+                ->where('attendances.academic_year', $academic_year)
                 ->get();
 
             $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
@@ -4785,8 +4827,6 @@ class ReportController extends Controller
             })->values()->all();
 
             $academicYear = Master_academic::first()->value('academic_year');
-
-            // dd($learningSkills);
 
             if ($semester == 1) {
                 $data = [
@@ -4821,23 +4861,6 @@ class ReportController extends Controller
             $pdf->loadView('components.report.pdf.nursery-pdf', $data)->setPaper('a5', 'portrait');
             return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
 
-            // $dompdf = new Dompdf();
-            // $html = View::make('components.report.pdf.semester1-pdf')->render();
-
-            // $dompdf->loadHtml($html);
-            
-
-            // // (Optional) Setup the paper size and orientation
-            // $dompdf->setPaper('A4', 'portrait');
-
-            // // Render the HTML as PDF
-            // $dompdf->render();
-
-            // // Output the generated PDF to Browser
-        
-            // return $dompdf->stream('tes.pdf');
-
-
         } catch (Exception $err) {
             dd($err);
         }
@@ -4847,6 +4870,8 @@ class ReportController extends Controller
     {
         try {
             $semester = intval(session('semester'));
+            $academic_year = session('aacdemic_year');
+
             if ($semester == 1) {
                 $mid = 0.5;
             }
@@ -4856,6 +4881,7 @@ class ReportController extends Controller
 
             $score = Mid_kindergarten::where('student_id', $id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->first();
     
             $gradeId = Student::where('id', $id)->value('grade_id');
@@ -4880,7 +4906,6 @@ class ReportController extends Controller
             $quiz           = Type_exam::where('name', 'quiz')->value('id');
             $participation  = Type_exam::where('name', 'participation')->value('id');
 
-
             $resultsAttendance = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->leftJoin('attendances', function ($join) {
                     $join->on('attendances.student_id', '=', 'students.id');
@@ -4893,6 +4918,7 @@ class ReportController extends Controller
                 ->where('grades.id', $student->grade_id)
                 ->where('students.id', $id)
                 ->where('attendances.semester', $semester)
+                ->where('attendacnes.academic_year', $academic_year)
                 ->get();
 
             $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
@@ -4935,11 +4961,10 @@ class ReportController extends Controller
                 )
                 ->where('grades.id', $gradeId)
                 ->where('exams.semester', $semester)
+                ->where('exams.academic_year', $academic_year)
                 ->where('students.id', $id)
                 ->whereIn('exams.type_exam', [$exercise, $quiz])
                 ->get();
-
-            // dd($results);
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use ($exercise, $quiz) {
 
@@ -4967,7 +4992,6 @@ class ReportController extends Controller
                     'subjects' => $scoresBySubject->values()->all(),
                 ];
             })->values()->all();
-            // dd($learningSkills);
 
             $subjects = [
                 ['name' => 'English Language', 'field' => 'english_language'],
@@ -5031,9 +5055,11 @@ class ReportController extends Controller
     {
         try {
             $semester = intval(session('semester'));
+            $academic_year = session('academic_year');
 
             $score = Kindergarten::where('student_id', $id)
                 ->where('semester', $semester)
+                ->where('academic_year', $academic_year)
                 ->first();
     
             $gradeId = Student::where('id', $id)->value('grade_id');
@@ -5081,6 +5107,7 @@ class ReportController extends Controller
                 ->where('grades.id', $student->grade_id)
                 ->where('students.id', $id)
                 ->where('attendances.semester', $semester)
+                ->where('attendances.academic_year', $academic_year)
                 ->get();
 
             $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
@@ -5097,8 +5124,6 @@ class ReportController extends Controller
             })->values()->all();
 
             $academicYear = Master_academic::first()->value('academic_year');
-
-            // dd($learningSkills);
 
             if ($semester == 1) {
                 $data = [
@@ -5140,8 +5165,6 @@ class ReportController extends Controller
                     'academicYear' => $academicYear,
                 ];
             }
-
-            // dd($data);
 
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);

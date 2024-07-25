@@ -74,6 +74,7 @@ class AttendanceController extends Controller
                 ->first();
 
             $semester = session('semester');
+            $academic_year = session('academic_year');
 
             $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->leftJoin('attendances', function ($join) {
@@ -86,6 +87,7 @@ class AttendanceController extends Controller
                 )
                 ->where('grades.id', $gradeId)
                 ->where('attendances.semester', $semester)
+                ->where('attendances.academic_year', $academic_year)
                 ->get();
 
                 $totalAttendances = [
@@ -146,6 +148,7 @@ class AttendanceController extends Controller
 
                 $status = Score_attendance_status::where('grade_id', $grade->grade_id)
                     ->where('semester', $semester)
+                    ->where('academic_year', $academic_year)
                     ->where('class_teacher_id', $classTeacher->teacher_id)
                     ->first();
 
@@ -237,6 +240,7 @@ class AttendanceController extends Controller
 
 
             $semester = session('semester');
+            $academic_year = session('academic_year');
 
             $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->leftJoin('attendances', function ($join) {
@@ -250,6 +254,7 @@ class AttendanceController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('attendances.subject_id', $subjectId)
                 ->where('attendances.semester', $semester)
+                ->where('attendances.academic_year', $academic_year)
                 ->get();
 
             $totalAttendances = [
@@ -291,7 +296,7 @@ class AttendanceController extends Controller
                 'totalAttendances' => $totalAttendances,
             ];
 
-            dd($data);
+            // dd($data);
             return view('components.attendance.detail')->with('data', $data);
         } catch (Exception $err) {
             dd($err);
@@ -306,7 +311,6 @@ class AttendanceController extends Controller
             ]);
 
             $gradeStudent = Student::where('grade_id', $id)->where('is_active', true)->get();
-
 
         } catch (Exception $err) {
             dd($err);
@@ -442,6 +446,7 @@ class AttendanceController extends Controller
                 ->first();
 
             $semester = session('semester');
+            $academic_year = session('academic_year');
 
             $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->leftJoin('attendances', function ($join) {
@@ -454,6 +459,7 @@ class AttendanceController extends Controller
                 )
                 ->where('grades.id', $gradeId)
                 ->where('attendances.semester', $semester)
+                ->where('attendances.academic_year', $academic_year)
                 ->get();
 
                 $totalAttendances = [
@@ -514,6 +520,7 @@ class AttendanceController extends Controller
 
                 $status = Score_attendance_status::where('grade_id', $grade->grade_id)
                     ->where('semester', $semester)
+                    ->where('academic_year', $academic_year)
                     ->where('class_teacher_id', $classTeacher->teacher_id)
                     ->first();
 
@@ -571,6 +578,7 @@ class AttendanceController extends Controller
 
 
             $semester = session('semester');
+            $academic_year = session('academic_year');
 
             $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->leftJoin('attendances', function ($join) {
@@ -584,6 +592,7 @@ class AttendanceController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('attendances.subject_id', $subjectId)
                 ->where('attendances.semester', $semester)
+                ->where('attendances.academic_year', $academic_year)
                 ->get();
 
             $totalAttendances = [
@@ -647,7 +656,6 @@ class AttendanceController extends Controller
         $grade        = Grade::where('id', $gradeId)->first();
         $teacher      = Teacher::where('id', $getIdTeacher)->value('name');
 
-
         $nameGrade    = "$grade->name - $grade->class";
         $nameTeacher  = $teacher;
 
@@ -674,14 +682,16 @@ class AttendanceController extends Controller
             'child' => 'attendance class teacher',
         ]);
  
-        $semester     = Master_academic::first()->value('now_semester');
-        $getIdTeacher = Teacher::where('user_id', $userId)->value('id');
+        $semester      = session('semester');
+        $academic_year = session('academic_year')
+        $getIdTeacher  = Teacher::where('user_id', $userId)->value('id');
 
         $grade = Grade::where('id', $gradeId)->first();
 
         $attendances = Attendance::where('teacher_id', $getIdTeacher)
             ->where('grade_id', $gradeId)
             ->where('semester', $semester)
+            ->where('academic_year', $academic_year)
             ->leftJoin('grades', 'grades.id', '=', 'attendances.grade_id')
             ->select('attendances.date as date', 'grades.id as grade_id')
             ->distinct('date')
@@ -715,13 +725,14 @@ class AttendanceController extends Controller
             'child' => 'attendance class teacher',
         ]);
 
-        // dd($date, $teacherId, $gradeId, $semester);
-        // dd($getIdTeacher);
+        $semester = session('semester');
+        $academic_year = session('academic_year')
 
         $attendances = Attendance::where('teacher_id', $teacherId)
             ->where('date', $date)
             ->where('attendances.grade_id', $gradeId)
-            ->where('semester', session('semester'))
+            ->where('semester', $semester)
+            ->where('academic_year', $academic_year)
             ->leftjoin('students', 'students.id', '=', 'attendances.student_id')
             ->select('attendances.*','students.name as student_name')
             ->get();
@@ -755,6 +766,7 @@ class AttendanceController extends Controller
                ->where('teacher_id', $request->teacher_id)
                ->where('student_id', $studentId)
                ->where('semester', $request->semester)
+               ->where('academic_year', session('academic_year'))
                ->exists()) {
                     return redirect('/teacher/dashboard/attendance/'. $userId . '/' . $request->grade_id)
                     ->with('failed_attend', 'Attendance already recorded for this student.');
@@ -777,6 +789,7 @@ class AttendanceController extends Controller
                     'permission'  => $status === 'permission' ? 1 : 0,
                     'information' => $request->comment[$studentId] ?? '',
                     'semester'    => $request->semester,
+                    'academic_year' => session('academic_year'),
                     'created_at'  => now(),
                 ];
     

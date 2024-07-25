@@ -371,168 +371,255 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     calendar.render();
 
-    // Add event listeners for teacher and grade selects
-    var teacherSelect = document.getElementById('teacher-select');
-    var gradeSelect = document.getElementById('grade-select');
-    var teacherCompanionSelect = document.getElementById('teacher-select-companion');
-    var gradeCompanionSelect = document.getElementById('grade-select-companion');
-
-    teacherSelect.addEventListener('change', filterSchedules);
-    gradeSelect.addEventListener('change', filterSchedules);
-
-    teacherCompanionSelect.addEventListener('change', filterSchedulesCompanion);
-    gradeCompanionSelect.addEventListener('change', filterSchedulesCompanion);
-
-    function filterSchedules() {
-        var selectedTeacher = teacherSelect.value;
-        var selectedGrade = gradeSelect.value;
-
-        fetch(`/get-schedule-filter/${selectedTeacher}/${selectedGrade}`)
-            .then(response => response.json())
-            .then(data => {
-                var tableBody = document.querySelector('#substituteTeacherTable tbody');
-                tableBody.innerHTML = '';
-
-                data.forEach(teacher => {
-                    var row = document.createElement('tr');
-
-                    ['teacher_name', 'grade_name', 'subject_name', 'start_time', 'end_time'].forEach(key => {
-                        var td = document.createElement('td');
-
-                        if (key === 'grade_name' && teacher['grade_name'] && teacher['grade_class']) {
-                            td.innerText = `${teacher['grade_name']} - ${teacher['grade_class']}`;
-                        } else {
-                            td.innerText = teacher[key];
-                        }
-                        row.appendChild(td);
-                    });
-                    tableBody.appendChild(row);
+    function showSubstituteButton(scheduleData) {
+        var substituteBtnContainer = document.getElementById('substituteTeacherBtnContainer');
+        substituteBtnContainer.innerHTML = '';
+    
+        var day = new Date(scheduleData.day).getDay();
+        var date = moment(scheduleData.day).format('YYYY-MM-DD');
+    
+        var startTime = moment(scheduleData.start_time).format('HH:mm');
+        var endTime = moment(scheduleData.end_time).format('HH:mm');
+        var subject = scheduleData.subject;
+        var teacherCompanion = scheduleData.teacher_companion;
+    
+        document.getElementById('submitSubstitute').addEventListener('click', function() {
+            var selectTeacherElement = document.getElementById('select_teacher');
+            var selectedTeacherId = selectTeacherElement.value;
+            var teacherName = selectTeacherElement.options[selectTeacherElement.selectedIndex].text;
+    
+            @foreach ($gradeSchedule as $gs)
+                var selectedGradeId = {{ $gs->grade_id }};
+            @endforeach
+    
+            if (selectedTeacherId === "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please select a teacher!',
                 });
-
-                var modal = new bootstrap.Modal(document.getElementById('substituteTeacherModal'));
-                modal.show();
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
+            } else {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `Do you want to assign ${teacherName} as the substitute teacher?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, assign!',
+                    cancelButtonText: 'No, cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '{{ route('subtitute.teacher') }}',
+                            type: 'POST',
+                            data: {
+                                grade_id: selectedGradeId,
+                                subject_id: subject,
+                                teacher_id: selectedTeacherId,
+                                teacher_companion: teacherCompanion,
+                                date: date,
+                                day: day,
+                                start_time: startTime,
+                                end_time: endTime,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                Swal.fire('Assigned!', 'The substitute teacher has been assigned.', 'success').then(() => {
+                                    location.reload();
+                                });
+                                console.log('success:', response);
+                            },
+                            error: function(xhr, status, error) {
+                                Swal.fire('Error!', 'There was an error assigning the substitute teacher.', 'error');
+                                console.error('Error saving:', error);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    
+        if (!scheduleData.teacher_id) {
+            var substituteBtn = document.createElement('button');
+            substituteBtn.setAttribute('type', 'button');
+            substituteBtn.setAttribute('class', 'btn btn-primary');
+            substituteBtn.innerText = 'Substitute Teacher';
+    
+            substituteBtn.onclick = function() {
+                var selectedTeacher = document.querySelector('select[name="teacher"]').value;
+                var selectedGrade = document.querySelector('select[name="grade"]').value;
+    
+                fetch(`/get-schedule-teacher/${day}/${startTime}/${endTime}?teacher=${selectedTeacher}&grade=${selectedGrade}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        var tableBody = document.querySelector('#substituteTeacherTable tbody');
+                        tableBody.innerHTML = '';
+    
+                        data.forEach(teacher => {
+                            var row = document.createElement('tr');
+    
+                            ['teacher_name', 'grade_name', 'subject_name', 'start_time', 'end_time'].forEach(key => {
+                                var td = document.createElement('td');
+                                if (key === 'grade_name' && teacher['grade_name'] && teacher['grade_class']) {
+                                    td.innerText = `${teacher['grade_name']} - ${teacher['grade_class']}`;
+                                } else {
+                                    td.innerText = teacher[key];
+                                }
+                                row.appendChild(td);
+                            });
+    
+                            tableBody.appendChild(row);
+                        });
+    
+                        var modal = new bootstrap.Modal(document.getElementById('substituteTeacherModal'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    });
+            };
+    
+            substituteBtnContainer.appendChild(substituteBtn);
+        }
     }
-
-    function filterSchedulesCompanion() {
-        var selectedTeacher = teacherCompanionSelect.value;
-        var selectedGrade = gradeCompanionSelect.value;
-
-        console.log("grade =",selectedGrade);
-
-        fetch(`/get-schedule-companion-filter/${selectedTeacher}/${selectedGrade}`)
-            .then(response => response.json())
-            .then(data => {
-                var tableBody = document.querySelector('#substituteTeacherCompanionTable tbody');
-                tableBody.innerHTML = '';
-
-                console.log(data);
-                data.forEach(teacher => {
-                    var row = document.createElement('tr');
-
-                    ['teacher_companion', 'grade_name', 'subject_name', 'start_time', 'end_time'].forEach(key => {
-                        var td = document.createElement('td');
-                        if (key === 'grade_name' && teacher['grade_name'] && teacher['grade_class']) {
-                            td.innerText = `${teacher['grade_name']} - ${teacher['grade_class']}`;
-                        } else {
-                            td.innerText = teacher[key];
-                        }
-                        row.appendChild(td);
-                    });
-
-                    tableBody.appendChild(row);
+    
+    function showSubstituteCompanionButton(scheduleData) {
+    
+        var substituteCompanionBtnContainer = document.getElementById('substituteTeacherCompanionBtnContainer');
+        substituteCompanionBtnContainer.innerHTML = '';
+    
+        var day = new Date(scheduleData.day).getDay();
+        var date = moment(scheduleData.day).format('YYYY-MM-DD');
+    
+        var startTime = moment(scheduleData.start_time).format('HH:mm');
+        var endTime = moment(scheduleData.end_time).format('HH:mm');
+        var subject = scheduleData.subject;
+        var teacherCompanion = scheduleData.teacher_companion;
+        var teacherId = scheduleData.teacher_id;
+        
+        document.getElementById('submitSubstituteCompanion').addEventListener('click', function() {
+            var selectTeacherCompanionElement = document.getElementById('select_teacher_companion');
+            var selectedTeacherCompanionId = selectTeacherCompanionElement.value;
+            var teacherCompanionName = selectTeacherCompanionElement.options[selectTeacherCompanionElement.selectedIndex].text;
+    
+            @foreach ($gradeSchedule as $gs)
+                var selectedGradeId = {{ $gs->grade_id }};
+            @endforeach
+    
+            if (selectedTeacherCompanionId === "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please select a teacher!',
                 });
-
-                var modal = new bootstrap.Modal(document.getElementById('substituteTeacherCompanionModal'));
-                modal.show();
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
+            } else {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `Do you want to assign ${teacherCompanionName} as the substitute Assisstant?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, assign!',
+                    cancelButtonText: 'No, cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '{{ route('subtitute.teacher') }}',
+                            type: 'POST',
+                            data: {
+                                grade_id: selectedGradeId,
+                                subject_id: subject,
+                                teacher_id: teacherId,
+                                teacher_companion: selectedTeacherCompanionId,
+                                date: date,
+                                day: day,
+                                start_time: startTime,
+                                end_time: endTime,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                Swal.fire('Assigned!', 'The substitute Assisstant has been assigned.', 'success').then(() => {
+                                    location.reload();
+                                });
+                                console.log('success:', response);
+                            },
+                            error: function(xhr, status, error) {
+                                Swal.fire('Error!', 'There was an error assigning the substitute Assisstant.', 'error');
+                                console.error('Error saving:', error);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    
+        if (!scheduleData.teacher_companion_id) {
+            var substituteCompanionBtn = document.createElement('button');
+            substituteCompanionBtn.setAttribute('type', 'button');
+            substituteCompanionBtn.setAttribute('class', 'btn btn-danger');
+            substituteCompanionBtn.innerText = 'Substitute Assisstant';
+    
+            substituteCompanionBtn.onclick = function() {
+                var selectedTeacher = document.querySelector('select[name="teacher"]').value;
+                var selectedGrade = document.querySelector('select[name="grade"]').value;
+    
+                fetch(`/get-schedule-companion/${day}/${startTime}/${endTime}?teacher=${selectedTeacher}&grade=${selectedGrade}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        var tableBody = document.querySelector('#substituteTeacherCompanionTable tbody');
+                        tableBody.innerHTML = '';
+    
+                        console.log("hasil:",data);
+                        data.forEach(teacher => {
+                            var row = document.createElement('tr');
+    
+                            ['teacher_companion', 'grade_name', 'subject_name', 'start_time', 'end_time'].forEach(key => {
+                                var td = document.createElement('td');
+                                if (key === 'grade_name' && teacher['grade_name'] && teacher['grade_class']) {
+                                    td.innerText = `${teacher['grade_name']} - ${teacher['grade_class']}`;
+                                } else {
+                                    td.innerText = teacher[key];
+                                }
+                                row.appendChild(td);
+                            });
+    
+                            tableBody.appendChild(row);
+                        });
+    
+                        var modal = new bootstrap.Modal(document.getElementById('substituteTeacherCompanionModal'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    });
+            };
+    
+            substituteCompanionBtnContainer.appendChild(substituteCompanionBtn);
+        }
     }
 });
+</script>
 
-function showSubstituteButton(scheduleData) {
-    var substituteBtnContainer = document.getElementById('substituteTeacherBtnContainer');
-    substituteBtnContainer.innerHTML = '';
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var teacherSelect = document.getElementById('teacher-select');
+        var gradeSelect = document.getElementById('grade-select');
+        var teacherCompanionSelect = document.getElementById('teacher-select-companion');
+        var gradeCompanionSelect = document.getElementById('grade-select-companion');
 
-    var day = new Date(scheduleData.day).getDay();
-    var date = moment(scheduleData.day).format('YYYY-MM-DD');
+        teacherSelect.addEventListener('change', validateAndFetchSchedule);
+        gradeSelect.addEventListener('change', validateAndFetchSchedule);
 
-    var startTime = moment(scheduleData.start_time).format('HH:mm');
-    var endTime = moment(scheduleData.end_time).format('HH:mm');
-    var subject = scheduleData.subject;
-    var teacherCompanion = scheduleData.teacher_companion;
+        teacherCompanionSelect.addEventListener('change', filterSchedulesCompanion);
+        gradeCompanionSelect.addEventListener('change', filterSchedulesCompanion);
 
-    document.getElementById('submitSubstitute').addEventListener('click', function() {
-        var selectTeacherElement = document.getElementById('select_teacher');
-        var selectedTeacherId = selectTeacherElement.value;
-        var teacherName = selectTeacherElement.options[selectTeacherElement.selectedIndex].text;
+        function validateAndFetchSchedule() {
+            const teacher = teacherSelect.value || 'null';
+            const grade = gradeSelect.value || 'null';
 
-        @foreach ($gradeSchedule as $gs)
-            var selectedGradeId = {{ $gs->grade_id }};
-        @endforeach
-
-        if (selectedTeacherId === "") {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please select a teacher!',
-            });
-        } else {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: `Do you want to assign ${teacherName} as the substitute teacher?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, assign!',
-                cancelButtonText: 'No, cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '{{ route('subtitute.teacher') }}',
-                        type: 'POST',
-                        data: {
-                            grade_id: selectedGradeId,
-                            subject_id: subject,
-                            teacher_id: selectedTeacherId,
-                            teacher_companion: teacherCompanion,
-                            date: date,
-                            day: day,
-                            start_time: startTime,
-                            end_time: endTime,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            Swal.fire('Assigned!', 'The substitute teacher has been assigned.', 'success').then(() => {
-                                location.reload();
-                            });
-                            console.log('success:', response);
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire('Error!', 'There was an error assigning the substitute teacher.', 'error');
-                            console.error('Error saving:', error);
-                        }
-                    });
-                }
-            });
+            filterSchedulesTeacher(teacher, grade);
         }
-    });
 
-    if (!scheduleData.teacher_id) {
-        var substituteBtn = document.createElement('button');
-        substituteBtn.setAttribute('type', 'button');
-        substituteBtn.setAttribute('class', 'btn btn-primary');
-        substituteBtn.innerText = 'Substitute Teacher';
-
-        substituteBtn.onclick = function() {
-            var selectedTeacher = document.querySelector('select[name="teacher"]').value;
-            var selectedGrade = document.querySelector('select[name="grade"]').value;
-
-            fetch(`/get-schedule/${day}/${startTime}/${endTime}?teacher=${selectedTeacher}&grade=${selectedGrade}`)
+        function filterSchedulesTeacher(teacher, grade) {
+            fetch(`/get-schedule-subtitute-filter/${teacher}/${grade}`)
                 .then(response => response.json())
                 .then(data => {
                     var tableBody = document.querySelector('#substituteTeacherTable tbody');
@@ -543,6 +630,7 @@ function showSubstituteButton(scheduleData) {
 
                         ['teacher_name', 'grade_name', 'subject_name', 'start_time', 'end_time'].forEach(key => {
                             var td = document.createElement('td');
+
                             if (key === 'grade_name' && teacher['grade_name'] && teacher['grade_class']) {
                                 td.innerText = `${teacher['grade_name']} - ${teacher['grade_class']}`;
                             } else {
@@ -550,7 +638,6 @@ function showSubstituteButton(scheduleData) {
                             }
                             row.appendChild(td);
                         });
-
                         tableBody.appendChild(row);
                     });
 
@@ -560,97 +647,16 @@ function showSubstituteButton(scheduleData) {
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
-        };
-
-        substituteBtnContainer.appendChild(substituteBtn);
-    }
-}
-
-function showSubstituteCompanionButton(scheduleData) {
-    var substituteCompanionBtnContainer = document.getElementById('substituteTeacherCompanionBtnContainer');
-    substituteCompanionBtnContainer.innerHTML = '';
-
-    var day = new Date(scheduleData.day).getDay();
-    var date = moment(scheduleData.day).format('YYYY-MM-DD');
-
-    var startTime = moment(scheduleData.start_time).format('HH:mm');
-    var endTime = moment(scheduleData.end_time).format('HH:mm');
-    var subject = scheduleData.subject;
-    var teacherCompanion = scheduleData.teacher_companion;
-    var teacherId = scheduleData.teacher_id;
-    
-    document.getElementById('submitSubstituteCompanion').addEventListener('click', function() {
-        var selectTeacherCompanionElement = document.getElementById('select_teacher_companion');
-        var selectedTeacherCompanionId = selectTeacherCompanionElement.value;
-        var teacherCompanionName = selectTeacherCompanionElement.options[selectTeacherCompanionElement.selectedIndex].text;
-
-        @foreach ($gradeSchedule as $gs)
-            var selectedGradeId = {{ $gs->grade_id }};
-        @endforeach
-
-        if (selectedTeacherCompanionId === "") {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please select a teacher!',
-            });
-        } else {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: `Do you want to assign ${teacherCompanionName} as the substitute Assisstant?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, assign!',
-                cancelButtonText: 'No, cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '{{ route('subtitute.teacher') }}',
-                        type: 'POST',
-                        data: {
-                            grade_id: selectedGradeId,
-                            subject_id: subject,
-                            teacher_id: teacherId,
-                            teacher_companion: selectedTeacherCompanionId,
-                            date: date,
-                            day: day,
-                            start_time: startTime,
-                            end_time: endTime,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            Swal.fire('Assigned!', 'The substitute Assisstant has been assigned.', 'success').then(() => {
-                                location.reload();
-                            });
-                            console.log('success:', response);
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire('Error!', 'There was an error assigning the substitute Assisstant.', 'error');
-                            console.error('Error saving:', error);
-                        }
-                    });
-                }
-            });
         }
-    });
 
-    if (!scheduleData.teacher_companion_id) {
-        var substituteCompanionBtn = document.createElement('button');
-        substituteCompanionBtn.setAttribute('type', 'button');
-        substituteCompanionBtn.setAttribute('class', 'btn btn-danger');
-        substituteCompanionBtn.innerText = 'Substitute Assisstant';
-
-        substituteCompanionBtn.onclick = function() {
-            var selectedTeacher = document.querySelector('select[name="teacher"]').value;
-            var selectedGrade = document.querySelector('select[name="grade"]').value;
-
-            fetch(`/get-schedule-companion/${day}/${startTime}/${endTime}?teacher=${selectedTeacher}&grade=${selectedGrade}`)
+        function filterSchedulesCompanion(teacherAssist, gradeAssist) {
+            fetch(`/get-schedule-companion-filter/${teacherAssist}/${gradeAssist}`)
                 .then(response => response.json())
                 .then(data => {
                     var tableBody = document.querySelector('#substituteTeacherCompanionTable tbody');
                     tableBody.innerHTML = '';
 
-                    console.log("hasil:",data);
+                    // console.log(data);
                     data.forEach(teacher => {
                         var row = document.createElement('tr');
 
@@ -673,11 +679,8 @@ function showSubstituteCompanionButton(scheduleData) {
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
-        };
-
-        substituteCompanionBtnContainer.appendChild(substituteCompanionBtn);
-    }
-}
+        }
+    })
 </script>
 
 

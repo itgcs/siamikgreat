@@ -17,6 +17,7 @@ class Acar_comment extends Model
         'type',
         'comment',
         'semester',
+        'academic_year',
         'created_at',
         'updated_at',
     ];
