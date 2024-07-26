@@ -479,6 +479,7 @@ class ExamController extends Controller
          $dataSubject = Teacher_subject::join('subjects','subjects.id','=','teacher_subjects.subject_id')
             ->where('teacher_subjects.teacher_id', $getIdTeacher)
             ->select('subjects.*')
+            ->orderBy('subjects.name_subject', 'asc')
             ->get();
 
          $dataGrade = Teacher_subject::join('grades', 'grades.id', '=', 'teacher_subjects.grade_id')
@@ -488,7 +489,7 @@ class ExamController extends Controller
             ->orderBy('grades.id', 'asc')
             ->get();
 
-         $dataType    = Type_exam::get();
+         $dataType    = Type_exam::orderBy('name', 'asc')->get();
 
          $data = [
             'teacher' => $dataTeacher,

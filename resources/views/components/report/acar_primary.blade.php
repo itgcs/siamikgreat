@@ -12,6 +12,8 @@
                         <li class="breadcrumb-item"><a href="{{url('/superadmin/reports')}}">Reports</a></li>
                     @elseif (session('role') == 'admin')
                         <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
+                    @elseif (session('role') == 'teacher')
+                        <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report/class/teacher')}}">Reports</a></li>
                     @endif
                     <li class="breadcrumb-item active" aria-current="page">Detail Acar</li>
                 </ol>
@@ -56,16 +58,20 @@
             </div>  
         @endif
 
-        <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
+        <table class="table table-striped table-bordered bg-white border-black" style=" width: 2800px;">
             <thead>
                 <tr>
                     <th rowspan="3" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
                     <th rowspan="3" class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
                     <th colspan="9" class="text-center" style="vertical-align : middle;text-align:center;">Major Subjects</th>
                     <th colspan="7" class="text-center" style="vertical-align : middle;text-align:center;">Minor Subjects</th>
+                    @if ($data['healthEducation'] !== null)
                     <th colspan="13" class="text-center" style="vertical-align : middle;text-align:center;">Supplementary Subjects</th>
+                    @else
+                    <th colspan="11" class="text-center" style="vertical-align : middle;text-align:center;">Supplementary Subjects</th>
+                    @endif
                     <th class="text-center">Academic</th>
-                    <th rowspan="3" class="text-center" style="width: 25%;vertical-align : middle;text-align:center;">Comment</th>
+                    <th rowspan="3" class="text-center" style="width: 25%;vertical-align : middle;text-align:center;">Remarks</th>
                 </tr>
                 <tr>
                     <!-- Major Subjects -->
@@ -89,7 +95,10 @@
                     <td class="text-center" colspan="2">GK</td>
                     <td class="text-center" colspan="2">A/C</td>
                     <td class="text-center" colspan="2">CB</td>
+                    @if ($data['healthEducation'] !== null)
                     <td class="text-center" colspan="2">HE</td>
+                    @else
+                    @endif
                     <td class="text-center">Avg</td>
                     <!-- END SUPPLEMENTARY SUBJECTS -->
 
@@ -130,8 +139,11 @@
                     <td class="text-center">Grs</td>
                     <td class="text-center">Mks</td>
                     <td class="text-center">Grs</td>
+                    @if ($data['healthEducation'] !== null)
                     <td class="text-center">Mks</td>
                     <td class="text-center">Grs</td>
+                    @else
+                    @endif
                     <td class="text-center">10%</td>
                     <!-- END SUPPLEMENTARY SUBJECTS -->
 
@@ -187,17 +199,24 @@
 
                             <td class="text-center">{{ $dt['percent_minorSubjects'] }}</td>
 
+                            @if ($data['healthEducation'] !== null)
                             @foreach ([18, 6, 17, 15, 16, 19] as $subject_id)
                                 <td class="text-center">{{ $subjects[$subject_id]['mks'] }}</td>
                                 <td class="text-center">{{ $subjects[$subject_id]['grs'] }}</td>
                             @endforeach
+                            @else    
+                            @foreach ([18, 6, 17, 15, 16] as $subject_id)
+                                <td class="text-center">{{ $subjects[$subject_id]['mks'] }}</td>
+                                <td class="text-center">{{ $subjects[$subject_id]['grs'] }}</td>
+                            @endforeach
+                            @endif
 
                             <td class="text-center">{{ $dt['percent_supplementarySubjects'] }}</td>
                             <td class="text-center">{{ $dt['total_score'] }}</td>
-                            <td class="project-actions text-right">
+                            <td class="project-actions text-left">
                                 <div class="input-group">
                                     @if ($data['status'] == null)
-                                        <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $dt['comment'] ? '' : 'Write your comment' }}" value="{{ $dt['comment'] ?: '' }}" autocomplete="off" required>
+                                        <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $dt['comment'] ? '' : 'Write your remarks' }}" value="{{ $dt['comment'] ?: '' }}" autocomplete="off" required>
                                     @else 
                                         {{ $dt['comment'] }}
                                     @endif
@@ -323,7 +342,7 @@
         Swal.fire({
             icon: 'success',
             title: 'Successfully',
-            text: 'Successfully post score academic assessment secondary report in the database.',
+            text: 'Successfully post score academic assessment report primary in the database.',
         });
     </script>
 @endif

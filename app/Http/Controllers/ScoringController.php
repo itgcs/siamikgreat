@@ -55,7 +55,7 @@ class ScoringController extends Controller
                     'subject_id'         => $request->subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
                     'semester'           => $request->semester,
-                    'academic_year'      => session('academic_year',)
+                    'academic_year'      => session('academic_year'),
                     'comment'            => $request->comment[$i],
                     'grades'             => $grade,
                     'final_score'        => $request->final_score[$i],
@@ -130,7 +130,6 @@ class ScoringController extends Controller
                     'comment'            => $request->comment[$i],
                     'grades'             => $grade,
                     'final_score'        => $request->final_score[$i],
-                    ;
                 ];
 
                 $comment = [
@@ -308,7 +307,7 @@ class ScoringController extends Controller
                     ];
                     
                     Kindergarten::updateOrCreate(
-                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')]
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                         $scoring
                     );
                 }
@@ -575,7 +574,7 @@ class ScoringController extends Controller
                         'participation' => $request->participation[$i],
                         'grades_participation' => $this->determineGrade($request->participation[$i]),
                         'final_score' => round($final_score),
-                        'grades_final_score' => $this->determineGrade($final_score),
+                        'grades_final_score' => $this->determineGrade(round($final_score)),
                         'created_at' => now()
                     ];
                 } 
@@ -608,7 +607,7 @@ class ScoringController extends Controller
                         'participation' => $request->participation[$i],
                         'grades_participation' => $this->determineGrade($request->participation[$i]),
                         'final_score' => round($final_score),
-                        'grades_final_score' => $this->determineGrade($final_score),
+                        'grades_final_score' => $this->determineGrade(round($final_score)),
                         'created_at' => now()
                     ];
                 }
@@ -795,7 +794,7 @@ class ScoringController extends Controller
             ];
     
             Sooa_status::updateOrCreate(
-                ['grade_id' => $request->grade_id, 'class_teacher_id' => $request->class_teacher, 'semester' => $request->semester, 'academic_year', => session('academic_year')],
+                ['grade_id' => $request->grade_id, 'class_teacher_id' => $request->class_teacher, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
                 $status
             );
     
@@ -891,7 +890,7 @@ class ScoringController extends Controller
 
                 Tcop::updateOrCreate(
                     ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 
-                    'class_teacher_id' => $request->class_teacher, 'academic_year', => session('academic_year')],
+                    'class_teacher_id' => $request->class_teacher, 'academic_year' => session('academic_year')],
                     $data
                 );
             }
@@ -925,7 +924,7 @@ class ScoringController extends Controller
                 
                 Mid_report::updateOrCreate(
                     ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
-                    'class_teacher_id' => $request->teacher_id], 'academic_year' => session('academic_year'),
+                    'class_teacher_id' => $request->teacher_id, 'academic_year' => session('academic_year')], 
                     $scoring
                 );
             }
@@ -976,7 +975,7 @@ class ScoringController extends Controller
                     'problem_solving' => $request->problem_solving[$i],
                     'goal_setting_to_improve_work' => $request->goal_setting_to_improve_work[$i],
                     'strength_weakness_nextstep' => $request->strength_weakness_nextstep[$i],
-                    'remarks' => $request->remarks[$i],
+                    // 'remarks' => $request->remarks[$i],
                     'created_at' => now()
                 ];
                 
@@ -1200,8 +1199,8 @@ class ScoringController extends Controller
                 'class_teacher_id' => $request->teacher_id,
                 'status'           => 1,
                 'semester'         => $request->semester,
-                'academic_year'    => session('academic_year')
-                'created_at'       => now()
+                'academic_year'    => session('academic_year'),
+                'created_at'       => now(),
             ];
 
             Report_card_status::create($status);

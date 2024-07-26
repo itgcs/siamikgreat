@@ -63,6 +63,7 @@ class ScoreController extends Controller
                'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
                'students.id as student_id', 'students.name as student_name',
                'scores.score as score')
+               ->orderBy('student_name', 'asc')
                ->get();
          }
          elseif (strtolower($subject) == "religion catholic") {
@@ -87,6 +88,7 @@ class ScoreController extends Controller
                'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
                'students.id as student_id', 'students.name as student_name',
                'scores.score as score')
+               ->orderBy('student_name', 'asc')
                ->get();
          }
          elseif (strtolower($subject) == "religion christian") {
@@ -111,6 +113,7 @@ class ScoreController extends Controller
                'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
                'students.id as student_id', 'students.name as student_name',
                'scores.score as score')
+               ->orderBy('student_name', 'asc')
                ->get();
          }
          elseif (strtolower($subject) == "religion buddhism") {
@@ -135,6 +138,7 @@ class ScoreController extends Controller
                'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
                'students.id as student_id', 'students.name as student_name',
                'scores.score as score')
+               ->orderBy('student_name', 'asc')
                ->get();
          }
          elseif (strtolower($subject) == "religion hinduism") {
@@ -159,6 +163,7 @@ class ScoreController extends Controller
                'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
                'students.id as student_id', 'students.name as student_name',
                'scores.score as score')
+               ->orderBy('student_name', 'asc')
                ->get();
          }
          elseif (strtolower($subject) == "religion confucianism") {
@@ -183,6 +188,7 @@ class ScoreController extends Controller
                'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
                'students.id as student_id', 'students.name as student_name',
                'scores.score as score')
+               ->orderBy('student_name', 'asc')
                ->get();
          }
          elseif (strtolower($subject) == "chinese lower") {
@@ -209,6 +215,7 @@ class ScoreController extends Controller
                'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
                'students.id as student_id', 'students.name as student_name',
                'scores.score as score')
+               ->orderBy('student_name', 'asc')
                ->get();
         }
         elseif (strtolower($subject) == "chinese higher") {
@@ -235,6 +242,7 @@ class ScoreController extends Controller
                'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
                'students.id as student_id', 'students.name as student_name',
                'scores.score as score')
+               ->orderBy('student_name', 'asc')
                ->get();
         }
          else{
@@ -258,6 +266,7 @@ class ScoreController extends Controller
             'type_exams.name as type_exam', 'type_exams.id as type_exam_id',
             'students.id as student_id', 'students.name as student_name',
             'scores.score as score')
+            ->orderBy('student_name', 'asc')
             ->get();
          }
          

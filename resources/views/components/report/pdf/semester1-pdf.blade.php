@@ -8,7 +8,7 @@ $typelogo = pathinfo($pathlogo, PATHINFO_EXTENSION);
 $datalogo = file_get_contents($pathlogo);
 $logo = 'data:image/' . $typelogo . ';base64,' . base64_encode($datalogo);
 
-$pathcambridge = public_path('images/cambridge.png');
+$pathcambridge = public_path('images/lcn.png');
 $typecambridge = pathinfo($pathcambridge, PATHINFO_EXTENSION);
 $datacambridge = file_get_contents($pathcambridge);
 $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($datacambridge);
@@ -27,7 +27,7 @@ $grade_name = $student->grade_name;
             font-family: Arial, sans-serif;
         }
         .header {
-            margin-top: 50px;
+            margin-top: 100px;
             text-align: center;
         }
         .header h1, .header h2 ,.header h5, .header h4, .header h5 {
@@ -64,6 +64,10 @@ $grade_name = $student->grade_name;
             position: absolute;
             top: 30%;
             z-index: -1;
+        }
+        
+        @page {
+            margin: 5mm 5mm 0mm 5mm;
         }
     </style>
 </head>
@@ -219,12 +223,15 @@ $grade_name = $student->grade_name;
                     <td style="text-align:center;border-bottom: 3px solid black;" colspan="2"><b>Principal's Signature</b></td>
                     <td style="text-align:center;border-bottom: 3px solid black;" colspan="3"><b>Parent's Signature</b></td>
                 </tr>
-                <!-- END SIGNATURE -->
-                <tr>
-                    <td colspan="2" style="text-align:left;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
-                    <td colspan="4" style="text-align:center;padding-top: 4px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td>
-                    <td colspan="2" style="text-align:right;">Page 1 of 2</td>
-                </tr>
+            </table>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
+                        <td  style="text-align:center;padding-top: 4px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td>
+                        <td  style="vertical-align : top;text-align:right;width:15%;">Page 1 of 2</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     <!-- END PAGE 1 -->
@@ -252,7 +259,7 @@ $grade_name = $student->grade_name;
                 @foreach ($subjectReports[0]['scores'] as $scores)
                     <!-- SUBJECT REPORT -->
                     <tr>
-                        <td style="text-align:center;border: 1px dotted black;border-left: solid 1px black;padding:3px;">{{ $scores['subject_name'] }}</td>
+                        <td style="text-align:left;border: 1px dotted black;border-left: solid 1px black;padding:3px;">{{ $scores['subject_name'] }}</td>
                         <td style="text-align:center;border: 1px dotted black;padding:3px;">{{ $scores['final_score'] }}</td>
                         <td style="text-align:center;border: 1px dotted black;padding:3px;">{{ $scores['grades'] }}</td>
                         <td style="text-align:left;border: 1px dotted black;padding:3px;border-right: solid 1px black;" colspan="5">{{ $scores['comment'] }}</td>
@@ -344,15 +351,15 @@ $grade_name = $student->grade_name;
 
                 <!-- REMARKS -->
                     <tr style="border-top: 3px solid black;border-bottom: 1px dotted black;border-right: 1px solid black;border-left: 1px solid black;">
-                        <td colspan="8" style="padding-left:5px;"><b>Remarks :</b> {{ $learningSkills->remarks }}</td>
+                        <td colspan="8" style="padding-left:5px;"><b>Remarks :</b> {{ $remarks }}</td>
                     </tr>
                 <!-- END RAMARKS -->
 
                 <!-- SIGNATURE -->
                     <tr style="border-right: 1px solid black;border-left: 1px solid black;">
-                        <td style="height:50px;" colspan="3"></td>
-                        <td style="height:50px;" colspan="2"></td>
-                        <td style="height:50px;" colspan="3"></td>
+                        <td style="height:30px;" colspan="3"></td>
+                        <td style="height:30px;" colspan="2"></td>
+                        <td style="height:30px;" colspan="3"></td>
                     </tr>
                     <tr style="border-right: 1px solid black;border-left: 1px solid black;">
                         <td style="text-align:center;text-decoration:underline;" colspan="3">{{ $classTeacher->teacher_name }}</td>
@@ -371,12 +378,15 @@ $grade_name = $student->grade_name;
                         <td style="text-align:center;border-bottom: 3px solid black;" colspan="3"><b>Parent's Signature</b></td>
                     </tr>
                 <!-- END SIGNATURE -->
-
-                <tr>
-                    <td colspan="2" style="text-align:left;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
-                    <td colspan="4" style="text-align:center;padding-top: 4px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td>
-                    <td colspan="2" style="text-align:right;">Page 2 of 2</td>
-                </tr>
+                </tbody>
+            </table>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
+                        <td  style="text-align:center;padding-top: 4px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td>
+                        <td  style="vertical-align : top;text-align:right;width:15%;">Page 2 of 2</td>
+                    </tr>
                 </tbody>
             </table>
         </div>

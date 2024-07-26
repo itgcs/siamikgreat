@@ -683,7 +683,7 @@ class AttendanceController extends Controller
         ]);
  
         $semester      = session('semester');
-        $academic_year = session('academic_year')
+        $academic_year = session('academic_year');
         $getIdTeacher  = Teacher::where('user_id', $userId)->value('id');
 
         $grade = Grade::where('id', $gradeId)->first();
@@ -726,7 +726,7 @@ class AttendanceController extends Controller
         ]);
 
         $semester = session('semester');
-        $academic_year = session('academic_year')
+        $academic_year = session('academic_year');
 
         $attendances = Attendance::where('teacher_id', $teacherId)
             ->where('date', $date)

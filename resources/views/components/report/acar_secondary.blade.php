@@ -12,6 +12,8 @@
                         <li class="breadcrumb-item"><a href="{{url('/superadmin/reports')}}">Reports</a></li>
                     @elseif (session('role') == 'admin')
                         <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
+                    @elseif (session('role') == 'teacher')
+                        <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report/class/teacher')}}">Reports</a></li>
                     @endif
                     <li class="breadcrumb-item active" aria-current="page">Detail Acar</li>
                 </ol>
@@ -172,7 +174,7 @@
                             <td class="text-center">{{ $dt['total_score'] }}</td>
 
                             <!-- COMMENT -->
-                            <td class="project-actions text-right">
+                            <td class="project-actions text-left">
                                 <div class="input-group">
                                     @if ($data['status'] == null)
                                         <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $dt['comment'] ? '' : 'Write your comment' }}" value="{{ $dt['comment'] ?: '' }}" autocomplete="off" required>
