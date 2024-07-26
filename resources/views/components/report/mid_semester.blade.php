@@ -66,7 +66,8 @@
                     <tr>
                         <th class="text-center" style="vertical-align : middle;text-align:center;width:5%;">S/N</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;width:20%;">First Name</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;width:75%;">Remarks</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;width:65%;">Remarks</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;width:10%;">View</th>
                     </tr>
                 </thead>
 
@@ -97,7 +98,13 @@
                             <td class="text-center">
                                 <input name="remarks[]" type="text" class="form-control" autocomplete="off">
                             </td>
-                    
+                            <td>
+                                <a class="btn btn-primary btn"
+                                    href="{{url('teacher/dashboard/midreport/print') . '/' . $student['id']}}">
+                                    View
+                                </a>
+                            </td>
+            
                             <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['id'] }}">
                         </tr>
                         @endforeach

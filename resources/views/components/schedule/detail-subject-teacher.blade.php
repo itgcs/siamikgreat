@@ -51,6 +51,7 @@
 <?php
 $startOfWeek = \Carbon\Carbon::now()->startOfWeek()->format('Y-m-d');
 ?>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var gradeSchedule           = @json($gradeSchedule);
@@ -88,19 +89,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 subject_id: schedule.subject_id,
             })),
             ...subtituteTeacher.map(subs => ({
-                title: subs.subject_name,
-                startRecur: startSemester,
-                endRecur: endSemester,
-                daysOfWeek: [subs.day],
-                startTime: subs.start_time,
-                endTime: subs.end_time,
+                title: `${subs.grade_name} (${subs.subject_name})`,
+                start: `${subs.date}T${subs.start_time}`,
+                end: `${subs.date}T${subs.end_time}`,  
                 description: `<br>Teacher: ${subs.teacher_name}<span class='badge badge-danger'>substitute</span><br>Assisstant : ${subs.teacher_companion}<br>Grade: ${subs.grade_name} - ${subs.grade_class}`,
                 color: 'red',
                 grade_id: subs.grade_id,
                 subject_id: subs.subject_id,
             })),
             ...assistSchedule.map(assist => ({
-                title: assist.subject_name,
+                title: `${assist.grade_name} (${assist.subject_name})`,
                 startRecur: startSemester,
                 endRecur: endSemester,
                 daysOfWeek: [assist.day],
@@ -112,12 +110,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 subject_id: assist.subject_id,
             })),
             ...assistSubtituteTeacher.map(subs => ({
-                title: subs.subject_name,
-                startRecur: startSemester,
-                endRecur: endSemester,
-                daysOfWeek: [subs.day],
-                startTime: subs.start_time,
-                endTime: subs.end_time,
+                title: `${subs.grade_name} (${subs.subject_name})`,
+                start: `${subs.date}T${subs.start_time}`,
+                end: `${subs.date}T${subs.end_time}`,  
                 description: `<br>Teacher: ${subs.teacher_name}<br>Assisstant : ${subs.teacher_companion}<span class='badge badge-danger'>substitute</span><br>Grade: ${subs.grade_name} - ${subs.grade_class}`,
                 color: 'lime',
                 grade_id: subs.grade_id,

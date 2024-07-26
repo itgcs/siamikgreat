@@ -59,7 +59,7 @@
 
         @if (!empty($data['students']))
         
-        <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
+        <table class="table table-striped table-bordered bg-white" style=" width: 3000px;">
             @if ($data['status'] == null)
                 <!-- JIKA DATA BELUM DI SUBMIT OLEH TEACHER  -->
                 <thead>
@@ -80,7 +80,7 @@
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Problem Solving</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Goal setting to improve work</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Strengths/Weeakness/Next Steps</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Remarks</th>
+                        <!-- <th class="text-center" style="vertical-align : middle;text-align:center;">Remarks</th> -->
                     </tr>
                 </thead>
 
@@ -136,10 +136,10 @@
         
                                 <!-- Strengths/weakness/nextstep -->
                                 <td class="text-center">
-                                <input name="strength_weakness_nextstep[]" type="text" class="form-control" value="{{ $score['strength_weakness_nextstep'] }}"  autocomplete="off" required></td>
+                                <textarea name="strength_weakness_nextstep[]" type="text" class="form-control" autocomplete="off" required>{{ $score['strength_weakness_nextstep'] }}</td>
         
-                                <td class="text-center">
-                                <input name="remarks[]" type="text" class="form-control" value="{{ $score['remarks'] }}" autocomplete="off"></td>
+                                <!-- <td class="text-center">
+                                <input name="remarks[]" type="text" class="form-control" value="{{ $score['remarks'] }}" autocomplete="off"></td> -->
                             @endforeach
                         
                                 <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">
@@ -202,10 +202,11 @@
         
                                 <!-- Strengths/weakness/nextstep -->
                                 <td class="text-center">
-                                <input name="strength_weakness_nextstep[]" type="text" class="form-control"  autocomplete="off" required></td>
+                                    <textarea name="strength_weakness_nextstep[]" type="text" class="form-control"  autocomplete="off" required></textarea>
+                                </td>
         
-                                <td class="text-center">
-                                <input name="remarks[]" type="text" class="form-control"  autocomplete="off"></td>
+                                <!-- <td class="text-center">
+                                <input name="remarks[]" type="text" class="form-control"  autocomplete="off"></td> -->
                         
                                 <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['id'] }}">
                         </tr>
@@ -237,7 +238,7 @@
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Problem Solving</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Goal setting to improve work</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Strengths/Weeakness/Next Steps</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Remarks</th>
+                        <!-- <th class="text-center" style="vertical-align : middle;text-align:center;">Remarks</th> -->
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Print Report Card</th>
                     </tr>
                 </thead>
@@ -285,7 +286,7 @@
                                 <!-- Strengths/weakness/nextstep -->
                                 <td class="text-left">{{ $score['strength_weakness_nextstep'] }}</td>
 
-                                <td class="text-center">{{ $score['remarks'] }}</td>
+                                <!-- <td class="text-center">{{ $score['remarks'] }}</td> -->
 
                                 @if ($data['status'] !== null)
                                     @if (session('role') == "superadmin" || session('role') == "admin")

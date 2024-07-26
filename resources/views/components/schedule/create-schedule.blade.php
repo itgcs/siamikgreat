@@ -154,8 +154,8 @@
                 </form>
             </div>
 
-            <!-- Mid column -->
-            <div class="col-md-4" style="max-width: 1250px;">
+            <!-- Right column -->
+            <div class="col-md-8">
                 <div class="card card-dark">
                     <div class="card-header">
                         <h3 class="card-title">All Schedule</h3>
@@ -165,9 +165,9 @@
                             </button>
                         </div>
                     </div>
-                    <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+                    <div class="card-body" style="max-height: 600px;overflow-y: auto;">
                         <div class="row">
-                            <div class="col-4">
+                            <div class="col-2">
                                 <div class="form-group">
                                     <label>Teacher: <span style="color: red"></span></label>
                                     <select id="teacher-select-all" name="teacher_select_all" class="form-control">
@@ -178,7 +178,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="col-2">
                                 <div class="form-group">
                                     <label>Grade: <span style="color: red"></span></label>
                                     <select id="grade-select-all" name="grade_select_all" class="form-control">
@@ -189,7 +189,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="col-2">
                                 <div class="form-group">
                                     <label>Day: <span style="color: red"></span></label>
                                     <select id="day-select-all" name="day_select_all" class="form-control">
@@ -204,120 +204,6 @@
                             </div>
                         </div>
                         <div id="scheduleAll"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right column -->
-            <div class="col-md-4" style="max-width: 1250px;">
-                <div>
-                    <div class="card card-dark">
-                        <div class="card-header">
-                            <h3 class="card-title">See Teacher Schedule</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <!-- /.card-header -->
-                        <!-- form start -->
-                        <div class="card-body" style="height:340px;overflow-y:auto;">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label>Teacher: <span style="color: red"></span></label>
-                                        <select id="teacher-select" name="teacher_select" class="form-control">
-                                            <option value="" selected>-- Select Teacher --</option>
-                                            @foreach ($data['teacher'] as $tc)
-                                                <option value="{{ $tc->id }}">{{ $tc->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label>Grade: <span style="color: red"></span></label>
-                                        <select id="grade-select" name="grade_select" class="form-control">
-                                            <option value="" selected>-- Select Grade --</option>
-                                            @foreach ($data['grades'] as $gr)
-                                                <option value="{{ $gr->id }}">{{ $gr->name }} - {{ $gr->class }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label>Day: <span style="color: red"></span></label>
-                                        <select id="day-select" name="day_select" class="form-control">
-                                            <option value="">-- Select Day --</option>
-                                            <option value="1">Monday</option>
-                                            <option value="2">Tuesday</option>
-                                            <option value="3">Wednesday</option>
-                                            <option value="4">Thursday</option>
-                                            <option value="5">Friday</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-    
-                            <div id="scheduleTeacher">
-                        </div>
-                    </div>
-                </div>
-    
-                <div>
-                    <div class="card card-dark">
-                        <div class="card-header">
-                            <h3 class="card-title">See Assistant Schedule</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <!-- /.card-header -->
-                        <!-- form start -->
-                        <div class="card-body" style="height:340px;overflow-y:auto;">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label>Assistant: <span style="color: red"></span></label>
-                                        <select id="assistant-select" name="assistant_select" class="form-control">
-                                            <option value="" selected>-- Select Teacher --</option>
-                                            @foreach ($data['teacher'] as $tc)
-                                                <option value="{{ $tc->id }}">{{ $tc->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label>Grade: <span style="color: red"></span></label>
-                                        <select id="assistant-grade-select" name="assistant_grade_select" class="form-control">
-                                            <option value="" selected>-- Select Grade --</option>
-                                            @foreach ($data['grades'] as $gr)
-                                                <option value="{{ $gr->id }}">{{ $gr->name }} - {{ $gr->class }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label>Day: <span style="color: red"></span></label>
-                                        <select id="assistant-day-select" name="assistant-day-select" class="form-control">
-                                            <option value="" selected>-- Select Day --</option>
-                                            <option value="1">Monday</option>
-                                            <option value="2">Tuesday</option>
-                                            <option value="3">Wednesday</option>
-                                            <option value="4">Thursday</option>
-                                            <option value="5">Friday</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="scheduleTeacherCompanion"></div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -489,75 +375,125 @@
         const daySelectAll = document.getElementById('day-select-all');
         const scheduleTeacherAllDiv = document.getElementById('scheduleAll');
 
-        fetchTeacherSchedule('null', 'null', 'null');
+        fetchTeacherAllSchedule('null', 'null', 'null');
         
-        teacherSelectAll.addEventListener('change', validateAndFetchSchedule);
-        gradeSelectAll.addEventListener('change', validateAndFetchSchedule);
-        daySelectAll.addEventListener('change', validateAndFetchSchedule);
+        teacherSelectAll.addEventListener('change', validateAndFetchScheduleAll);
+        gradeSelectAll.addEventListener('change', validateAndFetchScheduleAll);
+        daySelectAll.addEventListener('change', validateAndFetchScheduleAll);
 
-        function validateAndFetchSchedule() {
+        function validateAndFetchScheduleAll() {
             const teacher = teacherSelectAll.value || 'null';
             const grade = gradeSelectAll.value || 'null';
             const day = daySelectAll.value || 'null';
 
-            fetchTeacherSchedule(teacher, grade, day);
+            fetchTeacherAllSchedule(teacher, grade, day);
         }
 
-        function fetchTeacherSchedule(teacher, grade, day) {
+        function fetchTeacherAllSchedule(teacher, grade, day) {
             fetch(`/get-all-schedule-filter/${teacher}/${grade}/${day}`)
                 .then(response => response.json())
                 .then(data => {
-                    renderScheduleTable(data, scheduleTeacherAllDiv);
+                    console.log('Data fetched:', data); // Log data yang diambil
+                    renderScheduleTableAll(data, scheduleTeacherAllDiv);
                 })
                 .catch(error => console.error('Error fetching schedule:', error));
         }
 
-        function renderScheduleTable(data, container) {
+        function renderScheduleTableAll(data, container) {
+            const dayColors = {
+                "Monday": "#FFDDC1",
+                "Tuesday": "#D4F1F4",
+                "Wednesday": "#F7D6E0",
+                "Thursday": "#D1D4E0",
+                "Friday": "#FFF5E1"
+            };
+
+            const classColors = {
+                "Toddler": "#FFCCCC",      // Light Pink
+                "Nursery": "#CCFFCC",      // Light Green
+                "Kindergarten - A": "#CCCCFF",           // Light Blue
+                "Kindergarten - B": "#FFCC99",           // Light Orange
+                "Primary - 1": "#FF99CC",  // Pink
+                "Primary - 2": "#99CCFF",  // Sky Blue
+                "Primary - 3": "#FFCC99",  // Peach
+                "Primary - 4": "#99FF99",  // Light Lime
+                "Primary - 5": "#FFCCFF",  // Light Magenta
+                "Primary - 6": "#CCCC99",   // Light Olive
+                "Secondary - 1": "#FF99FF", // Violet
+                "Secondary - 2": "#FFFF99", // Light Yellow
+                "Secondary - 3": "#99CCFF"  // Light Cyan
+            };
+
             let table = '<table class="table table-bordered">';
             table += `
                 <thead>
                     <tr>
-                        <th style="font-size:12px;">Grade</th>
-                        <th style="font-size:12px;">Subject</th>
-                        <th style="font-size:12px;">Teacher</th>
-                        <th style="font-size:12px;">Assisstant</th>
-                        <th style="font-size:12px;">Day</th>
-                        <th style="font-size:12px;">Start Time</th>
-                        <th style="font-size:12px;">End Time</th>
+                        <th style="font-size:12px;">Waktu</th>
+                        <th style="font-size:12px;">Toddler</th>
+                        <th style="font-size:12px;">Nursery</th>
+                        <th style="font-size:12px;">KA</th>
+                        <th style="font-size:12px;">KB</th>
+                        <th style="font-size:12px;">Primary-1</th>
+                        <th style="font-size:12px;">Primary-2</th>
+                        <th style="font-size:12px;">Primary-3</th>
+                        <th style="font-size:12px;">Primary-4</th>
+                        <th style="font-size:12px;">Primary-5</th>
+                        <th style="font-size:12px;">Primary-6</th>
+                        <th style="font-size:12px;">Secondary-1</th>
+                        <th style="font-size:12px;">Secondary-2</th>
+                        <th style="font-size:12px;">Secondary-3</th>
                     </tr>
                 </thead>
                 <tbody>
             `;
 
-            const getDayName = (day) => {
-                switch(day) {
-                    case 1:
-                        return "Monday";
-                    case 2:
-                        return "Tuesday";
-                    case 3:
-                        return "Wednesday";
-                    case 4:
-                        return "Thursday";
-                    case 5:
-                        return "Friday";
-                    default:
-                        return "";
-                }
-            }
+            Object.keys(data).forEach(day => {
+                table += `<tr style="background-color: ${dayColors[day]}"><td class="bg-yellow text-center text-bold" style="font-size:12px;" colspan="14">${day.toUpperCase()}</td></tr>`;
+                const gradeSchedules = data[day];
 
-            data.forEach((item, index) => {
-                table += `
-                    <tr>
-                        <td style="font-size:12px;">${item.grade_name || ''}</td>
-                        <td style="font-size:12px;">${item.subject_name == null ? item.note : item.subject_name}</td>
-                        <td style="font-size:12px;">${item.teacher_name == null ? '' : item.teacher_name}</td>
-                        <td style="font-size:12px;">${item.assisstant == null ? '' : item.assisstant}</td>
-                        <td style="font-size:12px;">${getDayName(item.day)}</td>
-                        <td style="font-size:12px;">${item.start_time}</td>
-                        <td style="font-size:12px;">${item.end_time}</td>
-                    </tr>
-                `;
+                // Kumpulkan semua slot waktu untuk hari ini
+                const timeSlots = [];
+                Object.keys(gradeSchedules).forEach(grade => {
+                    gradeSchedules[grade].forEach(schedule => {
+                        const timeSlot = `${schedule.start_time}-${schedule.end_time}`;
+                        if (!timeSlots.includes(timeSlot)) {
+                            timeSlots.push(timeSlot);
+                        }
+                    });
+                });
+
+                timeSlots.forEach(timeSlot => {
+                    table += `<tr><td class="font-bold text-xs">${timeSlot}</td>`;
+                    const timeSlotSchedules = {};
+
+                    Object.keys(gradeSchedules).forEach(grade => {
+                        gradeSchedules[grade].forEach(schedule => {
+                            if (`${schedule.start_time}-${schedule.end_time}` === timeSlot) {
+                                const gradeName = schedule.grade_name || '';
+                                const classColor = classColors[gradeName.split(' ')[0]] || '#FFFFFF';
+                                timeSlotSchedules[grade] = `
+                                    <div class="col p-0" style="background-color: ${classColor[grade]};">
+                                        <p class="text-bold" style="font-size:12px;">${schedule.subject_name ? schedule.subject_name.toUpperCase() : ""}
+                                        <br>${schedule.teacher_name}
+                                        <br>${schedule.assisstant ? `${schedule.assisstant} (assisstant)` : ""}</p>
+                                    </div>
+                                `;
+
+                                if (!schedule.subject_name) {
+                                    timeSlotSchedules[grade] = `<p>${schedule.notes}</p>`;
+                                }
+                            }
+                        });
+                    });
+
+                    const grades = ["Toddler", "Nursery", "Kindergarten - A", "Kindergarten - B", "Primary - 1", "Primary - 2", "Primary - 3", "Primary - 4", "Primary - 5", "Primary - 6", "Secondary - 1", "Secondary - 2", "Secondary - 3"];
+
+                    grades.forEach(grade => {
+                        table += `<td style="font-size:12px;background-color: ${classColors[grade]};">${timeSlotSchedules[grade] || ''}</td>`;
+                    });
+
+                    table += `</tr>`;
+                });
             });
 
             table += '</tbody></table>';
@@ -566,172 +502,13 @@
     });
 </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const teacherSelect = document.getElementById('teacher-select');
-        const gradeSelect = document.getElementById('grade-select'); 
-        const daySelect = document.getElementById('day-select');
-        const scheduleTeacherDiv = document.getElementById('scheduleTeacher');
 
-        teacherSelect.addEventListener('change', validateAndFetchSchedule);
-        gradeSelect.addEventListener('change', validateAndFetchSchedule);
-        daySelect.addEventListener('change', validateAndFetchSchedule);
-
-        function validateAndFetchSchedule() {
-            const teacher = teacherSelect.value || 'null';
-            const grade = gradeSelect.value || 'null';
-            const day = daySelect.value || 'null';
-
-            fetchTeacherSchedule(teacher, grade, day);
-        }
-
-        function fetchTeacherSchedule(teacher, grade, day) {
-            fetch(`/get-schedule-filter/${teacher}/${grade}/${day}`)
-                .then(response => response.json())
-                .then(data => {
-                    renderScheduleTable(data, scheduleTeacherDiv);
-                })
-                .catch(error => console.error('Error fetching schedule:', error));
-        }
-
-        function renderScheduleTable(data, container) {
-            let table = '<table class="table table-bordered">';
-            table += `
-                <thead>
-                    <tr>
-                        <th style="font-size:12px;">Grade</th>
-                        <th style="font-size:12px;">Subject</th>
-                        <th style="font-size:12px;">Teacher</th>
-                        <th style="font-size:12px;">Day</th>
-                        <th style="font-size:12px;">Start Time</th>
-                        <th style="font-size:12px;">End Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-            `;
-
-            const getDayName = (day) => {
-                switch(day) {
-                    case 1:
-                        return "Monday";
-                    case 2:
-                        return "Tuesday";
-                    case 3:
-                        return "Wednesday";
-                    case 4:
-                        return "Thursday";
-                    case 5:
-                        return "Friday";
-                    default:
-                        return "";
-                }
-            }
-
-            data.forEach((item, index) => {
-                table += `
-                    <tr>
-                        <td style="font-size:12px;">${item.grade_name || ''}</td>
-                        <td style="font-size:12px;">${item.subject_name == null ? item.note : item.subject_name}</td>
-                        <td style="font-size:12px;">${item.teacher_name == null ? '' : item.teacher_name}</td>
-                        <td style="font-size:12px;">${getDayName(item.day)}</td>
-                        <td style="font-size:12px;">${item.start_time}</td>
-                        <td style="font-size:12px;">${item.end_time}</td>
-                    </tr>
-                `;
-            });
-
-            table += '</tbody></table>';
-            container.innerHTML = table;
-        }
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const teacherAssistSelect = document.getElementById('assistant-select');
-        const gradeAssistSelect = document.getElementById('assistant-grade-select');
-        const dayAssistSelect = document.getElementById('assistant-day-select');
-        const scheduleTeacherDiv = document.getElementById('scheduleTeacherCompanion');
-
-        teacherAssistSelect.addEventListener('change', validateAndFetchSchedule);
-        gradeAssistSelect.addEventListener('change', validateAndFetchSchedule);
-        dayAssistSelect.addEventListener('change', validateAndFetchSchedule);
-
-        function validateAndFetchSchedule() {
-            const teacherAssist = teacherAssistSelect.value || 'null';
-            const gradeAssist = gradeAssistSelect.value || 'null';
-            const dayAssist = dayAssistSelect.value || 'null';
-
-            fetchTeacherSchedule(teacherAssist, gradeAssist, dayAssist);
-        }
-
-        function fetchTeacherSchedule(teacherAssist, gradeAssist, dayAssist) {
-            fetch(`/get-schedule-assist-filter/${teacherAssist}/${gradeAssist}/${dayAssist}`)
-                .then(response => response.json())
-                .then(data => {
-                    renderScheduleTable(data, scheduleTeacherDiv);
-                })
-                .catch(error => console.error('Error fetching schedule:', error));
-        }
-
-        function renderScheduleTable(data, container) {
-            let table = '<table class="table table-bordered">';
-            table += `
-                <thead>
-                    <tr>
-                        <th style="font-size:12px;">Grade</th>
-                        <th style="font-size:12px;">Subject</th>
-                        <th style="font-size:12px;">Assistant</th>
-                        <th style="font-size:12px;">Day</th>
-                        <th style="font-size:12px;">Start Time</th>
-                        <th style="font-size:12px;">End Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-            `;
-
-            const getDayName = (day) => {
-                switch(day) {
-                    case 1:
-                        return "Monday";
-                    case 2:
-                        return "Tuesday";
-                    case 3:
-                        return "Wednesday";
-                    case 4:
-                        return "Thursday";
-                    case 5:
-                        return "Friday";
-                    default:
-                        return "";
-                }
-            }
-
-            data.forEach((item, index) => {
-                table += `
-                    <tr>
-                        <td style="font-size:12px;">${item.grade_name || ''}</td>
-                        <td style="font-size:12px;">${item.subject_name == null ? item.note : item.subject_name}</td>
-                        <td style="font-size:12px;">${item.teacher_name == null ? '' : item.teacher_name}</td>
-                        <td style="font-size:12px;">${getDayName(item.day)}</td>
-                        <td style="font-size:12px;">${item.start_time}</td>
-                        <td style="font-size:12px;">${item.end_time}</td>
-                    </tr>
-                `;
-            });
-
-            table += '</tbody></table>';
-            container.innerHTML = table;
-        }
-    });
-</script>
-
-@if(session('after_create_schedule')) 
+@if(session('after_create_grade_schedule')) 
    <script>
     Swal.fire({
         icon: 'success',
         text: 'Successfully',
-        title: 'Successfully created new schedule in the database.',
+        title: 'Successfully created schedule in the database.',
     });
    </script>
 @endif
