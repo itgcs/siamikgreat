@@ -1,21 +1,48 @@
 @extends('layouts.admin.master')
 @section('content')
 
+<style>
+   .full-height {
+      height: 60vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+   }
+   .icon-wrapper {
+      position: relative;
+      display: inline-block;
+   }
+   .icon-wrapper i {
+      font-size: 200px;
+      color: #ccc;
+   }
+   .icon-wrapper p {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      margin: 0;
+      font-size: 1.5rem;
+      color: black;
+      text-align: center;
+   }
+</style>
 
 <!-- Content Wrapper. Contains page content -->
-<div class="container-fluid">
-   <div class="row">
-        <div class="col">
-            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item">Home</li>
-                    <li class="breadcrumb-item active" aria-current="page">Grades</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-   <!-- START TABEL -->
-   @if (sizeof($data['gradeTeacher']) != 0)
+<!-- START TABEL -->
+@if (sizeof($data['gradeTeacher']) != 0)
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col">
+               <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+                  <ol class="breadcrumb mb-0">
+                     <li class="breadcrumb-item">Home</li>
+                     <li class="breadcrumb-item active" aria-current="page">Grades</li>
+                  </ol>
+               </nav>
+         </div>
+      </div>
       @foreach ($data['gradeTeacher'] as $dgt)
          <div class="card card-dark">
                <div class="card-header">
@@ -89,11 +116,15 @@
          </div>
       @endforeach
       <!-- END TABLE -->
-   @else
-      <p class="text-center">You don't have data grade</p>
-   @endif
-   <!-- END TABEL -->
-</div>
+   </div>
+@else
+   <div class="container-fluid full-height">
+      <div class="icon-wrapper">
+         <i class="fa-solid fa-user-large-slash"></i>
+         <p> Oops... <br> You are not a class teacher</p>
+      </div>
+   </div>
+@endif
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>

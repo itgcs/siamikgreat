@@ -22,6 +22,7 @@ use App\Models\Student_eca;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -93,8 +94,10 @@ class DashboardController extends Controller
                ->get();
             
             $teacherSubject = Teacher_subject::join('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
+               ->join('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
                ->where('teacher_id', $id)
-               ->select('subjects.*')
+               ->select('subjects.*',
+                  DB::raw("CONCAT(grades.name, '-', grades.class) as grade_name"))
                ->get();
 
             $dataExam  = Grade_exam::join('grades', 'grades.id', '=', 'grade_exams.grade_id')
@@ -102,6 +105,8 @@ class DashboardController extends Controller
                ->join('type_exams', 'type_exams.id', '=', 'exams.type_exam')
                ->select('exams.*', 'type_exams.name as type_exam_name', 'grades.name as grade_name', 'grades.class as grade_class')
                ->where('exams.teacher_id', $id)
+               ->where('exams.semester', session('semester'))
+               ->where('exams.academic_year', session('academic_year'))
                ->get();
 
             foreach ($dataExam as $ed ) {
@@ -121,7 +126,11 @@ class DashboardController extends Controller
                ->get()
                ->count('id');
 
-            $totalExam      = Exam::where('teacher_id', $id)->get()->count('id');
+            $totalExam      = Exam::where('teacher_id', $id)
+               ->where('semester', session('semester'))
+               ->where('academic_year', session('academic_year'))
+               ->get()->count('id');
+
             $totalGrade     = Teacher_grade::where('teacher_id', $id)->get()->count('id');
             $totalSubject   = Teacher_subject::where('teacher_id', $id)->get()->count('id');
             

@@ -7,7 +7,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col">
-            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
+            <nav aria-label="breadcrumb" class="bg-white rounded-3 p-3 mb-2">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item">Home</li>
                     <li class="breadcrumb-item active" aria-current="page">Exams</li>

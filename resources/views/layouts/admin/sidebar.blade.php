@@ -110,13 +110,13 @@
           <li class="nav-item">
             <a href="/{{session('role')}}/schedules/midexams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules mid exam' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
-              <p>Mid Exam</p>
+              <p>Mid Exams</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/{{session('role')}}/schedules/finalexams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules final exam' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
-              <p>Final Exam</p>
+              <p>Final Exams</p>
             </a>
           </li>
           <li class="nav-item">
@@ -148,7 +148,7 @@
           <li class="nav-item">
             <a href="/{{session('role')}}/dashboard/schedules/grade" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules grade' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
-              <p>Grade</p>
+              <p>Class Teacher</p>
             </a>
           </li>
           <li class="nav-item">
@@ -158,7 +158,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/schedules/invillager" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules invillager' ? 'active' : '') : ''}}">
+            <a href="/{{session('role')}}/dashboard/schedules/invigilater" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules invigilater' ? 'active' : '') : ''}}">
               <i class="far fa-circle nav-icon"></i>
               <p>Invigilater</p>
             </a>
@@ -512,7 +512,7 @@
           <a href="/{{ session('role') }}/exams" class="nav-link {{ session('page') && session('page')->page == 'database exam' ? 'active' : '' }}">
             <i class="nav-icon fa-solid fa-pencil"></i>
             <p>
-              Exam
+              Exams
             </p>
           </a>
         </li>
@@ -521,7 +521,7 @@
           <a href="/{{ session('role') }}/dashboard/exam/teacher" class="nav-link {{ session('page') && session('page')->page == 'database teacher exams' ? 'active' : '' }}">
             <i class="nav-icon fa-solid fa-pencil"></i>
             <p>
-              Exam
+              Exams
             </p>
           </a>
         </li>
@@ -530,7 +530,7 @@
           <a href="/{{ session('role') }}/dashboard/exam" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'exams' ? 'active' : '') : ''}}">
             <i class="nav-icon fa-solid fa-pencil"></i>
             <p>
-              Exam
+              Exams
             </p>
           </a>
         </li>
@@ -556,7 +556,7 @@
           <a href="/{{ session('role') }}/typeExams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database type exams' ? 'active' : '') : ''}}">
             <i class="nav-icon fa-solid fa-clipboard"></i>
             <p>
-              Type Exam
+              Type Exams
             </p>
           </a>
         </li>

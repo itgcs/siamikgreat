@@ -358,20 +358,20 @@
             table += `
                 <thead>
                     <tr>
-                        <th style="font-size:12px;width:0px;">Waktu</th>
-                        <th style="font-size:12px;width:100px;">Toddler</th>
-                        <th style="font-size:12px;width:100px;">Nursery</th>
-                        <th style="font-size:12px;width:100px;">KA</th>
-                        <th style="font-size:12px;width:100px;">KB</th>
-                        <th style="font-size:12px;width:100px;">Primary-1</th>
-                        <th style="font-size:12px;width:100px;">Primary-2</th>
-                        <th style="font-size:12px;width:100px;">Primary-3</th>
-                        <th style="font-size:12px;width:100px;">Primary-4</th>
-                        <th style="font-size:12px;width:100px;">Primary-5</th>
-                        <th style="font-size:12px;width:100px;">Primary-6</th>
-                        <th style="font-size:12px;width:100px;">Secondary-1</th>
-                        <th style="font-size:12px;width:100px;">Secondary-2</th>
-                        <th style="font-size:12px;width:100px;">Secondary-3</th>
+                        <th style="font-size:12px;">Waktu</th>
+                        <th style="font-size:12px;">Toddler</th>
+                        <th style="font-size:12px;">Nursery</th>
+                        <th style="font-size:12px;">KA</th>
+                        <th style="font-size:12px;">KB</th>
+                        <th style="font-size:12px;">Primary-1</th>
+                        <th style="font-size:12px;">Primary-2</th>
+                        <th style="font-size:12px;">Primary-3</th>
+                        <th style="font-size:12px;">Primary-4</th>
+                        <th style="font-size:12px;">Primary-5</th>
+                        <th style="font-size:12px;">Primary-6</th>
+                        <th style="font-size:12px;">Secondary-1</th>
+                        <th style="font-size:12px;">Secondary-2</th>
+                        <th style="font-size:12px;">Secondary-3</th>
                     </tr>
                 </thead>
                 <tbody>

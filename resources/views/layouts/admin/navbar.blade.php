@@ -1,3 +1,24 @@
+<style>
+  .navbar-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: bold;
+      color: black;
+  }
+  .shake {
+      animation: shake 1.5s;
+      animation-iteration-count: infinite;
+  }
+  @keyframes shake {
+      0% { transform: translateX(-1px); }
+      25% { transform: translateX(1px); }
+      50% { transform: translateX(-1px); }
+      75% { transform: translateX(1px); }
+      100% { transform: translateX(-1px); }
+  }
+</style>
+
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
    <!-- Left navbar links -->
@@ -5,12 +26,9 @@
      <li class="nav-item">
        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
      </li>
-     {{-- <li class="nav-item d-none d-sm-inline-block">
-       <a href="index3.html" class="nav-link">Home</a>
+     <li class="nav-item d-none d-sm-inline-block shake">
+       <a class="nav-link text-black text-md">System Academic Periode {{ session('semester') }} Year {{ session('academic_year') }}</a>
      </li>
-     <li class="nav-item d-none d-sm-inline-block">
-       <a href="#" class="nav-link">Contact</a>
-     </li> --}}
    </ul>
 
    <!-- Right navbar links -->
@@ -117,7 +135,7 @@
        </a>
      </li> --}}
    </ul>
- </nav>
+</nav>
  <!-- /.navbar -->
 
  <script>
