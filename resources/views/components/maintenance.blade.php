@@ -27,8 +27,8 @@
 <!-- Main content -->
 <div class="container-fluid full-height">
   <div class="icon-wrapper">
-      <i class="fa-regular fa-face-sad-tear"></i>
-      <a href="/teacher/dashboard" class="btn btn-primary mt-3"><p>Oops.. <br> Under Maintenance</p></a>
+  <i class="fa-regular fa-face-smile-wink"></i>
+  <p>Sorry.. <br> this page is under development</p>
   </div>
 </div>
 <!-- /.content-wrapper -->

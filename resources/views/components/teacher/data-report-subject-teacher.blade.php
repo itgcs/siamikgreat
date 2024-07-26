@@ -221,7 +221,7 @@
 @else
    <div class="container-fluid full-height">
       <div class="icon-wrapper">
-         <i class="fa-regular fa-face-sad-tear"></i>
+            <i class="fa-regular fa-face-laugh-wink"></i>
             <p>Oops.. <br> Maybe you haven't been plotted yet</p>
       </div>
    </div>

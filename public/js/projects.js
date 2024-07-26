@@ -87,8 +87,8 @@ $(document).ready(function () {
                     accepts: {
                         mycustomtype: "application/x-some-custom-type",
                     },
-                    url: `/admin/user/${value}`,
-                    type: "delete",
+                    url: `/superadmin/users/delete/${value}`,
+                    type: "get",
                     cache: false,
                     data: {
                         id: value,

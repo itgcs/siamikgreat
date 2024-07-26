@@ -99,10 +99,10 @@
     </div>
 @else
     <div class="container-fluid full-height">
-    <div class="icon-wrapper">
-        <i class="fa-regular fa-face-sad-tear"></i>
-            <p>Oops.. <br> You are not class teacher</p>
-    </div>
+        <div class="icon-wrapper">
+            <i class="fa-regular fa-face-laugh-wink"></i>
+            <p>Oops.. <br> This page can only be accessed by class teachers</p>
+        </div>
     </div>
 @endif
 

@@ -51,7 +51,10 @@ $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
               </div>
               <div class="col-sm-8">
                 <p class="text-muted mb-0">{{$data->date_exam}}</p>
-                <small class="text-muted mb-0">Days until exam:  <span class="badge badge-danger">{{$days}} days</span></small>
+                @if($data->is_active)
+                  <small class="text-muted mb-0">Days until exam:  <span class="badge badge-danger">{{$days}} days</span></small>
+                @else
+                @endif
               </div>
             </div>
             <hr>
@@ -100,15 +103,19 @@ $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
                     @if($data->is_active)
                         <h1 class="badge badge-success">Active</h1>
                     @else
-                        <h1 class="badge badge-danger">Inactive</h1>
+                        <h1 class="badge badge-danger">Inactive (Scores already inputed)</h1>
                     @endif
                   </p>
+              </div>
+            </div>
+            <div class="row d-flex justify-content-center">
+              <div class="col-md-12">
+                <a href="/teacher/dashboard/exam/score/{{ $data->id }}" class="btn btn-success col-12">Scoring</a>
               </div>
             </div>
           </div>
         </div>
 
-        
       </div>
     </div>
   </div>

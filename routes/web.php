@@ -757,7 +757,6 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::get('/', [Pdf::class, 'index']);
    });
 
-
    Route::prefix('/chineseHigher')->group(function () {
       Route::get('/', [ChineseHigherController::class, 'index']);
       Route::get('/add', [ChineseHigherController::class, 'addStudent']);

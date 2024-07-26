@@ -9,19 +9,14 @@
       align-items: center;
       position: relative;
    }
-   .icon-wrapper {
-      position: relative;
-      display: inline-block;
-   }
    .icon-wrapper i {
       font-size: 200px;
       color: #ccc;
    }
    .icon-wrapper p {
       position: absolute;
-      top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, 0%);
       margin: 0;
       font-size: 1.5rem;
       color: black;
@@ -120,8 +115,8 @@
 @else
    <div class="container-fluid full-height">
       <div class="icon-wrapper">
-         <i class="fa-solid fa-user-large-slash"></i>
-         <p> Oops... <br> You are not a class teacher</p>
+         <i class="fa-regular fa-face-laugh-wink"></i>
+         <p> Oops... <br> This page can only be accessed by class teachers</p>
       </div>
    </div>
 @endif

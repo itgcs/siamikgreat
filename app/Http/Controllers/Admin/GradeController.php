@@ -290,11 +290,11 @@ class GradeController extends Controller
          $subjectGrade = Grade_subject::where('grade_id', $id)->pluck('subject_id')->toArray();
 
          // dd(count($subjectGrade));
-         $teacher = Teacher::orderBy('id', 'asc')->get();
+         $teacher = Teacher::orderBy('name', 'asc')->get();
          $subject = Subject::orderBy('id', 'asc')->get();         
          $data    = Grade::where('id', $id)->first();
          $gradeSubject = Subject::get();
-         $allTeacher = Teacher::get();
+         $allTeacher = Teacher::orderBy('name', 'asc')->get();
          $gradeId = $id;
          
          // dd($subjectGrade);

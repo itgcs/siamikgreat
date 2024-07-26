@@ -219,8 +219,8 @@ class ExamController extends Controller
    public function getById($id)
    {
       session()->flash('page',  $page = (object)[
-         'page' => 'database exam',
-         'child' => 'exams',
+         'page' => 'database teacher exams',
+         'child' => 'database teacher exams',
       ]);
 
       try {
