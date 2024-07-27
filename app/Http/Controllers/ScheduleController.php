@@ -102,7 +102,18 @@ class ScheduleController extends Controller
          $semester2 = Master_academic::value('semester2');
          $endsemester2 = Master_academic::value('end_semester2');
 
-         return view('components.schedule.all-schedule', compact('exams', 'schedules', 'gradeSchedules', 'gradeSchedulestwo', 'semester1', 'semester2', 'endsemester1', 'endsemester2',));
+
+         $grades = Grade::whereNotIn('name', ['IGCSE'])->get();
+         $teacher = Teacher::orderBy('name', 'asc')->get();
+         $subject = Subject::orderBy('name_subject', 'asc')->get();
+         
+         $data = [
+            'grades' => $grades,
+            'teacher' => $teacher,
+            'subject' => $subject,
+         ];
+         
+         return view('components.schedule.all-schedule', compact('exams', 'schedules', 'gradeSchedules', 'gradeSchedulestwo', 'semester1', 'semester2', 'endsemester1', 'endsemester2'))->with('data', $data);
 
       } catch (Exception $err) {
          return dd($err);
@@ -420,7 +431,7 @@ class ScheduleController extends Controller
             ->select('grades.name as grade_name', 'grades.class as grade_class', 'grades.id as grade_id')
             ->first();
 
-         $teacher = Teacher::get();
+         $teacher = Teacher::orderBy('name', 'asc')->get();
          $grade   = Grade::get();
 
          // dd($subtituteTeacher);
@@ -1239,8 +1250,8 @@ class ScheduleController extends Controller
 
          $grade = Grade::where('id', $id)->get();
          $grades = Grade::whereNotIn('name', ['IGCSE'])->get();
-         $teacher = Teacher::get();
-         $subject = Subject::get();
+         $teacher = Teacher::orderBy('name', 'asc')->get();
+         $subject = Subject::orderBy('name_subject', 'asc')->get();
 
          $typeSchedule = Type_schedule::where('name', 'lesson')->get();
 
@@ -1400,8 +1411,8 @@ class ScheduleController extends Controller
          } 
 
          session()->flash('after_create_grade_schedule');
-
-         return redirect('/' . $role . '/schedules/detail/' . $request->grade_id);
+         return redirect()->back();
+         // return redirect('/' . $role . '/schedules/detail/' . $request->grade_id);
       } catch (Exception $err) {
          dd($err);
          return redirect()->back()->withErrors(['error' => $err->getMessage()])->withInput();
@@ -1808,8 +1819,7 @@ class ScheduleController extends Controller
             })
             ->select('subtitute_teachers.*', 
                      'grades.id as grade_id',
-                     'grades.name as grade_name', 
-                     'grades.class as grade_class', 
+                     DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"), 
                      't1.name as teacher_name',
                      't2.name as teacher_companion',
                      't2.id as teacher_companion_id',
@@ -1846,8 +1856,7 @@ class ScheduleController extends Controller
             })
             ->select('subtitute_teachers.*', 
                      'grades.id as grade_id',
-                     'grades.name as grade_name', 
-                     'grades.class as grade_class', 
+                     DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"),  
                      't1.name as teacher_name',
                      't2.name as teacher_companion',
                      't2.id as teacher_companion_id',

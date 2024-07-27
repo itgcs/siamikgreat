@@ -76,8 +76,8 @@ class GradeController extends Controller
             'child' => 'database grades',
          ]);
 
-         $teacher = Teacher::get();
-         $subject = Subject::get();
+         $teacher = Teacher::orderBy('name', 'asc')->get();
+         $subject = Subject::orderBy('name_subject', 'asc')->get();
          $grade   = Grade::where('id', $id)->first();
 
          $data = [
@@ -89,7 +89,8 @@ class GradeController extends Controller
          // dd($data);
          return view('components.grade.add-subject-grade')->with('data', $data);
          
-      } catch (Exception) {
+      } catch (Exception $err) {
+         dd($err);
          return abort(500);
       }
    }

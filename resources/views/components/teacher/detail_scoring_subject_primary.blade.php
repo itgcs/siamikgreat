@@ -61,7 +61,7 @@
             </div>  
         @endif
         
-        <table class="table table-striped table-bordered" style=" width: 1400px;">
+        <table class="table table-striped table-bordered bg-white border-black" style=" width: 2000px;">
             <thead>
                 <tr>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -112,7 +112,7 @@
                                 <td class="text-center">{{ $score['score'] }}</td>
                             @endif
                         @endforeach
-                        <td class="text-center">{{ $student['avg_homework'] }} </td>
+                        <td class="text-center">{{ $student['percent_homework'] }} </td>
                         <!-- END HOMEWORK -->
 
 
@@ -123,7 +123,7 @@
                             @endif
                         @endforeach
 
-                        <td class="text-center">{{ $student['avg_exercise'] }}</td> <!-- nilai rata-rata exercise -->
+                        <td class="text-center">{{ $student['percent_exercise'] }}</td> <!-- nilai rata-rata exercise -->
                         <!-- END COUNT EXERCISE -->
 
 
@@ -134,7 +134,7 @@
                             @endif
                         @endforeach
 
-                        <td class="text-center">{{ $student['avg_participation'] }}</td> <!-- nilai rata-rata participation -->
+                        <td class="text-center">{{ $student['percent_participation'] }}</td> <!-- nilai rata-rata participation -->
                         
                         <!-- END COUNT PARTICIPATION -->
 
@@ -144,11 +144,11 @@
                                 <td class="text-center">{{ $score['score'] }}</td> 
                             @elseif($score['type_exam'] == $data['practical'])
                                 <td class="text-center">{{ $score['score'] }}</td> 
-                            @elseif($score['type_exam'] == $data['finalExam'])
+                            @elseif($score['type_exam'] == $data['finalAssessment'])
                                 <td class="text-center">{{ $score['score'] }}</td> 
                             @endif
                         @endforeach
-                        <td class="text-center">{{ $student['avg_fe'] }}</td>
+                        <td class="text-center">{{ $student['percent_fe'] }}</td>
                         <!-- END COUNT PROJECT / PRACTICAL / FINAL ASESSMENT -->
                         
 
@@ -159,18 +159,22 @@
                         <td class="text-center">{{ $student['grades'] }}</td>
 
                         <!-- COMMENT -->
-                        <td class="project-actions text-right">
+                        <td class="project-actions text-left">
                             <div class="input-group">
-                                <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
                                 <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">  
                                 <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $student['total_score'] }}">  
                                 <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">  
+                                @if ($data['status'] == null) 
+                                <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
                                 <div class="input-group-append">
-                                <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
-                                    <i class="fas fa-pen"></i>
+                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
+                                        <i class="fas fa-pen"></i>
                                         Edit
                                     </a>
                                 </div>
+                                @else
+                                {{ $student['comment'] }}
+                                @endif
                             </div>
                         </td>
                     </tr>

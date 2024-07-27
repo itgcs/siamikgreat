@@ -56,7 +56,7 @@
                 </div>
             </div>  
         @endif
-        <table class="table table-striped table-bordered" style=" width: 1400px;">
+        <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
             <thead>
                 <tr>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -65,7 +65,7 @@
                     <th colspan="{{ $data['grade']->total_mid + 2 }}" class="text-center" style="vertical-align : middle;text-align:center;">Quiz/Practical Exam/Project</th>
                     <th colspan="{{ $data['grade']->total_final_exam + 2 }}" class="text-center" style="vertical-align : middle;text-align:center;">Final Exam (Written Tes/Big Project)</th>
                     <th class="text-center">Total</th>
-                    <th rowspan="2" class="text-center" style="width: 25%;" style="vertical-align : middle;text-align:center;">Comment</th>
+                    <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Comment</th>
                 </tr>
                 <tr>
                     <!-- TASKS -->

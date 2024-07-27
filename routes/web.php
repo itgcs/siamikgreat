@@ -68,6 +68,7 @@ Route::get('/counter', Counter::class);
 Route::get('/get-subjects/{gradeId}', function($gradeId) {
    $subjects = Grade_subject::join('subjects', 'grade_subjects.subject_id', '=', 'subjects.id')
    ->where('grade_id', $gradeId)
+   ->orderBy('subjects.name_subject', 'asc')
    ->get();
    return response()->json($subjects);
 });
@@ -86,6 +87,7 @@ Route::get('/get-subjects/{gradeId}/{teacherId}', function($gradeId, $teacherId)
    $teachers = Teacher_subject::join('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
    ->where('grade_id', $gradeId)
    ->where('teacher_id', $teacherId)
+   ->orderBy('subjects.name_subject', 'asc')
    ->get();
    return response()->json($teachers);
 });
@@ -103,37 +105,73 @@ Route::get('/get-all-schedule-filter/{teacher?}/{grade?}/{day?}', function($teac
    $lesson = Type_schedule::where('name', '=', 'Lesson')->value('id');
 
    $query = Schedule::leftJoin('teachers', 'schedules.teacher_id', '=', 'teachers.id')
-      ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
-      ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
-      ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
-      ->where('type_schedule_id', $lesson)
-      ->where('semester', session('semester'))
-      ->orderBy('grade_id', 'asc')
-      ->orderBy('day', 'asc')
-      ->orderBy('start_time', 'asc');
+       ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
+       ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
+       ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
+       ->where('type_schedule_id', $lesson)
+       ->where('semester', session('semester'))
+       ->orderBy('grade_id', 'asc')
+       ->orderBy('day', 'asc')
+       ->orderBy('start_time', 'asc');
 
    if ($teacher !== 'null') {
-      $query->where('teacher_id', $teacher);
+       $query->where('teacher_id', $teacher);
    }
 
    if ($grade !== 'null') {
-      $query->where('grade_id', $grade);
+       $query->where('grade_id', $grade);
    }
 
    if ($day !== 'null') {
-      $query->where('day', $day);
+       $query->where('day', $day);
    }
 
    $schedules = $query->select(
-      'schedules.*',
-      'teachers.name as teacher_name',
-      't2.name as assisstant',
-      DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"),
-      'subjects.name_subject as subject_name'
+       'schedules.*',
+       'teachers.name as teacher_name',
+       't2.name as assisstant',
+       DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"),
+       'subjects.name_subject as subject_name'
    )->get();
 
-   return response()->json($schedules);
+   // Define day names
+   $dayNames = [
+       1 => 'Monday',
+       2 => 'Tuesday',
+       3 => 'Wednesday',
+       4 => 'Thursday',
+       5 => 'Friday'
+   ];
+
+   // Group schedules by day and grade_name
+   $groupedSchedules = $schedules->groupBy('day')->mapWithKeys(function($group, $day) use ($dayNames) {
+       $dayName = $dayNames[$day] ?? 'Unknown';
+
+       $gradeGrouped = $group->groupBy('grade_name')->map(function($gradeGroup) {
+           return $gradeGroup->map(function($schedule) {
+               return [
+                   'id' => $schedule->id,
+                   'subject_name' => $schedule->subject_name,
+                   'teacher_name' => $schedule->teacher_name,
+                   'assisstant' => $schedule->assisstant,
+                   'day' => $schedule->day,
+                   'start_time' => $schedule->start_time,
+                   'end_time' => $schedule->end_time,
+                   'notes' => $schedule->note
+               ];
+           })->values();
+       });
+
+       return [$dayName => $gradeGrouped];
+   });
+
+   return response()->json($groupedSchedules);
 });
+
+
+
+
+
 
 
 Route::get('/get-schedule-filter/{teacher?}/{grade?}/{day?}', function($teacher = null, $grade = null, $day = null) {

@@ -60,7 +60,7 @@
             </div>  
         @endif
         
-        <table class="table table-striped table-bordered" style=" width: 2000px;">
+        <table class="table table-striped table-bordered bg-white" style="width:2000px;">
             <thead>
                 <tr>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -183,7 +183,7 @@
                         <td>{{ $student['total_score'] }}</td>
 
                         <!-- COMMENT -->
-                        <td class="project-actions text-right">
+                        <td class="project-actions text-left">
                             <div class="input-group">
                                 <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">  
                                 <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $student['total_score'] }}">  
