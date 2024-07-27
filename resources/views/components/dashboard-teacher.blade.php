@@ -111,8 +111,8 @@
                   style="position: relative; height: 500px; overflow-y: auto;">
 
                      @if (sizeof($data['exam']) == 0)
-                      <div class="d-flex justify-content-center">
-                        <h2>Teacher don't create any exam!!!</h2>
+                      <div class="d-flex justify-content-center"> 
+                        <h5 class="text-center">Oops.. <br> You don't create any exam</h5>
                       </div>
                      @else
     
@@ -195,28 +195,34 @@
               <!-- /.card-tools -->
             </div>
             <div class="card-body" style="position: relative; height: 500px; overflow-y: auto;">
-             <table class="table table-borderless">
-               <thead>
-                 <tr>
-                   <th scope="col">#</th>
-                   <th scope="col">Name</th>
-                   <th scope="col">Gender</th>
-                   <th scope="col">Grade</th>
-                 </tr>
-               </thead>
-               <tbody>
+            @if (sizeof($data['student']) == 0)
+              <div class="d-flex justify-content-center">
+                <h5 class="text-center">Oops.. <br>You are not class teacher</h5>
+              </div>
+            @else 
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Grade</th>
+                  </tr>
+                </thead>
+                <tbody>
 
-               @foreach ($data['student'] as $el)
-                 <tr>
-                   <td scope="row">{{$loop->index+1}}</td>
-                   <td>{{ $el->name }}</td>
-                   <td>{{ $el->gender }}</td>
-                   <td>{{ $el->grade_name }} - {{ $el->grade_class }}</td>
-                 </tr>
-               @endforeach  
-                 
-               </tbody>
-             </table>
+                @foreach ($data['student'] as $el)
+                  <tr>
+                    <td scope="row">{{$loop->index+1}}</td>
+                    <td>{{ $el->name }}</td>
+                    <td>{{ $el->gender }}</td>
+                    <td>{{ $el->grade_name }} - {{ $el->grade_class }}</td>
+                  </tr>
+                @endforeach  
+                  
+                </tbody>
+              </table>
+            @endif
             </div>
             <div class="card-footer bg-transparent">
               <div class="d-none row">
@@ -256,29 +262,30 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body" style="position: relative; height: 500px; overflow-y: auto;">
-             <table class="table table-borderless">      
               @if(sizeof($data['teacherSubject']) != 0)
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Grade</th>
-                  </tr>
-                </thead>
-                <tbody>
-                @foreach ($data['teacherSubject'] as $el)
-                  <tr>
-                    <td scope="row">{{$loop->index+1}}</td>
-                    <td>{{$el->name_subject}}</td>
-                    <td>{{$el->grade_name}}</td>
-                  </tr>
-                @endforeach  
+                <table class="table table-borderless">      
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Grade</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($data['teacherSubject'] as $el)
+                      <tr>
+                        <td scope="row">{{$loop->index+1}}</td>
+                        <td>{{$el->name_subject}}</td>
+                        <td>{{$el->grade_name}}</td>
+                      </tr>
+                    @endforeach  
+                  </tbody>
+                </table>
               @else
-                <p>Teacher dont have data subject !!!</p>
+                <div class="d-flex justify-content-center">
+                  <h5 class="text-center">Oops.. <br>Maybe you haven't been plotted yet</h5>
+                </div>
               @endif
-                 
-               </tbody>
-             </table>
             </div>
           </div>
 
@@ -298,26 +305,33 @@
               <!-- /.card-tools -->
             </div>
             <div class="card-body" style="position: relative; height: 500px; overflow-y: auto;">
-             <table class="table table-borderless">
-               <thead>
-                 <tr>
-                   <th scope="col">#</th>
-                   <th scope="col">Name</th>
-                   <th scope="col">Class</th>
-                 </tr>
-               </thead>
-               <tbody>
+              @if (sizeof($data['gradeTeacher']) == 0)
+                <div class="d-flex justify-content-center">
+                  <h5 class="text-center">Oops.. <br>You are not class teacher</h5>
+                </div>
+              @else
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Class</th>
+                  </tr>
+                </thead>
+                <tbody>
 
-               @foreach ($data['gradeTeacher'] as $el)
-                 <tr>
-                   <td scope="row">{{$loop->index+1}}</td>
-                   <td>{{$el->name}}</td>
-                   <td>{{$el->class}}</td>
-                 </tr>
-               @endforeach  
+                  @foreach ($data['gradeTeacher'] as $el)
+                    <tr>
+                      <td scope="row">{{$loop->index+1}}</td>
+                      <td>{{$el->name}}</td>
+                      <td>{{$el->class}}</td>
+                    </tr>
+                  @endforeach  
+                  </tbody>
+                </table>
+              @endif
+
                  
-               </tbody>
-             </table>
             </div>
             <div class="card-footer">
               <div class="d-none row">

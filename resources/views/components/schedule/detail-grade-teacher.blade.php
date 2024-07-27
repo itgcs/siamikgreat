@@ -1,82 +1,110 @@
 @extends('layouts.admin.master')
 @section('content')
 
-<!-- Content Wrapper. Contains page content -->
-<div class="container-fluid">
-    @if (!empty($data))
-    @if ($totalClass > 1)
-            <div class="card card-dark mt-2">
-               <div class="card-header"> 
-                  <h3 class="card-title">Your Class</h3>
-                  <div class="card-tools">
-                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                        <i class="fas fa-minus"></i>
-                     </button>
-                  </div>
-               </div>
-   
-               <div class="card-body p-0">
-                  <table class="table table-striped projects">
-                     <thead>
-                           <tr>
-                              <th style="width: 10%">
-                                 #
-                              </th>
-                              <th style="width: 25%">
-                                 Grade
-                              </th>
-                              <th>
-                                 Action
-                              </th>
-                           </tr>
-                     </thead>
-                     <tbody>
-                     @foreach ($data as $dt)
-                        <tr id="{{ 'index_grade_' . $dt->id }}">
-                            <td>
-                                {{ $loop->index + 1 }}
-                            </td>
-                            <td>
-                                <a>
-                                {{ $dt->grade_name }} - {{ $dt->grade_class }}
-                                </a>
-                            </td>
-                            <td>
-                                <a class="btn btn-primary btn-sm"
-                                href="{{url('teacher/dashboard/schedules/gradeOther') . '/' . $dt->grade_id}}">
-                                <i class="fas fa-folder">
-                                </i>
-                                View
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                     </tbody>
-                  </table>
-               </div>
-            </div> 
-        
-    @else
-        <div class="card card-dark mt-2">
-            <div class="card-header header-elements-inline">
-                <h5 class="card-title">{{ $data['grade_name'] }} - {{ $data['grade_class'] }}</h5>
+<style>
+   .full-height {
+      height: 60vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+   }
+   .icon-wrapper i {
+      font-size: 200px;
+      color: #ccc;
+   }
+   .icon-wrapper p {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 0%);
+      margin: 0;
+      font-size: 1.5rem;
+      color: black;
+      text-align: center;
+   }
+</style>
 
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                        <i class="fas fa-minus"></i>
-                    </button>
+<!-- Content Wrapper. Contains page content -->
+@if (!empty($data))
+    <div class="container-fluid">
+        @if ($totalClass > 1)
+                <div class="card card-dark mt-2">
+                <div class="card-header"> 
+                    <h3 class="card-title">Your Class</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+    
+                <div class="card-body p-0">
+                    <table class="table table-striped projects">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%">
+                                    #
+                                </th>
+                                <th style="width: 25%">
+                                    Grade
+                                </th>
+                                <th>
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach ($data as $dt)
+                            <tr id="{{ 'index_grade_' . $dt->id }}">
+                                <td>
+                                    {{ $loop->index + 1 }}
+                                </td>
+                                <td>
+                                    <a>
+                                    {{ $dt->grade_name }} - {{ $dt->grade_class }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm"
+                                    href="{{url('teacher/dashboard/schedules/gradeOther') . '/' . $dt->grade_id}}">
+                                    <i class="fas fa-folder">
+                                    </i>
+                                    View
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                </div> 
+            
+        @else
+            <div class="card card-dark mt-2">
+                <div class="card-header header-elements-inline">
+                    <h5 class="card-title">{{ $data['grade_name'] }} - {{ $data['grade_class'] }}</h5>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div id="calendar"></div>
                 </div>
             </div>
-
-            <div class="card-body">
-                <div id="calendar"></div>
-            </div>
+        @endif
+    </div>
+@else
+    <div class="container-fluid full-height">
+        <div class="icon-wrapper">
+            <i class="fa-regular fa-face-laugh-wink"></i>
+            <p>Oops.. <br> This page can only be accessed by class teachers</p>
         </div>
-    @endif
-    @else
-        <p>Data Kosong</p>
-    @endif
-</div>
+    </div>
+@endif
 
 <!-- Modal Detail Schedule -->
 <div class="modal fade " id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">

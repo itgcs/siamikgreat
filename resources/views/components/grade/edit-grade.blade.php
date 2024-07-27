@@ -54,6 +54,7 @@
                                             <option {{$selected === 'Primary' ? 'selected' : ''}}>Primary</option>
                                             <option {{$selected === 'Secondary' ? 'selected' : ''}}>Secondary</option>
                                             <option {{$selected === 'Junior College' ? 'selected' : ''}}>Junior College</option>
+                                            <option {{$selected === 'IGCSE' ? 'selected' : ''}}>IGCSE</option>
                                         </select>
                                         @if($errors->any())
                                         <p style="color: red">{{$errors->first('name')}}</p>

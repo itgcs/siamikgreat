@@ -757,7 +757,6 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::get('/', [Pdf::class, 'index']);
    });
 
-
    Route::prefix('/chineseHigher')->group(function () {
       Route::get('/', [ChineseHigherController::class, 'index']);
       Route::get('/add', [ChineseHigherController::class, 'addStudent']);
@@ -1164,7 +1163,7 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('schedules/grade', [ScheduleController::class, 'scheduleGradeTeacher']);
       Route::get('schedules/gradeOther/{id}', [ScheduleController::class, 'scheduleGradeTeacherOther']);
       Route::get('schedules/subject', [ScheduleController::class, 'scheduleSubjectTeacher']);
-      Route::get('schedules/invillager', [ScheduleController::class, 'scheduleInvillagerTeacher']);
+      Route::get('schedules/invigilater', [ScheduleController::class, 'scheduleInvillagerTeacher']);
       Route::get('schedules/companion/{id}', [ScheduleController::class, 'scheduleCompanionTeacher']);
       Route::get('schools', [ScheduleController::class, 'scheduleTeacherSchools']);
       Route::get('schedules/detail/{teacherId}/{gradeId}', [ScheduleController::class, 'detailScheduleTeacher']);
