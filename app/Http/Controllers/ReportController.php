@@ -2693,8 +2693,6 @@ class ReportController extends Controller
                'classTeacher' => $classTeacher,
             ];
 
-
-   
             return view('components.teacher.data-report-teacher')->with('data', $data);
    
         } catch (Exception $err) {
@@ -2721,6 +2719,8 @@ class ReportController extends Controller
                 //         ->on('scoring_statuses.subject_id', '=', 'subjects.id');
                 // })
                 ->get();
+
+            
 
             // Filter kindergarten grades
             $kindergartenGrades = $subjectTeacher->filter(function($item) {

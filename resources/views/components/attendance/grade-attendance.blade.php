@@ -1,10 +1,33 @@
 @extends('layouts.admin.master')
 @section('content')
 
+<style>
+   .full-height {
+      height: 60vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+   }
+   .icon-wrapper i {
+      font-size: 200px;
+      color: #ccc;
+   }
+   .icon-wrapper p {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 0%);
+      margin: 0;
+      font-size: 1.5rem;
+      color: black;
+      text-align: center;
+   }
+</style>
 
 <!-- Content Wrapper. Contains page content -->
-<div class="container-fluid">
-   <div class="form-group row">
+@if (sizeof($data['gradeTeacher']) != 0)
+   <div class="container-fluid">
+   <!-- <div class="form-group row">
       <div class="col-md-2">
          <select required name="semester" class="form-control" id="semester" onchange="saveSemesterToSession()">
             <option value="">-- Semester -- </option>
@@ -12,10 +35,9 @@
             <option value="2" {{ session('semester') == '2' ? "selected" : "" }}>Semester 2</option>
          </select>
       </div>
-   </div>
+   </div> -->
 
    <!-- START TABEL -->
-   @if (sizeof($data['gradeTeacher']) != 0)
          <div class="card card-dark mt-2">
                <div class="card-header"> 
                   <h3 class="card-title">Your Class</h3>
@@ -79,11 +101,15 @@
                </div>
          </div>
       <!-- END TABLE -->
-   @else
-      <p class="text-center">You don't have data grade</p>
-   @endif
-   <!-- END TABEL -->
-</div>
+   </div>
+@else
+   <div class="container-fluid full-height">
+      <div class="icon-wrapper">
+         <i class="fa-regular fa-face-laugh-wink"></i>  
+         <p>Oops.. <br> This page can only be accessed by class teachers</p>
+      </div>
+   </div>
+@endif
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>

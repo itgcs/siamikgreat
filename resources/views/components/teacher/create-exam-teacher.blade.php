@@ -30,26 +30,11 @@
                      <!-- form start -->
                      <div class="card-body">
                         <div class="form-group row">
-                           <div class="col-md-12">
+                           <div class="col-md-12 d-none">
                               <label for="semester">Semester<span style="color: red">*</span></label>
                               <select required name="semester" class="form-control" id="semester">
                                  <option value="1" {{ session('semester') == '1' ? "selected" : "" }}>Semester 1</option>
                                  <option value="2" {{ session('semester') == '2' ? "selected" : "" }}>Semester 2</option>
-                              </select>
-                              @if($errors->has('type_exam'))
-                                    <p style="color: red">{{ $errors->first('type_exam') }}</p>
-                              @endif
-                           </div>
-                        </div>
-
-                        <div class="form-group row">
-                           <div class="col-md-12">
-                              <label for="type_exam">Type<span style="color: red">*</span></label>
-                              <select required name="type_exam" class="form-control" id="type_exam">
-                                    <option selected disabled>--- SELECT TYPE EXAM ---</option>
-                                    @foreach($data['type_exam'] as $el)
-                                       <option value="{{ $el->id }}">{{ $el->name }}</option>
-                                    @endforeach
                               </select>
                               @if($errors->has('type_exam'))
                                     <p style="color: red">{{ $errors->first('type_exam') }}</p>
@@ -77,6 +62,21 @@
                               </select>
                               @if($errors->has('subject_id'))
                                     <p style="color: red">{{ $errors->first('subject_id') }}</p>
+                              @endif
+                           </div>
+                        </div>
+
+                        <div class="form-group row">
+                           <div class="col-md-12">
+                              <label for="type_exam">Type<span style="color: red">*</span></label>
+                              <select required name="type_exam" class="form-control" id="type_exam">
+                                    <option selected disabled>--- SELECT TYPE EXAM ---</option>
+                                    @foreach($data['type_exam'] as $el)
+                                       <option value="{{ $el->id }}">{{ $el->name }}</option>
+                                    @endforeach
+                              </select>
+                              @if($errors->has('type_exam'))
+                                    <p style="color: red">{{ $errors->first('type_exam') }}</p>
                               @endif
                            </div>
                         </div>
@@ -127,10 +127,12 @@
                               @endif
                            </div>
                         </div>
-                     </div>
 
-                     <div class="row d-flex justify-content-center">
-                        <input role="button" type="submit" class="btn btn-success center col-11 m-3">
+                        <div class="row d-flex justify-content-center">
+                           <div class="col-md-12">
+                              <input role="button" type="submit" class="btn btn-success center col-12">
+                           </div>
+                        </div>
                      </div>
                   </div>
                </form>

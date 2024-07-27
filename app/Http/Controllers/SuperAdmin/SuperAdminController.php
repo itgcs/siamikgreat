@@ -232,14 +232,13 @@ class SuperAdminController extends Controller
             return response()->json(['errors' => 'user id not found!']);
          }
 
+         Teacher::where('user_id', $id)->update(['user_id' => null]);
          User::where('id', $id)->delete();
 
          return response()->json(['status' => 201, 
          'response' => 'Delete user success'
       ]);
       } catch (Exception $err) {
-         //throw $th;
-
          return dd($err);
       }
    }

@@ -219,8 +219,8 @@ class ExamController extends Controller
    public function getById($id)
    {
       session()->flash('page',  $page = (object)[
-         'page' => 'database exam',
-         'child' => 'exams',
+         'page' => 'database teacher exams',
+         'child' => 'database teacher exams',
       ]);
 
       try {
@@ -418,6 +418,7 @@ class ExamController extends Controller
             ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
             ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
             ->where('exams.teacher_id', $getIdTeacher)
+            ->where('exams.semester', session('semester'))
             ->where('exams.academic_year', session('academic_year'))
             ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
             ->orderBy('exams.created_at', 'desc')
