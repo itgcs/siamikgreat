@@ -141,6 +141,25 @@ class ReportController extends Controller
                 )
                 ->get();
 
+            $getIdTeacher = Teacher_grade::where('grade_id', $id)->value('teacher_id');
+
+            $status = Teacher_subject::where('teacher_subjects.teacher_id', $getIdTeacher)
+                ->join('subjects', 'subjects.id', '=', 'teacher_subjects.subject_id')
+                ->join('grades', 'grades.id', '=', 'teacher_subjects.grade_id')
+                ->join('scoring_statuses', function ($join) {
+                    $join->on('scoring_statuses.grade_id', '=', 'grades.id')
+                        ->on('scoring_statuses.subject_id', '=', 'subjects.id');
+                })
+                ->select('subjects.id as subject_id', 'grades.id as grade_id', 'scoring_statuses.status')
+                ->get();
+
+            foreach ($subject as $item) {
+                $item->status = $status->firstWhere('subject_id', $item->subject_id)
+                ->status ?? 'Not Submitted';
+            }
+            
+            // dd($subject);
+
             $grade = grade::where('id', $id)->get();
 
             $data = [
@@ -183,8 +202,24 @@ class ReportController extends Controller
                 )
                 ->get();
 
-            $grade = grade::where('id', $id)->get();
+            $getIdTeacher = Teacher_grade::where('grade_id', $id)->value('teacher_id');
 
+            $status = Teacher_subject::where('teacher_subjects.teacher_id', $getIdTeacher)
+                ->join('subjects', 'subjects.id', '=', 'teacher_subjects.subject_id')
+                ->join('grades', 'grades.id', '=', 'teacher_subjects.grade_id')
+                ->join('scoring_statuses', function ($join) {
+                    $join->on('scoring_statuses.grade_id', '=', 'grades.id')
+                        ->on('scoring_statuses.subject_id', '=', 'subjects.id');
+                })
+                ->select('subjects.id as subject_id', 'grades.id as grade_id', 'scoring_statuses.status')
+                ->get();
+
+            foreach ($subject as $item) {
+                $item->status = $status->firstWhere('subject_id', $item->subject_id)
+                ->status ?? 'Not Submitted';
+            }
+
+            $grade = grade::where('id', $id)->get();
 
             $data = [
                 'grade' => $grade,
@@ -237,8 +272,9 @@ class ReportController extends Controller
             $homework       = Type_exam::where('name', 'homework')->value('id');
             $exercise       = Type_exam::where('name', 'exercise')->value('id');
             $quiz           = Type_exam::where('name', 'quiz')->value('id');
-            $finalExam     = Type_exam::where('name', 'final exam')->value('id');
-
+            $finalExam      = Type_exam::where('name', 'final exam')->value('id');
+            $participation  = Type_exam::where('name', 'participation')->value('id');
+ 
             $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId) {
                 $query->whereHas('subject', function ($subQuery) use ($subjectId) {
                     $subQuery->where('subject_id', $subjectId);
@@ -388,7 +424,7 @@ class ReportController extends Controller
                     
                     $student            = $scores->first();
                     $homeworkScores     = $scores->where('type_exam', $homework)->pluck('score');
-                    $exerciseScores     = $scores->where('type_exam', $exercise2)->pluck('score');
+                    $exerciseScores     = $scores->where('type_exam', $exercise)->pluck('score');
                     $participationScore = $scores->where('type_exam', $participation)->pluck('score');
                     $quizScores         = $scores->where('type_exam', $quiz)->pluck('score');
                     $finalExamScores    = $scores->where('type_exam', $finalAssessment)->pluck('score');
@@ -518,6 +554,8 @@ class ReportController extends Controller
                 ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
                 ->first();
 
+            $teacherId = $subjectTeacher->teacher_id;
+
             $subject = Subject::where('id', $subjectId)
                 ->select('subjects.name_subject as subject_name', 'subjects.id as subject_id')
                 ->first();
@@ -532,6 +570,9 @@ class ReportController extends Controller
             $finalExam = Type_exam::whereIn('name', ['written tes', 'big project'])
                 ->pluck('id')
                 ->toArray();
+
+            $semester = session('semester');
+            $academic_year = session('acadmeic_year');
 
             $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId, $mid, $tasks, $finalExam) {
                 $query->whereHas('subject', function ($subQuery) use ($subjectId) {
@@ -864,6 +905,7 @@ class ReportController extends Controller
                 'grade' => $totalExam,
                 'students' => $scoresByStudent,
                 'semester' => $semester,
+                'status' => $status,
             ];
 
             // dd($data);   
@@ -2703,7 +2745,6 @@ class ReportController extends Controller
     public function subjectTeacher()
     {
         try {
-            //code...
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
                 'child' => 'report subject teacher',
@@ -2714,15 +2755,26 @@ class ReportController extends Controller
             $subjectTeacher = Teacher_subject::where('teacher_subjects.teacher_id', $getIdTeacher)
                 ->join('subjects', 'subjects.id', '=', 'teacher_subjects.subject_id')
                 ->join('grades', 'grades.id', '=', 'teacher_subjects.grade_id')
-                // ->join('scoring_statuses', function ($join) {
-                //     $join->on('scoring_statuses.grade_id', '=', 'grades.id')
-                //         ->on('scoring_statuses.subject_id', '=', 'subjects.id');
-                // })
+                ->select('teacher_subjects.*', 'subjects.name_subject as name_subject', 'grades.name', 'grades.class')
                 ->get();
 
-            
+            $status = Teacher_subject::where('teacher_subjects.teacher_id', $getIdTeacher)
+                ->join('subjects', 'subjects.id', '=', 'teacher_subjects.subject_id')
+                ->join('grades', 'grades.id', '=', 'teacher_subjects.grade_id')
+                ->join('scoring_statuses', function ($join) {
+                    $join->on('scoring_statuses.grade_id', '=', 'grades.id')
+                        ->on('scoring_statuses.subject_id', '=', 'subjects.id');
+                })
+                ->select('subjects.id as subject_id', 'grades.id as grade_id', 'scoring_statuses.status')
+                ->get();
 
-            // Filter kindergarten grades
+            // Add status to each subjectTeacher item
+            foreach ($subjectTeacher as $item) {
+                $item->status = $status->firstWhere('subject_id', $item->subject_id)
+                                       ->status ?? 'Not Submitted';
+            }
+
+            // Filter grades
             $kindergartenGrades = $subjectTeacher->filter(function($item) {
                 return stripos($item->name, 'kindergarten') !== false;
             });
@@ -2730,22 +2782,21 @@ class ReportController extends Controller
             $primaryGrades = $subjectTeacher->filter(function($item) {
                 return stripos($item->name, 'primary') !== false;
             });
-            
-            // Filter secondary grades
+
             $secondaryGrades = $subjectTeacher->filter(function($item) {
                 return stripos($item->name, 'secondary') !== false;
             });
-            
-            $data = $subjectTeacher;
 
-            // dd($data);
+            // dd($subjectTeacher);
 
-            return view('components.teacher.data-report-subject-teacher', compact('primaryGrades', 'secondaryGrades', 'kindergartenGrades'))->with('data', $data);
+            return view('components.teacher.data-report-subject-teacher', compact('primaryGrades', 'secondaryGrades', 'kindergartenGrades'))->with('data', $subjectTeacher);
 
         } catch (Exception $err) {
             return dd($err);
         }
     }
+
+
 
     public function cardSemesterMid($id){
         // dd($id);

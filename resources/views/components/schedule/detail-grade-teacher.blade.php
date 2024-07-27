@@ -42,10 +42,10 @@
                     <table class="table table-striped projects">
                         <thead>
                             <tr>
-                                <th style="width: 10%">
+                                <th style="width: 5%">
                                     #
                                 </th>
-                                <th style="width: 25%">
+                                <th style="width: 10%">
                                     Grade
                                 </th>
                                 <th>
@@ -67,7 +67,7 @@
                                 <td>
                                     <a class="btn btn-primary btn-sm"
                                     href="{{url('teacher/dashboard/schedules/gradeOther') . '/' . $dt->grade_id}}">
-                                    <i class="fas fa-folder">
+                                    <i class="fas fa-eye">
                                     </i>
                                     View
                                     </a>

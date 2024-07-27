@@ -42,11 +42,13 @@
         @csrf
 
         @if ($data['status'] == null)
-            <div class="row my-2">
-                <div class="input-group-append mx-2">
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit Scoring</button>
+            @if (!empty($data['students']))
+                <div class="row my-2">
+                    <div class="input-group-append mx-2">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit Scoring</button>
+                    </div>
                 </div>
-            </div>
+            @endif
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
                 <div class="input-group-append mx-2">
@@ -58,7 +60,7 @@
             </div>  
         @endif
 
-        <table class="table table-striped table-bordered" style=" width: 1400px;">
+        <table class="table table-striped table-bordered bg-white" style="width: 2000px;">
             <thead>
                 <tr>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -202,8 +204,11 @@
                     <input name="subject_teacher" type="number" class="form-control d-none" id="subject_teacher" value="{{ $data['subjectTeacher']->teacher_id }}">  
                 </form>
             @else
-                
-                <p>data kosong</p>
+                <tr>
+                    <td colspan="15" class="text-center">
+                        Teacher dont added a assessment...
+                    </td>    
+                </tr>
             @endif
                 
             </tbody>
