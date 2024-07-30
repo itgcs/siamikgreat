@@ -152,19 +152,23 @@
                         <td class="text-center">{{ $student['grades'] }}</td>
 
                         <!-- COMMENT -->
-                        <td class="project-actions text-right">
+                        <td class="project-actions text-left">
                             <div class="input-group">
-                                <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
                                 <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">  
                                 <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $student['total_score'] }}">  
                                 <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">  
+                            </div>
+                            @if ($data['status'] == null)
+                                <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
                                 <div class="input-group-append">
-                                <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
-                                    <i class="fas fa-pen"></i>
+                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
+                                        <i class="fas fa-pen"></i>
                                         Edit
                                     </a>
                                 </div>
-                            </div>
+                            @else
+                                {{ $student['comment'] }}
+                            @endif
                         </td>
                     </tr>
                 @endforeach

@@ -172,30 +172,269 @@ class ExamController extends Controller
          Subject_exam::create($postSubjectExam);
          Grade_exam::create($postGradeExam);
 
-         $getStudentId = Student::where("grade_id", $request->grade_id)->pluck('id')->toArray();
+         $checkSubject = Subject_exam::where('subject_exams.exam_id', '=', $getLastIdExam)->value('subject_id');
+         $subject = Subject::where('id', $checkSubject)->value('name_subject');
 
-         for ($i=0; $i < sizeof($getStudentId); $i++) { 
-            $postStudentExam = [
-               'student_id' => $getStudentId[$i],
-               'exam_id' => $getLastIdExam,
-               'academic_year' => session('academic_year'),
-               'created_at' => now(),
-            ];
 
-            $score = [
-               'exam_id' => $getLastIdExam,
-               'subject_id' => $request->subject_id,
-               'grade_id' => $request->grade_id,
-               'teacher_id' => $request->teacher_id,
-               'type_exam_id' => $request->type_exam,
-               'student_id' => $getStudentId[$i],
-               'score' => 0,
-               'academic_year' => session('academic_year'),
-               'created_at' => now(),
-            ];
+
+         if (strtolower($subject) == "religion islamic") {
+            $getStudentId = Student::where("grade_id", $request->grade_id)
+                                    ->where('religion', '=', 'islam')
+                                    ->pluck('id')->toArray();
+
+            for ($i=0; $i < sizeof($getStudentId); $i++) { 
+               $postStudentExam = [
+                  'student_id' => $getStudentId[$i],
+                  'exam_id' => $getLastIdExam,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+
+               $score = [
+                  'exam_id' => $getLastIdExam,
+                  'subject_id' => $request->subject_id,
+                  'grade_id' => $request->grade_id,
+                  'teacher_id' => $request->teacher_id,
+                  'type_exam_id' => $request->type_exam,
+                  'student_id' => $getStudentId[$i],
+                  'score' => 0,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+               
+               Student_exam::create($postStudentExam);
+               Score::create($score);
+            }
+         }
+         elseif (strtolower($subject) == "religion catholic") {
+            $getStudentId = Student::where("grade_id", $request->grade_id)
+                                    ->where('religion', '=', 'Catholic Christianity')
+                                    ->pluck('id')->toArray();
+
+            for ($i=0; $i < sizeof($getStudentId); $i++) { 
+               $postStudentExam = [
+                  'student_id' => $getStudentId[$i],
+                  'exam_id' => $getLastIdExam,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+
+               $score = [
+                  'exam_id' => $getLastIdExam,
+                  'subject_id' => $request->subject_id,
+                  'grade_id' => $request->grade_id,
+                  'teacher_id' => $request->teacher_id,
+                  'type_exam_id' => $request->type_exam,
+                  'student_id' => $getStudentId[$i],
+                  'score' => 0,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+               
+               Student_exam::create($postStudentExam);
+               Score::create($score);
+            }
+         }
+         elseif (strtolower($subject) == "religion christian") {
+            $getStudentId = Student::where("grade_id", $request->grade_id)
+                                    ->where('religion', '=', 'Protestant Christianity')
+                                    ->pluck('id')->toArray();
+
+            for ($i=0; $i < sizeof($getStudentId); $i++) { 
+               $postStudentExam = [
+                  'student_id' => $getStudentId[$i],
+                  'exam_id' => $getLastIdExam,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+
+               $score = [
+                  'exam_id' => $getLastIdExam,
+                  'subject_id' => $request->subject_id,
+                  'grade_id' => $request->grade_id,
+                  'teacher_id' => $request->teacher_id,
+                  'type_exam_id' => $request->type_exam,
+                  'student_id' => $getStudentId[$i],
+                  'score' => 0,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+               
+               Student_exam::create($postStudentExam);
+               Score::create($score);
+            }
+         }
+         elseif (strtolower($subject) == "religion buddhism") {
+            $getStudentId = Student::where("grade_id", $request->grade_id)
+                                    ->where('religion', '=', 'Buddhism')
+                                    ->pluck('id')->toArray();
+
+            for ($i=0; $i < sizeof($getStudentId); $i++) { 
+               $postStudentExam = [
+                  'student_id' => $getStudentId[$i],
+                  'exam_id' => $getLastIdExam,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+
+               $score = [
+                  'exam_id' => $getLastIdExam,
+                  'subject_id' => $request->subject_id,
+                  'grade_id' => $request->grade_id,
+                  'teacher_id' => $request->teacher_id,
+                  'type_exam_id' => $request->type_exam,
+                  'student_id' => $getStudentId[$i],
+                  'score' => 0,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+               
+               Student_exam::create($postStudentExam);
+               Score::create($score);
+            }
+         }
+         elseif (strtolower($subject) == "religion hinduism") {
+            $getStudentId = Student::where("grade_id", $request->grade_id)
+                                    ->where('religion', '=', 'Hinduism')
+                                    ->pluck('id')->toArray();
+
+            for ($i=0; $i < sizeof($getStudentId); $i++) { 
+               $postStudentExam = [
+                  'student_id' => $getStudentId[$i],
+                  'exam_id' => $getLastIdExam,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+
+               $score = [
+                  'exam_id' => $getLastIdExam,
+                  'subject_id' => $request->subject_id,
+                  'grade_id' => $request->grade_id,
+                  'teacher_id' => $request->teacher_id,
+                  'type_exam_id' => $request->type_exam,
+                  'student_id' => $getStudentId[$i],
+                  'score' => 0,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+               
+               Student_exam::create($postStudentExam);
+               Score::create($score);
+            }
+         }
+         elseif (strtolower($subject) == "religion confucianism") {
+            $getStudentId = Student::where("grade_id", $request->grade_id)
+                                    ->where('religion', '=', 'Confucianism')
+                                    ->pluck('id')->toArray();
+
+            for ($i=0; $i < sizeof($getStudentId); $i++) { 
+               $postStudentExam = [
+                  'student_id' => $getStudentId[$i],
+                  'exam_id' => $getLastIdExam,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+
+               $score = [
+                  'exam_id' => $getLastIdExam,
+                  'subject_id' => $request->subject_id,
+                  'grade_id' => $request->grade_id,
+                  'teacher_id' => $request->teacher_id,
+                  'type_exam_id' => $request->type_exam,
+                  'student_id' => $getStudentId[$i],
+                  'score' => 0,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+               
+               Student_exam::create($postStudentExam);
+               Score::create($score);
+            }
+         }
+         elseif (strtolower($subject) == "chinese lower") {
+            $chineseLowerStudent = Chinese_lower::where('grade_id', $request->grade_id)->pluck('student_id')->toArray();
+
+            // $getStudentId = Student::where("grade_id", $request->grade_id)->pluck('id')->toArray();
             
-            Student_exam::create($postStudentExam);
-            Score::create($score);
+            for ($i=0; $i < sizeof($chineseLowerStudent); $i++) { 
+               $postStudentExam = [
+                  'student_id' => $chineseLowerStudent[$i],
+                  'exam_id' => $getLastIdExam,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+
+               $score = [
+                  'exam_id' => $getLastIdExam,
+                  'subject_id' => $request->subject_id,
+                  'grade_id' => $request->grade_id,
+                  'teacher_id' => $request->teacher_id,
+                  'type_exam_id' => $request->type_exam,
+                  'student_id' => $chineseLowerStudent[$i],
+                  'score' => 0,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+               
+               Student_exam::create($postStudentExam);
+               Score::create($score);
+            }
+         }
+         elseif (strtolower($subject) == "chinese hingher") {
+            $chineseHigherStudent = Chinese_higher::where('grade_id', $request->grade_id)->pluck('student_id')->toArray();
+
+            // $getStudentId = Student::where("grade_id", $request->grade_id)->pluck('id')->toArray();
+            
+            for ($i=0; $i < sizeof($chineseHigherStudent); $i++) { 
+               $postStudentExam = [
+                  'student_id' => $chineseHigherStudent[$i],
+                  'exam_id' => $getLastIdExam,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+
+               $score = [
+                  'exam_id' => $getLastIdExam,
+                  'subject_id' => $request->subject_id,
+                  'grade_id' => $request->grade_id,
+                  'teacher_id' => $request->teacher_id,
+                  'type_exam_id' => $request->type_exam,
+                  'student_id' => $chineseHigherStudent[$i],
+                  'score' => 0,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+               
+               Student_exam::create($postStudentExam);
+               Score::create($score);
+            }
+         }
+         else {
+            $getStudentId = Student::where("grade_id", $request->grade_id)->pluck('id')->toArray();
+   
+            for ($i=0; $i < sizeof($getStudentId); $i++) { 
+               $postStudentExam = [
+                  'student_id' => $getStudentId[$i],
+                  'exam_id' => $getLastIdExam,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+   
+               $score = [
+                  'exam_id' => $getLastIdExam,
+                  'subject_id' => $request->subject_id,
+                  'grade_id' => $request->grade_id,
+                  'teacher_id' => $request->teacher_id,
+                  'type_exam_id' => $request->type_exam,
+                  'student_id' => $getStudentId[$i],
+                  'score' => 0,
+                  'academic_year' => session('academic_year'),
+                  'created_at' => now(),
+               ];
+               
+               Student_exam::create($postStudentExam);
+               Score::create($score);
+            }
          }
 
          session()->flash('after_create_exam');
@@ -523,39 +762,78 @@ class ExamController extends Controller
             $id                = Relationship::where('user_id', $getIdUser)->value('id');
             $getIdStudent      = session('studentId');
             $gradeIdStudent    = Student::where('id', $getIdStudent)->value('grade_id');
-            
 
-            $data = Exam::select('exams.*', 'grades.name as grade_name', 'subjects.name_subject')
-            ->join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
-            ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
-            ->join('subject_exams', 'exams.id', '=', 'subject_exams.exam_id')
-            ->join('subjects', 'subject_exams.subject_id', '=', 'subjects.id')
-            ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
-            ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
-            ->where('grade_exams.grade_id', $gradeIdStudent)
-            ->where('grade_exams.academic_year', session('academic_year'))
-            ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
-            ->paginate(15);
+            // $data = Exam::select('exams.*', 'grades.name as grade_name', 'subjects.name_subject')
+            //    ->join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
+            //    ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
+            //    ->join('subject_exams', 'exams.id', '=', 'subject_exams.exam_id')
+            //    ->join('subjects', 'subject_exams.subject_id', '=', 'subjects.id')
+            //    ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
+            //    ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
+            //    ->join('scores', function($join) {
+            //       $join->on('student_exams.student_id', '=', 'scores.student_id')
+            //           ->on('exams.id', '=', 'scores.exam_id');
+            //   })
+            //    ->where('grade_exams.grade_id', $gradeIdStudent)
+            //    ->where('scores.student_id', $getIdStudent)
+            //    ->where('grade_exams.academic_year', session('academic_year'))
+            //    ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
+            //    ->paginate(15);
+
+            // $data = Exam::join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
+            //    ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
+            //    ->join('subject_exams', 'exams.id', '=', 'subject_exams.exam_id')
+            //    ->join('subjects', 'subject_exams.subject_id', '=', 'subjects.id')
+            //    ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
+            //    ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
+            //    ->join('student_exams', 'exams.id', '=', 'student_exams.exam_id')
+            //    ->join('students', 'student_exams.student_id', '=', 'students.id')
+            //    ->join('scores', function($join) {
+            //        $join->on('student_exams.student_id', '=', 'scores.student_id')
+            //            ->on('exams.id', '=', 'scores.exam_id');
+            //    })
+            //    ->where('scores.student_id', $getIdStudent)
+            //    ->where('exams.academic_year', session('academic_year'))
+            //    ->where('exams.semester', session('semester'))
+            //    ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class',
+            //     'subjects.name_subject as subject_name', 'teachers.name as teacher_name',
+            //      'type_exams.name as type_exam' , 'scores.score as score')
+            //    ->paginate(15);
+
+            $data = Score::join('exams', 'exams.id', '=', 'scores.exam_id')
+               ->join('grades', 'scores.grade_id', '=', 'grades.id')
+               ->join('subjects', 'scores.subject_id', '=', 'subjects.id')
+               ->join('teachers', 'scores.teacher_id', '=', 'teachers.id')
+               ->join('type_exams', 'scores.type_exam_id', '=', 'type_exams.id')
+               ->join('students', 'scores.student_id', '=', 'students.id')
+               ->where('scores.student_id', $getIdStudent)
+               ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class',
+                  'subjects.name_subject as subject_name', 'teachers.name as teacher_name',
+                  'type_exams.name as type_exam' , 'scores.score as score', 'students.name as student_name')
+               ->orderBy('created_at', 'asc')
+               ->paginate(15);
          } 
          elseif (session('role') == 'student') 
          {
-            $getIdUser  = session('id_user');
-            $id         = Student::where('user_id', $getIdUser)->value('grade_id');
-            $getGradeId = Grade::where('id', $id)->value('id');
+            $getIdUser     = session('id_user');
+            $id            = Student::where('user_id', $getIdUser)->value('grade_id');
+            $getGradeId    = Grade::where('id', $id)->value('id');
+            $getIdStudent  = Student::where('user_id', $getIdUser)->value('id');
 
             // dd($getGradeId);
    
-            $data = Exam::select('exams.*', 'grades.name as grade_name', 'subjects.name_subject')
-            ->join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
-            ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
-            ->join('subject_exams', 'exams.id', '=', 'subject_exams.exam_id')
-            ->join('subjects', 'subject_exams.subject_id', '=', 'subjects.id')
-            ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
-            ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
-            ->where('grade_exams.grade_id', $getGradeId)
-            ->where('grade_exams.academic_year', session('academic_year'))
-            ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
-            ->paginate(15);
+            $data = Score::join('exams', 'exams.id', '=', 'scores.exam_id')
+               ->join('grades', 'scores.grade_id', '=', 'grades.id')
+               ->join('subjects', 'scores.subject_id', '=', 'subjects.id')
+               ->join('teachers', 'scores.teacher_id', '=', 'teachers.id')
+               ->join('type_exams', 'scores.type_exam_id', '=', 'type_exams.id')
+               ->join('students', 'scores.student_id', '=', 'students.id')
+               ->where('scores.student_id', $getIdStudent)
+               ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class',
+                  'subjects.name_subject as subject_name', 'teachers.name as teacher_name',
+                  'type_exams.name as type_exam' , 'scores.score as score', 'students.name as student_name')
+               ->orderBy('date_exam', 'desc')
+               ->paginate(15);
          }
 
          // dd($data);

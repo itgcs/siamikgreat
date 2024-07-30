@@ -68,7 +68,11 @@
                                     </td>
                                     @endif
                                     <td>
-                                        {{ $pr->status }}
+                                        @if ($pr->status == 1)
+                                            Already Submitted
+                                        @else
+                                            {{ $pr->status }}
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

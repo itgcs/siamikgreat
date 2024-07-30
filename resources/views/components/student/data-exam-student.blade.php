@@ -29,102 +29,115 @@
             <table class="table table-striped projects">
                 <thead>
                     <tr>
-                        <th>
+                        <th style="width:5%;">
                            #
                         </th>
-                        <th >
-                          Type Assessment
+                        <th style="width:10%;">
+                            student
                         </th>
-                        <th >
-                           Name
+                        <th style="width:10%;">
+                          Type Exam
                         </th>
                         <th style="width:10%;">
                           Date
                         </th>
-                        <th>
+                        <th style="width:10%;">
                            Grade
                         </th>
-                        <th>
+                        <th style="width:15%;">
                            Subject
                         </th>
-                        <th>
-                           Teacher
+                        <th style="width:5%;">
+                           Score
                         </th>
-                        <th>
+                        <th style="width:10%;">
                            Status
                         </th>
-                        <th style="width: 20%">
+                        <th>
                            Action
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($data as $el)
-                    <tr id={{'index_grade_' . $el->id}}>
-                        <td>
-                            {{ $loop->index + 1 }}
-                        </td>
-                        <td>
-                           <a>
-                              {{$el->type_exam}}
-                           </a>
-                        </td>
-                        <td>
-                           <a>
-                              {{$el->name_exam}}
-                           </a>
-                        </td>
-                        <td>
-                           <a>
-                              {{$el->date_exam}}
-                           </a>
-                           <br>
-                           @php
-                              $currentDate = now(); // Tanggal saat ini
-                              $dateExam = $el->date_exam; // Tanggal exam dari data
+                    @if (count($data) !== 0)
+                        @foreach ($data as $el)
+                        <tr id={{'index_grade_' . $el->id}}>
+                            <td>
+                                {{ $loop->index + 1 }}
+                            </td>
+                            <td>
+                            <a>
+                                {{$el->type_exam}}
+                            </a>
+                            </td>
+                            <td>
+                            <a>
+                                {{$el->name_exam}}
+                            </a>
+                            </td>
+                            <td>
+                            <a>
+                                {{$el->date_exam}}
+                            </a>
+                            <br>
+                            @php
+                                    $currentDate = now(); // Tanggal saat ini
+                                    $dateExam = $el->date_exam; // Tanggal ujian dari data
 
-                              // Hitung selisih antara tanggal exam dengan tanggal saat ini
-                              $diff = strtotime($dateExam) - strtotime($currentDate);
-                              $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
-                           @endphp
-                           @if ($el->is_active)
-                           <small class="text-muted mb-0"><span class="badge badge-danger">{{$days}} days again</span></small>
-                           @else
-                           @endif
-                        </td>
-                        <td>
-                           {{$el->grade_name}} - {{ $el->grade_class }}
-                        </td>
-                        <td>
-                           {{$el->subject_name}}
-                        </td>
-                        <td>
-                           {{$el->teacher_name}}
-                        </td>
-                        <td>
-                           @php
-                              $currentDate = now(); // Tanggal saat ini
-                              $dateExam = $el->date_exam; // Tanggal exam dari data
+                                    // Buat objek DateTime dari tanggal saat ini dan tanggal ujian
+                                    $currentDateTime = new DateTime($currentDate);
+                                    $dateExamDateTime = new DateTime($dateExam);
 
-                              // Hitung selisih antara tanggal exam dengan tanggal saat ini
-                              $diff = strtotime($dateExam) - strtotime($currentDate);
-                              $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
-                           @endphp
-                           @if ($el->is_active)
-                           <small class="text-muted mb-0"><span class="badge badge-danger">{{$days}} days again</span></small>
-                           @else
-                           <span class="badge badge-success"> Done </span>
-                           @endif
-                        </td>
-                        <td class="project-actions text-left toastsDefaultSuccess">
-                           <a class="btn btn-primary btn" id="view" data-id="{{ $el->id }}">
-                              <i class="fas fa-folder"></i>
-                              View
-                           </a>
-                        </td>
+                                    // Hitung selisih antara kedua tanggal
+                                    $interval = $currentDateTime->diff($dateExamDateTime);
+
+                                    // Ambil jumlah hari dari selisih tersebut
+                                    $days = $interval->days;
+
+                                    // Jika tanggal ujian lebih kecil dari tanggal saat ini, buat selisih menjadi negatif
+                                    if ($dateExamDateTime < $currentDateTime) {
+                                        $days = -$days;
+                                    } else if ($dateExamDateTime > $currentDateTime && $days == 0) {
+                                        // Jika tanggal ujian di masa depan dan selisih kurang dari 1 hari, anggap 1 hari
+                                        $days = 1;
+                                    }
+                            @endphp
+                            @if ($el->is_active)
+                            <span class="badge badge-danger">{{$days}} days again</span>
+                            @else
+                            @endif
+                            </td>
+                            <td>
+                            {{$el->grade_name}} - {{ $el->grade_class }}
+                            </td>
+                            <td>
+                            {{$el->subject_name}}
+                            </td>
+                            <td>
+                            {{$el->score}}
+                            </td>
+                            <td>
+                            @if ($el->is_active)
+                            <span class="badge badge-danger">On Progress</span>
+                            @else
+                            <span class="badge badge-success"> Done </span>
+                            @endif
+                            </td>
+                            <td class="project-actions text-left toastsDefaultSuccess">
+                            <a class="btn btn-primary btn" id="view" data-id="{{ $el->id }}">
+                                <i class="fas fa-eye"></i>
+                                View
+                            </a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    @else
+                    <tr>
+                        <td colspan="9" class="text-center text-red">
+                            No Exam 
+                        </td>    
                     </tr>
-
-                    @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>

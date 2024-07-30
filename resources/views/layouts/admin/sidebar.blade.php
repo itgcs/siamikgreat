@@ -539,14 +539,14 @@
 
       <!-- SCORE IN PARENT -->
       @if (session('role') == 'parent')  
-      <li class="nav-item">
+      <!-- <li class="nav-item">
           <a href="/{{ session('role') }}/dashboard/score" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'scores' ? 'active' : '') : ''}}">
             <i class="nav-icon fa-solid fa-book"></i>
             <p>
               Report Score
             </p>
           </a>
-        </li>
+        </li> -->
       @endif
 
       

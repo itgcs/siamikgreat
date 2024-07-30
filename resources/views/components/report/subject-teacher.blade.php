@@ -67,7 +67,13 @@
                                             View
                                         </a>
                                     </td>
-                                    <td>{{ $pr->status }}</td>
+                                    <td>
+                                        @if ($pr->status == 1)
+                                            Already Submitted
+                                        @else
+                                            {{ $pr->status }}
+                                        @endif
+                                    </td>
                                     @endif
                                 </tr>
                             @endforeach

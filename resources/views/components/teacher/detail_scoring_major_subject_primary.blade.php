@@ -33,17 +33,7 @@
         </div>
     </div>
 
-    <div style="overflow-x: auto;">
-        @if (session('role') == 'superadmin')
-            <form id="confirmForm" method="POST" action={{route('actionPostScoringMajorPrimary')}}>
-        @elseif (session('role') == 'admin')
-            <form id="confirmForm">
-        @elseif (session('role') == 'teacher')
-            <form id="confirmForm" method="POST" action={{route('actionTeacherPostScoringMajorPrimary')}}>
-        @endif
-        @csrf
-
-        @if ($data['status'] == null)
+    @if ($data['status'] == null)
             @if (!empty($data['students']))
                 <div class="row my-2">
                     <div class="input-group-append mx-2">
@@ -61,7 +51,17 @@
                 </div>
             </div>  
         @endif
-        
+
+    <div style="overflow-x: auto;">
+        @if (session('role') == 'superadmin')
+            <form id="confirmForm" method="POST" action={{route('actionPostScoringMajorPrimary')}}>
+        @elseif (session('role') == 'admin')
+            <form id="confirmForm">
+        @elseif (session('role') == 'teacher')
+            <form id="confirmForm" method="POST" action={{route('actionTeacherPostScoringMajorPrimary')}}>
+        @endif
+        @csrf
+    
         <table class="table table-striped table-bordered bg-white" style="width:2000px;">
             <thead>
                 <tr>

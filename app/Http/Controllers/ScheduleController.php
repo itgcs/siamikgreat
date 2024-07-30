@@ -215,7 +215,12 @@ class ScheduleController extends Controller
 
          $id = session('id_user');
 
-         $getGradeStudent = Student::where('user_id', $id)->value('grade_id');
+         if (session('role') == 'parent') {
+            $getGradeStudent = Student::where('id', session('studentId'))->value('grade_id');
+         }
+         elseif (session('role') == 'student') {
+            $getGradeStudent = Student::where('user_id', $id)->value('grade_id');
+         }
          
          $academic_year = Master_academic::first()->value('academic_year');
          
@@ -1993,16 +1998,17 @@ class ScheduleController extends Controller
          // dd(session('id_user'));
 
          $checkRole = session('role');
+         $getIdStudent  = session('studentId');
 
          if($checkRole == 'parent'){
             $userId = session('id_user');
             $parentId = Relationship::where('user_id', $userId)->value('id');
-            $getIdStudent = Student_relationship::where('relationship_id', $parentId)->value('student_id');
+            $getIdStudent  = session('studentId');
             $getGradeId= Student::where('id', $getIdStudent)->value('grade_id');
          }
          elseif($checkRole == 'student'){
             $userId = session('id_user');
-            $getIdStudent = Student::where('user_id', $userId)->value('id');
+            $getIdStudent  = session('studentId');
             $getGradeId = Student::where('id', $getIdStudent)->value('grade_id');
          }
 
@@ -2015,7 +2021,6 @@ class ScheduleController extends Controller
             $startSemester = Master_academic::first()->value('semester2');
             $endSemester = Master_academic::first()->value('end_semester2');
          }
-         
          
          // dd($getGradeId);
          $typeExam = Type_schedule::where('name', '=', 'lesson')->value('id');
@@ -2032,12 +2037,12 @@ class ScheduleController extends Controller
                      ->whereNotNull('schedules.subject_id');
             })
             ->select('schedules.*', 
-                     'grades.id as grade_id',
-                     'grades.name as grade_name', 
-                     'grades.class as grade_class', 
-                     'teachers.name as teacher_name', 
-                     'subjects.id as subject_id',
-                     'subjects.name_subject as subject_name')
+               'grades.id as grade_id',
+               'grades.name as grade_name', 
+               'grades.class as grade_class', 
+               'teachers.name as teacher_name', 
+               'subjects.id as subject_id',
+               'subjects.name_subject as subject_name')
             ->get();
 
          $subtituteTeacher = Subtitute_teacher::where('grade_id', $getGradeId)

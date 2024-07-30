@@ -34,7 +34,7 @@
         @if (session('role') == 'superadmin')
             <form id="confirmForm"  method="POST">
         @elseif (session('role') == 'admin')
-            <form id="confirmForm" method="POST">
+            <form id="confirmForm" method="POST" action={{route('actionAdminPostReportCard2')}}>
         @elseif (session('role') == 'teacher')
             <form id="confirmForm" method="POST" action={{route('actionTeacherPostReportCard2')}}>
         @endif
@@ -95,50 +95,50 @@
                                         
                                     <!-- Independent_work -->
                                     <td class="text-center">
-                                        <input name="independent_work[]" type="text" class="form-control" id="iw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['independent_work'] }}" onkeyup="validateInput(this)"></td>
+                                        <input name="independent_work[]" type="text" class="form-control required-input" id="iw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['independent_work'] }}" onkeyup="validateInput(this)"></td>
 
                                     <!-- Initiative -->
                                     <td class="text-center">
-                                        <input name="initiative[]" type="text" class="form-control" id="in" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['use_of_information'] }}" onkeyup="validateInput(this)"></td>
+                                        <input name="initiative[]" type="text" class="form-control required-input" id="in" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['use_of_information'] }}" onkeyup="validateInput(this)"></td>
 
                                     <!-- Homework_completion -->
                                     <td class="text-center">
-                                    <input name="homework_completion[]" type="text" class="form-control" id="hc" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['homework_completion'] }}" onkeyup="validateInput(this)"></td>
+                                    <input name="homework_completion[]" type="text" class="form-control required-input" id="hc" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['homework_completion'] }}" onkeyup="validateInput(this)"></td>
 
 
                                     <!-- Use_of_information -->
                                     <td class="text-center">
-                                    <input name="use_of_information[]" type="text" class="form-control" id="uoi" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['use_of_information'] }}" onkeyup="validateInput(this)"></td>
+                                    <input name="use_of_information[]" type="text" class="form-control required-input" id="uoi" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['use_of_information'] }}" onkeyup="validateInput(this)"></td>
 
 
                                     <!-- Cooperation_with_other -->
                                     <td class="text-center">
-                                    <input name="cooperation_with_other[]" type="text" class="form-control" id="cwo" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['cooperation_with_other'] }}" onkeyup="validateInput(this)"></td>
+                                    <input name="cooperation_with_other[]" type="text" class="form-control required-input" id="cwo" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['cooperation_with_other'] }}" onkeyup="validateInput(this)"></td>
 
 
                                     <!-- Conflict_resolution -->
                                     <td class="text-center">
-                                    <input name="conflict_resolution[]" type="text" class="form-control" id="cr" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['conflict_resolution'] }}" onkeyup="validateInput(this)"></td>
+                                    <input name="conflict_resolution[]" type="text" class="form-control required-input" id="cr" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['conflict_resolution'] }}" onkeyup="validateInput(this)"></td>
 
 
                                     <!-- Class_participation -->
                                     <td class="text-center">
-                                    <input name="class_participation[]" type="text" class="form-control" id="cp" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['class_participation'] }}" onkeyup="validateInput(this)"></td>
+                                    <input name="class_participation[]" type="text" class="form-control required-input" id="cp" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['class_participation'] }}" onkeyup="validateInput(this)"></td>
 
 
                                     <!-- Problem_solving -->
                                     <td class="text-center">
-                                    <input name="problem_solving[]" type="text" class="form-control" id="ps" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['problem_solving'] }}" onkeyup="validateInput(this)"></td>
+                                    <input name="problem_solving[]" type="text" class="form-control required-input" id="ps" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['problem_solving'] }}" onkeyup="validateInput(this)"></td>
 
 
                                     <!-- Goal_setting_to_improve_work -->
                                     <td class="text-center">
-                                    <input name="goal_setting_to_improve_work[]" type="text" class="form-control" id="gstiw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['goal_setting_to_improve_work'] }}" onkeyup="validateInput(this)"></td>
+                                    <input name="goal_setting_to_improve_work[]" type="text" class="form-control required-input" id="gstiw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['goal_setting_to_improve_work'] }}" onkeyup="validateInput(this)"></td>
 
 
                                     <!-- Strengths/weakness/nextstep -->
                                     <td class="text-center">
-                                    <input name="strength_weakness_nextstep[]" type="text" class="form-control"  autocomplete="off" value="{{ $score['strength_weakness_nextstep'] }}" required></td>
+                                    <input name="strength_weakness_nextstep[]" type="text" class="form-control required-input"  autocomplete="off" value="{{ $score['strength_weakness_nextstep'] }}" required></td>
 
                                     <td class="text-left text-xs">
                                         <div class="form-check me-2 mx-2">
@@ -161,13 +161,13 @@
                                         </div>
                                     </td>
                                 @endforeach
-                                <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">
+                                <input name="student_id[]" type="number" class="form-control required-input d-none" id="student_id" value="{{ $student['student_id'] }}">
                             </tr>
                         @endforeach
                     </tbody>
-                    <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
-                    <input name="teacher_id" type="number" class="form-control d-none" id="class_teacher_id" value="{{ $data['classTeacher']->teacher_id }}">    
-                    <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}"> 
+                    <input name="grade_id" type="number" class="form-control required-input d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
+                    <input name="teacher_id" type="number" class="form-control required-input d-none" id="class_teacher_id" value="{{ $data['classTeacher']->teacher_id }}">    
+                    <input name="semester" type="number" class="form-control required-input d-none" id="semester" value="{{ $data['semester'] }}"> 
                 
                 <!-- JIKA TEACHER BELUM INPUT NILAI -->
                 @else
@@ -179,49 +179,49 @@
         
                                     <!-- Independent_work -->
                                     <td class="text-center">
-                                        <input name="independent_work[]" type="text" class="form-control" id="iw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+                                        <input name="independent_work[]" type="text" class="form-control required-input" id="iw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
         
                                     <!-- Initiative -->
                                     <td class="text-center">
-                                        <input name="initiative[]" type="text" class="form-control" id="in" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+                                        <input name="initiative[]" type="text" class="form-control required-input" id="in" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
         
                                     <!-- Homework_completion -->
                                     <td class="text-center">
-                                    <input name="homework_completion[]" type="text" class="form-control" id="hc" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+                                    <input name="homework_completion[]" type="text" class="form-control required-input" id="hc" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
         
         
                                     <!-- Use_of_information -->
                                     <td class="text-center">
-                                    <input name="use_of_information[]" type="text" class="form-control" id="uoi" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+                                    <input name="use_of_information[]" type="text" class="form-control required-input" id="uoi" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
         
         
                                     <!-- Cooperation_with_other -->
                                     <td class="text-center">
-                                    <input name="cooperation_with_other[]" type="text" class="form-control" id="cwo" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+                                    <input name="cooperation_with_other[]" type="text" class="form-control required-input" id="cwo" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
         
         
                                     <!-- Conflict_resolution -->
                                     <td class="text-center">
-                                    <input name="conflict_resolution[]" type="text" class="form-control" id="cr" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+                                    <input name="conflict_resolution[]" type="text" class="form-control required-input" id="cr" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
         
         
                                     <!-- Class_participation -->
                                     <td class="text-center">
-                                    <input name="class_participation[]" type="text" class="form-control" id="cp" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+                                    <input name="class_participation[]" type="text" class="form-control required-input" id="cp" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
         
                                     <!-- Problem_solving -->
                                     <td class="text-center">
-                                    <input name="problem_solving[]" type="text" class="form-control" id="ps" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+                                    <input name="problem_solving[]" type="text" class="form-control required-input" id="ps" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
         
         
                                     <!-- Goal_setting_to_improve_work -->
                                     <td class="text-center">
-                                    <input name="goal_setting_to_improve_work[]" type="text" class="form-control" id="gstiw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
+                                    <input name="goal_setting_to_improve_work[]" type="text" class="form-control required-input" id="gstiw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
         
         
                                     <!-- Strengths/weakness/nextstep -->
                                     <td class="text-center">
-                                    <input name="strength_weakness_nextstep[]" type="text" class="form-control"  autocomplete="off" required></td>
+                                    <input name="strength_weakness_nextstep[]" type="text" class="form-control required-input"  autocomplete="off" required></td>
         
                                     <td class="text-left text-xs">
                                         <div class="form-check me-2 mx-2">
@@ -244,13 +244,13 @@
                                         </div>
                                     </td>
                             
-                                    <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['id'] }}">
+                                    <input name="student_id[]" type="number" class="form-control required-input d-none" id="student_id" value="{{ $student['id'] }}">
                             </tr>
                         @endforeach
                     </tbody>
-                    <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
-                    <input name="teacher_id" type="number" class="form-control d-none" id="class_teacher_id" value="{{ $data['classTeacher']->teacher_id }}">    
-                    <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}"> 
+                    <input name="grade_id" type="number" class="form-control required-input d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
+                    <input name="teacher_id" type="number" class="form-control required-input d-none" id="class_teacher_id" value="{{ $data['classTeacher']->teacher_id }}">    
+                    <input name="semester" type="number" class="form-control required-input d-none" id="semester" value="{{ $data['semester'] }}"> 
                 @endif  
             
             <!-- JIKA DATA SUDAH DI SUBMIT OLEH TEACHER -->
@@ -402,11 +402,11 @@
     </div>
 </div>
 
-<script>
+<!-- <script>
     document.getElementById('confirmAccScoring').addEventListener('click', function() {
         document.getElementById('confirmForm').submit();
     });
-</script>
+</script> -->
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
@@ -424,6 +424,45 @@
             });
         }
     }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('confirmAccScoring').addEventListener('click', function() {
+            // Mengambil semua input yang wajib diisi
+            var requiredInputs = document.querySelectorAll('.required-input');
+            var allFilled = true;
+
+            console.log(requiredInputs);
+
+            requiredInputs.forEach(function(input) {
+                var value = input.value.trim();
+
+                // Memeriksa apakah input tidak kosong dan apakah bernilai angka yang valid
+                if (value === '') {
+                    allFilled = false;
+                    // Menambahkan kelas untuk memberikan highlight pada input yang kosong atau tidak valid
+                    input.classList.add('is-invalid');
+                } else {
+                    // Menghapus kelas jika input tidak kosong atau tidak valid
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            // alert(allFilled);
+            // Jika semua input terisi dan valid, submit form
+            if (allFilled) {
+                document.getElementById('confirmForm').submit();
+            } else {
+                // Menampilkan pesan peringatan
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'All fields must be filled with valid values before submitting the form!',
+                });
+            }
+        });
+    });
 </script>
 
 

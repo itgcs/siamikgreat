@@ -119,7 +119,7 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
             <!-- STUDENT STATUS -->
             <tr>
                 <td style="text-align:left;padding-left:3px;padding-left:3px;"><b>Student Name</b><span class="noto-serif-sc-chinese">姓名</span></td>
-                <td style="text-align:left;padding-left:3px;"><b>: {{ $student['student_name'] }}</b></td>
+                <td style="text-align:left;padding-left:3px;"><b>: {{ ucwords(strtolower($student->student_name)) }}</b></td>
             </tr>
             <tr>
                 <td style="text-align:left;padding-left:3px;"><b>Class</b> <span class="noto-serif-sc-chinese">班级</span></td>
@@ -249,7 +249,7 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
                     @if ($relation == null)
                     <p><b>-</b></p>
                     @else
-                    <p><b>{{ $relation['relationship_name'] }}</b></p>
+                    <p><b>{{ ucwords(strtolower($relation['relationship_name'])) }}</b></p>
                     @endif
                 </td>
             </tr>
