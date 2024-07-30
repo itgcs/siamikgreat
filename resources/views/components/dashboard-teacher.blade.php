@@ -141,8 +141,6 @@
                              <span class="text text-sm">( {{$el->type_exam_name}} ) {{$el->name_exam}} ({{ $el->subject }}) ({{ $el->grade_name .'-'. $el->grade_class }})</span>
 
                              <span>
-                              <?php 
-                              ?>
                                 @if ($el->is_active)
                                   @php
                                     $currentDate = now(); // Tanggal saat ini

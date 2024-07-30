@@ -35,10 +35,11 @@
                     <table class="table table-striped projects">
                         <thead>
                             <tr>
-                                <th style="width: 10%">#</th>
-                                <th style="width: 25%">Subject</th>
-                                <th style="width: 25%">Teacher Subject</th>
-                                <th style="width: 30%"></th>
+                                <th style="width: 5%">#</th>
+                                <th style="width: 15%">Subject</th>
+                                <th style="width: 15%">Teacher Subject</th>
+                                <th style="width: 10%">Action</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -48,24 +49,31 @@
                                     <td><a>  {{ $pr->subject_name}}</a></td>
                                     <td><a>  {{ $pr->teacher_name }}</a></td>
                                     @if (session('role') == 'superadmin')
-                                    <td class="project-actions text-right toastsDefaultSuccess">
+                                    <td class="project-actions text-left toastsDefaultSuccess">
                                         <a class="btn btn-primary btn"
                                             href="{{url('superadmin/reports') . '/detailSubjectSec/student/' . $dg->id . '/' . $pr->subject_id}}">
-                                            <i class="fas fa-folder">
+                                            <i class="fas fa-eye">
                                             </i>
                                             View
                                         </a>
                                     </td>
                                     @elseif (session('role') == 'admin')
-                                    <td class="project-actions text-right toastsDefaultSuccess">
+                                    <td class="project-actions text-left toastsDefaultSuccess">
                                         <a class="btn btn-primary btn"
                                             href="{{url('admin/reports') . '/detailSubjectSec/student/' . $dg->id . '/' . $pr->subject_id}}">
-                                            <i class="fas fa-folder">
+                                            <i class="fas fa-eye">
                                             </i>
                                             View
                                         </a>
                                     </td>
                                     @endif
+                                    <td>
+                                        @if ($pr->status == 1)
+                                            Already Submitted
+                                        @else
+                                            {{ $pr->status }}
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

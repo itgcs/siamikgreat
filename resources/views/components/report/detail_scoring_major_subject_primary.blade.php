@@ -42,11 +42,13 @@
         @csrf
 
         @if ($data['status'] == null)
-            <div class="row my-2">
-                <div class="input-group-append mx-2">
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit Scoring</button>
+            @if (!empty($data['students']))
+                <div class="row my-2">
+                    <div class="input-group-append mx-2">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit Scoring</button>
+                    </div>
                 </div>
-            </div>
+            @endif
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
                 <div class="input-group-append mx-2">
@@ -58,7 +60,7 @@
             </div>  
         @endif
 
-        <table class="table table-striped table-bordered" style=" width: 1400px;">
+        <table class="table table-striped table-bordered bg-white" style="width: 2000px;">
             <thead>
                 <tr>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -181,18 +183,22 @@
                         <td>{{ $student['total_score'] }}</td>
 
                         <!-- COMMENT -->
-                        <td class="project-actions text-right">
+                        <td class="project-actions text-left">
                             <div class="input-group">
-                            <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
+                            @if ($data['status'] == null)
+                                <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
                                 <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">  
                                 <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $student['total_score'] }}">  
                                 <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">  
                                 <div class="input-group-append">
-                                <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
-                                    <i class="fas fa-pen"></i>
+                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
+                                        <i class="fas fa-pen"></i>
                                         Edit
                                     </a>
                                 </div>
+                            @else
+                                {{ $student['comment'] }}
+                            @endif
                             </div>
                         </td>
                     </tr>
@@ -202,8 +208,11 @@
                     <input name="subject_teacher" type="number" class="form-control d-none" id="subject_teacher" value="{{ $data['subjectTeacher']->teacher_id }}">  
                 </form>
             @else
-                
-                <p>data kosong</p>
+                <tr>
+                    <td colspan="15" class="text-center">
+                        Teacher dont added a assessment...
+                    </td>    
+                </tr>
             @endif
                 
             </tbody>

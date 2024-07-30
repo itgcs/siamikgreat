@@ -79,16 +79,14 @@
                             <th style="width: 10%">
                             Grade
                             </th>
-                            <th>
+                            <th style="width: 15%">
                             Subject
                             </th>
-                            <th style="width: 15%">
-                            Teacher
-                            </th>
-                            <th>
+                            <th style="width: 5%">
                             Status
                             </th>
-                            <th style="width: 30%">
+                            <th>
+                                Action
                             </th>
                         </tr>
                     </thead>
@@ -130,16 +128,13 @@
                             {{$el->subject_name}}
                             </td>
                             <td>
-                            {{$el->teacher_name}}
-                            </td>
-                            <td>
                             @if($el->is_active)
                             <span class="badge badge-success"> Active </span>
                             @else
                             <span class="badge badge-danger"> Inactive </span>
                             @endif
                             </td>
-                            <td class="project-actions text-right toastsDefaultSuccess">
+                            <td class="project-actions text-left toastsDefaultSuccess">
                             <a class="btn btn-primary btn"
                                 href="{{url('teacher/dashboard/exam') . '/detail/' . $el->id}}">
                                 <i class="fas fa-eye"></i>

@@ -142,11 +142,29 @@
                               <span class="text text-sm">( {{$el->type_exam_name}} ) ({{ $el->subject }}) {{$el->name_exam}} </span>
                               
                               <span>
-                                @if ($el->date_exam == now())
+                                @if ($el->is_active)
+                                  @php
                                   $currentDate = now(); // Tanggal saat ini
-                                  $dateExam = $el->date_exam; // Tanggal exam dari data
-                                  $diff = strtotime($dateExam) - strtotime($currentDate);
-                                  $days = floor($diff / (60 * 60 * 24));
+                                  $dateExam = $el->date_exam; // Tanggal ujian dari data
+
+                                  // Buat objek DateTime dari tanggal saat ini dan tanggal ujian
+                                  $currentDateTime = new DateTime($currentDate);
+                                  $dateExamDateTime = new DateTime($dateExam);
+
+                                  // Hitung selisih antara kedua tanggal
+                                  $interval = $currentDateTime->diff($dateExamDateTime);
+
+                                  // Ambil jumlah hari dari selisih tersebut
+                                  $days = $interval->days;
+
+                                  // Jika tanggal ujian lebih kecil dari tanggal saat ini, buat selisih menjadi negatif
+                                  if ($dateExamDateTime < $currentDateTime) {
+                                    $days = -$days;
+                                  } else if ($dateExamDateTime > $currentDateTime && $days == 0) {
+                                    // Jika tanggal ujian di masa depan dan selisih kurang dari 1 hari, anggap 1 hari
+                                    $days = 1;
+                                  }
+                                  @endphp
                                   
                                   <span class="badge badge-warning">{{$days}} days again</span>
                                 @else

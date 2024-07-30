@@ -12,6 +12,8 @@
               <li class="breadcrumb-item"><a href="{{url('/superadmin/reports')}}">Reports</a></li>
             @elseif (session('role') == 'admin')
             <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Reports</a></li>
+            @elseif (session('role') == 'teacher')
+            <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report/subject/teacher')}}">Reports</a></li>
             @endif
             <li class="breadcrumb-item active" aria-current="page">Detail Report {{ $data['subject']->subject_name }}</li>
           </ol>
@@ -54,7 +56,7 @@
                 </div>
             </div>  
         @endif
-        <table class="table table-striped table-bordered" style=" width: 1400px;">
+        <table class="table table-striped table-bordered bg-white" style=" width: 1400px;">
             <thead>
                 <tr>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -71,15 +73,23 @@
                 </tr>
                 <tr>
                     <!-- EXERCISE -->
-                    @for ($i=1; $i <= $data['grade']->total_exercise; $i++)
-                        <td class="text-center">{{ $i }}</td>
-                    @endfor
-                    <!-- END TASKS -->
+                    @if ($data['grade']->total_exercise !== 0)
+                        @for ($i=1; $i <= $data['grade']->total_exercise; $i++)
+                            <td class="text-center">{{ $i }}</td>
+                        @endfor
+                    @else
+                    <td>&nbsp;</td>
+                    @endif
+                    <!-- END EXERCISE -->
 
                     <!-- QUIZ -->
-                    @for ($j=1; $j <= $data['grade']->total_quiz; $j++)
-                        <td class="text-center">{{ $j }}</td>
-                    @endfor
+                    @if ($data['grade']->total_quiz !== 0)
+                        @for ($j=1; $j <= $data['grade']->total_quiz; $j++)
+                            <td class="text-center">{{ $j }}</td>
+                        @endfor
+                    @else
+                    <td>&nbsp;</td>
+                    @endif
                     <!-- END QUIZ -->
                 </tr>
             </thead>
@@ -94,7 +104,7 @@
                         <td>{{ $student['student_name'] }}</td> <!-- name -->
                 
                         <!-- EXERCISE -->
-                        @php $foundExcercise = false; @endphp
+                        @php $foundExercise = false; @endphp
                         @foreach ($student['scores'] as $index => $score)
                             @if($score['type_exam'] == $data['exercise'])
                                 <td class="text-center">{{ $score['score'] }}</td>

@@ -33,22 +33,14 @@
         </div>
     </div>
 
-    <div style="overflow-x: auto;">
-        @if (session('role') == 'superadmin')
-            <form id="confirmForm" method="POST" action={{route('actionPostScoringMajorPrimary')}}>
-        @elseif (session('role') == 'admin')
-            <form id="confirmForm">
-        @elseif (session('role') == 'teacher')
-            <form id="confirmForm" method="POST" action={{route('actionTeacherPostScoringMajorPrimary')}}>
-        @endif
-        @csrf
-
-        @if ($data['status'] == null)
-            <div class="row my-2">
-                <div class="input-group-append mx-2">
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
+    @if ($data['status'] == null)
+            @if (!empty($data['students']))
+                <div class="row my-2">
+                    <div class="input-group-append mx-2">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
+                    </div>
                 </div>
-            </div>
+            @endif
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
                 <div class="input-group-append mx-2">
@@ -59,7 +51,17 @@
                 </div>
             </div>  
         @endif
-        
+
+    <div style="overflow-x: auto;">
+        @if (session('role') == 'superadmin')
+            <form id="confirmForm" method="POST" action={{route('actionPostScoringMajorPrimary')}}>
+        @elseif (session('role') == 'admin')
+            <form id="confirmForm">
+        @elseif (session('role') == 'teacher')
+            <form id="confirmForm" method="POST" action={{route('actionTeacherPostScoringMajorPrimary')}}>
+        @endif
+        @csrf
+    
         <table class="table table-striped table-bordered bg-white" style="width:2000px;">
             <thead>
                 <tr>
@@ -207,9 +209,14 @@
                 <input name="subject_id" type="number" class="form-control d-none" id="subject_id" value="{{ $data['subject']->subject_id }}">  
                 <input name="subject_teacher" type="number" class="form-control d-none" id="subject_teacher" value="{{ $data['subjectTeacher']->teacher_id }}">  
             </form>
-        @else
-            <p>Data kosong</p>
-        @endif
+            @else
+            <tr>
+                <td colspan="15" class="text-center">
+                    You haven't added a assessment... <br>
+                    <a href="/teacher/dashboard/exam/teacher" class="text-red">Create Exam</a>        
+                </td>    
+            </tr>
+            @endif
             </tbody>
         </table>
 

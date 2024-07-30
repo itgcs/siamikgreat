@@ -32,9 +32,9 @@
 
     <div style="overflow-x: auto;">
         @if (session('role') == 'superadmin')
-            <form id="confirmForm"  method="POST" action={{route('actionPostTcop')}}>
+            <form id="confirmForm"  method="POST">
         @elseif (session('role') == 'admin')
-            <form id="confirmForm" method="POST" action={{route('actionAdminPostTcop')}}>
+            <form id="confirmForm" method="POST">
         @elseif (session('role') == 'teacher')
             <form id="confirmForm" method="POST" action={{route('actionTeacherPostTcop')}}>
         @endif
@@ -57,7 +57,7 @@
             </div>  
         @endif
         
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered bg-white">
             <thead>
                 <tr>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -137,7 +137,11 @@
                     <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
                     <input name="class_teacher" type="number" class="form-control d-none" id="class_teacher" value="{{ $data['classTeacher']->teacher_id }}">    
                 @else
-                    <p>Data Kosong</p>
+                    <tr>
+                        <td colspan="10" class="text-center text-red">
+                            Data empty !!!
+                        </td>
+                    </tr>
                 @endif
             </tbody>
         </table>

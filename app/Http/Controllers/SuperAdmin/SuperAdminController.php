@@ -142,7 +142,7 @@ class SuperAdminController extends Controller
 
          $dataRole = DB::table('roles')->select('id', 'name')->get()->toArray();
          $dataTeacher = DB::table('teachers')->select('id', 'name', 'user_id')->get()->toArray();
-         $dataStudent = Student::get();
+         $dataStudent = Student::orderBy('name', 'asc')->get();
          $dataParent = Relationship::get();
 
          $data = [
