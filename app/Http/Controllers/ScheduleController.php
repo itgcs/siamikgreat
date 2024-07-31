@@ -1001,14 +1001,17 @@ class ScheduleController extends Controller
             'child' => 'schedules academic',
          ]);
         
-        $data = [
+
+      
+         $data = [
             'teacher_id'        => $request->teacher_id,
             'teacher_companion' => $request->teacher_companion,
             'start_time'        => $request->start_time,
             'end_time'          => $request->end_time,
+            'day'               => $request->day,
             'note'              => $request->notes,
             'updated_at'        => now(),
-        ];
+         ];
 
          $role = session('role');
 

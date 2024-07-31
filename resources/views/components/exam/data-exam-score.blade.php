@@ -37,7 +37,6 @@
                             <th>Type Exam</th>
                             <th>Name Exam</th>
                             <th>Date Exam</th>
-                            <th>Grade</th>
                             <th style="width: 25%">Score</th>
                         </tr>
                     </thead>
@@ -49,7 +48,6 @@
                             <td class="text-sm">{{ $el->type_exam }}</td>
                             <td class="text-sm"><a>{{ $el->exam_name }}</a></td>
                             <td class="text-sm"><a>{{ $el->date_exam }}</a></td>
-                            <td class="text-sm">{{ $el->grade_name }} - {{ $el->grade_class }}</td>
                             <td class="project-actions text-right">
                                 <div class="input-group">
                                     <input name="exam_id" type="text" class="form-control d-none" id="exam_id" value="{{ $el->exam_id }}">
@@ -59,9 +57,6 @@
                                     <input name="type_exam_id" type="text" class="form-control d-none" id="type_exam_id" value="{{ $el->type_exam_id }}">
                                     <input name="student_id[]" type="text" class="form-control d-none" id="student_id" value="{{ $el->student_id }}">
                                     <input name="score[]" type="number" class="form-control" id="score" placeholder="Score" value="{{ old('score', $el->score) }}" autocomplete="off" min="0" max="100" required>
-                                    <div class="input-group-append">
-                                        <button type="submit" class="btn btn-success" name="update_single" value="{{ $el->id }}">Update</button>
-                                    </div>
                                 </div>
                                 @if($errors->has('score'))
                                 <p style="color: red">{{ $errors->first('score') }}</p>

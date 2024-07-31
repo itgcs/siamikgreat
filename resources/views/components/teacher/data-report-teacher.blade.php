@@ -116,7 +116,7 @@
                                        </a>
                                        @elseif (session('semester') == 2)
                                        <a class="btn btn-secondary btn"
-                                          href="{{url('teacher/dashboard/report') . '/midcard/semesterdua/' . $dgt->id}}">
+                                          href="{{url('teacher/dashboard/report') . '/midcard/semestersatu/' . $dgt->id}}">
                                           Mid Report Card
                                        </a>   
                                        <a class="btn btn-primary btn"
@@ -150,7 +150,7 @@
                                        @endif
                                        @if (session('semester') == 2)
                                           <a class="btn btn-secondary btn"
-                                             href="{{url('teacher/dashboard/report') . '/midcard/semesterdua/' . $dgt->id}}">
+                                             href="{{url('teacher/dashboard/report') . '/midcard/semestersatu/' . $dgt->id}}">
                                              Mid Report Card
                                           </a>
                                           <a class="btn btn-primary btn"

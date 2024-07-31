@@ -76,7 +76,7 @@
                     <th colspan="1" class="text-center" style="vertical-align : middle;text-align:center;">Final</th>
                     <th class="text-center" style="vertical-align : middle;text-align:center;">R (40%)</th>
                     <th class="text-center" style="vertical-align : middle;text-align:center;">Total</th>
-                    <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Comment</th>
+                    <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;width: 20%;">Comment</th>
                 </tr>
                 <tr>
                     @for ($i=1; $i <= $data['grade']->total_homework; $i++)
@@ -112,7 +112,7 @@
                 @foreach ($data['students'] as $student)
                     
                     <tr>
-                        <td>{{ $loop->iteration }}</td>  <!-- nomer -->
+                        <td  class="text-center" style="vertical-align : middle;text-align:center;">{{ $loop->iteration }}</td>  <!-- nomer -->
                         <td>{{ $student['student_name'] }}</td> <!-- name -->
                     
 
@@ -191,13 +191,14 @@
                                 <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $student['total_score'] }}">  
                                 <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}"> 
                                 @if ($data['status'] == null) 
-                                <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
-                                <div class="input-group-append">
+                                <textarea name="comment[]" class="form-control" cols="6" rows="1" id="comment"></textarea>
+                                <!-- <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required> -->
+                                <!-- <div class="input-group-append">
                                     <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
                                         <i class="fas fa-pen"></i>
                                         Edit
                                     </a>
-                                </div>
+                                </div> -->
                                 @else
                                 {{ $student['comment'] }}
                                 @endif
