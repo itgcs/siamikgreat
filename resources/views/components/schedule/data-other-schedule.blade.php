@@ -5,7 +5,7 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
 
-   <div class="row mt-4">
+   <div class="row">
       <div class="col">
       <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
          <ol class="breadcrumb mb-0">
@@ -19,7 +19,7 @@
 
    <div class="card card-dark ">
       <div class="card-header">
-         <h3 class="card-title">Schedule</h3>
+         <h3 class="card-title">Manage Schedule</h3>
 
          <div class="card-tools">
                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">

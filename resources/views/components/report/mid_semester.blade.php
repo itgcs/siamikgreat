@@ -137,7 +137,7 @@
                                 @if (session('role') == "superadmin" || session('role') == "admin")
                                     <td>
                                         <a class="btn btn-primary btn"
-                                            href="{{url(session('role') . '/reports/semester1/print') . '/' . $student['student_id']}}">
+                                            href="{{url(session('role') . '/reports/midreport/print') . '/' . $student['student_id']}}">
                                             Print
                                         </a>
                                     </td>

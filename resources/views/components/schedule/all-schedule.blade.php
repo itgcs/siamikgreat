@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="card-body" style="max-height: 600px;overflow-y: auto;">
-                <div class="row">
+                <div class="row" style="max-width:1200px;">
                     <div class="col-2">
                         <div class="form-group">
                             <label>Teacher: <span style="color: red"></span></label>

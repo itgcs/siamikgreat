@@ -26,7 +26,7 @@
                </button>
          </div>
       </div>
-      <div class="card-body">
+      <div class="card-body" style="max-height:500px;overflow-y:auto;">
          <table class="table table-striped projects">
                <thead>
                   <tr>
@@ -127,7 +127,7 @@
       <!-- /.card-body -->
    </div>
 
-   <div class="card card-dark mt-5">
+   <div class="card card-dark mt-5" style="max-height:500px;overflow-y:auto;">
       <div class="card-header">
          <h3 class="card-title">Schedule Substitute</h3>
 

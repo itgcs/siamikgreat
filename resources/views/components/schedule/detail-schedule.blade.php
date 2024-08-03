@@ -83,7 +83,7 @@
                             <div class="form-group">
                                 <form id="confirmForm" method="POST" action={{route('subtitute.teacher')}}>
                                     @csrf
-                                    <label>Select Subitute Teacher: <span style="color: red"></span></label>
+                                    <label>Select Substitute Teacher: <span style="color: red"></span></label>
                                     <select id="select_teacher" name="select_teacher" class="form-control">
                                         <option value="">-- Select Teacher --</option>
                                         @foreach ($teacher as $tc)
@@ -166,7 +166,7 @@
                             <div class="form-group">
                                 <form id="confirmForm" method="POST" action={{route('subtitute.teacher')}}>
                                     @csrf
-                                    <label>Select Subitute Assisstant: <span style="color: red"></span></label>
+                                    <label>Select Substitute Assisstant: <span style="color: red"></span></label>
                                     <select id="select_teacher_companion" name="select_teacher_companion" class="form-control">
                                         <option value="">-- Select Teacher --</option>
                                         @foreach ($teacher as $tc)

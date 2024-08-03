@@ -135,8 +135,8 @@
                         <th style="width: 15%">Grade</th>
                         <th style="width: 15%">Subject</th>
                         <th style="width: 15%">Teacher</th>
-                        <th style="width: 5%">Status</th>
-                        <th style="width: 15%">Action</th>
+                        <th>Status</th>
+                        <th style="width: 20%">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -189,7 +189,7 @@
                             <span class="badge badge-danger"> Done </span>
                             @endif
                         </td>
-                        <td class="project-actions text-left toastsDefaultSuccess">
+                        <td class="col project-actions text-left toastsDefaultSuccess">
                             <a class="btn btn-primary btn-sm"
                             href="{{url('/' . session('role') . '/exams') . '/' . $el->id}}">
                             <i class="fas fa-eye">

@@ -97,6 +97,7 @@ class EcaController extends Controller
 
             $data = Student::leftJoin('grades', 'grades.id', '=', 'students.grade_id')
                 ->select('students.*','grades.name as grade_name', 'grades.class as grade_class')
+                ->where('students.is_active', TRUE)
                 ->orderBy('grade_id', 'asc')
                 ->get();
 
