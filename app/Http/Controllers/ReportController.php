@@ -3020,7 +3020,7 @@ class ReportController extends Controller
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
-                'child' => 'database reports',
+                'child' => 'report class teacher',
             ]);
             
             $gradeId = $id;
@@ -3102,7 +3102,7 @@ class ReportController extends Controller
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
-                'child' => 'database reports',
+                'child' => 'report class teacher',
             ]);
             
             $gradeId = $id;
@@ -3202,7 +3202,7 @@ class ReportController extends Controller
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
-                'child' => 'database reports',
+                'child' => 'report class teacher',
             ]);
 
             $gradeId = $id;
@@ -3300,7 +3300,7 @@ class ReportController extends Controller
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
-                'child' => 'database reports',
+                'child' => 'report class teacher',
             ]);
             
             $gradeId = $id;
@@ -3399,7 +3399,7 @@ class ReportController extends Controller
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
-                'child' => 'database reports',
+                'child' => 'report class teacher',
             ]);
 
             $gradeId = $id;

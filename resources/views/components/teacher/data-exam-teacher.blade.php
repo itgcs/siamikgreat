@@ -60,8 +60,8 @@
                     </button>
                 </div>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-striped projects">
+            <div class="card-body p-0" style="overflow-x:auto;">
+                <table class="table table-striped projects" >
                     <thead>
                         <tr>
                             <th>
@@ -134,23 +134,23 @@
                             <span class="badge badge-danger"> Inactive </span>
                             @endif
                             </td>
-                            <td class="project-actions text-left toastsDefaultSuccess">
-                            <a class="btn btn-primary btn"
-                                href="{{url('teacher/dashboard/exam') . '/detail/' . $el->id}}">
-                                <i class="fas fa-eye"></i>
-                                View
-                            </a>
-                            <a class="btn btn-warning btn"
-                                href="{{url('teacher/dashboard/exam') . '/edit/' . $el->id}}">
-                                <i class="fas fa-pencil-alt"></i>
-                                Edit
-                            </a>
-                            <a class="btn btn-success btn"
-                                href="{{url('teacher/dashboard/exam') . '/score/' . $el->id}}">
-                                <i class="fas fa-book">
-                                </i>
-                                Score
-                            </a>
+                            <td class="project-actions text-left col toastsDefaultSuccess">
+                                <a class="btn btn-primary btn"
+                                    href="{{url('teacher/dashboard/exam') . '/detail/' . $el->id}}">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </a>
+                                <a class="btn btn-warning btn"
+                                    href="{{url('teacher/dashboard/exam') . '/edit/' . $el->id}}">
+                                    <i class="fas fa-pencil-alt"></i>
+                                    Edit
+                                </a>
+                                <a class="btn btn-success btn"
+                                    href="{{url('teacher/dashboard/exam') . '/score/' . $el->id}}">
+                                    <i class="fas fa-book">
+                                    </i>
+                                    Score
+                                </a>
                             </td>
                         </tr>
 

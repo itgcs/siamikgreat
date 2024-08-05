@@ -111,7 +111,7 @@
                <div class="card-footer">
                   <div class="d-flex align-items-center float-right">
                      <button type="button" class="btn btn-info mr-2" id="present_all_btn">Present All</button>
-                     <button type="submit" class="btn btn-success" name="present_attend">Present Attend</button>
+                     <button type="submit" class="btn btn-success" name="present_attend">Submit</button>
                   </div>
                </div>
             </form>

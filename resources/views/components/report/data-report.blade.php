@@ -118,7 +118,7 @@
                               <th>Class Teacher</th>
                               <th>Total Student</th>
                               <th>Total Subject</th>
-                              <th style="width:50%;"> Action</th>
+                              <th style="width:60%;"> Action</th>
                            </tr>
                      </thead>
                      <tbody>
@@ -148,11 +148,17 @@
                                           TCOP
                                        </a>
                                        @if (session('semester') == 1)
+                                          <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/midcard/semestersatu' . '/' . $pr->id }}">
+                                             Mid Report Card 
+                                          </a>
                                           <a class="btn btn-danger btn"
                                              href="{{url(session('role') . '/reports') . '/semestersatu/detail/' . $pr->id}}">
                                              REPORT CARD
                                           </a>
                                        @elseif (session('semester') == 2)
+                                          <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/midcard/semestersatu' . '/' . $pr->id }}">
+                                             Mid Report Card 
+                                          </a>
                                           <a class="btn btn-danger btn"
                                              href="{{url(session('role') . '/reports') . '/semesterdua/detail/' . $pr->id}}">
                                              REPORT CARD
@@ -183,11 +189,11 @@
                      <thead>
                            <tr>
                               <th>#</th>
-                              <th>Class</th>
+                              <th style="width:10%;">Class</th>
                               <th>Class Teacher</th>
                               <th>Total Student</th>
                               <th>Total Subject</th>
-                              <th>Action</th>
+                              <th style="width:60%;">Action</th>
                            </tr>
                      </thead>
                      <tbody>
@@ -215,6 +221,9 @@
                                        <a class="btn btn-secondary btn"
                                           href="{{url(session('role') . '/reports') . '/tcop/detailSec/' . $pr->id}}">
                                           TCOP
+                                       </a>
+                                       <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/midcard/semestersatu' . '/' . $pr->id }}">
+                                          Mid Report Card 
                                        </a>
                                        @if (session('semester') == 1)
                                        <a class="btn btn-danger btn"
