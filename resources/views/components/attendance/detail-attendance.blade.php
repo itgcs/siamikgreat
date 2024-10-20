@@ -15,10 +15,9 @@
             </nav>
          </div>
       </div>
-
       <div class="card card-dark mt-2">
          <div class="card-header">
-            <h3 class="card-title">{{ $data['nameTeacher'] }}/{{ $data['nameGrade'] }}/{{date('d-m-Y') }}</h3>
+            <h3 class="card-title">{{ $data['nameGrade'] }} / {{ \Carbon\Carbon::parse($data['date'])->format('l, d F Y') }}</h3>
             <div class="card-tools">
                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                   <i class="fas fa-minus"></i>
@@ -35,13 +34,6 @@
                            <th>#</th>
                            <th style="width: 20%">Student</th>
                            <th >Attendance</th>
-                           <th style="width: 20%"> 
-                              <select required name="semester" class="form-control" id="semester" onchange="saveSemesterToSession()">
-                                 <option value="">-- Semester -- </option>
-                                 <option value="1" {{ session('semester') == '1' ? "selected" : "" }}>Semester 1</option>
-                                 <option value="2" {{ session('semester') == '2' ? "selected" : "" }}>Semester 2</option>
-                              </select>
-                           </th>
                         </tr>
                   </thead>
                   <tbody>
@@ -65,7 +57,7 @@
                               <td><a>{{ $el->name }}</a></td>
                               <td colspan="2">
                                     <div class="input-group">
-                                       <input name="date" type="date" class="form-control d-none" id="date" value="{{ date('Y-m-d') }}">
+                                       <input name="date" type="date" class="form-control d-none" id="date" value="{{$data['date']}}">
                                        <input name="grade_id" type="text" class="form-control d-none" id="grade_id" value="{{ $data['gradeId'] }}">
                                        <input name="teacher_id" type="text" class="form-control d-none" id="teacher_id" value="{{ $data['teacherId'] }}">
                                     </div>
@@ -121,7 +113,7 @@
                <div class="card-footer">
                   <div class="d-flex align-items-center float-right">
                      <button type="button" class="btn btn-info mr-2" id="present_all_btn">Present All</button>
-                     <button type="submit" class="btn btn-success" name="present_attend">Present Attend</button>
+                     <button type="submit" class="btn btn-success" name="present_attend">Submit</button>
                   </div>
                </div>
             </form>
@@ -137,7 +129,6 @@
       let checkboxes = document.querySelectorAll('.absence-type');
       let presentAllBtn = document.getElementById('present_all_btn');
 
-      
       presentAllBtn.addEventListener('click', function() {
          checkboxes.forEach(function(checkbox) {
             if (checkbox.id.startsWith('present')) {
@@ -164,27 +155,29 @@
          });
       });
    });
+
+   
 </script>
 
 
-   @if(session('failed_attend')) 
-      <script>
-           Swal.fire({
-              icon: 'error',
-              title: 'Oops..',
-              text: 'Attendance already recorded for this day.',
-        });
-      </script>
-   @endif
-
-   @if(session('success_attend')) 
-      <script> 
+@if(session('failed_attend')) 
+   <script>
          Swal.fire({
-               icon: 'success',
-               title: 'Successfully',
-               text: 'Successfully Attend Student',
-         });
-      </script>
-   @endif
+            icon: 'error',
+            title: 'Oops..',
+            text: 'Attendance already recorded for this day.',
+      });
+   </script>
+@endif
+
+@if(session('success_attend')) 
+   <script> 
+      Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully Attend Student',
+      });
+   </script>
+@endif
 
 @endsection

@@ -214,7 +214,7 @@
                                         
                                     </a>
                                     @if(session('role') == 'superadmin')
-                                    <a class="btn btn-info btn-sm" title="Hapus" data-toggle="modal" data-target="#modalDeleteTeacher">
+                                    <a class="btn btn-info btn-sm" title="Hapus" data-toggle="modal" data-target="#modalDeleteTeacher{{$el->id}}">
                                         <i class="fas fa-trash">
                                         </i>
                                     </a>
@@ -234,7 +234,7 @@
                             </tr>  
 
                             <!-- Modal -->
-                            <div class="modal fade" id="modalDeleteTeacher" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal fade" id="modalDeleteTeacher{{$el->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -248,7 +248,7 @@
                                     </div>
                                     <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
-                                    <a class="btn btn-danger btn"  href="{{url('/' . session('role') .'/teachers') . '/delete/' . $el->id}}">Yes delete</a>
+                                    <a class="btn btn-danger btn" href="{{url('/' . session('role') .'/teachers') . '/delete/' . $el->id}}">Yes delete</a>
                                     </div>
                                 </div>
                             </div>

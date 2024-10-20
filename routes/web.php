@@ -625,7 +625,6 @@ Route::post('/save-studentId-session', [UserController::class, 'saveStudentIdToS
 // Route untuk menyimpan substitute teacher
 Route::post('/subtitute-teacher', [ScheduleController::class, 'subtituteTeacher'])->name('subtitute.teacher');
 
-
 Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->group(function () {
 
    Route::prefix('/teachers')->group(function () {
@@ -920,7 +919,7 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
 Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(function () {
 
    Route::get('/export/excel', [ExportController::class, 'excel']);
-   Route::get('/export/pdf', [ExportController::class, 'acar']);
+   Route::get('/export/pdf', [ExportController::class, 'attendance']);
 
    Route::prefix('/dashboard')->group(function () {
       Route::get('/', [DashboardController::class, 'index']);
@@ -930,6 +929,15 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
 
       Route::get('/change-password', [AdminController::class, 'changeMyPassword']);
       Route::put('/change-password', [AdminController::class, 'actionChangeMyPassword']);
+   });
+
+   Route::prefix('/users')->group(function () {
+      Route::get('/', [SuperAdminController::class, 'getUser']);
+      Route::get('/register-user', [SuperAdminController::class, 'registerUser']);
+      Route::get('/{id}', [SuperAdminController::class, 'getById']);
+      Route::post('/register-action', [SuperAdminController::class, 'registerUserAction']);
+      Route::put('/change-password/{id}',[SuperAdminController::class, 'changePassword'])->name('user.editPassword');
+      Route::get('delete/{id}', [SuperAdminController::class, 'deleteUser']);
    });
    
    Route::prefix('/detail')->group(function () {
@@ -1224,15 +1232,15 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('/edit/teacher', [TeacherController::class, 'editTeacher']);
       Route::put('/edit/{id}', [TeacherController::class, 'actionEdit'])->name('actionUpdateSelfTeacher');
       Route::post('/change-password/{id}',[UserController::class, 'changePassword'])->name('user.changePassword');
-      
 
+      Route::get('attendance/view/student/{id}/{gradeId}/{subjectId}', [AttendanceController::class, 'detailViewAttendTeacher']);
+      Route::get('attendance/edit/detail/{date}/{gradeId}/{teacherId}/{semester}', [AttendanceController::class, 'editDetail']);
+      Route::get('attendance/all/{id}/{gradeId}', [AttendanceController::class, 'detailAll'])->name('attendanceAll');
+      Route::get('attendance/edit/{id}/{gradeId}', [AttendanceController::class, 'edit']);
       Route::get('attendance/{id}', [AttendanceController::class, 'attendTeacher']);
       Route::get('attendance/class/teacher', [AttendanceController::class, 'gradeTeacher']);
-      Route::get('attendance/{id}/{gradeId}', [AttendanceController::class, 'detail'])->name('attendanceSubject');
-      Route::get('attendance/edit/{id}/{gradeId}', [AttendanceController::class, 'edit']);
-      Route::get('attendance/edit/detail/{date}/{gradeId}/{teacherId}/{semester}', [AttendanceController::class, 'editDetail']);
       Route::get('attendance/teacher/grade/subject', [AttendanceController::class, 'detailAttendTeacher'])->name('attendance.detail.teacher');
-      Route::get('attendance/view/student/{id}/{gradeId}/{subjectId}', [AttendanceController::class, 'detailViewAttendTeacher']);
+      Route::get('attendance/{id}/{gradeId}/{date}', [AttendanceController::class, 'detail'])->name('attendanceStudent');
       
       Route::post('/', [AttendanceController::class, 'postAttendance'])->name('actionUpdateAttendanceStudent');
       Route::post('/editAttendance', [AttendanceController::class, 'postEditAttendance'])->name('actionEditAttendanceStudent');
@@ -1240,6 +1248,8 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
 
       Route::get('/grade', [GradeController::class, 'teacherGrade']);
       
+
+      // EXAM
       Route::get('/exam/teacher', [ExamController::class, 'teacherExam'])->name('teacher.dashboard.exam');
       Route::get('exam/create', [ExamController::class, 'createTeacherExam']);
       Route::post('/exam', [ExamController::class, 'actionPost'])->name('actionCreateExamTeacher');
@@ -1287,7 +1297,6 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('report/cardKindergarten/{id}', [ReportController::class, 'cardKindergarten']);
       Route::get('report/mid/cardKindergarten/{id}', [ReportController::class, 'cardKindergartenMid']);
       
-
       Route::get('report/tcop/detail/{id}', [ReportController::class, 'tcopPrimary']);
       Route::get('report/tcop/detailSec/{id}', [ReportController::class, 'tcopSecondary']);
 
@@ -1311,6 +1320,7 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::post('report/kindergarten', [ScoringController::class, 'actionPostReportCardKindergarten'])->name('actionTeacherPostReportCardKindergarten');
       Route::post('report/midkindergarten', [ScoringController::class, 'actionPostMidReportCardKindergarten'])->name('actionTeacherPostMidReportCardKindergarten');
 
+      Route::get('schedules/all', [ScheduleController::class, 'allScheduleSchools']);
       Route::get('schedules/grade', [ScheduleController::class, 'scheduleGradeTeacher']);
       Route::get('schedules/gradeOther/{id}', [ScheduleController::class, 'scheduleGradeTeacherOther']);
       Route::get('schedules/subject', [ScheduleController::class, 'scheduleSubjectTeacher']);

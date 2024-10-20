@@ -24,10 +24,11 @@
     <div class="row">
         <div class="col">
             <p class="text-xs text-bold">Detail Attendance</p>
-            <p class="text-xs">Semester: {{ $data['semester']}}</p> 
-            <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</p>
-            <p class="text-xs">Class Teacher: {{ $data['classTeacher']->teacher_name }}</p>
-            <p class="text-xs">Date: {{ date('d-m-Y') }}</p>
+            <p class="text-xs">Semester : {{ $data['semester']}}</p> 
+            <p class="text-xs">Class : {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</p>
+            <p class="text-xs">Class Teacher : {{ $data['classTeacher']->teacher_name }}</p>
+            <p class="text-xs">Date : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
+            </p>
         </div>
     </div>
 
@@ -107,7 +108,7 @@
     @foreach ($data['totalAttendances']['datesByMonth'] as $month => $dates)
         <div class="row">
             <div class="col">
-                <div class="card card-dark ">
+                <div class="card card-dark">
                     <div class="card-header">
                         <h4 class="card-title">{{ $month }}</h4>
                         <div class="card-tools">
@@ -118,11 +119,11 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered" style="min-width: 100%;">
+                            <table class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
-                                        <th rowspan="2" class="text-center" style="vertical-align: middle;">S/N</th>
-                                        <th rowspan="2" class="text-center" style="vertical-align: middle;">First Name</th>
+                                        <th rowspan="2" class="text-center" style="vertical-align: middle;width:50px">S/N</th>
+                                        <th rowspan="2" class="text-center" style="vertical-align: middle;min-width:450px;">First Name</th>
                                         @foreach($dates as $date)
                                             <th class="text-center" style="vertical-align: middle;">{{ $loop->iteration }}</th>
                                         @endforeach
@@ -130,7 +131,8 @@
                                     </tr>
                                     <tr>
                                         @foreach($dates as $date)
-                                            <th class="text-center text-xs" style="vertical-align: middle;">{{ $date }}</th>
+                                            <th class="text-center text-xs" style="vertical-align: middle;">{{ \Carbon\Carbon::parse($date)->format('l, d F Y') }}
+                                            </th>
                                         @endforeach
                                         <!-- <th class="text-center" style="vertical-align: middle;">P</th>
                                         <th class="text-center" style="vertical-align: middle;">A</th>

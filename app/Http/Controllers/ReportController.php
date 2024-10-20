@@ -2538,10 +2538,10 @@ class ReportController extends Controller
                 ->select('subjects.name_subject as subject_name', 'subjects.id as subject_id')
                 ->first();
 
-            $tasks = Type_exam::whereIn('name', ['homework', 'small project', 'presentation'])
+            $tasks = Type_exam::whereIn('name', ['homework', 'small project', 'presentation', 'exercice'])
                 ->pluck('id')
                 ->toArray();
-            $mid = Type_exam::whereIn('name', ['quiz', 'practical', 'exam', 'project'])
+            $mid = Type_exam::whereIn('name', ['quiz', 'practical exam', 'project'])
                 ->pluck('id')
                 ->toArray();
             $finalExam = Type_exam::whereIn('name', ['written tes', 'big project'])
@@ -4465,8 +4465,8 @@ class ReportController extends Controller
                 ->select('teachers.name as teacher_name')
                 ->first();
 
-            $relation = Student_relationship::where('Student_relationships.student_id', $id)
-                ->join('relationships', 'relationships.id', '=', 'student_relationships.relationship_id')
+            $relation = Student_relationship::where('Student_relations.student_id', $id)
+                ->join('relationships', 'relationships.id', '=', 'student_relations.relation_id')
                 ->select('relationships.name as relationship_name')
                 ->first();
             
@@ -4697,6 +4697,8 @@ class ReportController extends Controller
                 'remarks' => $remarks,
             ];
 
+            // dd($data);
+
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);
             $pdf->set_option('isHtml5ParserEnabled', true);
@@ -4776,8 +4778,8 @@ class ReportController extends Controller
                 ->select('teachers.name as teacher_name')
                 ->first();
 
-            $relation = Student_relationship::where('Student_relationships.student_id', $id)
-                ->join('relationships', 'relationships.id', '=', 'student_relationships.relationship_id')
+            $relation = Student_relationship::where('Student_relations.student_id', $id)
+                ->join('relationships', 'relationships.id', '=', 'student_relations.relation_id')
                 ->select('relationships.name as relationship_name')
                 ->first();
             
@@ -5205,8 +5207,8 @@ class ReportController extends Controller
                 ->select('teachers.name as teacher_name')
                 ->first();
             
-            $relation = Student_relationship::where('Student_relationships.student_id', $id)
-                ->join('relationships', 'relationships.id', '=', 'student_relationships.relationship_id')
+            $relation = Student_relationship::where('Student_relations.student_id', $id)
+                ->join('relationships', 'relationships.id', '=', 'student_relations.relation_id')
                 ->select('relationships.name as relationship_name')
                 ->first();
 
@@ -5324,8 +5326,8 @@ class ReportController extends Controller
                 ->select('teachers.name as teacher_name')
                 ->first();
             
-            $relation = Student_relationship::where('Student_relationships.student_id', $id)
-                ->join('relationships', 'relationships.id', '=', 'student_relationships.relationship_id')
+            $relation = Student_relationship::where('Student_relations.student_id', $id)
+                ->join('relationships', 'relationships.id', '=', 'student_relations.relation_id')
                 ->select('relationships.name as relationship_name')
                 ->first();
 
@@ -5428,8 +5430,8 @@ class ReportController extends Controller
                 ->select('teachers.name as teacher_name')
                 ->first();
             
-            $relation = Student_relationship::where('Student_relationships.student_id', $id)
-                ->join('relationships', 'relationships.id', '=', 'student_relationships.relationship_id')
+            $relation = Student_relationship::where('Student_relations.student_id', $id)
+                ->join('relationships', 'relationships.id', '=', 'student_relations.relation_id')
                 ->select('relationships.name as relationship_name')
                 ->first();
 
@@ -5623,8 +5625,8 @@ class ReportController extends Controller
                 ->select('teachers.name as teacher_name')
                 ->first();
             
-            $relation = Student_relationship::where('Student_relationships.student_id', $id)
-                ->join('relationships', 'relationships.id', '=', 'student_relationships.relationship_id')
+            $relation = Student_relationship::where('Student_relations.student_id', $id)
+                ->join('relationships', 'relationships.id', '=', 'student_relations.relation_id')
                 ->select('relationships.name as relationship_name')
                 ->first();
 

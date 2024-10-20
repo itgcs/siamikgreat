@@ -146,8 +146,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         var exams      = @json($exams);
         var schedules  = @json($schedules);
-        var midExams   = @json($midExam);
-        var finalExams = @json($finalExam);
 
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -155,7 +153,7 @@
             headerToolbar: {
                 left: 'prev,next',
                 center: 'title',
-                right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                right: 'dayGridMonth'
             },
             events: [
                 ...exams.map(exam => ({
@@ -181,36 +179,7 @@
                         sampai: schedule.end_date ? new Date(schedule.end_date).toLocaleDateString('id-ID', { month: 'long', day: 'numeric', year: 'numeric' }) : null,
                     };
                 }),
-                ...midExams.map(schedule => {
-                    let endDate = schedule.end_date ? new Date(schedule.end_date) : null;
-                    if (endDate) {
-                        endDate.setDate(endDate.getDate() + 1); // Menambahkan satu hari
-                    }
-                    return {
-                        title: schedule.note,
-                        start: schedule.date,
-                        end: endDate ? endDate.toISOString().split('T')[0] : null,
-                        description: schedule.note,
-                        color: schedule.color,
-                        jadwal: new Date(schedule.date).toLocaleDateString('id-ID', { month: 'long', day: 'numeric', year: 'numeric' }),
-                        sampai: schedule.end_date ? new Date(schedule.end_date).toLocaleDateString('id-ID', { month: 'long', day: 'numeric', year: 'numeric' }) : null,
-                    };
-                }),
-                ...finalExams.map(schedule => {
-                    let endDate = schedule.end_date ? new Date(schedule.end_date) : null;
-                    if (endDate) {
-                        endDate.setDate(endDate.getDate() + 1); // Menambahkan satu hari
-                    }
-                    return {
-                        title: schedule.note,
-                        start: schedule.date,
-                        end: endDate ? endDate.toISOString().split('T')[0] : null,
-                        description: schedule.note,
-                        color: schedule.color,
-                        jadwal: new Date(schedule.date).toLocaleDateString('id-ID', { month: 'long', day: 'numeric', year: 'numeric' }),
-                        sampai: schedule.end_date ? new Date(schedule.end_date).toLocaleDateString('id-ID', { month: 'long', day: 'numeric', year: 'numeric' }) : null,
-                    };
-                }),
+                
             ],
             eventClick: function(info) {
                 document.getElementById('eventTitle').innerText = 'Event: ' + info.event.title;

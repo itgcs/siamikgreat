@@ -28,6 +28,12 @@ class UserSeeder extends Seeder
             'role_id' => '2',
             'created_at' => now(),
          ],
+         [
+            'username' => 'yuliana',
+            'password' => Hash::make('yuliana'),
+            'role_id' => '3',
+            'created_at' => now(),
+         ],
       ];
 
       DB::table('users')->insert($data);

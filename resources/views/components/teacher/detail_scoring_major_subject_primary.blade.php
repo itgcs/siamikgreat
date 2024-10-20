@@ -2,7 +2,7 @@
 @section('content')
 
 <!-- Content Wrapper. Contains page content -->
-<div class="container-fluid">
+<div class="container-fluid" id="anjayani">
     <div class="row">
         <div class="col">
             <nav aria-label="breadcrumb" class="bg-light rounded-3 mb-4">
@@ -23,13 +23,29 @@
 
     <div class="row">
         <div class="col">
-            <p class="text-xs text-bold">Major Subject Assessment</p>
-            <p class="text-xs">Semester : {{ $data['semester']}}</p> 
-            <p class="text-xs">Subject Teacher : {{ $data['subjectTeacher']->teacher_name }}</p>   
-            <p class="text-xs">Subject Teacher : {{ $data['subject']->subject_name }}</p>   
-            <p class="text-xs">Class Teacher : {{ $data['classTeacher']->teacher_name }}</p>
-            <p class="text-xs">Class: {{ $data['grade']->name }} - {{ $data['grade']->class }}</p>
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
+            <p class="text-bold">Major Subject Assessment</p>
+            <table>
+                <tr>
+                    <td>Subject</td>
+                    <td> : {{ $data['subject']->subject_name }}</td>
+                </tr>
+                <tr>
+                    <td>Subject Teacher</td>
+                    <td> : {{ $data['subjectTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Class</td>
+                    <td> : {{ $data['grade']->name }} - {{ $data['grade']->class }}</td>
+                </tr>
+                <tr>
+                    <td>Class Teacher</td>
+                    <td> : {{ $data['classTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
+                </tr>
+            </table>
         </div>
     </div>
 
@@ -44,9 +60,9 @@
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
                 <div class="input-group-append mx-2">
-                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
-                    @if (session('role') == 'superadmin' || session('role') == 'admin')
-                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline ACAR</a>
+                    <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
                     @endif
                 </div>
             </div>  
@@ -56,7 +72,7 @@
         @if (session('role') == 'superadmin')
             <form id="confirmForm" method="POST" action={{route('actionPostScoringMajorPrimary')}}>
         @elseif (session('role') == 'admin')
-            <form id="confirmForm">
+            <form id="confirmForm" method="POST" action={{route('actionAdminCreateExam')}}>
         @elseif (session('role') == 'teacher')
             <form id="confirmForm" method="POST" action={{route('actionTeacherPostScoringMajorPrimary')}}>
         @endif
@@ -187,11 +203,11 @@
                         <!-- COMMENT -->
                         <td class="project-actions text-left">
                             <div class="input-group">
-                                <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">  
-                                <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $student['total_score'] }}">  
-                                <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}"> 
+                                <input name="student_id[]" type="number" class="form-control d-none" id="student_id-{{$student['student_id']}}" value="{{ $student['student_id'] }}">  
+                                <input name="final_score[]" type="number" class="form-control d-none" id="final_score-{{$student['student_id']}}" value="{{ $student['total_score'] }}">  
+                                <input name="semester" type="number" class="form-control d-none" id="semester-{{$student['student_id']}}" value="{{ $data['semester'] }}"> 
                                 @if ($data['status'] == null) 
-                                <textarea name="comment[]" class="form-control" cols="6" rows="1" id="comment"></textarea>
+                                <textarea name="comment[]" class="form-control" cols="6" rows="1" id="comment-{{$student['student_id']}}" required></textarea>
                                 <!-- <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required> -->
                                 <!-- <div class="input-group-append">
                                     <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
@@ -265,14 +281,22 @@
 </div>
 
 <script>
-    document.getElementById('confirmAccScoring').addEventListener('click', function() {
-        document.getElementById('confirmForm').submit();
-    });
+    
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmButton = document.getElementById('confirmAccScoring');
+    const confirmForm = document.getElementById('confirmForm');
+    
+    if (confirmButton && confirmForm) {
+        confirmButton.addEventListener('click', function() {
+            confirmForm.submit();
+        });
+    }
+});
+
 </script>
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-
 
 @if(session('after_post_final_score')) 
     <script>

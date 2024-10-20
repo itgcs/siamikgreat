@@ -8,7 +8,7 @@
             <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 ">
                   <ol class="breadcrumb mb-0">
                      <li class="breadcrumb-item">Home</li>
-                     <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/exams')}}">Exam</a></li>
+                     <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/exams')}}">Scorings</a></li>
                      <li class="breadcrumb-item active" aria-current="page">Create</li>
                   </ol>
             </nav>

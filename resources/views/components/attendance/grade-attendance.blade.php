@@ -52,15 +52,9 @@
                   <table class="table table-striped projects">
                      <thead>
                            <tr>
-                              <th style="width: 10%">
-                                 #
-                              </th>
-                              <th style="width: 15%">
-                                 Class
-                              </th>
-                              <th style="width: 75%">
-                                 Action
-                              </th>
+                              <th style="width: 5%">No </th>
+                              <th style="width: 10%">Class</th>
+                              <th style="width: 85%">Action</th>
                            </tr>
                      </thead>
                      <tbody>
@@ -76,7 +70,7 @@
                                     </td>
                                     <td>
                                        <a class="btn btn-primary btn-sm"
-                                          href="{{url('/' . session('role') . '/dashboard/attendance') . '/' . session('id_user') . '/' . $el->id}}">
+                                          href="{{url('/' . session('role') . '/dashboard/attendance/all') . '/' . session('id_user') . '/' . $el->id}}">
                                           <i class="fas fa-paper-plane">
                                           </i>
                                           Attend
@@ -87,12 +81,12 @@
                                           </i>
                                           View
                                        </a>
-                                       <a class="btn btn-warning btn-sm"
+                                       <!-- <a class="btn btn-warning btn-sm"
                                           href="{{url('/' . session('role') . '/dashboard/attendance/edit') . '/' . session('id_user') . '/' . $el->id}}">
                                           <i class="fas fa-pencil">
                                           </i>
                                           Edit
-                                       </a>
+                                       </a> -->
                                     </td>
                               </tr>
                         @endforeach

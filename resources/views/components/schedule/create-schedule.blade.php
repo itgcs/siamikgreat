@@ -21,9 +21,9 @@
     </div>
     
     <div class="container-fluid" style="overflow-x: auto;">
-        <div class="row" style="width: 3800px;">
+        <div class="row" style="width: 3000px;">
             <!-- Left column -->
-            <div class="col-md-4" style="max-width: 1220px;">
+            <div class="col-md-5">
                 <div class="card card-dark">
                     <div class="card-header">
                         <h3 class="card-title">Create Schedule</h3>
@@ -70,26 +70,26 @@
                         <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th style="width: 14%;">Subject</th>
-                                    <th style="width: 18%;">Teacher</th>
-                                    <th style="width: 18%;">Assistant</th>
-                                    <th style="width: 8%;">Days</th>
-                                    <th style="width: 8%;">Start Time</th>
-                                    <th style="width: 8%;">End Time</th>
-                                    <th style="width: 12%;">Notes</th>
+                                    <th style="width:15%">Subject</th>
+                                    <th style="width:15%">Teacher</th>
+                                    <th style="width:15%">Assistant</th>
+                                    <th>Days</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Notes</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="scheduleTableBody">
                                 <tr>
                                     <td>
-                                        <select name="subject_id[]" class="form-control" id="subject_id"></select>
+                                        <select name="subject_id[]" class="form-control js-select2" id="subject_id"></select>
                                         @if($errors->has('subject_id'))
                                             <p style="color: red">{{ $errors->first('subject_id') }}</p>
                                         @endif
                                     </td>
                                     <td>
-                                        <select name="teacher_id[]" class="form-control" id="teacher_id">
+                                        <select name="teacher_id[]" class="form-control js-select2" id="teacher_id">
                                             <option value="">-- Teacher --</option>
                                         </select>
                                         @if($errors->has('teacher_id'))
@@ -97,7 +97,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <select name="teacher_companion[]" class="form-control" id="teacher_companion">
+                                        <select name="teacher_companion[]" class="form-control js-select2"" id="teacher_companion">
                                             <option value="" selected>-- Assistant --</option>
                                             @foreach($data['teacher'] as $dt)
                                                 <option value="{{ $dt->id }}">{{ $dt->name }}</option>
@@ -146,16 +146,13 @@
                             </tbody>
                         </table>
                     </div>
-
-                    <div class="row d-flex justify-content-center">
-                        <input role="button" type="submit" class="btn btn-success center col-11 m-3">
-                    </div>
+                    <input role="button" type="submit" class="btn btn-success mx-3 mb-2">
                 </div>
                 </form>
             </div>
 
             <!-- Right column -->
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <div class="card card-dark">
                     <div class="card-header">
                         <h3 class="card-title">All Schedule</h3>
@@ -165,7 +162,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="card-body" style="max-height: 600px;overflow-y: auto;">
+                    <div class="card-body">
                         <div class="row">
                             <div class="col-2">
                                 <div class="form-group">
@@ -221,16 +218,16 @@
         function addRow() {
             var newRow = `<tr>
                 <td>
-                    <select name="subject_id[]" class="form-control subject_id">
+                    <select name="subject_id[]" class="form-control subject_id js-select2">
                     </select>
                 </td>
                 <td>
-                    <select name="teacher_id[]" class="form-control teacher_id">
+                    <select name="teacher_id[]" class="form-control teacher_id js-select2">
                         <option value="" selected >-- Teacher --</option>
                     </select>
                 </td>
                 <td>
-                    <select name="teacher_companion[]" class="form-control">
+                    <select name="teacher_companion[]" class="form-control js-select2">
                         <option value="" selected >-- Assistant --</option>
                         @foreach($data['teacher'] as $dt)
                         <option value="{{ $dt->id }}">{{ $dt->name }}</option>
@@ -263,6 +260,15 @@
             </tr>`;
             $('#scheduleTableBody').append(newRow);
 
+            $('.js-select2').select2({
+                closeOnSelect : false,
+                placeholder : "Click to select an option",
+                theme: 'bootstrap4',
+                allowHtml: true,
+                allowClear: true,
+                tags: true,
+                searchInputPlaceholder: 'Search options'
+            });
             // Call the function to populate subject and teacher options for the new row
             const newSubjectSelect = $('#scheduleTableBody tr:last .subject_id');
             const newTeacherSelect = $('#scheduleTableBody tr:last .teacher_id');
@@ -277,12 +283,26 @@
 
         // Function to update the visibility of the "Hapus" buttons
         function updateHapusButtons() {
-            $('#scheduleTableBody tr').each(function(index, row) {
+            const rows = $('#scheduleTableBody tr');
+
+            rows.each(function(index, row) {
+                var tambahButton = $(row).find('.btn-tambah');
                 var hapusButton = $(row).find('.btn-hapus');
-                if (index === $('#scheduleTableBody tr').length - 1) {
-                    hapusButton.removeClass('d-none');
-                } else {
+
+                if (rows.length === 1) {
+                    // Jika hanya ada satu baris, hanya tampilkan tombol "Tambah"
+                    tambahButton.removeClass('d-none');
                     hapusButton.addClass('d-none');
+                } else {
+                    // Baris terakhir tampilkan tombol "Tambah" dan "Hapus"
+                    if (index === rows.length - 1) {
+                        tambahButton.removeClass('d-none');
+                        hapusButton.removeClass('d-none');
+                    } else {
+                        // Baris lainnya hanya tampilkan tombol "Hapus"
+                        tambahButton.addClass('d-none');
+                        hapusButton.removeClass('d-none');
+                    }
                 }
             });
         }
@@ -298,7 +318,7 @@
             updateHapusButtons();
         });
 
-        // Initial call to update the visibility of the "Hapus" buttons
+        // Initial call to update the visibility of the "Hapus" and "Tambah" buttons
         updateHapusButtons();
     });
 
@@ -448,7 +468,7 @@
             `;
 
             Object.keys(data).forEach(day => {
-                table += `<tr style="background-color: ${dayColors[day]}"><td class="bg-yellow text-center text-bold" style="font-size:12px;" colspan="14">${day.toUpperCase()}</td></tr>`;
+                table += `<tr style="background-color: ${dayColors[day]}"><td class="bg-black text-white text-center text-bold" style="font-size:12px;" colspan="14">${day.toUpperCase()}</td></tr>`;
                 const gradeSchedules = data[day];
 
                 // Kumpulkan semua slot waktu untuk hari ini
@@ -471,7 +491,12 @@
                             if (`${schedule.start_time}-${schedule.end_time}` === timeSlot) {
                                 const gradeName = schedule.grade_name || '';
                                 const classColor = classColors[gradeName.split(' ')[0]] || '#FFFFFF';
-                                timeSlotSchedules[grade] = `
+                        
+                                if (!timeSlotSchedules[grade]) {
+                                    timeSlotSchedules[grade] = '';
+                                }
+                                
+                                timeSlotSchedules[grade] += `
                                     <div class="col p-0" style="background-color: ${classColor[grade]};">
                                         <p class="text-bold" style="font-size:12px;">${schedule.subject_name ? schedule.subject_name.toUpperCase() : ""}
                                         <br>${schedule.teacher_name}

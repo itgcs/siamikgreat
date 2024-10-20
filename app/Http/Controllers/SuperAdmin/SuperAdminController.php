@@ -186,7 +186,12 @@ class SuperAdminController extends Controller
          
          if($validator->fails())
          {
-            return redirect('/superadmin/users/register-user')->withErrors($validator->messages())->withInput($credentials);
+            if (session('role') ==  'superadmin') {
+               return redirect('/superadmin/users/register-user')->withErrors($validator->messages())->withInput($credentials);
+            }
+            elseif (session('role') == 'admin') {
+               return redirect('/admin/users/register-user')->withErrors($validator->messages())->withInput($credentials);
+            }
          }
 
          if($request->password !== $request->reinputPassword)
@@ -211,7 +216,12 @@ class SuperAdminController extends Controller
          }
          
          session()->flash('register.success');
-         return redirect('/superadmin/users');
+         if (session('role') == 'superadmin') {
+            return redirect('/superadmin/users');
+         }
+         elseif (session('role') == 'admin') {
+            return redirect('/admin/users');
+         }
       } catch (Exception $err) {
          return dd($err);
       }

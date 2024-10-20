@@ -18,7 +18,7 @@
 
       <div class="card card-dark mt-2">
          <div class="card-header">
-            <h3 class="card-title">Edit Attendance Student</h3>
+            <h3 class="card-title">Edit Attendance Student {{ \Carbon\Carbon::parse($date)->format('l, d F Y') }}</h3>
             <div class="card-tools">
                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                   <i class="fas fa-minus"></i>
@@ -73,8 +73,8 @@
                                        </label>
                                     </div>
                                     <div class="form-check me-2 mx-2">
-                                       <input id="alpha{{ $loop->index + 1 }}" name="status[{{ $el->id }}]" class="form-check-input absence-type" type="checkbox" value="alpha" id="absent" {{ $el->absent ? 'checked' : '' }}>
-                                       <label class="form-check-label" for="absent">
+                                       <input id="alpha{{ $loop->index + 1 }}" name="status[{{ $el->id }}]" class="form-check-input absence-type" type="checkbox" value="alpha" id="absent" {{ $el->alpha ? 'checked' : '' }}>
+                                       <label class="form-check-label" for="alpha">
                                              Alpha
                                        </label>
                                     </div>
@@ -100,7 +100,7 @@
                                        <input id="latest{{ $loop->index + 1 }}" name="latest[{{ $el->id }}]" type="number" class="form-control comment-type" placeholder="times late (minute)" value="{{ $el->latest ? $el->latest : '' }}">
                                     </div>
                                     <div class="flex-grow-1 comment-container">
-                                       <input id="comment{{ $loop->index + 1 }}" name="comment[{{ $el->id }}]" type="text" class="form-control comment-type" placeholder="information" value="{{ $el->permission ? $el->permission : '' }}">
+                                       <input id="comment{{ $loop->index + 1 }}" name="comment[{{ $el->id }}]" type="text" class="form-control comment-type" placeholder="information" value="{{ $el->information ? $el->information : '' }}">
                                     </div>
                                  </div>
                            </td>

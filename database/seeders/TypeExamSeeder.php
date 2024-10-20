@@ -66,6 +66,10 @@ class TypeExamSeeder extends Seeder
                 'name' => 'Exam',
                 'created_at' => now(),
             ],
+            [
+                'name' => 'Final Assessment',
+                'created_at' => now(),
+            ],
         ]);
     }
 }

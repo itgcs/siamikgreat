@@ -19,7 +19,19 @@ class SubjectSeeder extends Seeder
                 'created_at' => now(),
             ],
             [
+                'name_subject' => 'Creative Play',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Movie Time',
+                'created_at' => now(),
+            ],
+            [
                 'name_subject' => 'Mathematics',
+                'created_at' => now(),
+            ],
+            [
+                'name_subject' => 'Lifeskill',
                 'created_at' => now(),
             ],
             [

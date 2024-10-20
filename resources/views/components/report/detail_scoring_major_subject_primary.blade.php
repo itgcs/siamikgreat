@@ -54,7 +54,7 @@
                 <div class="input-group-append mx-2">
                     <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
                     @if (session('role') == 'superadmin' || session('role') == 'admin')
-                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
+                    <a class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
                     @endif
                 </div>
             </div>  
@@ -239,47 +239,46 @@
             </div>
         </div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="editSingleComment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <!-- Edit Comment Modal -->
+        <div class="modal fade" id="editSingleComment" tabindex="-1" role="dialog" aria-labelledby="singleCommentLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Edit comment</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-                <div class="modal-body">
-                    Edit Comment
-                </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit comment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        Edit Comment
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Decline -->
-        <div class="modal fade" id="modalDecline" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <!-- Decline Modal -->
+        <div class="modal fade" id="modalDecline" tabindex="-1" role="dialog" aria-labelledby="declineModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Decline Scoring {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Decline Scoring {{ $data['grade']->name }} - {{ $data['grade']->class }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">Are you sure want to decline scoring {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} ?</div>
+                    <div class="modal-body">Are you sure want to decline scoring {{ $data['grade']->name }} - {{ $data['grade']->class }} ?</div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
+                        <a class="btn btn-danger" id="confirmDecline">Yes decline</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
@@ -293,38 +292,37 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    $('#modalDecline').on('show.bs.modal', function(event) {
-        var button = $(event.relatedTarget);
-        var id = @json($data['grade']->grade_id);
-        var teacherId = @json($data['subjectTeacher']->teacher_id);
-        var subjectId = @json($data['subject']->subject_id)
-        var semester = @json($data['semester']);
+        $('#modalDecline').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var id = @json($data['grade']->grade_id);
+            var teacherId = @json($data['subjectTeacher']->teacher_id);
+            var subjectId = @json($data['subject']->subject_id);
+            var semester = @json($data['semester']);
 
-        var confirmDecline = document.getElementById('confirmDecline');
-        confirmDecline.href = "{{ url('/' . session('role') . '/reports/scoring/decline') }}/" + id + "/" + teacherId + "/" + subjectId + "/" + semester;
+            var confirmDecline = document.getElementById('confirmDecline');
+            confirmDecline.href = "{{ url('/' . session('role') . '/reports/scoring/decline') }}/" + id + "/" + teacherId + "/" + subjectId + "/" + semester;
+        });
     });
-});
-
 </script>
 
 @if(session('after_post_final_score')) 
-      <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Successfully',
-                text: 'Successfully post final score major subject in the database.',
-            });
-      </script>
-  @endif
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully post final score major subject in the database.',
+        });
+    </script>
+@endif
 
-  @if(session('after_decline_scoring'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Successfully',
-                text: 'Successfully decline scoring.',
-            });
-        </script>
-    @endif
+@if(session('after_decline_scoring'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully decline scoring.',
+        });
+    </script>
+@endif
 
 @endsection

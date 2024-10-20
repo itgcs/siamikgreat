@@ -2,9 +2,7 @@
 <aside class="main-sidebar sidebar-light-orange elevation-4">
   <!-- Brand Logo -->
   <a href="#" class="brand-link text-center">
-    {{-- <img src="{{asset('template')}}/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> --}}
-    {{-- <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.dslXiO2DR5mYsNKZa8f8_gAAAA%26pid%3DApi&f=1&ipt=dadf6b59e2457fa578ca99f9f2a232f051528c0c5f50644c70ac19cb47b1766c&ipo=images" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> --}}
-   <img src="{{asset('/images')}}/logo-school.png"
+      <img src="{{asset('/images')}}/logo-school.png"
       class="img-fluid img-thumbnail" alt="Sample image">
   </a>
 
@@ -139,6 +137,12 @@
           </p>
         </a>
         <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="/{{session('role')}}/dashboard/schedules/all" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'all schedules' ? 'active' : '') : ''}}">
+              <i class="far fa-circle nav-icon"></i>
+              <p>All Schedules</p>
+            </a>
+          </li>
           <li class="nav-item">
            <a href="/{{session('role')}}/dashboard/schools" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules academic' ? 'active' : '') : ''}}">
              <i class="far fa-circle nav-icon"></i>
@@ -512,7 +516,7 @@
           <a href="/{{ session('role') }}/exams" class="nav-link {{ session('page') && session('page')->page == 'database exam' ? 'active' : '' }}">
             <i class="nav-icon fa-solid fa-pencil"></i>
             <p>
-              Exams
+              Scorings
             </p>
           </a>
         </li>
@@ -521,7 +525,7 @@
           <a href="/{{ session('role') }}/dashboard/exam/teacher" class="nav-link {{ session('page') && session('page')->page == 'database teacher exams' ? 'active' : '' }}">
             <i class="nav-icon fa-solid fa-pencil"></i>
             <p>
-              Exams
+              Scorings
             </p>
           </a>
         </li>
@@ -530,7 +534,7 @@
           <a href="/{{ session('role') }}/dashboard/exam" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'exams' ? 'active' : '') : ''}}">
             <i class="nav-icon fa-solid fa-pencil"></i>
             <p>
-              Exams
+              Scorings
             </p>
           </a>
         </li>
