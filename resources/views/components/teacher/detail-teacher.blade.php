@@ -43,7 +43,11 @@
             @if (!$data['user'])
               <div class="col-lg">
                 <h1 class="badge badge-danger">Don't Have an Account</h1>
-                <a href="{{url('/superadmin/users/register-user')}}" class="badge badge-primary">Create Account</a>
+                @if (session('role') == 'superadmin')
+                  <a href="{{url('/superadmin/users/register-user')}}" class="badge badge-primary">Create Account</a>
+                @elseif (session('role') == 'admin')  
+                  <a href="{{url('/admin/users/register-user')}}" class="badge badge-primary">Create Account</a>
+                @endif
                 
               </div>
             @else

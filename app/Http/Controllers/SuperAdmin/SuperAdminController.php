@@ -142,7 +142,7 @@ class SuperAdminController extends Controller
 
          $dataRole = DB::table('roles')->select('id', 'name')->get()->toArray();
          $dataTeacher = DB::table('teachers')->select('id', 'name', 'user_id')->get()->toArray();
-         $dataStudent = Student::get();
+         $dataStudent = Student::orderBy('name', 'asc')->get();
          $dataParent = Relationship::get();
 
          $data = [
@@ -186,7 +186,12 @@ class SuperAdminController extends Controller
          
          if($validator->fails())
          {
-            return redirect('/superadmin/users/register-user')->withErrors($validator->messages())->withInput($credentials);
+            if (session('role') ==  'superadmin') {
+               return redirect('/superadmin/users/register-user')->withErrors($validator->messages())->withInput($credentials);
+            }
+            elseif (session('role') == 'admin') {
+               return redirect('/admin/users/register-user')->withErrors($validator->messages())->withInput($credentials);
+            }
          }
 
          if($request->password !== $request->reinputPassword)
@@ -211,7 +216,12 @@ class SuperAdminController extends Controller
          }
          
          session()->flash('register.success');
-         return redirect('/superadmin/users');
+         if (session('role') == 'superadmin') {
+            return redirect('/superadmin/users');
+         }
+         elseif (session('role') == 'admin') {
+            return redirect('/admin/users');
+         }
       } catch (Exception $err) {
          return dd($err);
       }

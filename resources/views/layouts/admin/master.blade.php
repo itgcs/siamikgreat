@@ -4,18 +4,12 @@
   @include('layouts.header')
 </head>
 
-{{-- @php
-  if(sideBarCollapse) {
-    
-  }
-@endphp --}}
 
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 <div class="wrapper">
 
   <!-- Preloader -->
-  @if (session('preloader'))
-      
+  @if (session('preloader'))  
    <div class="preloader flex-column justify-content-center align-items-center">
       <img class="animation__shake" src="{{asset('images')}}/logo-school.png" alt="SchoolLogo" height="120" width="290">
    </div>
@@ -52,11 +46,6 @@
 
       @include('layouts.admin.sidebar')
 
-      
-
-   {{-- </div>
-   <!-- /.sidebar -->
- </aside> --}}
       <div class="content-wrapper">
          <!-- Content Header (Page header) -->
          <div class="content-header">
@@ -87,7 +76,6 @@
       <!-- /.content -->
    </div>
       <!-- /.content-wrapper -->
-
 </body>
 </html>
 

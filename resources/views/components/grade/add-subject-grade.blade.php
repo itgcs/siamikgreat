@@ -38,7 +38,7 @@
                                 <div class="form-group row">
                                     <div class="col-md-12">
                                         <label for="grade_id">Grade<span style="color: red">*</span></label>
-                                        <select required name="grade_id" class="form-control" id="grade_id">
+                                        <select required name="grade_id" class="form-control" id="grade_id"> 
                                             <option value="{{ $data['grade']['id'] }}" selected>{{ $data['grade']['name']  }} - {{ $data['grade']['class'] }}</option>
                                         </select>
                                         @if($errors->any())
@@ -55,7 +55,7 @@
                                         <tbody id="scheduleTableBody">
                                             <tr>
                                                 <td>
-                                                    <select required name="subject_id[]" class="form-control" id="subject_id">
+                                                    <select required name="subject_id[]" class="form-control js-select2" id="subject_id">
                                                         <option value="" selected>  SELECT SUBJECT </option>
                                                         @foreach($data['subject'] as $el)
                                                             <option value="{{ $el->id }}">{{ $el->name_subject }}</option>
@@ -66,8 +66,8 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <select name="teacher_subject_id[]" class="form-control" id="teacher_subject_id">
-                                                        <option value="0" selected>  SELECT TEACHER </option>
+                                                    <select name="teacher_subject_id[]" class="form-control js-select2" id="teacher_subject_id">
+                                                        <option value="" selected>  SELECT TEACHER </option>
                                                         @foreach($data['teacher'] as $el)
                                                             <option value="{{ $el->id }}">{{ $el->name }}</option>
                                                         @endforeach
@@ -106,12 +106,14 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
 <script>
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
+    let row = 1; // Inisialisasi variabel row di luar fungsi agar bertambah tiap kali
+
     // Function to add a new row
     function addRow() {
         var newRow = `<tr>
             <td>
-                <select required name="subject_id[]" class="form-control" id="subject_id">
+                <select required name="subject_id[]" class="form-control js-select2" id="subject_id_${row}">
                     <option value="" selected>  SELECT SUBJECT </option>
                     @foreach($data['subject'] as $el)
                         <option value="{{ $el->id }}">{{ $el->name_subject }}</option>
@@ -122,8 +124,8 @@ $(document).ready(function() {
                 @endif
             </td>
             <td>
-                <select required name="teacher_subject_id[]" class="form-control" id="teacher_subject_id">
-                    <option value="0" selected>  SELECT TEACHER </option>
+                <select required name="teacher_subject_id[]" class="form-control js-select2" id="teacher_subject_id_${row}">
+                    <option value="" selected>  SELECT TEACHER </option>
                     @foreach($data['teacher'] as $el)
                         <option value="{{ $el->id }}">{{ $el->name }}</option>
                     @endforeach
@@ -134,31 +136,47 @@ $(document).ready(function() {
             </td>
             <td>
                 <button type="button" class="btn btn-success btn-sm btn-tambah mt-1" title="Tambah Data"><i class="fa fa-plus"></i></button>
-                <button type="button" class="btn btn-danger btn-sm btn-hapus mt-1" title="Hapus Baris"><i class="fa fa-times"></i></button>
+                <button type="button" class="btn btn-danger btn-sm btn-hapus mt-1 d-none" title="Hapus Baris"><i class="fa fa-times"></i></button>
             </td>
         </tr>`;
         $('#scheduleTableBody').append(newRow);
-
-        // Call the function to populate subject and teacher options for the new row
-        const newSubjectSelect = $('#scheduleTableBody tr:last .subject_id');
-        const newTeacherSelect = $('#scheduleTableBody tr:last .teacher_id');
-
-        loadSubjectOptionExam($('#grade_id').val(), newSubjectSelect);
-        newSubjectSelect.change(function() {
-            loadTeacherOption($('#grade_id').val(), $(this).val(), newTeacherSelect);
+        row++;
+        
+        $('.js-select2').select2({
+            closeOnSelect : false,
+            placeholder : "Click to select an option",
+            theme: 'bootstrap4',
+            allowHtml: true,
+            allowClear: true,
+            tags: true,
+            searchInputPlaceholder: 'Search options'
         });
 
         updateHapusButtons();
     }
 
-    // Function to update the visibility of the "Hapus" buttons
+    // Function to update the visibility of the "Hapus" and "Tambah" buttons
     function updateHapusButtons() {
-        $('#scheduleTableBody tr').each(function(index, row) {
+        const rows = $('#scheduleTableBody tr');
+
+        rows.each(function(index, row) {
+            var tambahButton = $(row).find('.btn-tambah');
             var hapusButton = $(row).find('.btn-hapus');
-            if (index === $('#scheduleTableBody tr').length - 1) {
-                hapusButton.removeClass('d-none');
-            } else {
+
+            if (rows.length === 1) {
+                // Jika hanya ada satu baris, hanya tampilkan tombol "Tambah"
+                tambahButton.removeClass('d-none');
                 hapusButton.addClass('d-none');
+            } else {
+                // Baris terakhir tampilkan tombol "Tambah" dan "Hapus"
+                if (index === rows.length - 1) {
+                    tambahButton.removeClass('d-none');
+                    hapusButton.removeClass('d-none');
+                } else {
+                    // Baris lainnya hanya tampilkan tombol "Hapus"
+                    tambahButton.addClass('d-none');
+                    hapusButton.removeClass('d-none');
+                }
             }
         });
     }
@@ -174,10 +192,9 @@ $(document).ready(function() {
         updateHapusButtons();
     });
 
-    // Initial call to update the visibility of the "Hapus" buttons
+    // Initial call to update the visibility of the "Hapus" and "Tambah" buttons
     updateHapusButtons();
 });
-
 </script>
 
 @if(session('sweetalert'))

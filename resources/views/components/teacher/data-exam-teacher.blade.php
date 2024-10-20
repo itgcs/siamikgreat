@@ -36,23 +36,23 @@
             <nav aria-label="breadcrumb" class="bg-white rounded-3 p-3 mb-2">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item">Home</li>
-                    <li class="breadcrumb-item active" aria-current="page">Exams</li>
+                    <li class="breadcrumb-item active" aria-current="page">Scorings</li>
                 </ol>
             </nav>
         </div>
     </div>
     @if (sizeof($data) != 0)
         <div class="row">
-            <a type="button" href="{{ url('/teacher/dashboard/exam/create') }}" class="btn btn-secondary btn mx-2">
+            <a type="button" href="{{ url('/teacher/dashboard/exam/create') }}" class="btn btn-danger btn mx-2">
                 <i class="fa-solid fa-plus"></i>
                 </i>   
-                Add Exam
+                Add Scoring
             </a>
         </div>
 
         <div class="card card-dark mt-2">
             <div class="card-header">
-                <h3 class="card-title">Exams</h3>
+                <h3 class="card-title">Scorings</h3>
 
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -60,58 +60,30 @@
                     </button>
                 </div>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-striped projects">
+            <div class="card-body p-0" style="overflow-x:auto;">
+                <table class="table table-striped projects" >
                     <thead>
                         <tr>
-                            <th>
-                            #
-                            </th>
-                            <th  style="width: 15%">
-                            Type Exam
-                            </th>
-                            <th style="width: 15%">
-                            Name
-                            </th>
-                            <th style="width: 10%">
-                            Date
-                            </th>
-                            <th style="width: 10%">
-                            Grade
-                            </th>
-                            <th>
-                            Subject
-                            </th>
-                            <th style="width: 15%">
-                            Teacher
-                            </th>
-                            <th>
-                            Status
-                            </th>
-                            <th style="width: 30%">
-                            </th>
+                            <th >No</th>
+                            <th style="width: 15%">Subject</th>
+                            <th style="width: 10%">Grade</th>
+                            <th style="width: 15%">Type Scoring</th>
+                            <th style="width: 20%">Name</th>
+                            <th style="width: 15%">Deadline</th>
+                            <th style="width: 5%">Status</th>
+                            <th style="width: 15%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($data as $el)
                         <tr id={{'index_grade_' . $el->id}}>
+                            <td>{{ $loop->index + 1 }}</td>
+                            <td>{{$el->subject_name}}</td>
+                            <td>{{$el->grade_name}} - {{ $el->grade_class }}</td>
+                            <td>{{$el->type_exam}}</td>
+                            <td>{{$el->name_exam}}</td>
                             <td>
-                                {{ $loop->index + 1 }}
-                            </td>
-                            <td>
-                            <a>
-                                {{$el->type_exam}}
-                            </a>
-                            </td>
-                            <td>
-                            <a>
-                                {{$el->name_exam}}
-                            </a>
-                            </td>
-                            <td>
-                            <a>
-                                {{$el->date_exam}}
-                            </a>
+                                {{ \Carbon\Carbon::parse($el->date_exam)->format('l, d F Y') }}
                             <!-- <br>
                             @php
                                 $currentDate = now(); // Tanggal saat ini
@@ -124,38 +96,29 @@
                             <small class="text-muted mb-0"><span class="badge badge-danger">{{$days}} days again</span></small> -->
                             </td>
                             <td>
-                            {{$el->grade_name}} - {{ $el->grade_class }}
+                                @if($el->is_active)
+                                <span class="badge badge-success"> Active </span>
+                                @else
+                                <span class="badge badge-danger"> Inactive </span>
+                                @endif
                             </td>
                             <td>
-                            {{$el->subject_name}}
-                            </td>
-                            <td>
-                            {{$el->teacher_name}}
-                            </td>
-                            <td>
-                            @if($el->is_active)
-                            <span class="badge badge-success"> Active </span>
-                            @else
-                            <span class="badge badge-danger"> Inactive </span>
-                            @endif
-                            </td>
-                            <td class="project-actions text-right toastsDefaultSuccess">
-                            <a class="btn btn-primary btn"
-                                href="{{url('teacher/dashboard/exam') . '/detail/' . $el->id}}">
-                                <i class="fas fa-eye"></i>
-                                View
-                            </a>
-                            <a class="btn btn-warning btn"
-                                href="{{url('teacher/dashboard/exam') . '/edit/' . $el->id}}">
-                                <i class="fas fa-pencil-alt"></i>
-                                Edit
-                            </a>
-                            <a class="btn btn-success btn"
-                                href="{{url('teacher/dashboard/exam') . '/score/' . $el->id}}">
-                                <i class="fas fa-book">
-                                </i>
-                                Score
-                            </a>
+                                <a class="btn btn-primary btn text-sm w-100 mb-1"
+                                    href="{{url('teacher/dashboard/exam') . '/detail/' . $el->id}}">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </a>
+                                <a class="btn btn-warning btn text-sm w-100 mb-1"
+                                    href="{{url('teacher/dashboard/exam') . '/edit/' . $el->id}}">
+                                    <i class="fas fa-pencil-alt"></i>
+                                    Edit
+                                </a>
+                                <a class="btn btn-success btn text-sm w-100"
+                                    href="{{url('teacher/dashboard/exam') . '/score/' . $el->id}}">
+                                    <i class="fas fa-book">
+                                    </i>
+                                    Score
+                                </a>
                             </td>
                         </tr>
 
@@ -275,15 +238,15 @@
     @else
         <div class="container-fluid full-height">
             <div class="m-0">
-                <p class="text-red my-b-2">Oops.. You dont create any exam</p>
+                <p class="text-red my-b-2">Oops.. You dont create any scorings</p>
             </div>
             <div class="icon-wrapper">
                 <i class="fa-regular fa-face-laugh-beam"></i>
-                <p class="my-2">Students are happy to get exam from you</p>
+                <p class="my-2">Students are happy to get scoring from you</p>
             </div>
             <div class="btn-container">
                 <a type="button" href="{{ url('/teacher/dashboard/exam/create') }}" class="btn btn-secondary btn">
-                    <i class="fa-solid fa-plus"></i> Exam
+                    <i class="fa-solid fa-plus"></i> Scoring
                 </a>
             </div>
         </div>
@@ -301,7 +264,7 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Successfully',
-                text: 'Successfully created new assessment in the database.',
+                text: 'Successfully created new scoring in the database.',
             });
         </script>
     @endif
@@ -311,7 +274,7 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Successfully',
-                text: 'Successfully updated the assessment in the database.',
+                text: 'Successfully updated the scoring in the database.',
             });
         </script>
    @endif
@@ -321,7 +284,7 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'Successfully',
-                    text: 'Successfully update score exam',
+                    text: 'Successfully update score',
                 });
             </script>
     @endif

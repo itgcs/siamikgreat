@@ -7,7 +7,7 @@
                 <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-3">
                     <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item">Home</li>
-                    <li class="breadcrumb-item"><a href="admin/teachers/">Teachers</a></li>
+                    <li class="breadcrumb-item">Teachers</li>
                     <li class="breadcrumb-item active" aria-current="page">Edit Teacher</li>
                     </ol>
                 </nav>
@@ -52,6 +52,7 @@
                                         @endif
                                     </div>
                                 </div>
+
                                 <div class="form-group row">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -205,7 +206,7 @@
 
                                  
 
-                                 <div class="form-group row">
+                                <div class="form-group row">
                                     
                                     <div class="col-md-6">
                                      <label for="handphone">Mobilephone<span style="color: red">*</span></label>
@@ -251,15 +252,15 @@
                                         @endif
                                     </div>
                                 </div>
-                              </div>
-
-                              </div>
+                                
+                                <div class="row justify-content-center px-2">
+                                    <button type="submit" class="col-12  btn btn-success">Submit</button>
+                                </div>
+                            </div>
+                            
                         </div>
                         <!-- /.card-body Teacher -->
 
-                        <div class="d-flex justify-content-center my-5">
-                            <button type="submit" class="col-11 btn btn-success">Submit</button>
-                        </div>
                     </form>
 
                 </div>

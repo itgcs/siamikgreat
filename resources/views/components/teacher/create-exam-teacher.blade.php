@@ -8,8 +8,8 @@
             <nav aria-label="breadcrumb" class="bg-white rounded-3 p-3 mb-3">
                <ol class="breadcrumb mb-0">
                   <li class="breadcrumb-item">Home</li>
-                  <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/exam/teacher')}}">Exam</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Create Exam</li>
+                  <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/exam/teacher')}}">Scoring</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Create Scoring</li>
                </ol>
             </nav>
          </div>
@@ -24,7 +24,7 @@
                   @csrf
                   <div class="card card-dark">
                      <div class="card-header">
-                           <h3 class="card-title">Create exam</h3>
+                           <h3 class="card-title">Create Scoring</h3>
                      </div>
                      <!-- /.card-header -->
                      <!-- form start -->
@@ -70,7 +70,7 @@
                            <div class="col-md-12">
                               <label for="type_exam">Type<span style="color: red">*</span></label>
                               <select required name="type_exam" class="form-control" id="type_exam">
-                                    <option selected disabled>--- SELECT TYPE EXAM ---</option>
+                                    <option selected disabled>--- SELECT TYPE SCORING ---</option>
                                     @foreach($data['type_exam'] as $el)
                                        <option value="{{ $el->id }}">{{ $el->name }}</option>
                                     @endforeach
@@ -83,9 +83,9 @@
 
                         <div class="form-group row">
                            <div class="col-md-12">
-                              <label for="name">Exam Name<span style="color: red">*</span></label>
+                              <label for="name">Scoring Name<span style="color: red">*</span></label>
                               <input name="name" type="text" class="form-control" id="name"
-                                    placeholder="Enter Exam Name" value="{{ old('name') }}" autocomplete="off" required>
+                                    placeholder="Enter Scoring Name" value="{{ old('name') }}" autocomplete="off" required>
                               @if($errors->has('name'))
                                     <p style="color: red">{{ $errors->first('name') }}</p>
                               @endif
@@ -108,7 +108,7 @@
 
                         <div class="form-group row">
                            <div class="col-md-12">
-                              <label for="date_exam">Date Exam<span style="color: red">*</span></label>
+                              <label for="date_exam">Deadline Scoring<span style="color: red">*</span></label>
                               <input name="date_exam" type="date" class="form-control" id="date_exam" required>
                               
                               @if($errors->has('date_exam'))

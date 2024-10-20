@@ -144,8 +144,8 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var exams = @json($exams);
-        var schedules = @json($schedules);
+        var exams      = @json($exams);
+        var schedules  = @json($schedules);
 
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -153,14 +153,14 @@
             headerToolbar: {
                 left: 'prev,next',
                 center: 'title',
-                right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                right: 'dayGridMonth'
             },
             events: [
                 ...exams.map(exam => ({
-                    title: `${exam.type_exam} - (${exam.name_exam})`,
+                    title: `${exam.type_exam} - (${exam.subject_name})`,
                     start: exam.date_exam,
-                    description: `<br>Teacher : ${exam.teacher_name} <br>Grade : ${exam.grade_name} - ${exam.grade_class} `,
-                    color: 'lime',
+                    description: `<br>${exam.name_exam} <br> ${exam.grade_name} - ${exam.grade_class} <br>Deadline : `,
+                    color: 'orange',
                     jadwal: new Date(exam.date_exam).toLocaleDateString('id-ID', { month: 'long', day: 'numeric', year: 'numeric' }),
                     sampai: exam.end_date ? new Date(exam.end_date).toLocaleDateString('id-ID', { month: 'long', day: 'numeric', year: 'numeric' }) : null,
                 })),
@@ -179,6 +179,7 @@
                         sampai: schedule.end_date ? new Date(schedule.end_date).toLocaleDateString('id-ID', { month: 'long', day: 'numeric', year: 'numeric' }) : null,
                     };
                 }),
+                
             ],
             eventClick: function(info) {
                 document.getElementById('eventTitle').innerText = 'Event: ' + info.event.title;

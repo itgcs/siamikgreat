@@ -59,7 +59,7 @@
 
         @if (!empty($data['students']))
         
-        <table class="table table-striped table-bordered bg-white" style=" width: 3000px;">
+        <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
             @if ($data['status'] == null)
                 <!-- JIKA DATA BELUM DI SUBMIT OLEH TEACHER  -->
                 <thead>
@@ -79,7 +79,7 @@
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Class Participation</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Problem Solving</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Goal setting to improve work</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Strengths/Weeakness/Next Steps</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center; width:20%;">Strengths/Weeakness/Next Steps</th>
                         <!-- <th class="text-center" style="vertical-align : middle;text-align:center;">Remarks</th> -->
                     </tr>
                 </thead>
@@ -239,7 +239,7 @@
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Goal setting to improve work</th>
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Strengths/Weeakness/Next Steps</th>
                         <!-- <th class="text-center" style="vertical-align : middle;text-align:center;">Remarks</th> -->
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Print Report Card</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Action</th>
                     </tr>
                 </thead>
 

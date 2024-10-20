@@ -8,8 +8,8 @@
             <nav aria-label="breadcrumb" class="bg-white rounded-3 p-3 mb-3">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item">Home</li>
-                    <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/exam/teacher')}}">Exam</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Assessment Exam {{ $data[0]['subject_name'] }} ({{ $data[0]['grade_name'] }} - {{ $data[0]['grade_class'] }})</li>
+                    <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/exam/teacher')}}">Scoring</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Scoring {{ $data[0]['exam_name'] }} {{ $data[0]['subject_name'] }} ({{ $data[0]['grade_name'] }} - {{ $data[0]['grade_class'] }})</li>
                 </ol>
             </nav>
         </div>
@@ -17,7 +17,7 @@
 
     <div class="card card-dark">
         <div class="card-header">
-            <h3 class="card-title">Exams</h3>
+            <h3 class="card-title">Scorings</h3>
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -34,22 +34,19 @@
                         <tr>
                             <th>#</th>
                             <th>Student</th>
-                            <th>Type Exam</th>
-                            <th>Name Exam</th>
-                            <th>Date Exam</th>
-                            <th>Grade</th>
+                            <th>Type Scoring</th>
+                            <th>Deadline Scoring</th>
                             <th style="width: 25%">Score</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($data as $el)
-                        <tr id={{'index_grade_' . $el->id}}>
+                        <tr id="{{'index_grade_' . $el->id}}">
                             <td class="text-sm">{{ $loop->index + 1 }}</td>
                             <td class="text-sm">{{ $el->student_name }}</td>
                             <td class="text-sm">{{ $el->type_exam }}</td>
-                            <td class="text-sm"><a>{{ $el->exam_name }}</a></td>
-                            <td class="text-sm"><a>{{ $el->date_exam }}</a></td>
-                            <td class="text-sm">{{ $el->grade_name }} - {{ $el->grade_class }}</td>
+                            <td class="text-sm"><a>{{ \Carbon\Carbon::parse($el->date_exam)->format('l, d F Y') }}
+                            </a></td>
                             <td class="project-actions text-right">
                                 <div class="input-group">
                                     <input name="exam_id" type="text" class="form-control d-none" id="exam_id" value="{{ $el->exam_id }}">
@@ -58,10 +55,7 @@
                                     <input name="teacher_id" type="text" class="form-control d-none" id="teacher_id" value="{{ $el->teacher_id }}">
                                     <input name="type_exam_id" type="text" class="form-control d-none" id="type_exam_id" value="{{ $el->type_exam_id }}">
                                     <input name="student_id[]" type="text" class="form-control d-none" id="student_id" value="{{ $el->student_id }}">
-                                    <input name="score[]" type="number" class="form-control" id="score" placeholder="Score" value="{{ old('score', $el->score) }}" autocomplete="off" min="0" max="100" required>
-                                    <div class="input-group-append">
-                                        <button type="submit" class="btn btn-success" name="update_single" value="{{ $el->id }}">Update</button>
-                                    </div>
+                                    <input name="score[]" type="number" class="form-control score-input" id="score" placeholder="Score" value="{{ old('score', $el->score) }}" autocomplete="off" min="0" max="100" required>
                                 </div>
                                 @if($errors->has('score'))
                                 <p style="color: red">{{ $errors->first('score') }}</p>
@@ -84,29 +78,44 @@
 <script src="{{ asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const scoreInput = document.getElementById('score');
+        const scoreInputs = document.querySelectorAll('.score-input');
 
-        scoreInput.addEventListener('input', function() {
-            let value = parseInt(this.value, 10);
+        scoreInputs.forEach(function(scoreInput) {
 
-            if (value > 100) {
-                this.value = 100;
-            } else if (value < 0) {
-                this.value = 0;
-            }
-        });
+            // Prevent non-numeric characters from being entered
+            scoreInput.addEventListener('keypress', function(event) {
+                let charCode = event.which ? event.which : event.keyCode;
+                if (charCode < 48 || charCode > 57) {
+                    event.preventDefault(); // Block any input that isn't a number (0-9)
+                }
+            });
 
-        scoreInput.addEventListener('blur', function() {
-            let value = parseInt(this.value, 10);
+            // Validate input on the fly
+            scoreInput.addEventListener('input', function() {
+                let value = parseInt(this.value, 10);
 
-            if (isNaN(value) || value > 100) {
-                this.value = 100;
-            } else if (value < 0) {
-                this.value = 0;
-            }
+                if (value > 100) {
+                    this.value = 100;
+                } else if (value < 0) {
+                    this.value = 0;
+                }
+            });
+
+            // Ensure the value stays within the range on blur (when the input loses focus)
+            scoreInput.addEventListener('blur', function() {
+                let value = parseInt(this.value, 10);
+
+                if (isNaN(value) || value > 100) {
+                    this.value = 100;
+                } else if (value < 0) {
+                    this.value = 0;
+                }
+            });
+
         });
     });
 </script>
+
 
 @if(session('after_create_score'))
     <script>

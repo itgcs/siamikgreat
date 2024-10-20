@@ -88,63 +88,66 @@ class AttendanceController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('attendances.semester', $semester)
                 ->where('attendances.academic_year', $academic_year)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
-                $totalAttendances = [
-                    'total' => $results->count(),
-                    'dates' => $results->pluck('date')->unique()->values()->all(),
-                    'datesByMonth' => $results->groupBy(function($item) {
-                        return \Carbon\Carbon::parse($item->date)->format('F');
-                    })->map(function($group) {
-                        return $group->pluck('date')->unique()->values()->all();
+            // dd($results);
+
+            $totalAttendances = [
+                'total' => $results->count(),
+                'dates' => $results->pluck('date')->unique()->values()->all(),
+                'datesByMonth' => $results->groupBy(function($item) {
+                    return \Carbon\Carbon::parse($item->date)->format('F');
+                })->map(function($group) {
+                    return $group->pluck('date')->unique()->values()->all();
+                })
+            ];
+
+            // dd($totalAttendances);
+
+            $attendancesByStudent = $results->groupBy('student_id')->map(function($attendances) {
+                $student = $attendances->first();
+                $totalPresent = $attendances->where('present', 1)->count();
+                $totalSick = $attendances->where('sick', 1)->count();
+                $totalAlpha = $attendances->where('alpha', 1)->count();
+                $totalLate = $attendances->where('late', 1)->count();
+                $totalPermission = $attendances->where('permission', 1)->count();
+                $totalNonPresent = $attendances->where('present', 0)->count();
+                $effectiveDays = ($totalPresent + $totalAlpha + $totalSick + $totalLate + $totalPermission);
+            
+                // Calculate the score ensuring effectiveDays is not zero to avoid division by zero
+                if ($effectiveDays > 0) {
+                    $score = round((($effectiveDays - $totalAlpha - $totalPermission - ($totalLate * 0.5)) / $effectiveDays) * 100);
+                } else {
+                    $score = 0;
+                }
+            
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->student_name,
+                    'total_present' => $totalPresent,
+                    'total_alpha' => $totalAlpha,
+                    'total_sick' => $totalSick,
+                    'total_late' => $totalLate,
+                    'total_pe' => $totalPermission,
+                    'total_non_present' => $totalNonPresent,
+                    'score' => $score,
+            
+                    'attendances' => $attendances->map(function ($attend) {
+                        return [
+                            'attendances_id' => $attend->id,
+                            'attendances_date' => $attend->date,
+                            'attendances_present' => $attend->present,
+                            'attendances_alpha' => $attend->alpha,
+                            'attendances_sick' => $attend->sick,
+                            'attendances_late' => $attend->late,
+                            'attendances_latest' => $attend->latest,
+                            'attendances_permission' => $attend->permission,
+                            'attendances_information' => $attend->information,
+                        ];
                     })
                 ];
-    
-                // dd($totalAttendances);
-    
-                $attendancesByStudent = $results->groupBy('student_id')->map(function($attendances) {
-                    $student = $attendances->first();
-                    $totalPresent = $attendances->where('present', 1)->count();
-                    $totalSick = $attendances->where('sick', 1)->count();
-                    $totalAlpha = $attendances->where('alpha', 1)->count();
-                    $totalLate = $attendances->where('late', 1)->count();
-                    $totalPermission = $attendances->where('permission', 1)->count();
-                    $totalNonPresent = $attendances->where('present', 0)->count();
-                    $effectiveDays = ($totalPresent + $totalAlpha + $totalSick + $totalLate + $totalPermission);
-                
-                    // Calculate the score ensuring effectiveDays is not zero to avoid division by zero
-                    if ($effectiveDays > 0) {
-                        $score = round((($effectiveDays - $totalAlpha - $totalPermission - ($totalLate * 0.5)) / $effectiveDays) * 100);
-                    } else {
-                        $score = 0;
-                    }
-                
-                    return [
-                        'student_id' => $student->student_id,
-                        'student_name' => $student->student_name,
-                        'total_present' => $totalPresent,
-                        'total_alpha' => $totalAlpha,
-                        'total_sick' => $totalSick,
-                        'total_late' => $totalLate,
-                        'total_pe' => $totalPermission,
-                        'total_non_present' => $totalNonPresent,
-                        'score' => $score,
-                
-                        'attendances' => $attendances->map(function ($attend) {
-                            return [
-                                'attendances_id' => $attend->id,
-                                'attendances_date' => $attend->date,
-                                'attendances_present' => $attend->present,
-                                'attendances_alpha' => $attend->alpha,
-                                'attendances_sick' => $attend->sick,
-                                'attendances_late' => $attend->late,
-                                'attendances_latest' => $attend->latest,
-                                'attendances_permission' => $attend->permission,
-                                'attendances_information' => $attend->information,
-                            ];
-                        })
-                    ];
-                })->values()->all();
+            })->values()->all();
 
                 $status = Score_attendance_status::where('grade_id', $grade->grade_id)
                     ->where('semester', $semester)
@@ -255,6 +258,7 @@ class AttendanceController extends Controller
                 ->where('attendances.subject_id', $subjectId)
                 ->where('attendances.semester', $semester)
                 ->where('attendances.academic_year', $academic_year)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $totalAttendances = [
@@ -460,17 +464,41 @@ class AttendanceController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('attendances.semester', $semester)
                 ->where('attendances.academic_year', $academic_year)
+                ->orderBy('students.name', 'asc')
                 ->get();
+
+                // $totalAttendances = [
+                //     'total' => $results->count(),
+                //     'dates' => $results->pluck('date')->unique()->values()->all(),
+                //     'datesByMonth' => $results->groupBy(function($item) {
+                //         return \Carbon\Carbon::parse($item->date)->format('F');
+                //     })->map(function($group) {
+                //         return $group->pluck('date')->unique()->values()->all();
+                //     })
+                // ];
 
                 $totalAttendances = [
                     'total' => $results->count(),
-                    'dates' => $results->pluck('date')->unique()->values()->all(),
+                    'dates' => $results->pluck('date')->unique()->sortBy(function($date) {
+                        return \Carbon\Carbon::parse($date)->format('Y-m-d'); // Urutkan secara kronologis
+                    })->values()->all(),
                     'datesByMonth' => $results->groupBy(function($item) {
-                        return \Carbon\Carbon::parse($item->date)->format('F');
+                        return \Carbon\Carbon::parse($item->date)->format('F'); // Kelompokkan berdasarkan nama bulan
+                    })->sortKeysUsing(function($a, $b) {
+                        // Sortir nama bulan berdasarkan urutan kronologis dari Januari hingga Desember
+                        $months = [
+                            'January', 'February', 'March', 'April', 'May', 'June', 'July',
+                            'August', 'September', 'October', 'November', 'December'
+                        ];
+                        return array_search($a, $months) - array_search($b, $months);
                     })->map(function($group) {
-                        return $group->pluck('date')->unique()->values()->all();
+                        return $group->pluck('date')->unique()->sortBy(function($date) {
+                            return \Carbon\Carbon::parse($date)->day; // Urutkan tanggal dalam bulan dari 1 hingga akhir bulan
+                        })->values()->all();
                     })
                 ];
+                
+                
     
                 // dd($totalAttendances);
     
@@ -486,7 +514,15 @@ class AttendanceController extends Controller
                 
                     // Calculate the score ensuring effectiveDays is not zero to avoid division by zero
                     if ($effectiveDays > 0) {
-                        $score = round((($effectiveDays - $totalAlpha - $totalPermission - ($totalLate * 0.5)) / $effectiveDays) * 100);
+                        $totalScore = 
+                            ($totalPresent * 100) +    // Hadir dihitung 100 per present
+                            ($totalSick * 100) + 
+                            ($totalLate * 75) +        // Late dihitung 75 per keterlambatan
+                            ($totalAlpha * 0) +        // Alpha dihitung 0
+                            ($totalPermission * 0);    // Permission dihitung 0
+                        
+                        // Hitung rata-rata skor berdasarkan effective days
+                        $score = round($totalScore / $effectiveDays);
                     } else {
                         $score = 0;
                     }
@@ -642,36 +678,113 @@ class AttendanceController extends Controller
         }
     }
 
-    public function detail($userId, $gradeId)
+    public function detail($userId, $gradeId, $date)
     {
-       try {
-          //code...
-        session()->flash('page',  $page = (object)[
-            'page' => 'attendance',
-            'child' => 'attendance class teacher',
-        ]);
- 
-        $getIdTeacher = Teacher::where('user_id', $userId)->value('id');
-        $student      = Student::where('grade_id', $gradeId)->orderBy('name', 'asc')->get();
-        $grade        = Grade::where('id', $gradeId)->first();
-        $teacher      = Teacher::where('id', $getIdTeacher)->value('name');
+        try {
+            session()->flash('page',  $page = (object)[
+                'page' => 'attendance',
+                'child' => 'attendance class teacher',
+            ]);
+    
+            $getIdTeacher = Teacher::where('user_id', $userId)->value('id');
+            $student      = Student::where('grade_id', $gradeId)->orderBy('name', 'asc')->get();
+            $grade        = Grade::where('id', $gradeId)->first();
+            $teacher      = Teacher::where('id', $getIdTeacher)->value('name');
 
-        $nameGrade    = "$grade->name - $grade->class";
-        $nameTeacher  = $teacher;
+            $nameGrade    = "$grade->name - $grade->class";
+            $nameTeacher  = $teacher;
 
-        $data = [
-            'student'     => $student,
-            'teacherId'   => $getIdTeacher,
-            'gradeId'     => $gradeId,
-            'nameGrade'   => $nameGrade,
-            'nameTeacher' => $nameTeacher,
-        ];
- 
-         return view('components.attendance.detail-attendance')->with('data', $data);
- 
-       } catch (Exception $err) {
-         return dd($err);
-       }
+            $data = [
+                'student'     => $student,
+                'teacherId'   => $getIdTeacher,
+                'gradeId'     => $gradeId,
+                'nameGrade'   => $nameGrade,
+                'nameTeacher' => $nameTeacher,
+                'date'        => $date,
+            ];
+
+            return view('components.attendance.detail-attendance')->with('data', $data);
+    
+        } catch (Exception $err) {
+            return dd($err);
+        }
+    }
+
+    public function detailAll($userId, $gradeId)
+    {
+        try {
+            //code...
+            session()->flash('page',  $page = (object)[
+                'page' => 'attendance',
+                'child' => 'attendance class teacher',
+            ]);
+    
+            $getIdTeacher = Teacher::where('user_id', $userId)->value('id');
+            $student      = Student::where('grade_id', $gradeId)->orderBy('name', 'asc')->get();
+            $grade        = Grade::where('id', $gradeId)->first();
+            $teacher      = Teacher::where('id', $getIdTeacher)->value('name');
+
+            $nameGrade    = "$grade->name - $grade->class";
+            $nameTeacher  = $teacher;
+
+            $semester = Master_academic::first()->value('now_semester');
+
+            if ($semester == 1) {
+                $startSemester = Master_academic::first()->value('semester1');
+                $endSemester   = Master_academic::first()->value('end_semester1');
+            }
+            elseif ($semester == 2) {
+                $startSemester = Master_academic::first()->value('semester2');
+                $endSemester   = Master_academic::first()->value('end_semester2');
+            }
+
+            $data = [
+                'student'     => $student,
+                'teacherId'   => $getIdTeacher,
+                'gradeId'     => $gradeId,
+                'nameGrade'   => $nameGrade,
+                'nameTeacher' => $nameTeacher,
+            ];
+    
+            $dates = Attendance::where('teacher_id', $getIdTeacher)
+                ->where('grade_id', $gradeId)
+                ->pluck('date')          // Mengambil hanya kolom date
+                ->unique()               // Menghilangkan tanggal yang duplikat
+                ->values()               // Mengatur ulang indeks setelah unique
+                ->toArray();
+            
+            // dd($dates);
+            // Format array dates menjadi event data untuk FullCalendar
+            $calendarData = [];
+            foreach ($dates as $date) {
+                $calendarData[] = [
+                    'title' => 'Done',         // Status kehadiran
+                    'start' => $date,          // Tanggal
+                    'color' => 'green',        // Warna untuk kehadiran done
+                ];
+            }
+
+            // Jika Anda ingin menambahkan tanggal not yet (dengan contoh lain)
+            $notYetDates = [ /* Tanggal lain dengan status "not yet" */ ];
+            foreach ($notYetDates as $date) {
+                $calendarData[] = [
+                    'title' => 'Not Yet',      // Status kehadiran not yet
+                    'start' => $date,          // Tanggal
+                    'color' => 'red',          // Warna untuk not yet
+                ];
+            }
+
+            // dd(json_encode($calendarData));
+
+            return view('components.attendance.detail-attendance-all')->with('data', $data)
+            ->with('calendarData', $calendarData)
+            ->with('gradeId', $gradeId)
+            ->with('startSemester', $startSemester)
+            ->with('endSemester', $endSemester);
+    
+        } catch (Exception $err) {
+            return dd($err);
+        }
     }
 
     public function edit($userId, $gradeId)
@@ -739,7 +852,7 @@ class AttendanceController extends Controller
 
         // dd($attendances);
 
-        return view('components.attendance.edit-attendance')->with('data', $attendances);           
+        return view('components.attendance.edit-attendance')->with('data', $attendances)->with('date', $date);           
         
 
        } catch (Exception $err) {
@@ -755,7 +868,7 @@ class AttendanceController extends Controller
                 'child' => 'attendance subject teacher',
             ]);
 
-            // dd($request);
+            $semester = Master_academic::first()->value('now_semester');
             $userId = session('id_user');
             $getIdTeacher = Teacher::where('user_id', $userId)->value('id');
 
@@ -765,7 +878,7 @@ class AttendanceController extends Controller
                ->where('grade_id', $request->grade_id)
                ->where('teacher_id', $request->teacher_id)
                ->where('student_id', $studentId)
-               ->where('semester', $request->semester)
+               ->where('semester', $semester)
                ->where('academic_year', session('academic_year'))
                ->exists()) {
                     return redirect('/teacher/dashboard/attendance/'. $userId . '/' . $request->grade_id)
@@ -788,7 +901,7 @@ class AttendanceController extends Controller
                     'latest'      => $request->latest[$studentId] ?? 0,
                     'permission'  => $status === 'permission' ? 1 : 0,
                     'information' => $request->comment[$studentId] ?? '',
-                    'semester'    => $request->semester,
+                    'semester'    => $semester,
                     'academic_year' => session('academic_year'),
                     'created_at'  => now(),
                 ];
@@ -806,7 +919,7 @@ class AttendanceController extends Controller
                 return redirect('/admin/attendances');
             }
             elseif (session('role') == 'teacher') {
-                return redirect()->route('attendance.detail.teacher', ['id' => session('id_user'), 'gradeId' => $request->grade_id]);
+                return redirect()->route('attendanceAll', ['id' => session('id_user'), 'gradeId' => $request->grade_id]);
 
             }
 

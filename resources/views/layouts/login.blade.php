@@ -6,7 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" type="text/css" href={{ URL::asset('style.css'); }} >
   <link rel="stylesheet" href="{{asset('template')}}/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
- 
+  <link rel="icon" href="{{ asset('great.png') }}" type="image/x-icon">
+
   <!-- iCheck -->
   <link rel="stylesheet" href="{{asset('template')}}/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- JQVMap -->
@@ -19,7 +20,7 @@
   <link rel="stylesheet" href="{{asset('template')}}/plugins/daterangepicker/daterangepicker.css">
   <!-- summernote -->
   <link rel="stylesheet" href="{{asset('template')}}/plugins/summernote/summernote-bs4.min.css">
-    <title>Login</title>
+    <title>LOGIN | SIAMIK Great Crystal School & Course Center</title>
 </head>
 
 <body>

@@ -555,10 +555,8 @@ class TeacherController extends Controller
    public function delete($id)
    {
       try {
-         // Hapus data guru
-         $teacher = Teacher::findOrFail($id);
-         $teacher->delete();
-
+         
+         Teacher::where('id', $id)->delete();
          // Hapus data terkait (Teacher_grade, Teacher_subject)
          Teacher_grade::where('teacher_id', $id)->delete();
          Teacher_subject::where('teacher_id', $id)->delete();

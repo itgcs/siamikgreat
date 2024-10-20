@@ -13,6 +13,8 @@ use App\Models\Teacher_grade;
 use App\Models\Teacher_subject;
 use App\Models\Master_academic;
 use App\Models\Type_exam;
+use App\Models\Type_schedule;
+use App\Models\Schedule;
 use App\Models\Major_subject;
 use App\Models\Minor_subject;
 use App\Models\Supplementary_subject;
@@ -342,7 +344,7 @@ class ExportController extends Controller
     private function acarStudent($grade)
     {
         $semester  = Master_academic::first()->value('now_semester');
-        $academic_year = Master_academic::first()->value('academic_year';)
+        $academic_year = Master_academic::first()->value('academic_year');
         $grade_name = Grade::where('id', $grade)->value('name');
 
         if(strtolower($grade_name) === "primary"){
@@ -356,31 +358,35 @@ class ExportController extends Controller
                 $student = $scores->first();
                 $majorSubject = Major_subject::pluck('subject_id')->toArray();
                 $minorSubject = Minor_subject::pluck('subject_id')->toArray();
-                $supplementarySubject = Supplementary_subject::where('subject_id', ['6','19','18', '17', '16', '15'])->pluck('subject_id')->toArray();
-
+                $supplementarySubject = Supplementary_subject::whereIn('subject_id', ['6', '19', '18', '17', '16', '15'])->pluck('subject_id')->toArray();
+            
                 $majorSubjectsScores = $scores->whereIn('subject_id', $majorSubject)->pluck('final_score');
                 $minorSubjectsScores = $scores->whereIn('subject_id', $minorSubject)->pluck('final_score');
                 $supplementarySubjectsScores = $scores->whereIn('subject_id', $supplementarySubject)->pluck('final_score');
-
-                // dd($majorSubjectsScores);
-
+            
                 return [
                     'student_id' => $student->student_id,
                     'student_name' => $student->name,
-                    'scores' => $scores->map(function ($score) {
+                    'scores' => $scores->sortBy('subject_id')->mapWithKeys(function ($score) {
+                        $subjectName = Subject::where('id', $score->subject_id)->value('name_subject');
                         return [
-                            'subject_id' => $score->subject_id,
-                            'final_score' => $score->final_score,
-                            'grades' => $score->grades,
+                            $subjectName => [
+                                'subject_id' => $score->subject_id,
+                                'subject_name' => $subjectName,
+                                'final_score' => $score->final_score,
+                                'grades' => $score->grades,
+                            ]
                         ];
                     })->all(),
                     'percent_majorSubjects' => $majorSubjectsScores->avg() * 0.7,
                     'percent_minorSubjects' => $minorSubjectsScores->avg() * 0.2,
                     'percent_supplementarySubjects' => $supplementarySubjectsScores->avg() * 0.1,
-                    'total_score' => (($majorSubjectsScores->avg() * 0.7) + ($minorSubjectsScores->avg() * 0.2) + $supplementarySubjectsScores->avg() * 0.1),
+                    'total_score' => (($majorSubjectsScores->avg() * 0.7) + ($minorSubjectsScores->avg() * 0.2) + ($supplementarySubjectsScores->avg() * 0.1)),
                     // 'comment' => $comments->get($student->student_id)?->comment ?? '',
                 ];
             })->values()->all();
+                
+                
             return $scoresByStudent;
         } 
         elseif (strtolower($grade_name) === "secondary") {
@@ -400,16 +406,18 @@ class ExportController extends Controller
                 $minorSubjectsScores = $scores->whereIn('subject_id', $minorSubject)->pluck('final_score');
                 $supplementarySubjectsScores = $scores->whereIn('subject_id', $supplementarySubject)->pluck('final_score');
 
-                // dd($majorSubjectsScores);
-
                 return [
                     'student_id' => $student->student_id,
                     'student_name' => $student->name,
-                    'scores' => $scores->map(function ($score) {
+                    'scores' => $scores->sortBy('subject_id')->mapWithKeys(function ($score) {
+                        $subjectName = Subject::where('id', $score->subject_id)->value('name_subject');
                         return [
-                            'subject_id' => $score->subject_id,
-                            'final_score' => $score->final_score,
-                            'grades' => $score->grades,
+                            $subjectName => [
+                                'subject_id' => $score->subject_id,
+                                'subject_name' => $subjectName,
+                                'final_score' => $score->final_score,
+                                'grades' => $score->grades,
+                            ]
                         ];
                     })->all(),
                     'percent_majorSubjects' => $majorSubjectsScores->avg() * 0.7,
@@ -421,6 +429,85 @@ class ExportController extends Controller
             })->values()->all();
             return $scoresByStudent;
         }
+    }
+
+    private function attendanceStudent($grade)
+    {
+        $semester  = Master_academic::first()->value('now_semester');
+        $academic_year = Master_academic::first()->value('academic_year');
+        $grade_name = Grade::where('id', $grade)->value('name');
+
+        $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+                ->leftJoin('attendances', function ($join) {
+                    $join->on('attendances.student_id', '=', 'students.id');
+                })
+                ->select(
+                    'students.id as student_id',
+                    'students.name as student_name',
+                    'attendances.*',
+                )
+                ->where('grades.id', $grade)
+                ->where('attendances.semester', $semester)
+                ->where('attendances.academic_year', $academic_year)
+                ->get();
+
+            $totalAttendances = [
+                'total' => $results->count(),
+                'dates' => $results->pluck('date')->unique()->values()->all(),
+                'datesByMonth' => $results->groupBy(function($item) {
+                    return \Carbon\Carbon::parse($item->date)->format('F');
+                })->map(function($group) {
+                    return $group->pluck('date')->unique()->values()->all();
+                })
+            ];
+
+            // dd($totalAttendances);
+
+            $attendancesByStudent = $results->groupBy('student_id')->map(function($attendances) {
+                $student = $attendances->first();
+                $totalPresent = $attendances->where('present', 1)->count();
+                $totalSick = $attendances->where('sick', 1)->count();
+                $totalAlpha = $attendances->where('alpha', 1)->count();
+                $totalLate = $attendances->where('late', 1)->count();
+                $totalPermission = $attendances->where('permission', 1)->count();
+                $totalNonPresent = $attendances->where('present', 0)->count();
+                $effectiveDays = ($totalPresent + $totalAlpha + $totalSick + $totalLate + $totalPermission);
+            
+                // Calculate the score ensuring effectiveDays is not zero to avoid division by zero
+                if ($effectiveDays > 0) {
+                    $score = round((($effectiveDays - $totalAlpha - $totalPermission - ($totalLate * 0.5)) / $effectiveDays) * 100);
+                } else {
+                    $score = 0;
+                }
+            
+                return [
+                    'student_id' => $student->student_id,
+                    'student_name' => $student->student_name,
+                    'total_present' => $totalPresent,
+                    'total_alpha' => $totalAlpha,
+                    'total_sick' => $totalSick,
+                    'total_late' => $totalLate,
+                    'total_pe' => $totalPermission,
+                    'total_non_present' => $totalNonPresent,
+                    'score' => $score,
+            
+                    'attendances' => $attendances->map(function ($attend) {
+                        return [
+                            'attendances_id' => $attend->id,
+                            'attendances_date' => $attend->date,
+                            'attendances_present' => $attend->present,
+                            'attendances_alpha' => $attend->alpha,
+                            'attendances_sick' => $attend->sick,
+                            'attendances_late' => $attend->late,
+                            'attendances_latest' => $attend->latest,
+                            'attendances_permission' => $attend->permission,
+                            'attendances_information' => $attend->information,
+                        ];
+                    })
+                ];
+            })->values()->all();
+
+            return $attendancesByStudent;
     }
 
     private function sooaStudent($grade)
@@ -836,16 +923,31 @@ class ExportController extends Controller
         $scores = [];
 
         foreach ($grades as $grade => $value) {
-           $scores[$value] = $this->acarStudent($grade);
+            $acarStudentData = $this->acarStudent($grade);
+
+            $grade = Grade::where('id', $grade)->value('name');
+
+            if (strtolower($grade) == 'primary') {
+                $subjectGradeData = ['Chinese', 'Mathematics', 'English', 'Bahasa Indonesia', 'Science', 'IT', 'PPKn', 'Art & Craft', 'CB', 'GK', 'PE', 'Religion'];
+            }
+            elseif (strtolower($grade) == 'secondary') {
+                $subjectGradeData = ['Chinese', 'Mathematics', 'English', 'Bahasa Indonesia', 'Science', 'IT', 'PPKn', 'CB', 'PE', 'Religion', 'IPS', 'Art & Design'];
+            }
+    
+            $scores[$value] = [
+                'acarStudent' => $acarStudentData,
+                'subjectGrade' => $subjectGradeData,
+                'colspan'      => count($subjectGradeData)+1,
+            ];
         }
 
         $data = [
             'scores'       => $scores,
             'semester'     => $academic->now_semester,
-            'academicYear' => $academic->academic_year,
+            'academicYear' => $academic->academic_year
         ];
 
-        dd($data);
+        // dd($data);
 
         $pdf = app('dompdf.wrapper');
         $pdf->set_option('isRemoteEnabled', true);
@@ -872,7 +974,22 @@ class ExportController extends Controller
         $scores = [];
 
         foreach ($grades as $grade => $value) {
-           $scores[$value] = $this->sooaStudent($grade);
+            $sooaStudentData = $this->sooaStudent($grade);
+
+            $grade = Grade::where('id', $grade)->value('name');
+
+            if (strtolower($grade) == 'primary') {
+                $column = ['Academic', 'Choice', 'Language and Art', 'Self Development', 'ECA Aver', 'Behavior', 'Attendance', 'Participation', 'Final Score', 'Ranking'];
+            }
+            elseif (strtolower($grade) == 'secondary') {
+                $column = ['Academic', 'ECA 1', 'ECA 2', 'Self Development', 'ECA Aver', 'Behavior', 'Attendance', 'Participation', 'Final Score', 'Ranking'];
+            }
+    
+            $scores[$value] = [
+                'sooaStudent' => $sooaStudentData,
+                'column' => $column,
+                'colspan'      => count($column)+1,
+            ];
         }
 
         $data = [
@@ -881,12 +998,12 @@ class ExportController extends Controller
             'academicYear' => $academic->academic_year,
         ];
 
-        dd($data);
+        // dd($data);
 
         $pdf = app('dompdf.wrapper');
         $pdf->set_option('isRemoteEnabled', true);
         $pdf->set_option('isHtml5ParserEnabled', true);
-        $pdf->loadView('components.export.assessment-pdf', $data)->setPaper('a4', 'landscape');
+        $pdf->loadView('components.export.sooa-pdf', $data)->setPaper('a4', 'landscape');
         return $pdf->stream('grades.pdf');
 
     }
@@ -953,7 +1070,7 @@ class ExportController extends Controller
             'academicYear' => $academic->academic_year,
         ];
 
-        dd($data);
+        // dd($data);
 
         $pdf = app('dompdf.wrapper');
         $pdf->set_option('isRemoteEnabled', true);
@@ -962,4 +1079,119 @@ class ExportController extends Controller
         return $pdf->stream('grades.pdf');
     }
 
+    public function schedule()
+    {
+        $lesson = Type_schedule::where('name', '=', 'Lesson')->value('id');
+        $academic = Master_academic::first();
+
+        $query = Schedule::leftJoin('teachers', 'schedules.teacher_id', '=', 'teachers.id')
+            ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
+            ->leftJoin('grades', 'schedules.grade_id', '=', 'grades.id')
+            ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
+            ->where('type_schedule_id', $lesson)
+            ->where('semester', session('semester'))
+            ->orderBy('grade_id', 'asc')
+            ->orderBy('day', 'asc')
+            ->orderBy('start_time', 'asc');
+
+        $schedules = $query->select(
+            'schedules.*',
+            'teachers.name as teacher_name',
+            't2.name as assisstant',
+            DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"),
+            'subjects.name_subject as subject_name'
+        )->get();
+        
+        // Define day names
+        $dayNames = [
+            1 => 'Monday',
+            2 => 'Tuesday',
+            3 => 'Wednesday',
+            4 => 'Thursday',
+            5 => 'Friday'
+        ];
+
+        $groupedSchedules = $schedules->groupBy('day')->mapWithKeys(function($group, $day) use ($dayNames) {
+            $dayName = $dayNames[$day] ?? 'Unknown';
+     
+            $gradeGrouped = $group->groupBy('grade_name')->map(function($gradeGroup) {
+                return $gradeGroup->map(function($schedule) {
+                    return [
+                        'id' => $schedule->id,
+                        'subject_name' => $schedule->subject_name,
+                        'teacher_name' => $schedule->teacher_name,
+                        'assisstant' => $schedule->assisstant,
+                        'day' => $schedule->day,
+                        'start_time' => $schedule->start_time,
+                        'end_time' => $schedule->end_time,
+                        'notes' => $schedule->note
+                    ];
+                })->values();
+            });
+     
+            return [$dayName => $gradeGrouped];
+        });
+
+        $schedule = $groupedSchedules->toArray();
+
+        $data = [
+            'data'       => $schedule,
+            'semester'     => $academic->now_semester,
+            'academicYear' => $academic->academic_year,
+        ];
+
+
+        // dd($groupedSchedules);
+        // return view('components.export.schedules-pdf');
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->set_option('isRemoteEnabled', true);
+        $pdf->set_option('isHtml5ParserEnabled', true);
+        $pdf->loadView('components.export.schedules-pdf', $data)->setPaper('a4', 'landscape');
+        return $pdf->stream('schedules.pdf');
+    }
+
+    public function attendance()
+    {
+        $academic = Master_academic::first();
+        $grades = Grade::whereNotIn('name', ['toddler', 'nursery', 'kindergarten', 'igcse'])
+            // ->leftJoin('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+            ->select(
+                'grades.id as id',
+                // 'teachers.name as class_teacher',
+                DB::raw("CONCAT(grades.name, '-', grades.class) as grade_name_class")
+            )
+            ->pluck('grade_name_class', 'id')
+            ->toArray();
+        
+        $gradeIds = array_keys($grades);
+        // dd($grades);
+
+        $scores = [];
+
+        foreach ($grades as $grade => $value) {
+            $attendanceStudentData = $this->attendanceStudent($grade);
+
+            $grade = Grade::where('id', $grade)->value('name');
+    
+            $scores[$value] = [
+                'attendanceStudent' => $attendanceStudentData,
+            ];
+        }
+
+        $data = [
+            'scores'       => $scores,
+            'semester'     => $academic->now_semester,
+            'academicYear' => $academic->academic_year
+        ];
+
+        // dd($data);
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->set_option('isRemoteEnabled', true);
+        $pdf->set_option('isHtml5ParserEnabled', true);
+        $pdf->loadView('components.export.attendance-pdf', $data)->setPaper('a4', 'landscape');
+        return $pdf->stream('grades.pdf');
+
+    }
 }

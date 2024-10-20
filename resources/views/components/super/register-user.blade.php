@@ -12,7 +12,11 @@
             <div class="card-body register-card-body">
                 <p class="login-box-msg">Register a new user</p>
 
+                @if (session('role') == 'superadmin')
                 <form action="/superadmin/users/register-action" method="post" enctype="multipart/form-data">
+                @elseif (session('role') == 'admin')
+                <form action="/admin/users/register-action" method="post" enctype="multipart/form-data">
+                @endif
                     @csrf
                     @method('post')
                     <div class="input-group mb-3">

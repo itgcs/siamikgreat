@@ -115,17 +115,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 $endDate = date('Y-m-d', strtotime($schedule->end_date . ' +1 day'));
 
                 $event = [
-                    'title' => $schedule->subject_name,
+                    'title' => "{$schedule->subject_name} ({$schedule->teacher_name})" . ($schedule->note ? " {$schedule->note}" : ''),
                     'startRecur' => $schedule->date,
                     'endRecur' => $endDate,
                     'daysOfWeek' => [$schedule->day],
                     'startTime' => $schedule->start_time,
                     'endTime' => $schedule->end_time,
-                    'description' => '',
                     'color' => $schedule->color,
                     'teacherId' => $schedule->teacher_id,
                     'day' => $schedule->day,
-                    'description' => "<br>Invilager: {$schedule->teacher_name}<br>Grade: {$schedule->grade_name} - {$schedule->grade_class}"
+                    'description' => "<br>Invigilater : {$schedule->teacher_name}<br>Grade : {$schedule->grade_name} - {$schedule->grade_class}<br>Note :" . ($schedule->note ? " {$schedule->note}" : '')
                 ];
 
                 echo json_encode($event) . ',';

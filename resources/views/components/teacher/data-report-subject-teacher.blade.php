@@ -37,186 +37,134 @@
    </div> -->
    
    <!-- START TABEL -->
-         
-   <!-- Display Kindergartern Grades -->
-   @if (!$kindergartenGrades->isEmpty())
-      <div class="card card-dark mt-2">
-         <div class="card-header"> 
-            <h3 class="card-title">Kindergarten Grades</h3>
-            <div class="card-tools">
-               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                  <i class="fas fa-minus"></i>
-               </button>
+      <!-- Display Kindergarten Grades -->
+      @if (!$kindergartenGrades->isEmpty())
+         <div class="card card-dark mt-2">
+            <div class="card-header"> 
+                  <h3 class="card-title">Kindergarten Grades</h3>
+                  <div class="card-tools">
+                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                     </button>
+                  </div>
+            </div>
+            <div class="card-body p-0">
+                  <table class="table table-striped projects">
+                     <thead>
+                        <tr>
+                              <th style="width: 5%">#</th>
+                              <th style="width: 10%">Grade</th>
+                              <th style="width: 15%">Subject</th>
+                              <th style="width: 10%">Action</th>
+                              <th>Status</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        @foreach ($kindergartenGrades as $el)
+                              <tr id="{{ 'index_grade_' . $el->id }}">
+                                 <td>{{ $loop->index + 1 }}</td>
+                                 <td>{{ $el->name }} - {{ $el->class }}</td>
+                                 <td>{{ $el->name_subject }}</td>
+                                 <td>
+                                    <a class="btn btn-primary btn" href="{{ url('teacher/dashboard/report/detailSubjectKindergarten') . '/' . $el->grade_id . '/' . $el->subject_id }}">
+                                          Scoring
+                                    </a>
+                                 </td>
+                                 <td>{{ $el->status == 1 ? 'Already Submitted Score' : 'Not Submitted' }}</td>
+                              </tr>
+                        @endforeach
+                     </tbody>
+                  </table>
             </div>
          </div>
-         <div class="card-body p-0">
-            <table class="table table-striped projects">
-               <thead>
-                     <tr>
-                        <th style="width: 10%">
-                           #
-                        </th>
-                        <th style="width: 20%">
-                           Grade
-                        </th>
-                        <th style="width: 20%">
-                           Subject
-                        </th>
-                        <th>
-                           Action
-                        </th>
-                     </tr>
-               </thead>
-               <tbody>
-                  @foreach ($kindergartenGrades as $el)
-                     <tr id="{{ 'index_grade_' . $el->id }}">
-                        <td>
-                           {{ $loop->index + 1 }}
-                        </td>
-                        <td>
-                           {{ $el->name }} - {{ $el->class }}
-                        </td>
-                        <td>
-                           <a>
-                              {{ $el->name_subject }}
-                           </a>
-                        </td>
-                        <td>
-                           <a class="btn btn-primary btn"
-                              href="{{url('teacher/dashboard/report/detailSubjectKindergarten') . '/' . $el->grade_id . '/' . $el->subject_id}}">
-                              </i>
-                              Scoring
-                           </a>
-                        </td>
-                     </tr>
-                  @endforeach
-               </tbody>
-            </table>
-         </div>
-      </div>
-   @else
-   @endif
+      @endif
 
-   <!-- Display Primary Grades -->
-   @if (!$primaryGrades->isEmpty())
-      <div class="card card-dark mt-2">
-         <div class="card-header"> 
-            <h3 class="card-title">Primary Grades</h3>
-            <div class="card-tools">
-               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                  <i class="fas fa-minus"></i>
-               </button>
+      <!-- Display Primary Grades -->
+      @if (!$primaryGrades->isEmpty())
+         <div class="card card-dark mt-2">
+            <div class="card-header"> 
+                  <h3 class="card-title">Primary Grades</h3>
+                  <div class="card-tools">
+                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                     </button>
+                  </div>
+            </div>
+            <div class="card-body p-0">
+                  <table class="table table-striped projects">
+                     <thead>
+                        <tr>
+                              <th style="width: 5%">#</th>
+                              <th style="width: 10%">Grade</th>
+                              <th style="width: 15%">Subject</th>
+                              <th style="width: 10%">Action</th>
+                              <th>Status</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        @foreach ($primaryGrades as $el)
+                              <tr id="{{ 'index_grade_' . $el->id }}">
+                                 <td>{{ $loop->index + 1 }}</td>
+                                 <td>{{ $el->name }} - {{ $el->class }}</td>
+                                 <td>{{ $el->name_subject }}</td>
+                                 <td>
+                                    <a class="btn btn-primary btn" href="{{ url('teacher/dashboard/report/detailSubjectPrimary') . '/' . $el->grade_id . '/' . $el->subject_id }}">
+                                          Scoring
+                                    </a>
+                                 </td>
+                                 <td>{{ $el->status == 1 ? 'Already Submitted Score' : 'Not Submitted' }}</td>
+                              </tr>
+                        @endforeach
+                     </tbody>
+                  </table>
             </div>
          </div>
-         <div class="card-body p-0">
-            <table class="table table-striped projects">
-               <thead>
-                     <tr>
-                        <th style="width: 10%">
-                           #
-                        </th>
-                        <th style="width: 20%">
-                           Grade
-                        </th>
-                        <th style="width: 20%">
-                           Subject
-                        </th>
-                        <th>
-                           Action
-                        </th>
-                     </tr>
-               </thead>
-               <tbody>
-                  @foreach ($primaryGrades as $el)
-                     <tr id="{{ 'index_grade_' . $el->id }}">
-                        <td>
-                           {{ $loop->index + 1 }}
-                        </td>
-                        <td>
-                           {{ $el->name }} - {{ $el->class }}
-                        </td>
-                        <td>
-                           <a>
-                              {{ $el->name_subject }}
-                           </a>
-                        </td>
-                        <td>
-                           <a class="btn btn-primary btn"
-                              href="{{url('teacher/dashboard/report/detailSubjectPrimary') . '/' . $el->grade_id . '/' . $el->subject_id}}">
-                              </i>
-                              Scoring
-                           </a>
-                        </td>
-                     </tr>
-                  @endforeach
-               </tbody>
-            </table>
-         </div>
-      </div>
-   @else
-   @endif
+      @endif
 
-   <!-- Display Secondary Grades -->
-   @if (!$secondaryGrades->isEmpty())
-      <div class="card card-dark mt-2">
-         <div class="card-header"> 
-            <h3 class="card-title">Secondary Grades</h3>
-            <div class="card-tools">
-               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                  <i class="fas fa-minus"></i>
-               </button>
+      <!-- Display Secondary Grades -->
+      @if (!$secondaryGrades->isEmpty())
+         <div class="card card-dark mt-2">
+            <div class="card-header"> 
+                  <h3 class="card-title">Secondary Grades</h3>
+                  <div class="card-tools">
+                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                     </button>
+                  </div>
+            </div>
+            <div class="card-body p-0">
+                  <table class="table table-striped projects">
+                     <thead>
+                        <tr>
+                              <th style="width: 5%">#</th>
+                              <th style="width: 10%">Grade</th>
+                              <th style="width: 15%">Subject</th>
+                              <th style="width: 10%">Action</th>
+                              <th>Status</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        @foreach ($secondaryGrades as $el)
+                              <tr id="{{ 'index_grade_' . $el->id }}">
+                                 <td>{{ $loop->index + 1 }}</td>
+                                 <td>{{ $el->name }} - {{ $el->class }}</td>
+                                 <td>{{ $el->name_subject }}</td>
+                                 <td>
+                                    <a class="btn btn-primary btn" href="{{ url('teacher/dashboard/report/detailSubjectSecondary') . '/' . $el->grade_id . '/' . $el->subject_id }}">
+                                          Scoring
+                                    </a>
+                                 </td>
+                                 <td>{{ $el->status == 1 ? 'Already Submitted Score' : 'Not Submitted' }}</td>
+                              </tr>
+                        @endforeach
+                     </tbody>
+                  </table>
             </div>
          </div>
-         <div class="card-body p-0">
-            <table class="table table-striped projects">
-               <thead>
-                     <tr>
-                        <th style="width: 10%">
-                           #
-                        </th>
-                        <th style="width: 20%">
-                           Grade
-                        </th>
-                        <th style="width: 20%">
-                           Subject
-                        </th>
-                        <th>
-                           Action
-                        </th>
-                     </tr>
-               </thead>
-               <tbody>
-                  @foreach ($secondaryGrades as $el)
-                     <tr id="{{ 'index_grade_' . $el->id }}">
-                        <td>
-                           {{ $loop->index + 1 }}
-                        </td>
-                        <td>
-                           {{ $el->name }} - {{ $el->class }}
-                        </td>
-                        <td>
-                           <a>
-                              {{ $el->name_subject }}
-                           </a>
-                        </td>
-                        <td>
-                           <a class="btn btn-primary btn"
-                              href="{{url('teacher/dashboard/report/detailSubjectSecondary') . '/' . $el->grade_id . '/' . $el->subject_id}}">
-                              </i>
-                              Scoring
-                           </a>
-                        </td>
-                     </tr>
-                  @endforeach
-               </tbody>
-            </table>
-         </div>
-      </div>
-   @else
-   @endif
+      @endif
+
 
    <!-- END TABLE -->
-   <!-- END TABEL -->
 </div>
 @else
    <div class="container-fluid full-height">

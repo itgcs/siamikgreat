@@ -21,14 +21,24 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row">   
         <div class="col">
-            <p class="text-xs text-bold">Academic Assessment Report</p>
-            <p class="text-xs">Semester : {{ session('semester') }}</p>
-            <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
-            <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</p>
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
-        </div>
+            <p class="text-bold">Academic Assessment Report</p>
+            <table>
+                <tr>
+                    <td>Class</td>
+                    <td> : {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</td>
+                </tr>
+                <tr>
+                    <td>Teacher</td>
+                    <td> : {{ $data['classTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
+                </tr>
+            </table>
+        </div>  
     </div>
 
     <div style="overflow-x: auto;">
@@ -50,7 +60,7 @@
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
                 <div class="input-group-append mx-2">
-                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
+                    <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
                     @if (session('role') == 'superadmin' || session('role') == 'admin')
                     <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline ACAR</a>
                     @endif
@@ -216,21 +226,12 @@
                             <td class="project-actions text-left">
                                 <div class="input-group">
                                     @if ($data['status'] == null)
-                                        <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $dt['comment'] ? '' : 'Write your remarks' }}" value="{{ $dt['comment'] ?: '' }}" autocomplete="off" required>
+                                        <textarea name="comment[]" class="form-control" cols="6" rows="1" id="comment-{{$dt['student_id']}}" required></textarea>
                                     @else 
                                         {{ $dt['comment'] }}
                                     @endif
                                     <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $dt['student_id'] }}">
                                     <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $dt['total_score'] }}">
-
-                                    @if ($data['status'] == null)
-                                    <div class="input-group-append">
-                                        <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
-                                            <i class="fas fa-pen"></i>
-                                            Edit
-                                        </a>
-                                    </div>
-                                    @endif
                                 </div>
                             </td>
                         </tr>

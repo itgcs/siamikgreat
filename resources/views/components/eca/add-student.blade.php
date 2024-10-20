@@ -28,7 +28,7 @@
                         @csrf
                         <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Create ECA</h3>
+                                <h3 class="card-title">Add Student</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->

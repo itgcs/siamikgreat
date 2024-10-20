@@ -46,11 +46,11 @@
                      <thead>
                            <tr>
                               <th>#</th>
-                              <th style="width:10%;">Class</th>
-                              <th>Teacher Class</th>
+                              <th style="width:15%;">Class</th>
+                              <th>Class Teacher</th>
                               <th>Total Student</th>
                               <th>Total Subject</th>
-                              <th style="width:50%;"></th>
+                              <th style="width:50%;">Action</th>
                            </tr>
                      </thead>
                      <tbody>
@@ -61,83 +61,34 @@
                                     <td><a>  {{ $pr->teacher_class }}</a></td>
                                     <td><a>  {{ $pr->active_student_count }}</a></td>
                                     <td><a>  {{ $pr->active_subject_count }}</a></td>
-                                    @if (session('role') == 'superadmin')
+                                    @if (session('role') == 'superadmin' || session('role') == 'admin')
                                     <td class="project-actions text-left toastsDefaultSuccess">
-                                       <a class="btn btn-primary btn"
-                                          href="{{url(session('role'). '/reports') . '/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          Scoring
-                                       </a>
-                                       <a class="btn btn-success btn"
-                                          href="{{url(session('role') . '/reports') . '/acar/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          ACAR
-                                       </a>
-                                       <a class="btn btn-warning btn"
-                                          href="{{url(session('role') . '/reports') . '/sooa/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SOOA
-                                       </a>
-                                       <a class="btn btn-warning btn"
-                                          href="{{url(session('role') . '/reports') . '/tcop/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          TCOP
-                                       </a>
-                                       <a class="btn btn-primary btn"
-                                          href="{{url(session('role') . '/reports') . '/semestersatu/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SEMESTER 1
-                                       </a>
-                                       <a class="btn btn-primary btn"
-                                          href="{{url(session('role') . '/reports') . '/semesterdua/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SEMESTER 2
-                                       </a>
-                                    </td>
-                                    @elseif (session('role') == 'admin')
-                                    <td class="project-actions text-right toastsDefaultSuccess">
-                                       <a class="btn btn-primary btn"
-                                          href="{{url(session('role'). '/reports') . '/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          Scoring
-                                       </a>
-                                       <a class="btn btn-success btn"
-                                          href="{{url(session('role') . '/reports') . '/acar/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          ACAR
-                                       </a>
-                                       <a class="btn btn-warning btn"
-                                          href="{{url(session('role') . '/reports') . '/sooa/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SOOA
-                                       </a>
-                                       <a class="btn btn-warning btn"
-                                          href="{{url(session('role') . '/reports') . '/tcop/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          TCOP
-                                       </a>
-                                       <a class="btn btn-primary btn"
-                                          href="{{url(session('role') . '/reports') . '/semestersatu/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SEMESTER 1
-                                       </a>
-                                       <a class="btn btn-primary btn"
-                                          href="{{url(session('role') . '/reports') . '/semesterdua/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SEMESTER 2
-                                       </a>
+                                       @if (strtolower($pr->grade_name) === "toddler")
+                                          <a class="btn btn-secondary btn" href="{{ url(session('role'). '/reports') . '/mid/cardToddler' . '/' . $pr->id }}">
+                                             Mid Report Card
+                                          </a>
+                                          <a class="btn btn-primary btn" href="{{ url(session('role') . '/reports') . '/cardToddler' . '/' . $pr->id }}">
+                                             Report Card
+                                          </a>
+                                       @elseif (strtolower($pr->grade_name) === "nursery")
+                                          <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/mid/cardNursery' . '/' . $pr->id }}">
+                                             Mid Report Card 
+                                          </a>
+                                          <a class="btn btn-primary btn" href="{{url(session('role') . '/reports') . '/cardNursery' . '/' . $pr->id }}">
+                                             Report Card
+                                          </a>
+                                       @elseif (strtolower($pr->grade_name) === "kindergarten")
+                                          <a class="btn btn-primary btn"
+                                             href="{{url(session('role'). '/reports') . '/detail/' . $pr->id}}">
+                                             Scoring
+                                          </a>
+                                          <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/mid/cardKindergarten' . '/' . $pr->id }}">
+                                             Mid Report Card 
+                                          </a>
+                                          <a class="btn btn-primary btn" href="{{ url(session('role') . '/reports') . '/cardKindergarten' . '/' . $pr->id }}">
+                                             Report Card 
+                                          </a>
+                                       @endif
                                     </td>
                                     @endif
                               </tr>
@@ -164,10 +115,10 @@
                            <tr>
                               <th>#</th>
                               <th style="width:10%;">Class</th>
-                              <th>Teacher Class</th>
+                              <th>Class Teacher</th>
                               <th>Total Student</th>
                               <th>Total Subject</th>
-                              <th style="width:50%;"></th>
+                              <th style="width:60%;"> Action</th>
                            </tr>
                      </thead>
                      <tbody>
@@ -178,83 +129,41 @@
                                     <td><a>  {{ $pr->teacher_class }}</a></td>
                                     <td><a>  {{ $pr->active_student_count }}</a></td>
                                     <td><a>  {{ $pr->active_subject_count }}</a></td>
-                                    @if (session('role') == 'superadmin')
-                                    <td class="project-actions text-right toastsDefaultSuccess">
+                                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                                    <td class="project-actions text-left toastsDefaultSuccess">
                                        <a class="btn btn-primary btn"
                                           href="{{url(session('role'). '/reports') . '/detail/' . $pr->id}}">
-                                          
-                                          </i>
                                           Scoring
                                        </a>
                                        <a class="btn btn-success btn"
                                           href="{{url(session('role') . '/reports') . '/acar/detail/' . $pr->id}}">
-                                          
-                                          </i>
                                           ACAR
                                        </a>
                                        <a class="btn btn-warning btn"
                                           href="{{url(session('role') . '/reports') . '/sooa/detail/' . $pr->id}}">
-                                          
-                                          </i>
                                           SOOA
                                        </a>
-                                       <a class="btn btn-warning btn"
+                                       <a class="btn btn-secondary btn"
                                           href="{{url(session('role') . '/reports') . '/tcop/detail/' . $pr->id}}">
-                                          
-                                          </i>
                                           TCOP
                                        </a>
-                                       <a class="btn btn-primary btn"
-                                          href="{{url(session('role') . '/reports') . '/semestersatu/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SEMESTER 1
-                                       </a>
-                                       <a class="btn btn-primary btn"
-                                          href="{{url(session('role') . '/reports') . '/semesterdua/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SEMESTER 2
-                                       </a>
-                                    </td>
-                                    @elseif (session('role') == 'admin')
-                                    <td class="project-actions text-right toastsDefaultSuccess">
-                                       <a class="btn btn-primary btn"
-                                          href="{{url(session('role'). '/reports') . '/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          Scoring
-                                       </a>
-                                       <a class="btn btn-success btn"
-                                          href="{{url(session('role') . '/reports') . '/acar/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          ACAR
-                                       </a>
-                                       <a class="btn btn-warning btn"
-                                          href="{{url(session('role') . '/reports') . '/sooa/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SOOA
-                                       </a>
-                                       <a class="btn btn-warning btn"
-                                          href="{{url(session('role') . '/reports') . '/tcop/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          TCOP
-                                       </a>
-                                       <a class="btn btn-primary btn"
-                                          href="{{url(session('role') . '/reports') . '/semestersatu/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SEMESTER 1
-                                       </a>
-                                       <a class="btn btn-primary btn"
-                                          href="{{url(session('role') . '/reports') . '/semesterdua/detail/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SEMESTER 2
-                                       </a>
+                                       @if (session('semester') == 1)
+                                          <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/midcard/semestersatu' . '/' . $pr->id }}">
+                                             Mid Report Card 
+                                          </a>
+                                          <a class="btn btn-danger btn"
+                                             href="{{url(session('role') . '/reports') . '/semestersatu/detail/' . $pr->id}}">
+                                             REPORT CARD
+                                          </a>
+                                       @elseif (session('semester') == 2)
+                                          <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/midcard/semestersatu' . '/' . $pr->id }}">
+                                             Mid Report Card 
+                                          </a>
+                                          <a class="btn btn-danger btn"
+                                             href="{{url(session('role') . '/reports') . '/semesterdua/detail/' . $pr->id}}">
+                                             REPORT CARD
+                                          </a>
+                                       @endif
                                     </td>
                                     @endif
                               </tr>
@@ -280,11 +189,11 @@
                      <thead>
                            <tr>
                               <th>#</th>
-                              <th>Class</th>
+                              <th style="width:10%;">Class</th>
                               <th>Class Teacher</th>
                               <th>Total Student</th>
                               <th>Total Subject</th>
-                              <th></th>
+                              <th style="width:60%;">Action</th>
                            </tr>
                      </thead>
                      <tbody>
@@ -296,43 +205,37 @@
                                     <td><a>  {{ $pr->active_student_count }}</a></td>
                                     <td><a>  {{ $pr->active_subject_count }}</a></td>
                                     @if (session('role') == 'superadmin' || session('role') == 'admin')
-                                    <td class="project-actions text-right toastsDefaultSuccess">
+                                    <td class="project-actions text-left toastsDefaultSuccess">
                                        <a class="btn btn-primary btn"
                                           href="{{url(session('role'). '/reports') . '/detailSec/' . $pr->id}}">
-                                          
-                                          </i>
                                           Scoring
                                        </a>
                                        <a class="btn btn-success btn"
                                           href="{{url(session('role') . '/reports') . '/acar/detailSec/' . $pr->id}}">
-                                          
-                                          </i>
                                           ACAR
                                        </a>
                                        <a class="btn btn-warning btn"
                                           href="{{url(session('role') . '/reports') . '/sooa/detailSec/' . $pr->id}}">
-                                          
-                                          </i>
                                           SOOA
                                        </a>
-                                       <a class="btn btn-warning btn"
+                                       <a class="btn btn-secondary btn"
                                           href="{{url(session('role') . '/reports') . '/tcop/detailSec/' . $pr->id}}">
-                                          
-                                          </i>
                                           TCOP
                                        </a>
-                                       <a class="btn btn-primary btn"
+                                       <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/midcard/semestersatu' . '/' . $pr->id }}">
+                                          Mid Report Card 
+                                       </a>
+                                       @if (session('semester') == 1)
+                                       <a class="btn btn-danger btn"
                                           href="{{url(session('role') . '/reports') . '/semestersatu/detailSec/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SEMESTER 1
+                                          REPORT CARD
                                        </a>
-                                       <a class="btn btn-primary btn"
+                                       @elseif (session('semester') == 2)
+                                       <a class="btn btn-danger btn"
                                           href="{{url(session('role') . '/reports') . '/semesterdua/detailSec/' . $pr->id}}">
-                                          
-                                          </i>
-                                          SEMESTER 2
+                                          REPORT CARD
                                        </a>
+                                       @endif
                                     </td>
                                     @endif
                               </tr>
@@ -345,7 +248,7 @@
 
          <!-- END TABLE -->
    @else
-      <p class="text-center">You don't have data grade</p>
+      <p class="text-center">Teacher Dont create any assessment</p>
    @endif
    <!-- END TABEL -->
 </div>

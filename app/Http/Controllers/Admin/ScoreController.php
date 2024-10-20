@@ -41,6 +41,8 @@ class ScoreController extends Controller
          $checkSubject = Subject_exam::where('subject_exams.exam_id', '=', $id)->value('subject_id');
          $subject = Subject::where('id', $checkSubject)->value('name_subject');
 
+         // dd($subject);
+
          if (strtolower($subject) == "religion islamic") {
             $data = Exam::join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
                ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')

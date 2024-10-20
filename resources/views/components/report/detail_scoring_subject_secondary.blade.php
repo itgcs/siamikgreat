@@ -38,10 +38,27 @@
             <form id="confirmForm" method="POST" action={{route('actionTeacherPostScoringSecondary')}}>
         @endif
         @csrf
-        <div class="input-group-append my-2">
-            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
-        </div>
-        <table class="table table-striped table-bordered" style=" width: 1400px;">
+
+        @if ($data['status'] == null)
+            @if (!empty($data['students']))
+                <div class="row my-2">
+                    <div class="input-group-append mx-2">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit Scoring</button>
+                    </div>
+                </div>
+            @endif
+        @elseif ($data['status']->status != null && $data['status']->status == 1)       
+            <div class="row my-2">
+                <div class="input-group-append mx-2">
+                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
+                    @endif
+                </div>
+            </div>  
+        @endif
+
+        <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
             <thead>
                 <tr>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -153,8 +170,11 @@
                     <input name="subject_teacher" type="number" class="form-control d-none" id="subject_teacher" value="{{ $data['subjectTeacher']->teacher_id }}">  
                 </form>
             @else
-                
-                <p>data kosong</p>
+                 <tr>
+                    <td colspan="15" class="text-center">
+                        Teacher dont added a assessment...
+                    </td>    
+                </tr>
             @endif
                 
             </tbody>

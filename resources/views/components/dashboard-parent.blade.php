@@ -119,7 +119,7 @@
             <div class="card-header">
               <h3 class="card-title">
                 <i class="fa-solid fa-calendar-xmark mr-1"></i>
-                  List Exam
+                  List Exam's
               </h3>
               <!-- card tools -->
               <div class="card-tools">
@@ -157,6 +157,37 @@
                               </div>
                               <!-- todo text -->
                               <span class="text text-sm">( {{$el->type_exam_name}} ) ({{ $el->subject }}) {{$el->name_exam}} </span>
+
+                              <span>
+                                @if ($el->is_active)
+                                  @php
+                                  $currentDate = now(); // Tanggal saat ini
+                                  $dateExam = $el->date_exam; // Tanggal ujian dari data
+
+                                  // Buat objek DateTime dari tanggal saat ini dan tanggal ujian
+                                  $currentDateTime = new DateTime($currentDate);
+                                  $dateExamDateTime = new DateTime($dateExam);
+
+                                  // Hitung selisih antara kedua tanggal
+                                  $interval = $currentDateTime->diff($dateExamDateTime);
+
+                                  // Ambil jumlah hari dari selisih tersebut
+                                  $days = $interval->days;
+
+                                  // Jika tanggal ujian lebih kecil dari tanggal saat ini, buat selisih menjadi negatif
+                                  if ($dateExamDateTime < $currentDateTime) {
+                                    $days = -$days;
+                                  } else if ($dateExamDateTime > $currentDateTime && $days == 0) {
+                                    // Jika tanggal ujian di masa depan dan selisih kurang dari 1 hari, anggap 1 hari
+                                    $days = 1;
+                                  }
+                                  @endphp
+                                  
+                                  <span class="badge badge-warning">{{$days}} days again</span>
+                                @else
+                                 <span class="badge badge-success">Done</span>
+                                @endif
+                              </span>
                               
                               <div class="tools">
                                 <a class="btn" id="view" data-id="{{ $el->id }}">
@@ -166,7 +197,7 @@
                             </li>
                             @endforeach
                           @else
-                            <li>No active assessments</li>
+                            <li>No active exam</li>
                           @endif
                           </ul>
                        </div>
@@ -216,7 +247,7 @@
                   </tr>
                 @endforeach  
               @else
-                <p>Teacher dont have data subject !!!</p>
+                <p>Subject Grade is empty !!!</p>
               @endif
                  
                </tbody>

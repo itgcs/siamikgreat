@@ -83,7 +83,7 @@ class DashboardController extends Controller
             // dd($data);
             return view('components.dashboardtes')->with('data', $data);
          }
-         if($checkRole == 'teacher')
+         elseif($checkRole == 'teacher')
          {
             $id = Teacher::where('user_id', session('id_user'))->value('id');
             
@@ -150,7 +150,7 @@ class DashboardController extends Controller
 
             return view('components.dashboard-teacher')->with('data',$data);
          }
-         if($checkRole == 'student')
+         elseif($checkRole == 'student')
          {
             $id = Student::where('user_id', session('id_user'))->value('id');
             $gradeIdStudent = Student::where('user_id', session('id_user'))->value('grade_id');
@@ -202,7 +202,7 @@ class DashboardController extends Controller
 
             return view('components.dashboard-student')->with('data',$data);
          }
-         if($checkRole == 'parent')
+         elseif($checkRole == 'parent')
          {
             $id              = Relationship::where('user_id', session('id_user'))->value('id');
             $setStudentFirst = session('studentId');
@@ -246,6 +246,7 @@ class DashboardController extends Controller
                ->select('exams.*', 'type_exams.name as type_exam_name', 'grades.name as grade_name', 'grades.class as grade_class')
                ->where('grades.id', $gradeIdStudent)
                ->where('exams.is_active', 1)
+               ->orderBy('date_exam', 'asc')
                ->get();
 
             foreach ($dataExam as $ed ) {

@@ -3,6 +3,8 @@
   <title>Great Crystal School</title>
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="role" content="{{ session('role') }}">
+  <link rel="icon" href="{{ asset('great.png') }}" type="image/x-icon">
+
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -29,11 +31,12 @@
   <!-- Multi Select Javacript -->
   <link rel="stylesheet"  href="{{asset('template')}}/plugins/select2/css/select2.min.css">
   <link rel="stylesheet"  href="{{asset('template')}}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  
   <!-- SweetAlert -->
   <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 
   <!-- FullCalendar CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{asset('template')}}/plugins/fullcalendar/main.min.css">
 
 

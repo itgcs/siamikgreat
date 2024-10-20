@@ -12,6 +12,8 @@
               <li class="breadcrumb-item"><a href="{{url('/superadmin/reports')}}">Report Card</a></li>
             @elseif (session('role') == 'admin')
             <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Report Card</a></li>
+            @elseif (session('role') == 'teacher')
+            <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report/class/teacher')}}">Report Card</a></li>
             @endif
             <li class="breadcrumb-item active" aria-current="page">Detail Report Card</li>
           </ol>
@@ -94,11 +96,27 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $student['student_name'] }}</td>
                             @foreach ($student['scores'] as $index => $score)
-                                @foreach (['english', 'mathematics', 'chinese', 'science', 'character_building', 'art_and_craft', 'it', 'phonic'] as $field)
-                                    <td class="text-center">
-                                        {{ $score[$field] }}
-                                    </td>
-                                @endforeach
+                                @if (session('semester') == 1)
+                                    @foreach (['english', 'mathematics', 'chinese', 'science', 'character_building', 'art_and_craft', 'it', 'phonic'] as $field)
+                                        @if (!empty($score[$field]))
+                                            <td class="text-center">
+                                                {{ $score[$field] }}
+                                            </td>
+                                        @else
+                                            <td>&nbsp;</td>
+                                        @endif
+                                    @endforeach
+                                @elseif (session('semester') == 2)
+                                    @foreach (['english', 'mathematics', 'chinese', 'science', 'character_building', 'art_and_craft', 'it'] as $field)
+                                        @if (!empty($score[$field]))
+                                            <td class="text-center">
+                                                {{ $score[$field] }}
+                                            </td>
+                                        @else
+                                            <td>&nbsp;</td>
+                                        @endif
+                                    @endforeach
+                                @endif
                             @endforeach
 
                             <td>
@@ -121,9 +139,6 @@
                                     </label>
                                 </div>
                             </td>
-
-            
-
                             <td class="text-center">
                                 <input name="remarks[{{ $student['student_id'] }}]" type="text" class="form-control" autocomplete="off" value="{{ $score['remarks'] }}">
                             </td>
@@ -143,11 +158,25 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $student['name'] }}</td>
 
-                        @foreach (['english', 'mathematics', 'chinese', 'science', 'character_building', 'art_and_craft', 'phonic','it'] as $field)
-                            <td class="text-center">
-                                {{ $score[$field] }}
-                            </td>
-                        @endforeach
+                        @if (session('semester') == 1)
+                            @foreach (['english', 'mathematics', 'chinese', 'science', 'character_building', 'art_and_craft', 'phonic','it'] as $field)
+                                <td class="text-center">
+                                    @if (!empty($score[$field]))
+                                    {{ $score[$field] }}
+                                    @else    
+                                    @endif
+                                </td>
+                            @endforeach
+                        @elseif (session('semester') == 2)
+                            @foreach (['english', 'mathematics', 'chinese', 'science', 'character_building', 'art_and_craft','it'] as $field)
+                                <td class="text-center">
+                                    @if (!empty($score[$field]))
+                                    {{ $score[$field] }}
+                                    @else    
+                                    @endif
+                                </td>
+                            @endforeach
+                        @endif
                         <td>
                             <div class="form-check me-2 mx-2">
                                 <input id="conduct_excellent_{{ $student['student_id'] }}" name="conduct[{{ $student['student_id'] }}]" class="form-check-input status-type" type="radio" value="Excellent">
@@ -391,7 +420,7 @@
         Swal.fire({
             icon: 'success',
             title: 'Successfully',
-            text: `Successfully post report card nursery semester ${semester} in the database.`,
+            text: `Successfully post report card in the database.`,
         });
     </script>
 @endif

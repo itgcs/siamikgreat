@@ -135,6 +135,7 @@ class ScheduleController extends Controller
             ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
             ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
             ->where('exams.is_active', 1)
+            ->where('exams.academic_year', session('academic_year'))
             ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
             ->get();
 
@@ -146,14 +147,28 @@ class ScheduleController extends Controller
             ->where('type_schedule_id', '!=', $getIdLesson)
             ->where('type_schedule_id', '!=', $getIdMid)
             ->where('type_schedule_id', '!=', $getFinal)
+            ->where('schedules.academic_year', session('academic_year'))
             ->select('schedules.*', 'type_schedules.name as type_schedule', 'type_schedules.color as color')
             ->get();
+
+         $midExam = Schedule::join('type_schedules', 'schedules.type_schedule_id', '=', 'type_schedules.id')
+            ->where('type_schedule_id', '=', $getIdMid)
+            ->where('schedules.academic_year', session('academic_year'))
+            ->select('schedules.*', 'type_schedules.name as type_schedule', 'type_schedules.color as color')
+            ->get();
+
+         $finalExam = Schedule::join('type_schedules', 'schedules.type_schedule_id', '=', 'type_schedules.id')
+            ->where('type_schedule_id', '=', $getFinal)
+            ->where('schedules.academic_year', session('academic_year'))
+            ->select('schedules.*', 'type_schedules.name as type_schedule', 'type_schedules.color as color')
+            ->get();
+
 
          $typeSchedule = Type_schedule::where('name', '!=', 'Lesson')->get();
 
          // dd($schedules);
 
-         return view('components.schedule.schedule', compact('exams', 'schedules'))->with('data', $typeSchedule);
+         return view('components.schedule.schedule', compact('exams', 'schedules', 'midExam', 'finalExam'))->with('data', $typeSchedule);
 
       } catch (Exception $err) {
          return dd($err);
@@ -215,7 +230,12 @@ class ScheduleController extends Controller
 
          $id = session('id_user');
 
-         $getGradeStudent = Student::where('user_id', $id)->value('grade_id');
+         if (session('role') == 'parent') {
+            $getGradeStudent = Student::where('id', session('studentId'))->value('grade_id');
+         }
+         elseif (session('role') == 'student') {
+            $getGradeStudent = Student::where('user_id', $id)->value('grade_id');
+         }
          
          $academic_year = Master_academic::first()->value('academic_year');
          
@@ -276,6 +296,8 @@ class ScheduleController extends Controller
             'typeSchedule' => $typeSchedule,
             'otherSchedule' => $dataSchedule,
          ];
+
+         // dd($data['grade']);
 
          return view('components.schedule.data-schedule')->with('data', $data);
 
@@ -594,6 +616,8 @@ class ScheduleController extends Controller
          'child' => 'schedules grade',
       ]);
 
+      // dd($gradeId);
+
       $semester = session('semester');
       $academic_year = session('academic_year');
 
@@ -607,14 +631,14 @@ class ScheduleController extends Controller
                      ->whereNotNull('schedules.subject_id');
             })
             ->select('schedules.*', 
-                     'grades.id as grade_id',
-                     'grades.name as grade_name', 
-                     'grades.class as grade_class', 
-                     't1.id as teacher_id',
-                     't1.name as teacher_name',
-                     't2.id as teacher_companion_id',
-                     't2.name as teacher_companion_name',   
-                     'subjects.name_subject as subject_name')
+               'grades.id as grade_id',
+               'grades.name as grade_name', 
+               'grades.class as grade_class', 
+               't1.id as teacher_id',
+               't1.name as teacher_name',
+               't2.id as teacher_companion_id',
+               't2.name as teacher_companion_name',   
+               'subjects.name_subject as subject_name')
             ->where('semester', $semester)
             ->where('academic_year', $academic_year)
             ->get();
@@ -639,6 +663,7 @@ class ScheduleController extends Controller
             ->get();
 
 
+         // dd($data);
          if (count($data) != 0) {
             return view('components.schedule.data-schedule-grade')->with('data', $data)->with('subtituteTeacher', $dataSubtitute);
          } 
@@ -737,7 +762,7 @@ class ScheduleController extends Controller
                      't1.name as teacher_name',  
                      'subjects.name_subject as subject_name')
             ->where('semester', $semester)
-            -where('academic_year', $academic_year)
+            ->where('academic_year', $academic_year)
             ->get();
 
             $date = Schedule::where('type_schedule_id', $typeSchedule)
@@ -996,14 +1021,17 @@ class ScheduleController extends Controller
             'child' => 'schedules academic',
          ]);
         
-        $data = [
+
+      
+         $data = [
             'teacher_id'        => $request->teacher_id,
             'teacher_companion' => $request->teacher_companion,
             'start_time'        => $request->start_time,
             'end_time'          => $request->end_time,
+            'day'               => $request->day,
             'note'              => $request->notes,
             'updated_at'        => now(),
-        ];
+         ];
 
          $role = session('role');
 
@@ -1480,7 +1508,6 @@ class ScheduleController extends Controller
                'academic_year' => $academic_year,
                'start_time' => $request->start_time[$i],
                'end_time' => $request->end_time[$i],
-               'note' => $text,
             ];
             
             DB::beginTransaction();
@@ -1560,7 +1587,6 @@ class ScheduleController extends Controller
                'academic_year' => session('academic_year'),
                'start_time' => $request->start_time[$i],
                'end_time' => $request->end_time[$i],
-               'note' => $text,
             ];
             
             DB::beginTransaction();
@@ -1789,9 +1815,13 @@ class ScheduleController extends Controller
             $startSemester = Master_academic::first()->value('semester2');
             $endSemester = Master_academic::first()->value('end_semester2');
          }
+         $lesson = Type_schedule::where('name', '=', 'Lesson')->value('id');
+
 
          $gradeSchedule = Schedule::where('teacher_id', $getIdTeacher)
             ->where('academic_year', $academic_year)
+            ->where('semester', $semester)
+            ->where('type_schedule_id', $lesson)
             ->join('grades', 'grades.id', '=', 'schedules.grade_id')
             ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
             ->leftJoin('teachers as t2', 't2.id', '=', 'schedules.teacher_companion')
@@ -1880,7 +1910,65 @@ class ScheduleController extends Controller
             'child' => 'schedules invigilater',
          ]);
 
-         return view('components.maintenance');
+         $getIdTeacher = Teacher::where('user_id', session('id_user'))->value('id');
+         $getGradeId = Teacher_grade::where('teacher_id', $getIdTeacher)->value('grade_id');
+
+         $semester = Master_academic::first()->value('now_semester');
+         $academic_year = Master_academic::first()->value('academic_year');
+
+         if ($semester === 1) {
+            $startSemester = Master_academic::first()->value('semester1');
+            $endSemester = Master_academic::first()->value('end_semester1');
+         }
+         elseif ($semester === 2) {
+            $startSemester = Master_academic::first()->value('semester2');
+            $endSemester = Master_academic::first()->value('end_semester2');
+         }
+
+         $midExam = Type_schedule::where('name', '=', 'Mid Exam')->value('id');
+         $finalExam = Type_schedule::where('name', '=', 'Final Exam')->value('id');
+
+
+         $midExam = Schedule::where('teacher_id', $getIdTeacher)
+            ->where('academic_year', $academic_year)
+            ->where('type_schedule_id', $midExam)
+            ->where('semester', $semester)
+            ->join('grades', 'grades.id', '=', 'schedules.grade_id')
+            ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
+            ->leftJoin('subjects', function($join) {
+               $join->on('subjects.id', '=', 'schedules.subject_id')
+                     ->whereNotNull('schedules.subject_id');
+            })
+            ->select('schedules.*', 
+               'grades.id as grade_id',
+               DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"), 
+               't1.name as teacher_name',
+               'subjects.id as subject_id',
+               'subjects.name_subject as subject_name')
+            ->get();
+
+         
+            $finalExam = Schedule::where('teacher_id', $getIdTeacher)
+            ->where('academic_year', $academic_year)
+            ->where('type_schedule_id', $finalExam)
+            ->where('semester', $semester)
+            ->join('grades', 'grades.id', '=', 'schedules.grade_id')
+            ->leftJoin('teachers as t1', 't1.id', '=', 'schedules.teacher_id')
+            ->leftJoin('subjects', function($join) {
+               $join->on('subjects.id', '=', 'schedules.subject_id')
+                     ->whereNotNull('schedules.subject_id');
+            })
+            ->select('schedules.*', 
+               'grades.id as grade_id',
+               DB::raw("CONCAT(grades.name, ' - ', grades.class) as grade_name"), 
+               't1.name as teacher_name',
+               'subjects.id as subject_id',
+               'subjects.name_subject as subject_name')
+            ->get();
+
+         return view('components.schedule.detail-invigilater-teacher', compact('midExam','finalExam',  'endSemester', 'startSemester'))->with('data', $midExam);
+
+         // return view('components.maintenance');
 
          
       } catch (Exception $err) {
@@ -1993,16 +2081,17 @@ class ScheduleController extends Controller
          // dd(session('id_user'));
 
          $checkRole = session('role');
+         $getIdStudent  = session('studentId');
 
          if($checkRole == 'parent'){
             $userId = session('id_user');
             $parentId = Relationship::where('user_id', $userId)->value('id');
-            $getIdStudent = Student_relationship::where('relationship_id', $parentId)->value('student_id');
+            $getIdStudent  = session('studentId');
             $getGradeId= Student::where('id', $getIdStudent)->value('grade_id');
          }
          elseif($checkRole == 'student'){
             $userId = session('id_user');
-            $getIdStudent = Student::where('user_id', $userId)->value('id');
+            $getIdStudent  = session('studentId');
             $getGradeId = Student::where('id', $getIdStudent)->value('grade_id');
          }
 
@@ -2015,7 +2104,6 @@ class ScheduleController extends Controller
             $startSemester = Master_academic::first()->value('semester2');
             $endSemester = Master_academic::first()->value('end_semester2');
          }
-         
          
          // dd($getGradeId);
          $typeExam = Type_schedule::where('name', '=', 'lesson')->value('id');
@@ -2032,12 +2120,12 @@ class ScheduleController extends Controller
                      ->whereNotNull('schedules.subject_id');
             })
             ->select('schedules.*', 
-                     'grades.id as grade_id',
-                     'grades.name as grade_name', 
-                     'grades.class as grade_class', 
-                     'teachers.name as teacher_name', 
-                     'subjects.id as subject_id',
-                     'subjects.name_subject as subject_name')
+               'grades.id as grade_id',
+               'grades.name as grade_name', 
+               'grades.class as grade_class', 
+               'teachers.name as teacher_name', 
+               'subjects.id as subject_id',
+               'subjects.name_subject as subject_name')
             ->get();
 
          $subtituteTeacher = Subtitute_teacher::where('grade_id', $getGradeId)
@@ -2112,8 +2200,7 @@ class ScheduleController extends Controller
             $exam = "mid exam semester 2";
          }
 
-         $schedule = Schedule::where('note', $exam)
-            ->where('grade_id', $gradeId)
+         $schedule = Schedule::where('grade_id', $gradeId)
             ->get();
 
          if (count($schedule) > 0) {
@@ -2141,8 +2228,7 @@ class ScheduleController extends Controller
          
          session()->flash('after_delete_finalexam');
 
-         $schedule = Schedule::where('note', $exam)
-            ->where('grade_id', $gradeId)
+         $schedule = Schedule::where('grade_id', $gradeId)
             ->get();
 
          if (count($schedule) > 0) {
@@ -2229,8 +2315,26 @@ class ScheduleController extends Controller
 
             $getIdTeacher = Teacher_grade::where('grade_id', $id)->value('teacher_id');
             $getGradeId = $id;
+
+            $semester = Master_academic::first()->value('now_semester');
+            $academic_year = Master_academic::first()->value('academic_year');
+            
+            if ($semester === 1) {
+               $startSemester = Master_academic::first()->value('semester1');
+               $endSemester = Master_academic::first()->value('end_semester1');
+            }
+            elseif ($semester === 2) {
+               $startSemester = Master_academic::first()->value('semester2');
+               $endSemester = Master_academic::first()->value('end_semester2');
+            }
+
+            $lesson = Type_schedule::where('name', '=', 'Lesson')->value('id');
+
             
             $gradeSchedule = Schedule::where('grade_id', $getGradeId)
+               ->where('academic_year', $academic_year)
+               ->where('semester', $semester)
+               ->where('type_schedule_id', $lesson)
                ->join('grades', 'grades.id', '=', 'schedules.grade_id')
                ->leftJoin('teachers', function($join) {
                   $join->on('teachers.id', '=', 'schedules.teacher_id')
@@ -2240,14 +2344,22 @@ class ScheduleController extends Controller
                   $join->on('subjects.id', '=', 'schedules.subject_id')
                         ->whereNotNull('schedules.subject_id');
                })
+               ->leftJoin('teachers as assistant', function($join) {
+                  $join->on('assistant.id', '=', 'schedules.teacher_companion')
+                        ->whereNotNull('schedules.teacher_companion');
+               })
                ->select('schedules.*', 
-                        'grades.id as grade_id',
-                        'grades.name as grade_name', 
-                        'grades.class as grade_class', 
-                        'teachers.name as teacher_name', 
-                        'subjects.id as subject_id',
-                        'subjects.name_subject as subject_name')
+                  'grades.id as grade_id',
+                  'grades.name as grade_name', 
+                  'grades.class as grade_class', 
+                  'teachers.name as teacher_name', 
+                  'assistant.name as assisstant',
+                  'assistant.id as assisstant_id',
+                  'subjects.id as subject_id',
+                  'subjects.name_subject as subject_name')
                ->get();
+
+            // dd($gradeSchedule);
    
             $subtituteTeacher = Subtitute_teacher::where('grade_id', $getGradeId)
                ->join('grades', 'grades.id', '=', 'subtitute_teachers.grade_id')

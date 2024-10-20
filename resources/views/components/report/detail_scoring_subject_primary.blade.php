@@ -38,10 +38,27 @@
             <form id="confirmForm" method="POST" action={{route('actionAdminCreateExam')}}>
         @endif
         @csrf
-        <div class="input-group-append my-2">
-            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
-        </div>
-        <table class="table table-striped table-bordered" style=" width: 1400px;">
+        
+        @if ($data['status'] == null)
+            @if (!empty($data['students']))
+                <div class="row my-2">
+                    <div class="input-group-append mx-2">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit Scoring</button>
+                    </div>
+                </div>
+            @endif
+        @elseif ($data['status']->status != null && $data['status']->status == 1)       
+            <div class="row my-2">
+                <div class="input-group-append mx-2">
+                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
+                    @endif
+                </div>
+            </div>  
+        @endif
+
+        <table class="table table-striped table-bordered bg-white" style="width: 2000px;">
             <thead>
                 <tr>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -135,19 +152,23 @@
                         <td class="text-center">{{ $student['grades'] }}</td>
 
                         <!-- COMMENT -->
-                        <td class="project-actions text-right">
+                        <td class="project-actions text-left">
                             <div class="input-group">
-                                <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
                                 <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">  
                                 <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $student['total_score'] }}">  
                                 <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">  
+                            </div>
+                            @if ($data['status'] == null)
+                                <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
                                 <div class="input-group-append">
-                                <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
-                                    <i class="fas fa-pen"></i>
+                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
+                                        <i class="fas fa-pen"></i>
                                         Edit
                                     </a>
                                 </div>
-                            </div>
+                            @else
+                                {{ $student['comment'] }}
+                            @endif
                         </td>
                     </tr>
                 @endforeach
@@ -157,8 +178,11 @@
                     <input name="subject_teacher" type="number" class="form-control d-none" id="subject_teacher" value="{{ $data['subjectTeacher']->teacher_id }}">  
                 </form>
             @else
-                
-                <p>data kosong</p>
+                <tr>
+                    <td colspan="15" class="text-center">
+                        Teacher dont added a assessment...     
+                    </td>    
+                </tr>
             @endif
                 
             </tbody>

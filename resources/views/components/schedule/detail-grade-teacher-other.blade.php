@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         $event['color'] = 'orange';
                         break;
                     default:
-                        $event['description'] = "Teacher: {$schedule->teacher_name}<br>Grade: {$schedule->grade_name} - {$schedule->grade_class}";
+                        $event['description'] = "<br>Teacher: {$schedule->teacher_name} <br>Assisstant: {$schedule->assisstant}<br>Grade: {$schedule->grade_name} - {$schedule->grade_class}";
                 }
 
                 echo json_encode($event) . ',';

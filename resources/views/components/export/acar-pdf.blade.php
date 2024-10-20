@@ -68,7 +68,7 @@
             page-break-before: always;
         }
         @page {
-            margin: 20mm 20mm 20mm 20mm;
+            margin: 0mm;
         }
         .watermark {
             position: absolute;
@@ -78,35 +78,40 @@
     </style>
 </head>
 <body>
-    <div class="container"> 
+<div class="container"> 
     <!-- PAGE 1 -->    
-    @foreach ($grades as $grade)
+    @foreach ($scores as $scores => $value)
         <div class="header">
             <div style="padding-left:50px;padding-right:50px;margin-bottom:5px;">
                 <img src="<?= $logo ?>" style="width:90%;height:8%;" alt="Sample image">
             </div>
-            <h1 style="margin-bottom:5px;font-size:18px;">DATA ACADEMIC ASSESSMENT REPORT</h1>
+            <h1 style="margin-bottom:5px;font-size:18px;">DATA ASSESSMENT</h1>
             <h1 style="margin-bottom:2px;font-size:18px;">SEMESTER {{ $semester }} ACADEMIC YEAR {{ $academicYear }}</h1>
         </div>
             <table class="table">
                 <tr style="border: 1px black solid;">
-                    <th colspan="2">{{ $grade->grade_name }} (Class Teacher : {{ $grade->class_teacher }})</th>
+                    <th colspan="{{ $value['colspan'] }}">{{ $scores }}</th>
                 </tr>
                 <tr>
-                    <th style="border: 1px black solid;">Subject</th>
-                    <th style="border: 1px black solid;">Teacher</th>
-                </tr>
-                @if (is_array($gradeSubjectTeacher) && array_key_exists($grade->grade_name, $gradeSubjectTeacher) && count($gradeSubjectTeacher[$grade->grade_name]['subjects']) > 0)
-                    @foreach ($gradeSubjectTeacher[$grade->grade_name]['subjects'] as $index => $subject)
-                        <tr>
-                            <td>{{ $subject }}</td>
-                            <td>{{ $gradeSubjectTeacher[$grade->grade_name]['teachers'][$index] }}</td>
-                        </tr>
+                    <td>Student Name</td>
+                    @foreach ($value['subjectGrade'] as $sg)
+                        <td>{{ $sg }}</td>
                     @endforeach
+                </tr>
+
+                @if (count($value) > 0)
+                @foreach ($value['acarStudent'] as $student)
+                <tr>
+                    <td>{{ $student['student_name'] }}</td>
+                    @foreach ($student['scores'] as $ss)
+                        <td>{{ $ss['final_score'] }}</td>                        
+                    @endforeach
+                </tr>
+                @endforeach
                 @else
-                    <tr>    
-                        <td colspan="2" style="text-align:center">Data empty</td>
-                    </tr>
+                <tr>    
+                    <td colspan="2" style="text-align:center">Data empty</td>
+                </tr>
                 @endif
             </table>
             <br><br>

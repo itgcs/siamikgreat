@@ -70,7 +70,6 @@ class GradeController extends Controller
    public function pageAddSubjectTeacher($id)
    {
       try {
-         //code...
          session()->flash('page',  $page = (object)[
             'page' => 'grades',
             'child' => 'database grades',
@@ -86,7 +85,6 @@ class GradeController extends Controller
             'grade' => $grade,
          ];
 
-         // dd($data);
          return view('components.grade.add-subject-grade')->with('data', $data);
          
       } catch (Exception $err) {

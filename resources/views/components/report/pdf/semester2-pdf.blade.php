@@ -8,7 +8,7 @@ $typelogo = pathinfo($pathlogo, PATHINFO_EXTENSION);
 $datalogo = file_get_contents($pathlogo);
 $logo = 'data:image/' . $typelogo . ';base64,' . base64_encode($datalogo);
 
-$pathcambridge = public_path('images/cambridge.png');
+$pathcambridge = public_path('images/lcn.png');
 $typecambridge = pathinfo($pathcambridge, PATHINFO_EXTENSION);
 $datacambridge = file_get_contents($pathcambridge);
 $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($datacambridge);
@@ -21,13 +21,14 @@ $grade_name = $student->grade_name;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Report Card</title>
     <style>
         body {
             font-family: Arial, sans-serif;
         }
         .header {
-            margin-top: -30px;
+            margin-top: 100px;
             text-align: center;
         }
         .header h1, .header h2 ,.header h5, .header h4, .header h5 {
@@ -65,15 +66,19 @@ $grade_name = $student->grade_name;
             top: 30%;
             z-index: -1;
         }
+        
+        @page {
+            margin: 5mm 5mm 0mm 5mm;
+        }
     </style>
 </head>
 <body>
 <div class="container"> 
     <!-- PAGE 1 -->
         <div class="header">
-            <div style="padding-left:50px;padding-right:50px;margin-bottom:5px;">
+            <!-- <div style="padding-left:50px;padding-right:50px;margin-bottom:5px;">
                 <img src="<?= $logo ?>" style="width:90%;height:8%;" alt="Sample image">
-            </div>
+            </div> -->
             <h5>Report Card</h5>
             <h5>Semester II School Year {{ $academicYear }}</h5>
         </div>
@@ -86,7 +91,7 @@ $grade_name = $student->grade_name;
                 </tr>
                 <tr>
                     <td style="text-align:right;border: 1px dotted black;padding-right:8px;border-left: solid 1px black;">Name:</td>
-                    <td style="border: 1px dotted black;padding-left:8px;" colspan="3">{{  $student->student_name }}</td>
+                    <td style="border: 1px dotted black;padding-left:8px;" colspan="3">{{ ucwords(strtolower($student->student_name)) }}</td>
                     <td style="text-align:right;border: 1px dotted black;padding-right:8px;"  colspan="2">Date:</td>
                     <td style="border: 1px dotted black;padding-left:8px;border-right: solid 1px black;" colspan="2">{{ \Carbon\Carbon::now()->format('F d, Y') }}</td>
                 </tr>
@@ -124,9 +129,11 @@ $grade_name = $student->grade_name;
                     <td style="text-align:center;border: 1px dotted black;padding-right:8px;border-left: none;border-left: 1px solid black;" rowspan="3" colspan="1"><strong>Promotion Status</strong></td>
                     <td style="border: 1px dotted black;padding-left:8px;border-right: 1px solid black;" colspan="7">
                         @if ($learningSkills->promotion_status === 1)
+                        <i class="fa-solid fa-circle"></i>
                         Progressing well towards promotion
                         @else
-                        <s>Progressing well towards promotion</s>
+                        <i class="fa-regular fa-circle"></i>
+                        Progressing well towards promotion
                         @endif
                     </td>
                 </tr>
@@ -134,9 +141,11 @@ $grade_name = $student->grade_name;
                     <td style="border: 1px dotted black;padding-left:8px;border-right: 1px solid black;" colspan="7">
                         <div style="display: flex; align-items: center;">
                             @if ($learningSkills->promotion_status === 2)
+                            <i class="fa-solid fa-circle"></i>
                             Progressing with some difficulty towards promotion
                             @else
-                            <s>Progressing with some difficulty towards promotion</s>
+                            <i class="fa-regular fa-circle"></i>
+                            Progressing with some difficulty towards promotion
                             @endif
                         </div>
                     </td>
@@ -145,9 +154,11 @@ $grade_name = $student->grade_name;
                     <td style="border: 1px dotted black;padding-left:8px;border-right: 1px solid black;" colspan="7">
                         <div style="display: flex; align-items: center;">
                             @if ($learningSkills->promotion_status === 3)
+                            <i class="fa-solid fa-circle"></i>
                             No promotion
                             @else
-                            <s>No promotion</s>
+                            <i class="fa-regular fa-circle"></i>
+                            No promotion
                             @endif
                         </div>
                     </td>
@@ -244,23 +255,26 @@ $grade_name = $student->grade_name;
                     <td style="text-align:center;text-decoration:underline;" colspan="2">Yuliana Harijanto, B.Eng (Hons)</td>
                     <td style="text-align:center;text-decoration:underline;" colspan="3">
                         @if ($relation == null)
-                        <p><b>-</b></p>
+                        -
                         @else
-                        <p><b>{{ $relation['relationship_name'] }}</b></p>
+                        {{ ucwords(strtolower($relation['relationship_name'])) }}
                         @endif
                     </td>
                 </tr>
                 <tr style="border-right: 1px solid black;border-left: 1px solid black;">
-                    <th style="text-align:center;border-bottom: 3px solid black;" colspan="3"><b>Class Teacher's Signature</b></td>
-                    <th style="text-align:center;border-bottom: 3px solid black;" colspan="2"><b>Principal's Signature</b></td>
-                    <th style="text-align:center;border-bottom: 3px solid black;" colspan="3"><b>Parent's Signature</b></td>
+                    <td style="text-align:center;border-bottom: 3px solid black;" colspan="3"><b>Class Teacher's Signature</b></td>
+                    <td style="text-align:center;border-bottom: 3px solid black;" colspan="2"><b>Principal's Signature</b></td>
+                    <td style="text-align:center;border-bottom: 3px solid black;" colspan="3"><b>Parent's Signature</b></td>
                 </tr>
-                <!-- END SIGNATURE -->
-                <tr>
-                    <td colspan="2" style="text-align:left;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
-                    <td colspan="4" style="text-align:center;padding-top: 8px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td>
-                    <td colspan="2" style="text-align:right;">Page 1 of 2</td>
-                </tr>
+            </table>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
+                        <td  style="text-align:center;padding-top: 4px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td>
+                        <td  style="vertical-align : top;text-align:right;width:15%;">Page 1 of 2</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     <!-- END PAGE 1 -->
@@ -285,16 +299,19 @@ $grade_name = $student->grade_name;
                 </thead>
                 <tbody>
 
-                @foreach ($subjectReports[0]['scores'] as $scores)
-                    <!-- SUBJECT REPORT -->
-                    <tr>
-                        <td style="text-align:center;border: 1px dotted black;padding-right:8px;border-left: solid 1px black;">{{ $scores['subject_name'] }}</td>
-                        <td style="text-align:center;border: 1px dotted black;padding-left:8px;">{{ $scores['final_score'] }}</td>
-                        <td style="text-align:center;border: 1px dotted black;padding-right:8px;">{{ $scores['grades'] }}</td>
-                        <td style="text-align:left;border: 1px dotted black;padding-left:8px;border-right: solid 1px black;" colspan="5">{{ $scores['comment'] }}</td>
-                    </tr>
-                    <!-- END SUBJECT REPORT -->
-                @endforeach
+                @if (count($subjectReports) !== 0)
+                    @foreach ($subjectReports[0]['scores'] as $scores)
+                        <!-- SUBJECT REPORT -->
+                        <tr>
+                            <td style="text-align:center;border: 1px dotted black;padding-right:8px;border-left: solid 1px black;">{{ $scores['subject_name'] }}</td>
+                            <td style="text-align:center;border: 1px dotted black;padding-left:8px;">{{ $scores['final_score'] }}</td>
+                            <td style="text-align:center;border: 1px dotted black;padding-right:8px;">{{ $scores['grades'] }}</td>
+                            <td style="text-align:left;border: 1px dotted black;padding-left:8px;border-right: solid 1px black;" colspan="5">{{ $scores['comment'] }}</td>
+                        </tr>
+                        <!-- END SUBJECT REPORT -->
+                    @endforeach
+                @else
+                @endif
                     
                 <!-- ECA -->
                     <tr>
@@ -323,7 +340,7 @@ $grade_name = $student->grade_name;
                             </td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-left:8px;" colspan="2">Grade</td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;" colspan="2">
-                                ECA @if (empty($eca) || count($eca) == 3)
+                                ECA @if (!empty($eca) || count($eca) == 3)
                                 ({{ $eca['eca_2'] }})
                                 @else
                                 -
@@ -345,10 +362,17 @@ $grade_name = $student->grade_name;
                             </td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dottted 1px black;border-right: 1px solid black;" colspan="2">{{  $sooa[0]['scores'][0]['grades_choice'] }}</td>
                         @elseif (strtolower($grade_name) == "secondary")
+                            @if (count($subjectReports) !== 0)
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: solid 1px black;" colspan="2">{{ $sooa[0]['scores'][0]['eca_1'] }}</td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;" colspan="2">{{  $sooa[0]['scores'][0]['grades_eca_1'] }}</td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;" colspan="2">{{  $sooa[0]['scores'][0]['eca_2'] }}</td>
                             <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;border-right: 1px solid black;" colspan="2">{{  $sooa[0]['scores'][0]['grades_eca_2'] }}</td>
+                            @else
+                            <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: solid 1px black;" colspan="2">-</td>
+                            <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;" colspan="2">-</td>
+                            <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;" colspan="2">-</td>
+                            <td style="text-align:center;border: 1px dotted black;border-bottom: 1px solid black;padding-right:8px;border-left: dotted 1px black;border-right: 1px solid black;" colspan="2">-</td>
+                            @endif
                         @endif
                     </tr>
                 <!-- END ECA -->
@@ -368,6 +392,7 @@ $grade_name = $student->grade_name;
                         <td style="text-align:center;border: 1px dotted black;border-right: solid 1px black;width:10.5%;border-bottom: 1px solid black;">Rank</td>
                     </tr>
                     <tr>
+                        @if (count($subjectReports) !== 0)
                         <td style="text-align:center;border: 1px dotted black;padding-right:8px;border-left: solid 1px black;">{{  $sooa[0]['scores'][0]['academic'] }}</td>
                         <td style="text-align:center;border: 1px dotted black;padding-left:8px;">{{ $sooa[0]['scores'][0]['eca_aver'] }}</td>
                         <td style="text-align:center;border: 1px dotted black;padding-right:8px;">{{  $sooa[0]['scores'][0]['behavior'] }}</td>
@@ -376,10 +401,12 @@ $grade_name = $student->grade_name;
                         <td style="text-align:center;border: 1px dotted black;padding-left:8px;">{{ $sooa[0]['scores'][0]['final_score'] }}</td>
                         <td style="text-align:center;border: 1px dotted black;padding-right:8px;">{{ $sooa[0]['scores'][0]['grades_final_score'] }}</td>
                         <td style="text-align:center;border: 1px dotted black;padding-left:8px;border-right: solid 1px black;">{{  $sooa[0]['ranking'] }}</td>
+                        @else
+                        @endif
                     </tr>
                 <!-- END OVERALL MARK -->
 
-                <!-- FINAL SCORE -->
+                    @if (count($tcop) !== 0)
                     <tr>
                         <th colspan="8" style="text-align:center;border-top: 3px solid black;border-bottom: 3px solid black;border-right: 1px solid black;border-left: 1px solid black;">Final Score</th>
                     </tr>
@@ -391,6 +418,9 @@ $grade_name = $student->grade_name;
                         <td colspan="4" style="text-align:center;border-left:1px solid black;border-bottom: 1px solid black;border-right: 1px dotted black;">{{ $tcop[0]['final_score'] }}</td>
                         <td colspan="4" style="text-align:center;border-right:1px solid black;border-bottom: 1px solid black;border-left: 1px dotted black;">{{ $tcop[0]['grades_final_score'] }}</td>
                     </tr>
+                    @else
+                    @endif
+                <!-- FINAL SCORE -->
                 <!-- END FINAL SCORE -->
 
 
@@ -405,24 +435,27 @@ $grade_name = $student->grade_name;
                         <td style="text-align:center;text-decoration:underline;" colspan="2">Yuliana Harijanto, B.Eng (Hons)</td>
                         <td style="text-align:center;text-decoration:underline;" colspan="3">
                             @if ($relation == null)
-                            <p><b>-</b></p>
+                            
                             @else
-                            <p><b>{{ $relation['relationship_name'] }}</b></p>
+                            {{ ucwords(strtolower($relation['relationship_name'])) }}
                             @endif
                         </td>
                     </tr>
                     <tr style="border-right: 1px solid black;border-left: 1px solid black;">
-                        <th style="text-align:left;border-bottom: 3px solid black;" colspan="3"><b>Class Teacher's Signature</b></td>
-                        <th style="text-align:center;border-bottom: 3px solid black;" colspan="2"><b>Principal's Signature</b></td>
-                        <th style="text-align:center;border-bottom: 3px solid black;" colspan="3"><b>Parent's Signature</b></td>
+                        <td style="text-align:center;border-bottom: 3px solid black;" colspan="3"><b>Class Teacher's Signature</b></td>
+                        <td style="text-align:center;border-bottom: 3px solid black;" colspan="2"><b>Principal's Signature</b></td>
+                        <td style="text-align:center;border-bottom: 3px solid black;" colspan="3"><b>Parent's Signature</b></td>
                     </tr>
                 <!-- END SIGNATURE -->
-
-                <tr>
-                    <td colspan="2" style="text-align:left;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
-                    <td colspan="4" style="text-align:center;padding-top: 8px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td>
-                    <td colspan="2" style="text-align:right;">Page 2 of 2</td>
-                </tr>
+                </tbody>
+            </table>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
+                        <td  style="text-align:center;padding-top: 4px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td>
+                        <td  style="vertical-align : top;text-align:right;width:15%;">Page 2 of 2</td>
+                    </tr>
                 </tbody>
             </table>
         </div>

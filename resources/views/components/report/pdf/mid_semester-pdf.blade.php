@@ -57,6 +57,7 @@ $grade_name = $student->grade_name;
 
         .header {
             margin: 0;
+            margin-top: 100px;
             width: 100%;
             text-align: center;
         }
@@ -152,9 +153,9 @@ $grade_name = $student->grade_name;
         <div class="content">
             <!-- PAGE 1 -->
                 <div class="header">
-                    <div style="padding-left:50px;padding-right:50px;margin-bottom:5px;">
+                    <!-- <div style="padding-left:50px;padding-right:50px;margin-bottom:5px;">
                         <img src="<?= $logo ?>" style="width:90%;height:8%;" alt="Sample image">
-                    </div>
+                    </div> -->
                     <h5>MID-SEMESTER REPORT</h5>
                 </div>
     
@@ -283,7 +284,7 @@ $grade_name = $student->grade_name;
                             <td style="text-align: center;vertical-align : middle;font-size:10px;border: 1px solid black;">{!! $practicalScores[$m] !!}</td>
                             @endfor
                     </tr>
-                @endforeach
+                    @endforeach
 
                 </table>
     
