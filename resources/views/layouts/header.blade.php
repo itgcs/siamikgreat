@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="{{asset('template')}}/plugins/fontawesome-free/css/all.min.css">
   <link rel="stylesheet" href="{{asset('fontawesome')}}/css/all.min.css">
   <link rel="stylesheet" href="{{asset('/style.css')}}">
+  <script src="{{asset('template')}}/plugins/jquery/jquery.min.js" referrerpolicy="no-referrer"></script>
+
   <!-- Ionicons -->
   {{-- <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"> --}}
   <!-- Tempusdominus Bootstrap 4 -->

@@ -252,7 +252,9 @@ class GradeController extends Controller
          ->select('subjects.id as subject_id','teachers.name as teacher_name')
          ->get();
 
-      $gradeStudent = Student::where('grade_id', $id)->where('is_active', true)->get();
+      $gradeStudent = Student::where('grade_id', $id)->where('is_active', true)
+      ->orderBy('name', 'ASC')
+      ->get();
       
       try {
          $data = (object)[
@@ -518,7 +520,7 @@ class GradeController extends Controller
             ->get();
 
             foreach ($gradeTeacher as $gt) {
-               $gt->students = Student::where('grade_id', $gt->id)->get();
+               $gt->students = Student::where('grade_id', $gt->id)->where('is_active', true)->get();
            }
 
          $data = [
@@ -551,7 +553,7 @@ class GradeController extends Controller
             ->get();
 
             foreach ($gradeTeacher as $gt) {
-               $gt->students = Student::where('grade_id', $gt->id)->get();
+               $gt->students = Student::where('grade_id', $gt->id)->where('is_active', true)->get();
            }
 
          $data = [

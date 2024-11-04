@@ -58,6 +58,7 @@ class ScoreController extends Controller
                })
                ->where('exams.id', $id, 'exams.is_active')
                ->where('students.religion', '=', 'islam')
+               ->where('students.is_active', true)
                ->select('exams.id as exam_id', 'exams.name_exam as exam_name', 'exams.date_exam as date_exam',
                'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
@@ -83,6 +84,7 @@ class ScoreController extends Controller
                })
                ->where('exams.id', $id, 'exams.is_active')
                ->where('students.religion', '=', 'Catholic Christianity')
+               ->where('students.is_active', true)
                ->select('exams.id as exam_id', 'exams.name_exam as exam_name', 'exams.date_exam as date_exam',
                'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
@@ -108,6 +110,7 @@ class ScoreController extends Controller
                })
                ->where('exams.id', $id, 'exams.is_active')
                ->where('students.religion', '=', 'Protestant Christianity')
+               ->where('students.is_active', true)
                ->select('exams.id as exam_id', 'exams.name_exam as exam_name', 'exams.date_exam as date_exam',
                'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
@@ -133,6 +136,7 @@ class ScoreController extends Controller
                })
                ->where('exams.id', $id, 'exams.is_active')
                ->where('students.religion', '=', 'Buddhism')
+               ->where('students.is_active', true)
                ->select('exams.id as exam_id', 'exams.name_exam as exam_name', 'exams.date_exam as date_exam',
                'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
@@ -158,6 +162,7 @@ class ScoreController extends Controller
                })
                ->where('exams.id', $id, 'exams.is_active')
                ->where('students.religion', '=', 'Hinduism')
+               ->where('students.is_active', true)
                ->select('exams.id as exam_id', 'exams.name_exam as exam_name', 'exams.date_exam as date_exam',
                'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
@@ -171,6 +176,7 @@ class ScoreController extends Controller
          elseif (strtolower($subject) == "religion confucianism") {
             $data = Exam::join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
                ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
+               ->where('students.is_active', true)
                ->join('subject_exams', 'exams.id', '=', 'subject_exams.exam_id')
                ->join('subjects', 'subject_exams.subject_id', '=', 'subjects.id')
                ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
@@ -183,6 +189,7 @@ class ScoreController extends Controller
                })
                ->where('exams.id', $id, 'exams.is_active')
                ->where('students.religion', '=', 'Confucianism')
+               ->where('students.is_active', true)
                ->select('exams.id as exam_id', 'exams.name_exam as exam_name', 'exams.date_exam as date_exam',
                'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
@@ -210,6 +217,7 @@ class ScoreController extends Controller
                })
                ->where('exams.id', $id, 'exams.is_active')
                ->whereIn('students.id', $chineseLowerStudent)
+               ->where('students.is_active', true)
                ->select('exams.id as exam_id', 'exams.name_exam as exam_name', 'exams.date_exam as date_exam',
                'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
@@ -237,6 +245,7 @@ class ScoreController extends Controller
                })
                ->where('exams.id', $id, 'exams.is_active')
                ->whereIn('students.id', $chineseHigherStudent)
+               ->where('students.is_active', true)
                ->select('exams.id as exam_id', 'exams.name_exam as exam_name', 'exams.date_exam as date_exam',
                'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
@@ -261,6 +270,7 @@ class ScoreController extends Controller
                   ->on('exams.id', '=', 'scores.exam_id');
             })
             ->where('exams.id', $id, 'exams.is_active')
+            ->where('students.is_active', true)
             ->select('exams.id as exam_id', 'exams.name_exam as exam_name', 'exams.date_exam as date_exam',
             'grades.id as grade_id','grades.name as grade_name', 'grades.class as grade_class',
             'subjects.name_subject as subject_name', 'subjects.id as subject_id',
@@ -303,6 +313,8 @@ class ScoreController extends Controller
 
          $student = $request->student_id;
          $score = $request->score;
+
+         // dd($score);
          
          for ($i=0; $i < sizeof($student); $i++) { 
             $post = [

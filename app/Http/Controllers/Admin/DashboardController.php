@@ -118,6 +118,7 @@ class DashboardController extends Controller
             $student = Teacher_grade::join('students','students.grade_id', '=', 'teacher_grades.grade_id')
                ->join('grades', 'grades.id', '=', 'students.grade_id')
                ->where('teacher_id', $id)
+               ->where('is_active', true)
                ->select('students.*', 'grades.name as grade_name', 'grades.class as grade_class')
                ->get();
 
@@ -126,7 +127,7 @@ class DashboardController extends Controller
                ->get()
                ->count('id');
 
-            $totalExam      = Exam::where('teacher_id', $id)
+            $totalExam = Exam::where('teacher_id', $id)
                ->where('semester', session('semester'))
                ->where('academic_year', session('academic_year'))
                ->get()->count('id');

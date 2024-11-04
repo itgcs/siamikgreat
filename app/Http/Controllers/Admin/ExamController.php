@@ -179,8 +179,9 @@ class ExamController extends Controller
 
          if (strtolower($subject) == "religion islamic") {
             $getStudentId = Student::where("grade_id", $request->grade_id)
-                                    ->where('religion', '=', 'islam')
-                                    ->pluck('id')->toArray();
+            ->where('is_active', true)
+            ->where('religion', '=', 'islam')
+            ->pluck('id')->toArray();
 
             for ($i=0; $i < sizeof($getStudentId); $i++) { 
                $postStudentExam = [
@@ -208,8 +209,9 @@ class ExamController extends Controller
          }
          elseif (strtolower($subject) == "religion catholic") {
             $getStudentId = Student::where("grade_id", $request->grade_id)
-                                    ->where('religion', '=', 'Catholic Christianity')
-                                    ->pluck('id')->toArray();
+            ->where('is_active', true)
+            ->where('religion', '=', 'Catholic Christianity')
+            ->pluck('id')->toArray();
 
             for ($i=0; $i < sizeof($getStudentId); $i++) { 
                $postStudentExam = [
@@ -237,8 +239,9 @@ class ExamController extends Controller
          }
          elseif (strtolower($subject) == "religion christian") {
             $getStudentId = Student::where("grade_id", $request->grade_id)
-                                    ->where('religion', '=', 'Protestant Christianity')
-                                    ->pluck('id')->toArray();
+            ->where('is_active', true)
+            ->where('religion', '=', 'Protestant Christianity')
+            ->pluck('id')->toArray();
 
             for ($i=0; $i < sizeof($getStudentId); $i++) { 
                $postStudentExam = [
@@ -266,8 +269,9 @@ class ExamController extends Controller
          }
          elseif (strtolower($subject) == "religion buddhism") {
             $getStudentId = Student::where("grade_id", $request->grade_id)
-                                    ->where('religion', '=', 'Buddhism')
-                                    ->pluck('id')->toArray();
+            ->where('is_active', true)                        
+            ->where('religion', '=', 'Buddhism')
+            ->pluck('id')->toArray();
 
             for ($i=0; $i < sizeof($getStudentId); $i++) { 
                $postStudentExam = [
@@ -295,8 +299,9 @@ class ExamController extends Controller
          }
          elseif (strtolower($subject) == "religion hinduism") {
             $getStudentId = Student::where("grade_id", $request->grade_id)
-                                    ->where('religion', '=', 'Hinduism')
-                                    ->pluck('id')->toArray();
+            ->where('is_active', true)
+            ->where('religion', '=', 'Hinduism')
+            ->pluck('id')->toArray();
 
             for ($i=0; $i < sizeof($getStudentId); $i++) { 
                $postStudentExam = [
@@ -324,8 +329,9 @@ class ExamController extends Controller
          }
          elseif (strtolower($subject) == "religion confucianism") {
             $getStudentId = Student::where("grade_id", $request->grade_id)
-                                    ->where('religion', '=', 'Confucianism')
-                                    ->pluck('id')->toArray();
+            ->where('is_active', true)
+            ->where('religion', '=', 'Confucianism')
+            ->pluck('id')->toArray();
 
             for ($i=0; $i < sizeof($getStudentId); $i++) { 
                $postStudentExam = [
@@ -380,7 +386,7 @@ class ExamController extends Controller
                Score::create($score);
             }
          }
-         elseif (strtolower($subject) == "chinese hingher") {
+         elseif (strtolower($subject) == "chinese higher") {
             $chineseHigherStudent = Chinese_higher::where('grade_id', $request->grade_id)->pluck('student_id')->toArray();
 
             // $getStudentId = Student::where("grade_id", $request->grade_id)->pluck('id')->toArray();
@@ -410,7 +416,9 @@ class ExamController extends Controller
             }
          }
          else {
-            $getStudentId = Student::where("grade_id", $request->grade_id)->pluck('id')->toArray();
+            $getStudentId = Student::where("grade_id", $request->grade_id)
+            ->where('is_active', true)
+            ->pluck('id')->toArray();
    
             for ($i=0; $i < sizeof($getStudentId); $i++) { 
                $postStudentExam = [
@@ -934,6 +942,14 @@ class ExamController extends Controller
       session(['exam_id' => $request->id]);
 
       return response()->json(['success' => true]);
+   }
+
+   public function delete(Request $request)
+   {
+      Exam::where('id', $request->exam_id)->delete();
+      return response()->json([
+         'success', true,
+      ]);
    }
 
 }

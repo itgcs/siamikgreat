@@ -1256,6 +1256,7 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('exam/detail/{id}', [ExamController::class, 'getById']);
       Route::get('exam/edit/{id}', [ExamController::class, 'pageEdit']);
       Route::put('exam/edit/{id}', [ExamController::class, 'actionPut'])->name('actionUpdateExamTeacher');
+      Route::post('exam/delete', [ExamController::class, 'delete'])->name('delete.exam');
       Route::put('/{id}', [ScoreController::class, 'doneExam'])->name('doneExam');
 
       Route::get('exam/score/{id}', [ScoreController::class, 'score']);
