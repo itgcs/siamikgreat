@@ -2538,13 +2538,13 @@ class ReportController extends Controller
                 ->select('subjects.name_subject as subject_name', 'subjects.id as subject_id')
                 ->first();
 
-            $tasks = Type_exam::whereIn('name', ['homework', 'small project', 'presentation', 'exercice'])
+            $tasks = Type_exam::whereIn('name', ['homework', 'small project', 'presentation', 'exercice', 'Exercise'])
                 ->pluck('id')
                 ->toArray();
-            $mid = Type_exam::whereIn('name', ['quiz', 'practical exam', 'project'])
+            $mid = Type_exam::whereIn('name', ['quiz', 'practical exam', 'project', 'exam'])
                 ->pluck('id')
                 ->toArray();
-            $finalExam = Type_exam::whereIn('name', ['written tes', 'big project'])
+            $finalExam = Type_exam::whereIn('name', ['written tes', 'big project', 'final assessment'])
                 ->pluck('id')
                 ->toArray();
 
@@ -2814,6 +2814,7 @@ class ReportController extends Controller
                 )
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
+                ->where('students.is_active', true)
                 ->where('exams.semester', $semester)
                 ->where('exams.academic_year', $academic_year)
                 ->where('exams.teacher_id', $teacherId)

@@ -40,6 +40,7 @@ class AttendanceController extends Controller
                 ->select('grades.id as id', 'grades.name as grade_name', 'grades.class as grade_class',
                 'teachers.name as teacher_class')
                 ->withCount(['student as active_student_count', 'subject as active_subject_count'])
+                ->where('students.is_active', 1)
                 ->orderBy('grades.id', 'asc')
                 ->get();
 
@@ -339,7 +340,7 @@ class AttendanceController extends Controller
                 ->get();
 
                 foreach ($gradeTeacher as $gt) {
-                    $gt->students = Student::where('grade_id', $gt->id)->get();
+                    $gt->students = Student::where('grade_id', $gt->id)->where('is_active', 1)->get();
                     $gt->countStudent = count($gt->students);
                 }
 
@@ -687,7 +688,7 @@ class AttendanceController extends Controller
             ]);
     
             $getIdTeacher = Teacher::where('user_id', $userId)->value('id');
-            $student      = Student::where('grade_id', $gradeId)->orderBy('name', 'asc')->get();
+            $student      = Student::where('grade_id', $gradeId)->where('is_active', 1)->orderBy('name', 'asc')->get();
             $grade        = Grade::where('id', $gradeId)->first();
             $teacher      = Teacher::where('id', $getIdTeacher)->value('name');
 
@@ -720,7 +721,7 @@ class AttendanceController extends Controller
             ]);
     
             $getIdTeacher = Teacher::where('user_id', $userId)->value('id');
-            $student      = Student::where('grade_id', $gradeId)->orderBy('name', 'asc')->get();
+            $student      = Student::where('grade_id', $gradeId)->where('is_active', 1)->orderBy('name', 'asc')->get();
             $grade        = Grade::where('id', $gradeId)->first();
             $teacher      = Teacher::where('id', $getIdTeacher)->value('name');
 
