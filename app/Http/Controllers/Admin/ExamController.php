@@ -130,13 +130,13 @@ class ExamController extends Controller
          if($validator->fails())
          {
             DB::rollBack();
-            return redirect('/'.session('role').'/dasboard/exams/create')->withErrors($validator->messages())->withInput($rules);
+            return redirect('/'.session('role').'/dasboard/exam/create')->withErrors($validator->messages())->withInput($rules);
          }
       
          if(Exam::where('name_exam', $request->name)->where('teacher_id', $request->teacher_id)->first())
          {
             DB::rollBack();
-            return redirect('/'.session('role').'/dashboard/exams/create')->withErrors([
+            return redirect('/'.session('role').'/dashboard/exam/create')->withErrors([
                'name' => 'Exams is has been created ',
             ])->withInput($rules);
          }
