@@ -18,6 +18,8 @@ use App\Models\Type_exam;
 use App\Models\Score;
 use App\Models\Student_exam;
 use App\Models\Relationship;
+use App\Models\Chinese_higher;
+use App\Models\Chinese_lower;
 use App\Models\Student_relationship;
 
 
@@ -128,14 +130,14 @@ class ExamController extends Controller
          if($validator->fails())
          {
             DB::rollBack();
-            return redirect('/'.session('role').'/exams/create')->withErrors($validator->messages())->withInput($rules);
+            return redirect('/'.session('role').'/dasboard/exams/create')->withErrors($validator->messages())->withInput($rules);
          }
       
          if(Exam::where('name_exam', $request->name)->where('teacher_id', $request->teacher_id)->first())
          {
             DB::rollBack();
-            return redirect('/'.session('role').'/exams/create')->withErrors([
-               'name' => 'Exams ' . $request->name . $request->subject_id . $request->grade_id . 'for' . $request->teacher_id .' is has been created ',
+            return redirect('/'.session('role').'/dashboard/exams/create')->withErrors([
+               'name' => 'Exams is has been created ',
             ])->withInput($rules);
          }
          
