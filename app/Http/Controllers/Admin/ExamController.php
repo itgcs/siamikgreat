@@ -130,13 +130,13 @@ class ExamController extends Controller
          if($validator->fails())
          {
             DB::rollBack();
-            return redirect('/'.session('role').'/dasboard/exams/create')->withErrors($validator->messages())->withInput($rules);
+            return redirect('/'.session('role').'/dasboard/exam/create')->withErrors($validator->messages())->withInput($rules);
          }
       
          if(Exam::where('name_exam', $request->name)->where('teacher_id', $request->teacher_id)->first())
          {
             DB::rollBack();
-            return redirect('/'.session('role').'/dashboard/exams/create')->withErrors([
+            return redirect('/'.session('role').'/dashboard/exam/create')->withErrors([
                'name' => 'Exams is has been created ',
             ])->withInput($rules);
          }
@@ -177,7 +177,7 @@ class ExamController extends Controller
          $checkSubject = Subject_exam::where('subject_exams.exam_id', '=', $getLastIdExam)->value('subject_id');
          $subject = Subject::where('id', $checkSubject)->value('name_subject');
 
-
+         // dd($subject);
 
          if (strtolower($subject) == "religion islamic") {
             $getStudentId = Student::where("grade_id", $request->grade_id)
@@ -384,14 +384,17 @@ class ExamController extends Controller
                   'created_at' => now(),
                ];
                
-               Student_exam::create($postStudentExam);
-               Score::create($score);
+               $Student_exam = Student_exam::create($postStudentExam);
+               $scores = Score::create($score);
             }
          }
          elseif (strtolower($subject) == "chinese higher") {
             $chineseHigherStudent = Chinese_higher::where('grade_id', $request->grade_id)->pluck('student_id')->toArray();
 
             // $getStudentId = Student::where("grade_id", $request->grade_id)->pluck('id')->toArray();
+            // dd($request->grade_id);
+
+            // dd($chineseHigherStudent);
             
             for ($i=0; $i < sizeof($chineseHigherStudent); $i++) { 
                $postStudentExam = [
@@ -413,8 +416,8 @@ class ExamController extends Controller
                   'created_at' => now(),
                ];
                
-               Student_exam::create($postStudentExam);
-               Score::create($score);
+               $Student_exam = Student_exam::create($postStudentExam);
+               $scores = Score::create($score);
             }
          }
          else {
