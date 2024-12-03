@@ -230,6 +230,8 @@ class ScoreController extends Controller
         }
         elseif (strtolower($subject) == "chinese higher") {
             $chineseHigherStudent = Chinese_higher::pluck('student_id')->toArray();
+
+            // dd($chineseHigherStudent);
             
             $data = Exam::join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
                ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
@@ -255,6 +257,8 @@ class ScoreController extends Controller
                'scores.score as score')
                ->orderBy('student_name', 'asc')
                ->get();
+
+            // dd($data);
         }
          else{
             $data = Exam::join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
@@ -281,8 +285,6 @@ class ScoreController extends Controller
             ->orderBy('student_name', 'asc')
             ->get();
          }
-         
-         // dd($data);
 
          return view('components.exam.data-exam-score')->with('data', $data);
 

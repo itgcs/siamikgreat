@@ -177,7 +177,7 @@ class ExamController extends Controller
          $checkSubject = Subject_exam::where('subject_exams.exam_id', '=', $getLastIdExam)->value('subject_id');
          $subject = Subject::where('id', $checkSubject)->value('name_subject');
 
-
+         // dd($subject);
 
          if (strtolower($subject) == "religion islamic") {
             $getStudentId = Student::where("grade_id", $request->grade_id)
@@ -384,14 +384,17 @@ class ExamController extends Controller
                   'created_at' => now(),
                ];
                
-               Student_exam::create($postStudentExam);
-               Score::create($score);
+               $Student_exam = Student_exam::create($postStudentExam);
+               $scores = Score::create($score);
             }
          }
          elseif (strtolower($subject) == "chinese higher") {
             $chineseHigherStudent = Chinese_higher::where('grade_id', $request->grade_id)->pluck('student_id')->toArray();
 
             // $getStudentId = Student::where("grade_id", $request->grade_id)->pluck('id')->toArray();
+            // dd($request->grade_id);
+
+            // dd($chineseHigherStudent);
             
             for ($i=0; $i < sizeof($chineseHigherStudent); $i++) { 
                $postStudentExam = [
@@ -413,8 +416,8 @@ class ExamController extends Controller
                   'created_at' => now(),
                ];
                
-               Student_exam::create($postStudentExam);
-               Score::create($score);
+               $Student_exam = Student_exam::create($postStudentExam);
+               $scores = Score::create($score);
             }
          }
          else {
