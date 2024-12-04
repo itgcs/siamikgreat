@@ -348,6 +348,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'islam')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -374,6 +375,7 @@ class ReportController extends Controller
                         'scores.score as score',
                     )
                     ->where('students.religion', '=', 'catholic cristianity')
+                    ->where('students.is_active', true)
                     ->where('grades.id', $gradeId)
                     ->where('subject_exams.subject_id', $subjectId)
                     ->where('exams.semester', $semester)
@@ -400,6 +402,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'protestant cristianity')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -426,6 +429,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'buddhism')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -452,6 +456,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'hinduism')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -478,6 +483,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'confucianism')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -506,6 +512,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->whereIn('students.id', $chineseLowerStudent)
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -534,6 +541,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->whereIn('students.id', $chineseHigherStudent)
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -560,6 +568,7 @@ class ReportController extends Controller
                         'scores.score as score',
                     )
                     ->where('grades.id', $gradeId)
+                    ->where('students.is_active', true)
                     ->where('subject_exams.subject_id', $subjectId)
                     ->where('exams.semester', $semester)
                     ->where('exams.academic_year', $academic_year)
@@ -845,6 +854,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'islam')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -871,6 +881,7 @@ class ReportController extends Controller
                         'scores.score as score',
                     )
                     ->where('students.religion', '=', 'catholic cristianity')
+                    ->where('students.is_active', true)
                     ->where('grades.id', $gradeId)
                     ->where('subject_exams.subject_id', $subjectId)
                     ->where('exams.semester', $semester)
@@ -897,6 +908,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'protestant cristianity')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -923,6 +935,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'buddhism')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -949,6 +962,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'hinduism')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -975,6 +989,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'confucianism')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -1003,6 +1018,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->whereIn('students.id', $chineseLowerStudent)
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -1031,6 +1047,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->whereIn('students.id', $chineseHigherStudent)
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -1057,6 +1074,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('grades.id', $gradeId)
+                ->where('students.is_active', true)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.academic_year', $academic_year)
@@ -1934,6 +1952,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('grades.id', $gradeId)
+                ->where('students.is_active', true)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.academic_year', $academic_year)
@@ -2071,6 +2090,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'islam')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -2098,6 +2118,7 @@ class ReportController extends Controller
                         'scores.score as score',
                     )
                     ->where('students.religion', '=', 'catholic christianity')
+                    ->where('students.is_active', true)
                     ->where('grades.id', $gradeId)
                     ->where('subject_exams.subject_id', $subjectId)
                     ->where('exams.semester', $semester)
@@ -2125,6 +2146,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'protestant christianity')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -2152,6 +2174,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'buddhism')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -2179,6 +2202,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'hinduism')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -2206,6 +2230,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'confucianism')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -2233,6 +2258,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('grades.id', $gradeId)
+                ->where('students.is_active', true)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.academic_year', $academic_year)
@@ -2601,6 +2627,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'islam')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -2627,6 +2654,7 @@ class ReportController extends Controller
                         'scores.score as score',
                     )
                     ->where('students.religion', '=', 'catholic christianity')
+                    ->where('students.is_active', true)
                     ->where('grades.id', $gradeId)
                     ->where('subject_exams.subject_id', $subjectId)
                     ->where('exams.semester', $semester)
@@ -2653,6 +2681,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'protestant christianity')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -2679,6 +2708,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'buddhism')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -2705,6 +2735,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'hinduism')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -2731,6 +2762,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->where('students.religion', '=', 'confucianism')
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -2759,6 +2791,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->whereIn('students.id', $chineseLowerStudent)
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -2787,6 +2820,7 @@ class ReportController extends Controller
                     'scores.score as score',
                 )
                 ->whereIn('students.id', $chineseHigherStudent)
+                ->where('students.is_active', true)
                 ->where('grades.id', $gradeId)
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
@@ -3052,12 +3086,13 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('mid_reports.semester', $semester)
                 ->where('mid_reports.academic_year', $academic_year)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
-                ->where('is_active', true)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
@@ -3141,12 +3176,13 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('report_cards.semester', $semester)
                 ->where('report_cards.academic_year', $academic_year)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
-                ->where('is_active', true)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
@@ -3241,11 +3277,13 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('report_cards.semester', $semester)
                 ->where('report_cards.academic_year', $academic_year)
+                ->where('students.is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
-                ->where('is_active', true)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
@@ -3343,13 +3381,17 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('report_cards.semester', $semester)
                 ->where('report_cards.academic_year', $academic_year)
+                ->where('students.is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
-                ->where('is_active', true)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
+
+            // dd($student);
 
             // dd($results);
 
@@ -3442,11 +3484,13 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('report_cards.semester', $semester)
                 ->where('report_cards.academic_year', $academic_year)
+                ->where('students.is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
-                ->where('is_active', true)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
@@ -3545,11 +3589,13 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('nursery_toddlers.semester', $semester)
                 ->where('nursery_toddlers.academic_year', $academic_year)
+                ->where('students.is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
-                ->where('is_active', true)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
@@ -3660,11 +3706,13 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('nursery_toddlers.semester', $mid)
                 ->where('nursery_toddlers.academic_year', $academic_year)
+                ->where('students.is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
-                ->where('is_active', true)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
@@ -3752,11 +3800,13 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('nursery_toddlers.semester', $semester)
                 ->where('nursery_toddlers.academic_year', $academic_year)
+                ->where('students.is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
-                ->where('is_active', true)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
@@ -3851,11 +3901,13 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('nursery_toddlers.semester', $mid)
                 ->where('nursery_toddlers.academic_year', $academic_year)
+                ->where('students.is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
-                ->where('is_active', true)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
@@ -3941,11 +3993,13 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('kindergartens.semester', $semester)
                 ->where('kindergartens.academic_year', $academic_year)
+                ->where('students.is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
-                ->where('is_active', true)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
@@ -4030,11 +4084,13 @@ class ReportController extends Controller
                 ->where('grades.id', $gradeId)
                 ->where('mid_kindergartens.semester', $semester)
                 ->where('mid_kindergartens.academic_year', $academic_year)
+                ->where('students.is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
-                ->where('is_active', true)
+                ->where('students.is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
@@ -4268,7 +4324,9 @@ class ReportController extends Controller
                     ->where('exams.semester', $semester)
                     ->where('exams.academic_year', $academic_year)
                     ->where('students.id', $id)
+                    ->where('students.is_active', true)
                     ->whereIn('exams.type_exam', [$homework, $exercise, $quiz, $project, $practical])
+                    ->orderBy('students.name', 'asc')
                     ->get();
 
                 $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use ($order, $homework, $exercise, $quiz, $project, $practical) {
@@ -4380,6 +4438,8 @@ class ReportController extends Controller
                     ->where('exams.academic_year', $academic_year)
                     ->where('students.id', $id)
                     ->whereIn('exams.type_exam', [$homework, $exercise, $quiz, $project, $practical])
+                    ->where('students.is_active', true)
+                    ->orderBy('students.name', 'asc')
                     ->get();
 
                 $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use ($order, $homework, $exercise, $quiz, $project, $practical) {
@@ -5521,6 +5581,8 @@ class ReportController extends Controller
                 ->where('exams.academic_year', $academic_year)
                 ->where('students.id', $id)
                 ->whereIn('exams.type_exam', [$exercise, $quiz])
+                ->where('students.is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use ($exercise, $quiz) {
