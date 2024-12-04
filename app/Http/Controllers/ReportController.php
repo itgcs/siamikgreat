@@ -3057,6 +3057,7 @@ class ReportController extends Controller
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
+                ->where('is_active', true)
                 ->orderBy('students.name', 'asc')
                 ->get();
 
@@ -3145,6 +3146,8 @@ class ReportController extends Controller
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
+                ->where('is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             // dd($results);
@@ -3242,6 +3245,8 @@ class ReportController extends Controller
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
+                ->where('is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             // dd($results);
@@ -3342,6 +3347,8 @@ class ReportController extends Controller
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
+                ->where('is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             // dd($results);
@@ -3439,6 +3446,8 @@ class ReportController extends Controller
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
+                ->where('is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             // dd($results);
@@ -3540,6 +3549,8 @@ class ReportController extends Controller
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
+                ->where('is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             // dd($results);
@@ -3653,6 +3664,8 @@ class ReportController extends Controller
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
+                ->where('is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             // dd($results);
@@ -3743,6 +3756,8 @@ class ReportController extends Controller
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
+                ->where('is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             // dd($results);
@@ -3840,6 +3855,8 @@ class ReportController extends Controller
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
+                ->where('is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -3928,6 +3945,8 @@ class ReportController extends Controller
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
+                ->where('is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -4015,6 +4034,8 @@ class ReportController extends Controller
 
             $student = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->where('grades.id', $gradeId)
+                ->where('is_active', true)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             // dd($results);
