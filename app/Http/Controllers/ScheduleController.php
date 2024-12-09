@@ -47,6 +47,8 @@ class ScheduleController extends Controller
          $typeSchedule = Type_schedule::where('name', '=', 'lesson')->value('id');
          $typeMidExam = Type_schedule::where('name', '=', 'mid exam')->value('id');
          $typeFinalExam = Type_schedule::where('name', '=', 'final exam')->value('id');
+
+         $masterAcademic = Master_academic::where('is_use', true)->first();
          $semester = Master_academic::first()->value('now_semester');
          $academic_year = Master_academic::first()->value('academic_year');
          
@@ -71,6 +73,7 @@ class ScheduleController extends Controller
 
          $gradeSchedules = Schedule::where('type_schedule_id', $typeSchedule)
             ->where('semester', '=', 1)
+            ->where('academic_year', session('academic_year'))
             ->leftJoin('grades', 'grades.id', '=', 'schedules.grade_id')
             ->leftJoin('subjects', 'subjects.id', '=', 'schedules.subject_id')
             ->leftJoin('teachers', 'teachers.id', '=', 'schedules.teacher_id')
@@ -82,9 +85,12 @@ class ScheduleController extends Controller
             ->groupBy(function($item) {
                return $item->grade_name . '-' . $item->grade_class;
             });
+
+         // dd($gradeSchedules);
 
          $gradeSchedulestwo = Schedule::where('type_schedule_id', $typeSchedule)
             ->where('semester', '=', 2)
+            ->where('academic_year', '=', session('academic_year'))
             ->leftJoin('grades', 'grades.id', '=', 'schedules.grade_id')
             ->leftJoin('subjects', 'subjects.id', '=', 'schedules.subject_id')
             ->leftJoin('teachers', 'teachers.id', '=', 'schedules.teacher_id')
@@ -97,10 +103,10 @@ class ScheduleController extends Controller
                return $item->grade_name . '-' . $item->grade_class;
             });
 
-         $semester1 = Master_academic::value('semester1');
-         $endsemester1 = Master_academic::value('end_semester1');
-         $semester2 = Master_academic::value('semester2');
-         $endsemester2 = Master_academic::value('end_semester2');
+         $semester1 = Master_academic::where('is_use', true)->value('semester1');
+         $endsemester1 = Master_academic::where('is_use', true)->value('end_semester1');
+         $semester2 = Master_academic::where('is_use', true)->value('semester2');
+         $endsemester2 = Master_academic::where('is_use', true)->value('end_semester2');
 
 
          $grades = Grade::whereNotIn('name', ['IGCSE'])->get();
@@ -279,8 +285,17 @@ class ScheduleController extends Controller
          $academic_year = Master_academic::first()->value('academic_year');
 
          $dataGrade = Grade::with(['student', 'teacher', 'subject', 'schedule'])
-            ->withCount(['student as active_student_count', 'teacher as active_teacher_count', 
-            'subject as active_subject_count', 'schedule as active_schedule_count'])
+            ->withCount(['student as active_student_count', 
+               'teacher as active_teacher_count' => function ($query) {
+                  $query->where('teacher_grades.academic_year', session('academic_year'));
+              }, 
+               'subject as active_subject_count' => function ($query) {
+                  $query->where('grade_subjects.academic_year', session('academic_year'));
+              }, 
+               'schedule as active_schedule_count' => function ($query) {
+                  $query->where('schedules.academic_year', session('academic_year'));
+              }
+            ])
             ->get();
          
          $typeSchedule = Type_schedule::get();
@@ -318,8 +333,17 @@ class ScheduleController extends Controller
          $academic_year = session('academic_year');
 
          $dataGrade = Grade::with(['student', 'teacher', 'subject', 'schedule'])
-            ->withCount(['student as active_student_count', 'teacher as active_teacher_count', 
-            'subject as active_subject_count', 'schedule as active_schedule_count'])
+               ->withCount(['student as active_student_count', 
+                  'teacher as active_teacher_count' => function ($query) {
+                     $query->where('teacher_grades.academic_year', session('academic_year'));
+               }, 
+                  'subject as active_subject_count' => function ($query) {
+                     $query->where('grade_subjects.academic_year', session('academic_year'));
+               }, 
+                  'schedule as active_schedule_count' => function ($query) {
+                     $query->where('schedules.academic_year', session('academic_year'));
+               }
+            ])
             ->get();
          
          $typeSchedule = Type_schedule::get();
@@ -356,8 +380,17 @@ class ScheduleController extends Controller
          $academic_year = session('academic_year');
 
          $dataGrade = Grade::with(['student', 'teacher', 'subject', 'schedule'])
-            ->withCount(['student as active_student_count', 'teacher as active_teacher_count', 
-            'subject as active_subject_count', 'schedule as active_schedule_count'])
+            ->withCount(['student as active_student_count', 
+               'teacher as active_teacher_count' => function ($query) {
+                  $query->where('teacher_grades.academic_year', session('academic_year'));
+               }, 
+                  'subject as active_subject_count' => function ($query) {
+                     $query->where('grade_subjects.academic_year', session('academic_year'));
+               }, 
+                  'schedule as active_schedule_count' => function ($query) {
+                     $query->where('schedules.academic_year', session('academic_year'));
+               }
+            ])
             ->get();
          
          $typeSchedule = Type_schedule::get();
@@ -1709,8 +1742,8 @@ class ScheduleController extends Controller
          $getGradeId = Teacher_grade::where('teacher_id', $getIdTeacher)->get();
          $lesson = Type_schedule::where('name', '=', 'lesson')->value('id');
 
-         $academic_year = Master_academic::first()->value('academic_year');
-         $semester      = Master_academic::first()->value('now_semester');
+         $academic_year = session('academic_year');
+         $semester      = session('semester');
          
          if ($semester === 1) {
             $startSemester = Master_academic::first()->value('semester1');
@@ -1727,6 +1760,7 @@ class ScheduleController extends Controller
             $data = Teacher_grade::where('teacher_id', $getIdTeacher)
                ->join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
                ->select('grades.name as grade_name', 'grades.class as grade_class', 'grades.id as grade_id')
+               ->where('academic_year', $academic_year)
                ->get();
             $totalClass = count($getGradeId);
             return view('components.schedule.detail-grade-teacher')->with('data', $data)->with('totalClass', $totalClass);

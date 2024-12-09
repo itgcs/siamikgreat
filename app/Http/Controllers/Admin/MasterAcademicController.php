@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Master_academic;
+use App\Models\Grade_subject;
+use App\Models\Teacher_grade;
+use App\Models\Teacher_subject;
+
 
 use App\Exports\DataSchoolExport;
 use App\Exports\GradeExport;
@@ -27,10 +31,16 @@ class MasterAcademicController extends Controller
             'child' => 'master academic',
             ]);
 
-            $data = Master_academic::get();
+            // dd(session()->all());
+
+            $data = Master_academic::where('is_use', TRUE)->get();
+            $masterAcademic = Master_academic::get();
 
             // dd($data);
-            return view('components.masterAcademic.data-masterAcademic')->with('data', $data);
+            return view('components.masterAcademic.data-masterAcademic', [
+                'data' => $data,
+                'masterAcademic' => $masterAcademic,
+            ]);
 
         } catch (Exception $err) {
             return dd($err);
@@ -57,16 +67,39 @@ class MasterAcademicController extends Controller
 
         DB::beginTransaction();
 
-        try {                
-            $post = [
-                'academic_year' => $request->academic_year,
-                'semester1' => $request->semester1,
-                'end_semester1' => $request->end_semester1,
-                'semester2' => $request->semester2,
-                'end_semester2' => $request->end_semester2,
-                'now_semester' => $request->now_semester,
-                'created_at' => now(),
-            ];
+        try {              
+            $checkMaster = Master_academic::get();
+
+            if(count($checkMaster) == 0){
+                $post = [
+                    'academic_year' => $request->academic_year,
+                    'semester1' => $request->semester1,
+                    'end_semester1' => $request->end_semester1,
+                    'semester2' => $request->semester2,
+                    'end_semester2' => $request->end_semester2,
+                    'now_semester' => $request->now_semester,
+                    'is_use' => TRUE,
+                    'created_at' => now(),
+                ];
+            }
+            else{
+                $getLastIsUse = $checkMaster->where('is_use', 1)->value('id');
+                
+                Master_academic::where('id', $getLastIsUse)
+                ->update(['is_use' => FALSE]);
+
+                $post = [
+                    'academic_year' => $request->academic_year,
+                    'semester1' => $request->semester1,
+                    'end_semester1' => $request->end_semester1,
+                    'semester2' => $request->semester2,
+                    'end_semester2' => $request->end_semester2,
+                    'now_semester' => $request->now_semester,
+                    'is_use' => TRUE,
+                    'created_at' => now(),
+                ];
+            }
+            
 
             $role = session('role');
 
@@ -76,8 +109,8 @@ class MasterAcademicController extends Controller
 
             DB::commit();
 
-            $semester = Master_academic::first()->value('now_semester');
-            $academic_year = Master_academic::first()->value('academic_year');
+            $semester = Master_academic::where('is_use', true)->value('now_semester');
+            $academic_year = Master_academic::where('is_use', true)->value('academic_year');
 
             session()->put([
                 'semester' => $semester,
@@ -171,4 +204,39 @@ class MasterAcademicController extends Controller
 
         return Excel::download(new GradeExport($grades), 'grades.xlsx');
     }
+
+    public function changeMasterAcademic($id)
+    {
+        try {
+            // Ambil ID master akademik yang sedang aktif
+            $getLastIsUse = Master_academic::where('is_use', true)->value('id');
+
+            // Grade_subject::query()->update(['academic_year' => '2024-2025']);
+            // Teacher_grade::query()->update(['academic_year' => '2024-2025']);
+            // Teacher_subject::query()->update(['academic_year' => '2024-2025']);
+    
+            // Nonaktifkan master akademik yang lama
+            if ($getLastIsUse) {
+                Master_academic::where('id', $getLastIsUse)
+                    ->update(['is_use' => false]);
+            }
+    
+            // Aktifkan master akademik baru
+            Master_academic::where('id', $id)
+                ->update(['is_use' => true]);
+
+            // Query ulang untuk mendapatkan data terbaru
+            $activeMaster = Master_academic::where('is_use', true)->first();
+
+            // Pastikan data baru masuk ke session
+            session()->put([
+                'semester' => $activeMaster->now_semester,
+                'academic_year' => $activeMaster->academic_year,
+            ]);      
+    
+            return response()->json(['success' => true]);
+        } catch (Exception $err) {
+            return response()->json(['success' => false, 'message' => $err->getMessage()], 500);
+        }
+    }    
 }

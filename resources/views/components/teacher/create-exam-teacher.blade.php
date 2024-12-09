@@ -72,7 +72,7 @@
                               <select required name="type_exam" class="form-control" id="type_exam">
                                     <option selected disabled>--- SELECT TYPE SCORING ---</option>
                                     @foreach($data['type_exam'] as $el)
-                                       <option value="{{ $el->id }}">{{ $el->name }}</option>
+                                       <option value="{{ $el->id }}">{{ ucwords($el->name) }}</option>
                                     @endforeach
                               </select>
                               @if($errors->has('type_exam'))

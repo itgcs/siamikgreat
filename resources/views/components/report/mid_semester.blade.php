@@ -23,10 +23,24 @@
 
     <div class="row">
         <div class="col">
-            <p class="text-xs text-bold">Mid Report Card Semester </p>
-            <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
+            <p class="text-bold">Mid Report Card Semester </p>
+            <table>
+                <tr>
+                    <td>Class</td>
+                    <td> : {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</td>
+                </tr>
+                <tr>
+                    <td>Class Teacher</td>
+                    <td> : {{ $data['classTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
+                </tr>
+            </table>
+            {{-- <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
             <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} </p>
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
+            <p class="text-xs">Date  : {{date('d-m-Y')}}</p> --}}
         </div>
     </div>
 
@@ -49,9 +63,9 @@
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
                 <div class="input-group-append mx-2">
-                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
-                    @if (session('role') == 'superadmin' || session('role') == 'admin')
-                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Report Card Semester 1</a>
+                    <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Mid Report Card</a>
                     @endif
                 </div>
             </div>  
@@ -59,15 +73,24 @@
 
         @if (!empty($data['students']))
         
-        <table class="table table-striped table-bordered bg-white" style=" width: 1200px;">
+        <table class="table table-striped table-bordered bg-white" style="width: 2000px;">
             @if ($data['status'] == null)
                 <!-- JIKA DATA BELUM DI SUBMIT OLEH TEACHER  -->
                 <thead>
                     <tr>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;width:5%;">S/N</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;width:20%;">First Name</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;width:65%;">Remarks</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;width:10%;">View</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;width:2%;">S/N</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;width:15%;">First Name</th>
+                        
+                        @foreach ($data['monthlyActivities'] as $ma)
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">{{$ma->name}}</th>
+                        @endforeach
+
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Critical Thinking</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Cognitive Skills</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Life Skills</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Learning Skills</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Social and Emotional Development</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;width:3%;">View</th>
                     </tr>
                 </thead>
 
@@ -77,11 +100,29 @@
                         @foreach ($data['result'] as $student)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $student['student_name'] }}</td>
+                            <td>{{ $student['name'] }}</td>
+                            
+                            @foreach ($student['monthly_activities'] as $ma)
                             <td class="text-center">
-                            <input name="remarks[]" type="text" class="form-control" value="{{ $student['remarks'] }}" autocomplete="off"></td>
-                        @endforeach
+                                <input name="{{strtolower($ma['activity_name'])}}[]" min="0" max="100" type="number" class="form-control required-input" value="{{$ma['score']}}" autocomplete="off" required>
+                            </td>
+                            @endforeach
+
+                            {{-- <td class="text-center"><input name="remarks[]" type="text" class="form-control" value="{{ $student['remarks'] }}" autocomplete="off"></td> --}}
+                            <td><input name="critical_thinking[]" type="text" class="form-control" value="{{ $student['critical_thinking'] }}" autocomplete="off"></td>
+                            <td><input name="cognitive_skills[]" type="text" class="form-control" value="{{ $student['cognitive_skills'] }}" autocomplete="off"></td>
+                            <td><input name="life_skills[]" type="text" class="form-control" value="{{ $student['life_skills'] }}" autocomplete="off"></td>
+                            <td><input name="learning_skills[]" type="text" class="form-control" value="{{ $student['learning_skills'] }}" autocomplete="off"></td>
+                            <td><input name="social_and_emotional_development[]" type="text" class="form-control" value="{{ $student['social_and_emotional_development'] }}" autocomplete="off"></td>
+                            
                             <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">
+                            <td>
+                                <a class="btn btn-primary btn"
+                                    href="{{url('teacher/dashboard/midreport/print') . '/' . $student['id']}}">
+                                    View
+                                </a>
+                            </td>
+                        @endforeach
                         </tr>
                     </tbody>
                     <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
@@ -95,9 +136,18 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $student['name'] }}</td>
+                            
+                            @foreach ($data['monthlyActivities'] as $ma)
                             <td class="text-center">
-                                <input name="remarks[]" type="text" class="form-control" autocomplete="off">
+                                <input name="{{strtolower($ma->name)}}[]" min="0" max="100" type="number" class="form-control required-input" value="" autocomplete="off" required>
                             </td>
+                            @endforeach
+
+                            <td><textarea name="critical_thinking[]" autocomplete="off" class="required-input" required></textarea></td>
+                            <td><textarea name="cognitive_skills[]" autocomplete="off" class="required-input" required></textarea></td>
+                            <td><textarea name="life_skills[]" autocomplete="off" class="required-input" required></textarea></td>
+                            <td><textarea name="learning_skills[]" autocomplete="off" class="required-input" required></textarea></td>
+                            <td><textarea name="social_and_emotional_development[]" autocomplete="off" class="required-input" required></textarea></td>
                             <td>
                                 <a class="btn btn-primary btn"
                                     href="{{url('teacher/dashboard/midreport/print') . '/' . $student['id']}}">
@@ -119,10 +169,19 @@
             @elseif ($data['status']->status != null && $data['status']->status == 1)
                 <thead>
                     <tr>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Remarks</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Action</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;width:2%;">S/N</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;width:15%;">First Name</th>
+                        
+                        @foreach ($data['monthlyActivities'] as $ma)
+                            <th class="text-center" style="vertical-align : middle;text-align:center;">{{$ma->name}}</th>
+                        @endforeach
+
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Critical Thinking</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Cognitive Skills</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Life Skills</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Learning Skills</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;">Social and Emotional Development</th>
+                        <th class="text-center" style="vertical-align : middle;text-align:center;width:3%;">View</th>
                     </tr>
                 </thead>
 
@@ -131,21 +190,31 @@
                     @foreach ($data['result'] as $student)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $student['student_name'] }}</td>
-                            <td>{{ $student['remarks'] }}</td>
+                            <td>{{ $student['name'] }}</td>
+                            @foreach ($student['monthly_activities'] as $ma)
+                                <td>{{$ma['score']}}</td>
+                            @endforeach
+                            <td>{{ $student['critical_thinking'] }}</td>
+                            <td>{{ $student['cognitive_skills'] }}</td>
+                            <td>{{ $student['life_skills'] }}</td>
+                            <td>{{ $student['learning_skills'] }}</td>
+                            <td>{{ $student['social_and_emotional_development'] }}</td>
+
+
+
                             @if ($data['status'] !== null)
                                 @if (session('role') == "superadmin" || session('role') == "admin")
                                     <td>
                                         <a class="btn btn-primary btn"
                                             href="{{url(session('role') . '/reports/midreport/print') . '/' . $student['student_id']}}">
-                                            Print
+                                            View
                                         </a>
                                     </td>
                                 @elseif (session('role') == "teacher")
                                     <td>
                                         <a class="btn btn-primary btn"
                                             href="{{url('teacher/dashboard/midreport/print') . '/' . $student['student_id']}}">
-                                            Print
+                                            View
                                         </a>
                                     </td>
                                 @endif
@@ -187,12 +256,12 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Decline Report Card {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} Semester 1</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Decline Report Card {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">Are you sure want to decline report card {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} semester 1?</div>
+                    <div class="modal-body">Are you sure want to decline mid report card {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}?</div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
@@ -207,27 +276,54 @@
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
+
 <script>
-    document.getElementById('confirmAccScoring').addEventListener('click', function() {
-        document.getElementById('confirmForm').submit();
+    document.querySelectorAll('input').forEach(function(input) {
+        input.addEventListener('input', function(event) {
+            let value = parseInt(input.value, 10);
+            if (value < 0 || value > 100) {
+                input.value = '';
+                alert('Please enter a number between 0 and 100.');
+            }
+        });
     });
 </script>
 
-
 <script>
-    function validateInput(input) {
-        var validChars = ['E', 'G', 'S', 'N'];
-        var value = input.value.toUpperCase();
-        if (!validChars.includes(value) && value !== '') {
-            input.value = '';
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please enter only "E", "G", "S", or "N".'
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('confirmAccScoring').addEventListener('click', function() {
+            // Mengambil semua input yang wajib diisi
+            var requiredInputs = document.querySelectorAll('.required-input');
+            var allFilled = true;
+
+            requiredInputs.forEach(function(input) {
+                var value = input.value.trim();
+
+                // Memeriksa apakah input tidak kosong dan apakah bernilai angka yang valid
+                if (value === '') {
+                    allFilled = false;
+                    // Menambahkan kelas untuk memberikan highlight pada input yang kosong atau tidak valid
+                    input.classList.add('is-invalid');
+                } else {
+                    // Menghapus kelas jika input tidak kosong atau tidak valid
+                    input.classList.remove('is-invalid');
+                }
             });
-        }
-    }
+
+            if (allFilled) {
+                document.getElementById('confirmForm').submit();
+            } else {
+                // Menampilkan pesan peringatan
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'All fields must be filled with valid values before submitting the form!',
+                });
+            }
+        });
+    });
 </script>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -236,10 +332,16 @@
             var id = @json($data['grade']->grade_id);
             var teacherId = @json($data['classTeacher']->teacher_id);
             var semester = @json($data['semester']);
+            var role = @json(session('role'));
 
             console.log("id=", id, "teacher=", teacherId, "semester=", semester);
             var confirmDecline = document.getElementById('confirmDecline');
-            confirmDecline.href = "{{ url('/' . session('role') . '/reports/reportCard/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            if(role == 'admin' || role == 'superadmin'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/reports/midreportCard/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            }
+            else if(role == 'teacher'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/dashboard/midreportCard/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            }
         });
     });
 </script>

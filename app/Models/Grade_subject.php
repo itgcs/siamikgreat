@@ -13,6 +13,7 @@ class Grade_subject extends Model
         'id',
         'grade_id',
         'subject_id',
+        'academic_year',
         'created_at',
         'subject_id',
     ];

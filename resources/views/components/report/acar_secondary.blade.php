@@ -23,11 +23,25 @@
 
     <div class="row">
         <div class="col">
-            <p class="text-xs font-bold">Academic Assessment Report</p>
-            <p class="text-xs">Semester : {{ session('semester') }}</p>     
+            <p class="font-bold">Academic Assessment Report</p>
+            {{-- <p class="text-xs">Semester : {{ session('semester') }}</p>     
             <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
             <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</p>
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
+            <p class="text-xs">Date  : {{date('d-m-Y')}}</p> --}}
+            <table>
+                <tr>
+                    <td>Class</td>
+                    <td> : {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</td>
+                </tr>
+                <tr>
+                    <td>Teacher</td>
+                    <td> : {{ $data['classTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
+                </tr>
+            </table>
         </div>
     </div>
 
@@ -42,16 +56,18 @@
         @csrf
 
         @if ($data['status'] == null)
-            <div class="row my-2">
-                <div class="input-group-append mx-2">
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit ACAR</button>
+            @if (!empty($data['students']))
+                <div class="row my-2">
+                    <div class="input-group-append mx-2">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit ACAR</button>
+                    </div>
                 </div>
-            </div>
+            @endif
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
                 <div class="input-group-append mx-2">
-                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
-                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
                     <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline ACAR</a>
                     @endif
                 </div>
@@ -185,12 +201,12 @@
                                     <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $dt['total_score'] }}">  
                                     
                                     @if ($data['status'] == null)
-                                    <div class="input-group-append">
+                                    {{-- <div class="input-group-append">
                                         <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
                                             <i class="fas fa-pen"></i>
                                             Edit
                                         </a>
-                                    </div>
+                                    </div> --}}
                                     @endif
                                 </div>
                             </td>
@@ -199,7 +215,9 @@
                     @endforeach
                 @else
                     <tr>
-                        <td colspan="27">Data tidak ditemukan.</td>
+                        <td colspan="33" class="text-center text-danger">
+                            Teacher doesnt submit subject scoring      
+                        </td>    
                     </tr>
                 @endif
             </tbody>
@@ -278,10 +296,16 @@
             var id = @json($data['grade']->grade_id);
             var teacherId = @json($data['classTeacher']->teacher_id);
             var semester = @json($data['semester']);
+            var role = @json(session('role'));
 
             console.log("id=", id, "teacher=", teacherId, "semester=", semester);
             var confirmDecline = document.getElementById('confirmDecline');
-            confirmDecline.href = "{{ url('/' . session('role') . '/reports/acar/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            if(role == 'superadmin' || role == 'admin'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/reports/acar/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            }
+            else if(role == 'teacher'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/dashboard/acar/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            }
         });
     });
 </script>

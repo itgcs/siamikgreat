@@ -40,10 +40,10 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
             min-height: 100vh;
         }
 
-        /* * {
+        * {
             font-family: 'Ma Shan Zheng', DejaVu Sans, sans-serif;
             font-size: xx-large;
-        } */
+        }
 
         .noto-serif-sc-chinese {
             font-family: "Noto Serif SC", serif;

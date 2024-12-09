@@ -107,8 +107,8 @@ class UserController extends Controller
                'name_user' => $nameUser,
             ]);        
          } else {
-            $semester = Master_academic::first()->value('now_semester');
-            $academic_year = Master_academic::first()->value('academic_year');
+            $semester = Master_academic::where('is_use',TRUE)->value('now_semester');
+            $academic_year = Master_academic::where('is_use',TRUE)->value('academic_year');
    
             session()->put([
                'role' => $nameRoles->name,

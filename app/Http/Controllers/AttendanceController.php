@@ -39,8 +39,9 @@ class AttendanceController extends Controller
                 })
                 ->select('grades.id as id', 'grades.name as grade_name', 'grades.class as grade_class',
                 'teachers.name as teacher_class')
-                ->withCount(['student as active_student_count', 'subject as active_subject_count'])
-                ->where('students.is_active', 1)
+                ->withCount(['student as active_student_count' => function ($query) {
+                    $query->where('is_active', true); // Hitung hanya siswa aktif
+                }, 'subject as active_subject_count'])
                 ->orderBy('grades.id', 'asc')
                 ->get();
 
@@ -377,6 +378,7 @@ class AttendanceController extends Controller
                 ->join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
                 ->select('grades.*',)
                 ->orderBy('grades.id', 'asc')
+                ->where('academic_year', session('academic_year'))
                 ->get();
 
             $gradeId = Teacher_grade::where('teacher_id', $getIdTeacher)->value('grade_id');
@@ -869,7 +871,7 @@ class AttendanceController extends Controller
                 'child' => 'attendance subject teacher',
             ]);
 
-            $semester = Master_academic::first()->value('now_semester');
+            $semester = session('semester');
             $userId = session('id_user');
             $getIdTeacher = Teacher::where('user_id', $userId)->value('id');
 

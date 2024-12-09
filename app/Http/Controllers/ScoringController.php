@@ -29,7 +29,8 @@ use App\Models\Tcop;
 use App\Models\Master_academic;
 use App\Models\Mid_kindergarten;
 use App\Models\Mid_report;
-
+use App\Models\MonthlyActivity;
+use App\Models\Student_Monthly_Activity;
 use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Carbon;
 use Exception;
@@ -903,22 +904,22 @@ class ScoringController extends Controller
         }
     }
 
-
-
-
     public function actionPostMidReportCard(Request $request)
     {
         try {
 
+            // dd($request);
+
+            $monthlyActivity = MonthlyActivity::get();
+
             for($i=0; $i < count($request->student_id); $i++){
 
                 $scoring = [
-                    'student_id'       => $request->student_id[$i],
-                    'grade_id'         => $request->grade_id,
-                    'class_teacher_id' => $request->teacher_id,
-                    'semester'         => $request->semester,
-                    'academic_year'    => session('academic_year'),
-                    'remarks'          => $request->remarks[$i],
+                    'critical_thinking' => $request->critical_thinking[$i],
+                    'cognitive_skills'  => $request->cognitive_skills[$i],
+                    'life_skills'       => $request->life_skills[$i],
+                    'learning_skills'   => $request->learning_skills[$i],
+                    'social_and_emotional_development' => $request->social_and_emotional_development[$i],
                     'created_at'       => now()
                 ];
                 
@@ -927,6 +928,24 @@ class ScoringController extends Controller
                     'class_teacher_id' => $request->teacher_id, 'academic_year' => session('academic_year')], 
                     $scoring
                 );
+                
+                foreach($monthlyActivity as $ma){
+                    $name = strtolower(str_replace(' ', '_', trim($ma->name)));
+
+                    $monthly = [
+                        'score' => $request->$name[$i],
+                        'monthly_activity_id' => $ma->id,
+                        'grades' => $this->determineGrade($request->$name[$i]),
+                    ];
+                    
+                    // dd($monthly);
+
+                    Student_Monthly_Activity::updateOrCreate(
+                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester,
+                        'monthly_activity_id' => $ma->id, 'academic_year' => session('academic_year')], 
+                        $monthly
+                    );
+                }
             }
 
             if ($request->semester == 1) {

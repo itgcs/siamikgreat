@@ -21,5 +21,6 @@ class Score extends Model
       'created_at',
       'updated_at',
       'academic_year',
+      'semester',
     ];
 }

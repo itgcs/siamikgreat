@@ -23,11 +23,53 @@
 
     <div class="row">
         <div class="col">
-        <p class="text-xs">Semester : {{ $data['semester']}}</p> 
+            <p class="text-bold">Major Subject Assessment</p>
+            <table>
+                <tr>
+                    <td>Subject</td>
+                    <td> : {{ $data['subject']->subject_name }}</td>
+                </tr>
+                <tr>
+                    <td>Subject Teacher</td>
+                    <td> : {{ $data['subjectTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Class</td>
+                    <td> : {{ $data['grade']->name }} - {{ $data['grade']->class }}</td>
+                </tr>
+                <tr>
+                    <td>Class Teacher</td>
+                    <td> : {{ $data['classTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
+                </tr>
+            </table>
+            {{-- <p class="text-xs">Semester : {{ $data['semester']}}</p> 
             <p class="text-xs">Subject Teacher : {{ $data['subjectTeacher']->teacher_name }}</p>    
             <p class="text-xs">Class Teacher : {{ $data['classTeacher']->teacher_name }}</p>
             <p class="text-xs">Class : {{ $data['grade']->name }} - {{ $data['grade']->class }}</p>
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
+            <p class="text-xs">Date  : {{date('d-m-Y')}}</p> --}}
+        </div>
+    </div>
+
+    <!-- Decline -->
+    <div class="modal fade" id="modalDecline" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Decline Scoring {{ $data['grade']->name }} - {{ $data['grade']->class }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">Are you sure want to decline Scoring {{ $data['grade']->name }} - {{ $data['grade']->class }} ?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -52,9 +94,9 @@
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
                 <div class="input-group-append mx-2">
-                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
-                    @if (session('role') == 'superadmin' || session('role') == 'admin')
-                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline ACAR</a>
+                    <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
                     @endif
                 </div>
             </div>  
@@ -229,6 +271,22 @@
 </div>
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#modalDecline').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var gradeId = @json($data['grade']->id);
+            var teacherId = @json($data['classTeacher']->teacher_id);
+            var subjectId = @json($data['subject']->subject_id);
+            var semester = @json($data['semester']);
+
+            // console.log("id=", gradeId, "teacher=", teacherId, "semester=", semester, "subject=", subjectId, academicYear);
+            var confirmDecline = document.getElementById('confirmDecline');
+            confirmDecline.href = "{{ url('/' . session('role') . '/dashboard/scoring/decline') }}/" + gradeId + "/" + teacherId + "/" + subjectId + "/" + semester;
+        });
+    });
+</script>
 
 <script>
     document.getElementById('confirmAccScoring').addEventListener('click', function() {
