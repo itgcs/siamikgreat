@@ -5,7 +5,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col">
-            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item">Home</li>
                     @if (session('role') == 'superadmin')
@@ -23,11 +23,25 @@
 
     <div class="row">
         <div class="col">
-            <p class="text-xs text-bold">Detail Attendance</p>
-            <p class="text-xs">Semester : {{ $data['semester']}}</p> 
+            <p class="text-bold">Detail Attendance</p>
+            <table>
+                <tr>
+                    <td>Class</td>
+                    <td> : {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</td>
+                </tr>
+                <tr>
+                    <td>Class Teacher</td>
+                    <td> : {{ $data['classTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
+                </tr>
+            </table>
+            {{-- <p class="text-xs">Semester : {{ $data['semester']}}</p> 
             <p class="text-xs">Class : {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</p>
             <p class="text-xs">Class Teacher : {{ $data['classTeacher']->teacher_name }}</p>
-            <p class="text-xs">Date : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
+            <p class="text-xs">Date : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }} --}}
             </p>
         </div>
     </div>

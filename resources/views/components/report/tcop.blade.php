@@ -23,10 +23,25 @@
 
     <div class="row">
         <div class="col">
-            <p class="text-xs text-bold">The Certificate of Promotion</p>
-            <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
+            <p class="text-bold">The Certificate of Promotion</p>
+            
+            {{-- <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
             <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} </p>
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
+            <p class="text-xs">Date  : {{date('d-m-Y')}}</p> --}}
+            <table>
+                <tr>
+                    <td>Class</td>
+                    <td> : {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</td>
+                </tr>
+                <tr>
+                    <td>Class Teacher</td>
+                    <td> : {{ $data['classTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
+                </tr>
+            </table>
         </div>
     </div>
 
@@ -41,16 +56,18 @@
         @csrf
         
         @if ($data['status'] == null)
+            @if (!empty($data['students']))
             <div class="row my-2">
                 <div class="input-group-append mx-2">
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit TCOP</button>
                 </div>
             </div>
+            @endif
         @elseif ($data['status'] != null)        
             <div class="row my-2">
                 <div class="input-group-append mx-2">
-                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
-                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
                     <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline TCOP</a>
                     @endif
                 </div>
@@ -202,12 +219,24 @@
             var button = $(event.relatedTarget);
             var id = @json($data['grade']->grade_id);
             var teacherId = @json($data['classTeacher']->teacher_id);
+            var semester = @json($data['semester']);
+            var role = @json(session('role'));
 
             var confirmDecline = document.getElementById('confirmDecline');
-            confirmDecline.href = "{{ url('/' . session('role') . '/reports/tcop/decline') }}/" + id + "/" + teacherId ;
+
+            if(role == 'admin' || role == 'superadmin'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/reports/tcop/decline') }}/" + id + "/" + teacherId;
+            }
+            else if(role == 'teacher'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/dashboard/tcop/decline') }}/" + id + "/" + teacherId;
+            }            
         });
     });
 </script>
+
+<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
 
 @if(session('after_post_tcop'))
     <script>

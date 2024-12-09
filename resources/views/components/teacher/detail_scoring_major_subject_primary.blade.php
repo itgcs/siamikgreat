@@ -48,6 +48,7 @@
             </table>
         </div>
     </div>
+    
 
     @if ($data['status'] == null)
             @if (!empty($data['students']))
@@ -57,16 +58,36 @@
                     </div>
                 </div>
             @endif
-        @elseif ($data['status']->status != null && $data['status']->status == 1)       
-            <div class="row my-2">
-                <div class="input-group-append mx-2">
-                    <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
-                    @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
-                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
-                    @endif
+    @elseif ($data['status']->status != null && $data['status']->status == 1)       
+        <div class="row my-2">
+            <div class="input-group-append mx-2">
+                <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
+                @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
+                <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
+                @endif
+            </div>
+        </div>  
+    @endif
+
+    
+    <!-- Decline -->
+    <div class="modal fade" id="modalDecline" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Decline Scoring {{ $data['grade']->name }} - {{ $data['grade']->class }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-            </div>  
-        @endif
+                <div class="modal-body">Are you sure want to decline Scoring {{ $data['grade']->name }} - {{ $data['grade']->class }} ?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div style="overflow-x: auto;">
         @if (session('role') == 'superadmin')
@@ -207,8 +228,8 @@
                                 <input name="final_score[]" type="number" class="form-control d-none" id="final_score-{{$student['student_id']}}" value="{{ $student['total_score'] }}">  
                                 <input name="semester" type="number" class="form-control d-none" id="semester-{{$student['student_id']}}" value="{{ $data['semester'] }}"> 
                                 @if ($data['status'] == null) 
-                                <textarea name="comment[]" class="form-control" cols="6" rows="1" id="comment-{{$student['student_id']}}" required></textarea>
-                                <!-- <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required> -->
+                                {{-- <textarea name="comment[]" class="form-control" cols="6" rows="1" id="comment-{{$student['student_id']}}" required></textarea> --}}
+                                <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $student['comment'] ? '' : 'Write your comment' }}" value="{{ $student['comment'] ?: '' }}" autocomplete="off" required>
                                 <!-- <div class="input-group-append">
                                     <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
                                         <i class="fas fa-pen"></i>
@@ -294,6 +315,24 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#modalDecline').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var gradeId = @json($data['grade']->id);
+            var teacherId = @json($data['classTeacher']->teacher_id);
+            var subjectId = @json($data['subject']->subject_id);
+            var semester = @json($data['semester']);
+
+            // console.log("id=", gradeId, "teacher=", teacherId, "semester=", semester, "subject=", subjectId, academicYear);
+            var confirmDecline = document.getElementById('confirmDecline');
+            confirmDecline.href = "{{ url('/' . session('role') . '/dashboard/scoring/decline') }}/" + gradeId + "/" + teacherId + "/" + subjectId + "/" + semester;
+        });
+    });
+</script>
+
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>

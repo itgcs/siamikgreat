@@ -11,22 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mid_reports', function (Blueprint $table) {
+        Schema::create('student_monthly_activities', function(Blueprint $table){
             $table->id();
             $table->unsignedBigInteger('student_id');
-            $table->unsignedBigInteger('grade_id');
-            $table->unsignedBigInteger('class_teacher_id');
-            $table->string('remarks');
-            $table->text('critical_thinking');
-            $table->text('cognitive_skills');
-            $table->text('life_skills');
-            $table->text('learning_skills');
-            $table->text('social_and_emotional_development');
+            $table->unsignedBigInteger('monthly_activity_id');
+            $table->unsignedBigInteger('grade_id')->after('student_id');
             $table->integer('semester');
-            $table->integer('academic_year');
+            $table->string('academic_year')->nullable();
+            $table->unsignedBigInteger('score');
+            $table->string('grades');
             $table->foreign('student_id')->references('id')->on('students')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreign('grade_id')->references('id')->on('grades')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreign('class_teacher_id')->references('id')->on('teachers')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('monthly_activity_id')->references('id')->on('monthly_activities')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

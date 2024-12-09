@@ -52,16 +52,18 @@
         @csrf
 
         @if ($data['status'] == null)
-            <div class="row my-2">
-                <div class="input-group-append mx-2">
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit ACAR</button>
+            @if (!empty($data['students']))
+                <div class="row my-2">
+                    <div class="input-group-append mx-2">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit ACAR</button>
+                    </div>
                 </div>
-            </div>
+            @endif
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
                 <div class="input-group-append mx-2">
                     <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
-                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
                     <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline ACAR</a>
                     @endif
                 </div>
@@ -226,7 +228,7 @@
                             <td class="project-actions text-left">
                                 <div class="input-group">
                                     @if ($data['status'] == null)
-                                        <textarea name="comment[]" class="form-control" cols="6" rows="1" id="comment-{{$dt['student_id']}}" required></textarea>
+                                        <input name="comment[]" type="text" class="form-control" id="comment" placeholder="{{ $dt['comment'] ? '' : 'Write your comment' }}" value="{{ $dt['comment'] ?: '' }}" autocomplete="off" required>
                                     @else 
                                         {{ $dt['comment'] }}
                                     @endif
@@ -236,9 +238,16 @@
                             </td>
                         </tr>
                     @endforeach
+                @else
+                    <tr>
+                        <td colspan="33" class="text-center text-danger">
+                            Teacher doesnt submit subject scoring      
+                        </td>    
+                    </tr>
                 @endif
             </tbody>
         </table>
+        
         <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">  
         <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
         <input name="class_teacher" type="number" class="form-control d-none" id="class_teacher" value="{{ $data['classTeacher']->teacher_id }}">  
@@ -294,10 +303,17 @@
             var id = @json($data['grade']->grade_id);
             var teacherId = @json($data['classTeacher']->teacher_id);
             var semester = @json($data['semester']);
+            var role = @json(session('role'));
 
             console.log("id=", id, "teacher=", teacherId, "semester=", semester);
             var confirmDecline = document.getElementById('confirmDecline');
-            confirmDecline.href = "{{ url('/' . session('role') . '/reports/acar/decline') }}/" + id + "/" + teacherId + "/" + semester;
+
+            if(role == 'admin' || role == 'superadmin'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/reports/acar/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            }
+            else if(role == 'teacher'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/dashboard/acar/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            }
         });
     });
 </script>
@@ -333,7 +349,6 @@
         }
     });
 </script>
-
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>

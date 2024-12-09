@@ -23,10 +23,24 @@
 
     <div class="row">
         <div class="col">
-            <p class="text-xs text-bold">Summary of Academic Assessment</p>
-            <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
+            <p class="text-bold">Summary of Academic Assessment</p>
+            <table>
+                <tr>
+                    <td>Class</td>
+                    <td> : {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</td>
+                </tr>
+                <tr>
+                    <td>Class Teacher</td>
+                    <td> : {{ $data['classTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
+                </tr>
+            </table>
+            {{-- <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
             <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} </p>
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
+            <p class="text-xs">Date  : {{date('d-m-Y')}}</p> --}}
         </div>
     </div>
 
@@ -41,366 +55,171 @@
         @csrf
         
         @if ($data['status'] == null)
-            <div class="row my-2">
-                <div class="input-group-append mx-2">
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit SOOA</button>
+            @if (!empty($data['students']))
+                <div class="row my-2">
+                    <div class="input-group-append mx-2">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit SOOA</button>
+                    </div>
                 </div>
-            </div>
-
-            <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
-                <thead>
-                    <tr>
-                        <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
-                        <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Academic</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Pilihan (Dancing, Singing, Badminton, Football)</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Language and Art</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Self-Development</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">ECA Aver (Non-Academic)</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Behavior</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Attendance</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Participation</th>
-                        <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Total</th>
-                        <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Grades</th>
-                        <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Rank</th>
-                    </tr>
-
-                    <tr>
-                        <!-- Major Subjects -->
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <!-- END MAJOR SUBJECTS -->
-                        
-                        <!-- MINOR SUBJECTS -->
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <!-- END MINOR SUBJECTS -->
-                        
-                        <!-- SUPPLEMENTARY SUBJECTS -->
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <!-- END SUPPLEMENTARY SUBJECTS -->
-                    </tr>
-                </thead>
-
-                <tbody>
-                @if (!empty($data['students']))
-                    @foreach ($data['students'] as $student)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $student['student_name'] }}</td>
-
-                        @if (!empty($student['scores']))
-                            @foreach ($student['scores'] as $index => $score)
-
-                                <!-- ACADEMIC -->
-                                <td class="text-center">{{ $score['academic'] }}</td>
-                                <td class="text-center">{{ $score['grades_academic'] }}</td>
-
-                                <!-- Choice -->
-                                <td class="text-center">
-                                    @if ($student['haveEca'] == 1)
-                                        {{ $student['nameEca'] }}
-                                        <input name="choice[]" min="0" max="100" type="number" class="form-control required-input " id="choice" value="{{ $score['choice'] ?: '' }}" autocomplete="off" required>
-                                    @elseif ($student['haveEca'] == 0)
-                                        {{ $student['nameEca'] }}
-                                        <input name="choice[]" min="0" max="100" type="number" class="form-control required-input  d-none" id="choice" value="0" autocomplete="off" required>
-                                    @endif
-                                </td>
-                                <td class="text-center">{{ $score['grades_choice'] }}</td>
-
-                                <!-- Language & Art -->
-                                <td class="text-center">
-                                    <input name="language_and_art[]" min="0" max="100" type="number" class="form-control required-input " id="language_and_art" value="{{ $score['language_and_art'] ?: '' }}" autocomplete="off" required>
-                                </td>
-                                <td class="text-center">{{ $score['grades_language_and_art'] ?? '' }}</td>
-
-                                <!-- Self-Development -->
-                                <td class="text-center">
-                                    <input name="self_development[]" min="0" max="100" type="number" class="form-control required-input " id="self_development" value="{{ $score['self_development'] ?: '' }}" autocomplete="off" required>
-                                </td>
-                                <td class="text-center">{{ $score['grades_self_development'] ?? '' }}</td>
-
-                                <!-- ECA Aver -->
-                                <td class="text-center">
-                                    <input name="eca_aver[]" min="0" max="100" type="number" class="form-control required-input " id="eca_aver" value="{{ $score['eca_aver'] ?: '' }}" autocomplete="off" required>
-                                </td>
-                                <td class="text-center">{{ $score['grades_eca_aver'] ?? '' }}</td>
-
-                                <!-- Behavior -->
-                                <td class="text-center">
-                                    <input name="behavior[]" min="0" max="100" type="number" class="form-control required-input " id="behavior" value="{{ $score['behavior'] ?: '' }}" autocomplete="off" required>
-                                </td>
-                                <td class="text-center">{{ $score['grades_behavior'] ?? '' }}</td>
-
-                                <!-- Attendance -->
-                                <td class="text-center">{{ $score['attendance'] }}</td>
-                                <td class="text-center">{{ $score['grades_attendance'] }}</td>
-
-                                <!-- Participation -->
-                                <td class="text-center">
-                                    <input name="participation[]"  min="0" max="100" type="number" class="form-control required-input " id="participation"value="{{ $score['participation'] ?: '' }}" autocomplete="off" required>
-                                </td>
-                                <td class="text-center">{{ $score['grades_participation'] }}</td>
-
-                                <input name="student_id[]" type="number" class="form-control required-input  d-none" id="student_id" value="{{ $student['student_id'] }}">
-                                                
-                                <td class="text-center">{{ $score['final_score'] }}</td>
-                                <td class="text-center">{{ $score['grades_final_score'] }}</td>
-                            @endforeach
-
-                        @else
-                            @foreach ($student['scores'] as $index => $score)
-
-                                <!-- ACADEMIC -->
-                                <td class="text-center">{{ $score['academic'] }}</td>
-                                <td class="text-center">{{ $score['grades_academic'] }}</td>
-
-                                <!-- Choice -->
-                                <td class="text-center">
-                                    @if($score['choice'])
-                                        {{ $score['choice'] }}
-                                    @else
-                                        <input name="choice[]" min="0" max="100" type="number" class="form-control required-input " id="choice" value="{{ $score['choice'] ?: '' }}" autocomplete="off" required>
-                                    @endif
-                                </td>
-                                <td class="text-center">{{ $score['grades_choice'] }}</td>
-
-                                <!-- Language & Art -->
-                                <td class="text-center">
-                                    @if(isset($score['language_and_art']))
-                                        {{ $score['language_and_art'] }}
-                                    @else
-                                        <input name="language_and_art[]" min="0" max="100" type="number" class="form-control required-input " id="language_and_art" value="{{ $score['language_and_art'] ?: '' }}" autocomplete="off" required>
-                                    @endif
-                                </td>
-                                <td class="text-center">{{ $score['grades_language_and_art'] ?? '' }}</td>
-
-                                <!-- Self-Development -->
-                                <td class="text-center">
-                                    @if(isset($score['self_development']))
-                                        {{ $score['self_development'] }}
-                                    @else
-                                        <input name="self_development[]" min="0" max="100" type="number" class="form-control required-input " id="self_development" value="{{ $score['self_development'] ?: '' }}" autocomplete="off" required>
-                                    @endif
-                                </td>
-                                <td class="text-center">{{ $score['grades_self_development'] ?? '' }}</td>
-
-                                <!-- ECA Aver -->
-                                <td class="text-center">
-                                    @if(isset($score['eca_aver']))
-                                        {{ $score['eca_aver'] }}
-                                    @else
-                                        <input name="eca_aver[]" min="0" max="100" type="number" class="form-control required-input " id="eca_aver" value="{{ $score['eca_aver'] ?: '' }}" autocomplete="off" required>
-                                    @endif
-                                </td>
-                                <td class="text-center">{{ $score['grades_eca_aver'] ?? '' }}</td>
-
-                                <!-- Behavior -->
-                                <td class="text-center">
-                                    @if(isset($score['behavior']))
-                                        {{ $score['behavior'] }}
-                                    @else
-                                        <input name="behavior[]" min="0" max="100" type="number" class="form-control required-input " id="behavior" value="{{ $score['behavior'] ?: '' }}" autocomplete="off" required>
-                                    @endif
-                                </td>
-                                <td class="text-center">{{ $score['grades_behavior'] ?? '' }}</td>
-
-                                <!-- Attendance -->
-                                <td class="text-center">{{ $score['attendance'] }}</td>
-                                <td class="text-center">{{ $score['grades_attendance'] }}</td>
-
-                                <!-- Participation -->
-                                <td class="text-center">
-                                    @if(isset($score['participation']))
-                                        {{ $score['participation'] }}
-                                    @else
-                                        <input name="participation[]"  min="0" max="100" type="number" class="form-control required-input " id="participation"value="{{ $score['participation'] ?: '' }}" autocomplete="off" required></td>
-                                    @endif
-                                <td class="text-center">{{ $score['grades_participation'] }}</td>
-
-                                <input name="student_id[]" type="number" class="form-control required-input  d-none" id="student_id" value="{{ $student['student_id'] }}">
-                                                
-                                <td class="text-center">{{ $score['final_score'] }}</td>
-                                <td class="text-center">{{ $score['grades_final_score'] }}</td>
-                            @endforeach
-                        @endif
-
-                        
-                        <td class="text-center">{{ $student['ranking'] }}</td>
-                    @endforeach
-                    </tr>
-                    <input name="grade_id" type="number" class="form-control required-input  d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
-                    <input name="class_teacher" type="number" class="form-control required-input  d-none" id="class_teacher" value="{{ $data['classTeacher']->teacher_id }}">    
-                    <input name="semester" type="number" class="form-control required-input  d-none" id="semester" value="{{ $data['semester'] }}">    
-                @else
-                    <p>Data Kosong</p>
-                @endif
-                </tbody>
-            </table>
+            @endif
             
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
                 <div class="input-group-append mx-2">
-                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
-                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
                     <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline SOOA</a>
                     @endif
                 </div>
-            </div>  
-            
-            <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
-                <thead>
-                    <tr>
-                        <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
-                        <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Academic</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Pilihan (Dancing, Singing, Badminton, Football)</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Language and Art</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Self-Development</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">ECA Aver (Non-Academic)</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Behavior</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Attendance</th>
-                        <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Participation</th>
-                        <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Total</th>
-                        <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Grades</th>
-                        <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Rank</th>
-                    </tr>
-    
-                    <tr>
-                        <!-- Major Subjects -->
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <!-- END MAJOR SUBJECTS -->
-                        
-                        <!-- MINOR SUBJECTS -->
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <!-- END MINOR SUBJECTS -->
-                        
-                        <!-- SUPPLEMENTARY SUBJECTS -->
-                        <td class="text-center">Mks</td>
-                        <td class="text-center">Grs</td>
-                        <!-- END SUPPLEMENTARY SUBJECTS -->
-                    </tr>
-                </thead>
-    
-                <tbody>
-                @if (!empty($data['students']))
-                    @foreach ($data['students'] as $student)
-    
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $student['student_name'] }}</td>
-    
-                        @foreach ($student['scores'] as $index => $score)
-    
-                            <!-- ACADEMIC -->
-                            <td class="text-center">{{ $score['academic'] }}</td>
-                            <td class="text-center">{{ $score['grades_academic'] }}</td>
-    
-                            <!-- Choice -->
-                            <td class="text-center">
-                                @if($score['choice'])
-                                    {{ $score['choice'] }}
-                                @else
-                                    -
-                                @endif
-                            </td>
-                            <td class="text-center">{{ $score['grades_choice'] }}</td>
-    
-                            <!-- Language & Art -->
-                            <td class="text-center">
-                                @if(isset($score['language_and_art']))
-                                    {{ $score['language_and_art'] }}
-                                @else
-                                    <input name="language_and_art[]" min="0" max="100" type="number" class="form-control required-input " id="language_and_art" value="{{ $score['language_and_art'] ? : '' }}" autocomplete="off" required>
-                                @endif
-                            </td>
-                            <td class="text-center">{{ $score['grades_language_and_art'] ?? '' }}</td>
-    
-                            <!-- Self-Development -->
-                            <td class="text-center">
-                                @if(isset($score['self_development']))
-                                    {{ $score['self_development'] }}
-                                @else
-                                    <input name="self_development[]" min="0" max="100" type="number" class="form-control required-input " id="self_development" value="{{ $score['self_development'] ?: '' }}" autocomplete="off" required>
-                                @endif
-                            </td>
-                            <td class="text-center">{{ $score['grades_self_development'] ?? '' }}</td>
-    
-                            <!-- ECA Aver -->
-                            <td class="text-center">
-                                @if(isset($score['eca_aver']))
-                                    {{ $score['eca_aver'] }}
-                                @else
-                                    <input name="eca_aver[]" min="0" max="100" type="number" class="form-control required-input " id="eca_aver" value="{{ $score['eca_aver'] ?: '' }}" autocomplete="off" required>
-                                @endif
-                            </td>
-                            <td class="text-center">{{ $score['grades_eca_aver'] ?? '' }}</td>
-    
-                            <!-- Behavior -->
-                            <td class="text-center">
-                                @if(isset($score['behavior']))
-                                    {{ $score['behavior'] }}
-                                @else
-                                    <input name="behavior[]" min="0" max="100" type="number" class="form-control required-input " id="behavior" value="{{ $score['behavior'] ?: '' }}" autocomplete="off" required>
-                                @endif
-                            </td>
-                            <td class="text-center">{{ $score['grades_behavior'] ?? '' }}</td>
-    
-                            <!-- Attendance -->
-                            <td class="text-center">{{ $score['attendance'] }}</td>
-                            <td class="text-center">{{ $score['grades_attendance'] }}</td>
-    
-                            <!-- Participation -->
-                            <td class="text-center">
-                                @if(isset($score['participation']))
-                                    {{ $score['participation'] }}
-                                @else
-                                    <input name="participation[]"  min="0" max="100" type="number" class="form-control required-input " id="participation"value="{{ $score['participation'] ?: '' }}" autocomplete="off" required></td>
-                                @endif
-                            <td class="text-center">{{ $score['grades_participation'] }}</td>
-    
-                            <input name="student_id[]" type="number" class="form-control required-input  d-none" id="student_id" value="{{ $student['student_id'] }}">
-                                            
-                            <td class="text-center">{{ $score['final_score'] }}</td>
-                            <td class="text-center">{{ $score['grades_final_score'] }}</td>
-                        @endforeach
-                        
-                        <td class="text-center">{{ $student['ranking'] }}</td>
+            </div>   
+            @endif
+
+        <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
+                    <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
+                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Academic</th>
+                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Pilihan (Dancing, Singing, Badminton, Football)</th>
+                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Language and Art</th>
+                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Self-Development</th>
+                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">ECA Aver (Non-Academic)</th>
+                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Behavior</th>
+                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Attendance</th>
+                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Participation</th>
+                    <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Total</th>
+                    <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Grades</th>
+                    <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Rank</th>
+                </tr>
+
+                <tr>
+                    <!-- Major Subjects -->
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <!-- END MAJOR SUBJECTS -->
+                    
+                    <!-- MINOR SUBJECTS -->
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <!-- END MINOR SUBJECTS -->
+                    
+                    <!-- SUPPLEMENTARY SUBJECTS -->
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
+                    <!-- END SUPPLEMENTARY SUBJECTS -->
+                </tr>
+            </thead>
+
+            <tbody>
+            @if (!empty($data['students']))
+                @foreach ($data['students'] as $student)
+
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $student['student_name'] }}</td>
+
+                    @foreach ($student['scores'] as $index => $score)
+
+                        <!-- ACADEMIC -->
+                        <td class="text-center">{{ $score['academic'] }}</td>
+                        <td class="text-center">{{ $score['grades_academic'] }}</td>
+
+                        <!-- Choice -->
+                        <td class="text-center">
+                            @if($score['choice'])
+                                {{ $score['choice'] }}
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td class="text-center">{{ $score['grades_choice'] }}</td>
+
+                        <!-- Language & Art -->
+                        <td class="text-center">
+                            @if(isset($score['language_and_art']))
+                                {{ $score['language_and_art'] }}
+                            @else
+                                <input name="language_and_art[]" min="0" max="100" type="number" class="form-control required-input " id="language_and_art" value="{{ $score['language_and_art'] ? : '' }}" autocomplete="off" required>
+                            @endif
+                        </td>
+                        <td class="text-center">{{ $score['grades_language_and_art'] ?? '' }}</td>
+
+                        <!-- Self-Development -->
+                        <td class="text-center">
+                            @if(isset($score['self_development']))
+                                {{ $score['self_development'] }}
+                            @else
+                                <input name="self_development[]" min="0" max="100" type="number" class="form-control required-input " id="self_development" value="{{ $score['self_development'] ?: '' }}" autocomplete="off" required>
+                            @endif
+                        </td>
+                        <td class="text-center">{{ $score['grades_self_development'] ?? '' }}</td>
+
+                        <!-- ECA Aver -->
+                        <td class="text-center">
+                            @if(isset($score['eca_aver']))
+                                {{ $score['eca_aver'] }}
+                            @else
+                                <input name="eca_aver[]" min="0" max="100" type="number" class="form-control required-input " id="eca_aver" value="{{ $score['eca_aver'] ?: '' }}" autocomplete="off" required>
+                            @endif
+                        </td>
+                        <td class="text-center">{{ $score['grades_eca_aver'] ?? '' }}</td>
+
+                        <!-- Behavior -->
+                        <td class="text-center">
+                            @if(isset($score['behavior']))
+                                {{ $score['behavior'] }}
+                            @else
+                                <input name="behavior[]" min="0" max="100" type="number" class="form-control required-input " id="behavior" value="{{ $score['behavior'] ?: '' }}" autocomplete="off" required>
+                            @endif
+                        </td>
+                        <td class="text-center">{{ $score['grades_behavior'] ?? '' }}</td>
+
+                        <!-- Attendance -->
+                        <td class="text-center">{{ $score['attendance'] }}</td>
+                        <td class="text-center">{{ $score['grades_attendance'] }}</td>
+
+                        <!-- Participation -->
+                        <td class="text-center">
+                            @if(isset($score['participation']))
+                                {{ $score['participation'] }}
+                            @else
+                                <input name="participation[]"  min="0" max="100" type="number" class="form-control required-input " id="participation"value="{{ $score['participation'] ?: '' }}" autocomplete="off" required></td>
+                            @endif
+                        <td class="text-center">{{ $score['grades_participation'] }}</td>
+
+                        <input name="student_id[]" type="number" class="form-control required-input  d-none" id="student_id" value="{{ $student['student_id'] }}">
+                                        
+                        <td class="text-center">{{ $score['final_score'] }}</td>
+                        <td class="text-center">{{ $score['grades_final_score'] }}</td>
                     @endforeach
-                    </tr>
-                    <input name="grade_id" type="number" class="form-control required-input  d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
-                    <input name="class_teacher" type="number" class="form-control required-input  d-none" id="class_teacher" value="{{ $data['classTeacher']->teacher_id }}">    
-                    <input name="semester" type="number" class="form-control required-input  d-none" id="semester" value="{{ $data['semester'] }}">    
-                @else
-                    <p>Data Kosong</p>
-                @endif
-                </tbody>
-            </table>
-            </form>
-        @endif
+                    
+                    <td class="text-center">{{ $student['ranking'] }}</td>
+                @endforeach
+                </tr>
+                <input name="grade_id" type="number" class="form-control required-input  d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
+                <input name="class_teacher" type="number" class="form-control required-input  d-none" id="class_teacher" value="{{ $data['classTeacher']->teacher_id }}">    
+                <input name="semester" type="number" class="form-control required-input  d-none" id="semester" value="{{ $data['semester'] }}">    
+            @else
+                <tr>
+                    <td colspan="33" class="text-center text-danger">
+                        Teacher doesnt submit academic assessment report      
+                    </td>    
+                </tr>
+            @endif
+            </tbody>
+        </table>
+
+        </form>
     </div>
 
     <!-- Modal -->
@@ -502,10 +321,17 @@
             var id = @json($data['grade']->grade_id);
             var teacherId = @json($data['classTeacher']->teacher_id);
             var semester = @json($data['semester']);
+            var role = @json(session('role'));
 
             console.log("id=", id, "teacher=", teacherId, "semester=", semester);
             var confirmDecline = document.getElementById('confirmDecline');
-            confirmDecline.href = "{{ url('/' . session('role') . '/reports/sooa/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            
+            if(role == 'admin' || role == 'superadmin'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/reports/sooa/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            }
+            else if(role == 'teacher'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/dashboard/sooa/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            }
         });
     });
 </script>

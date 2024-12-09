@@ -33,8 +33,20 @@ class GradeController extends Controller
          ]);
 
          $data = Grade::with(['student', 'teacher', 'exam', 'subject'])
-            ->withCount(['student as active_student_count', 'teacher as active_teacher_count', 'exam as active_exam_count', 'subject as active_subject_count'])
+            ->withCount([
+               'student as active_student_count',
+               'teacher as active_teacher_count' => function ($query) {
+                     $query->where('teacher_grades.academic_year', session('academic_year')); // Pastikan tabel 'teachers'
+               },
+               'exam as active_exam_count' => function ($query) {
+                     $query->where('grade_exams.academic_year', session('academic_year')); // Pastikan tabel 'exams'
+               },
+               'subject as active_subject_count' => function ($query) {
+                     $query->where('grade_subjects.academic_year', session('academic_year')); // Pastikan tabel 'subjects'
+               }
+            ])
             ->get();
+
 
          // dd($data);
          return view('components.grade.data-grade')->with('data', $data);
@@ -176,7 +188,7 @@ class GradeController extends Controller
       // dd($request);
       try {
          for ($i=0; $i < count($request->subject_id); $i++) { 
-            if(Grade_subject::where('grade_id', $request->grade_id)->where('subject_id', $request->subject_id[$i])->exists())
+            if(Grade_subject::where('grade_id', $request->grade_id)->where('subject_id', $request->subject_id[$i])->where('academic_year', session('academic_year'))->exists())
             {
                DB::rollBack();
                return redirect('/'. session('role').'/grades/manageSubject/addSubject/' . $request->grade_id)
@@ -191,12 +203,14 @@ class GradeController extends Controller
                'teacher_id' => $request->teacher_subject_id[$i],
                'subject_id' => $request->subject_id[$i],
                'grade_id'   => $request->grade_id,
+               'academic_year' => session('academic_year'),
                'created_at' => now(),
             ];
 
             $grade_subject = [
                'grade_id' => $request->grade_id,
                'subject_id' => $request->subject_id[$i],
+               'academic_year' => session('academic_year'),
                'created_at' => now(),
             ];
 
@@ -226,12 +240,14 @@ class GradeController extends Controller
 
       $gradeTeacher = Teacher_grade::where('grade_id',$id)
          ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+         ->where('academic_year', session('academic_year'))
          ->get();
 
       $gradeExam = Grade_exam::join('exams', 'exams.id','=', 'grade_exams.exam_id')
          ->join('type_exams', 'type_exams.id', '=', 'exams.type_exam')
          ->select('exams.*', 'type_exams.name as type_exam_name')
          ->where('grade_exams.grade_id', $id)
+         ->where('grade_exams.academic_year', session('academic_year'))
          ->get();
 
       $gradeSubject = Teacher_subject::where('grade_id', $id)
@@ -242,6 +258,7 @@ class GradeController extends Controller
             'subjects.name_subject as subject_name', 'subjects.id as subject_id',
             'teachers.name as teacher_name', 'teachers.id as teacher_id'
          )
+         ->where('academic_year', session('academic_year'))
          ->get();
 
       // dd($gradeSubject);
@@ -286,8 +303,12 @@ class GradeController extends Controller
 
          // ambil data teacher yang mengajar di class
          // $teacherGrade = Grade::findOrFail($id)->teacher()->get();
-         $teacherGrade = Teacher_grade::where('grade_id', $id)->pluck('teacher_id')->toArray();
-         $subjectGrade = Grade_subject::where('grade_id', $id)->pluck('subject_id')->toArray();
+         $teacherGrade = Teacher_grade::where('grade_id', $id)
+         ->where('academic_year', session('academic_year'))
+         ->pluck('teacher_id')->toArray();
+         $subjectGrade = Grade_subject::where('grade_id', $id)
+         ->where('academic_year', session('academic_year'))
+         ->pluck('subject_id')->toArray();
 
          // dd(count($subjectGrade));
          $teacher = Teacher::orderBy('name', 'asc')->get();
@@ -319,7 +340,10 @@ class GradeController extends Controller
 
          // ambil data teacher yang mengajar di class
          // $teacherGrade = Grade::findOrFail($id)->teacher()->get();
-         $teacherGrade = Teacher_grade::where('grade_id', $id)->pluck('teacher_id')->toArray();
+         $teacherGrade = Teacher_grade::where('grade_id', $id)
+         ->where('academic_year', session('academic_year'))
+         ->pluck('teacher_id')->toArray();
+
          $subjectGrade = Teacher_subject::where('grade_id', $id)
             ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
             ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
@@ -328,6 +352,8 @@ class GradeController extends Controller
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
                'teachers.name as teacher_name', 'teachers.id as teacher_id'
             )
+            
+         ->where('academic_year', session('academic_year'))
             ->get();
 
          // dd(count($subjectGrade));
@@ -396,7 +422,7 @@ class GradeController extends Controller
 
          $rules = [
             'name' => $request->name,
-            'teacher_id' => $request->teacher_id? $request->teacher_id : null,
+            'teacher_id' => $request->teacher_id ? $request->teacher_id : null,
             'class' => $request->class,
          ];
 
@@ -416,6 +442,7 @@ class GradeController extends Controller
             'teacher_id' => $request->teacher_id,
             'grade_id' => $id,
             'updated_at' => now(),
+            'academic_year' => session('academic_year'),
          ];
          
          $check = Grade::where('name', $request->name)->where('class', $request->class)->first();
@@ -427,8 +454,11 @@ class GradeController extends Controller
          }
 
          Teacher_grade::updateOrCreate(
-            ['grade_id' => $id], // Attributes to find the record
-            $data // Attributes to update or create
+            [
+               'grade_id' => $id,
+               'academic_year' => session('academic_year')
+            ], 
+            $data 
         );
          
          DB::commit();
@@ -517,6 +547,7 @@ class GradeController extends Controller
          $gradeTeacher = Teacher_grade::where('teacher_id', $getIdTeacher)
             ->join('grades', 'grades.id', '=', 'teacher_grades.grade_id')
             ->select('grades.*', )
+            ->where('academic_year', session('academic_year'))
             ->get();
 
             foreach ($gradeTeacher as $gt) {

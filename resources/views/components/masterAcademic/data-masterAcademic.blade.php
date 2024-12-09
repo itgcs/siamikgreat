@@ -27,6 +27,18 @@
         Edit
     </a>
 
+    <div class="col-12 p-0 mt-1"> 
+        <label for="master_academic">Choose Master Academics<span style="color: red"></span></label>
+        <select name="master_academic" id="master_academic" class="form-control" onchange="changeMasterAcademic(this.value)">
+            <option value="">-- SELECT MASTER ACADEMIC --</option>
+            @foreach ($masterAcademic as $ma)
+                <option value="{{ $ma->id }}" {{ $data[0]['academic_year'] == $ma->academic_year ? 'selected' : '' }}>
+                    Academic Year {{ $ma->academic_year }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
     <div class="card card-dark mt-2">
         <div class="card-header">
             <h3 class="card-title">Master Academics</h3>
@@ -113,6 +125,31 @@
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+<script>
+    function changeMasterAcademic(selectedId) {
+        if (selectedId) {
+            fetch(`/changeMasterAcademic/${selectedId}`, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload(); // Reload page after successful change
+                } else {
+                    alert('Failed to update Master Academic. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating Master Academic.');
+            });
+        }
+    }
+</script>
 
 @if(session('after_create_masterAcademic'))
     <script>

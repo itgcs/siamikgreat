@@ -23,10 +23,24 @@
 
     <div class="row">
         <div class="col">
-            <p class="text-xs font-bold">Summary of Academic Assessment</p>
-            <p class="text-xs">Class Teacher: {{ $data['grade']->teacher_name }}</p>
+            <p class="font-bold">Summary of Academic Assessment</p>
+            {{-- <p class="text-xs">Class Teacher: {{ $data['grade']->teacher_name }}</p>
             <p class="text-xs">Class : {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} </p>
-            <p class="text-xs">Date : {{date('d-m-Y')}}</p>
+            <p class="text-xs">Date : {{date('d-m-Y')}}</p> --}}
+            <table>
+                <tr>
+                    <td>Class</td>
+                    <td> : {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</td>
+                </tr>
+                <tr>
+                    <td>Class Teacher</td>
+                    <td> : {{ $data['classTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
+                </tr>
+            </table>
         </div>
     </div>
 
@@ -49,8 +63,8 @@
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
                 <div class="input-group-append mx-2">
-                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
-                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
                     <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline SOOA</a>
                     @endif
                 </div>
@@ -59,7 +73,6 @@
 
         <table class="table table-striped table-bordered bg-white" style="width: 2000px">
             @if ($data['status'] == null)
-
                     <thead>
                         <tr>
                             <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
@@ -123,7 +136,7 @@
                                     <td class="text-center">
                                         @if ($student['haveEca'] ==  1)
                                             {{ $student['nameEca']['eca_1'] }}
-                                            <input name="eca_1[]" min="0" max="100" type="number" class="form-control required-input" id="eca_1" autocomplete="off" required>
+                                            <input name="eca_1[]" min="0" max="100" type="number" value="{{$score['eca_1']}}" class="form-control required-input" id="eca_1" autocomplete="off" value required>
                                         @elseif ($student['haveEca'] == 0)
                                             {{ $student['nameEca'] }}
                                             <input name="eca_1[]" min="0" max="100" type="number" class="form-control d-none" id="eca_1" value="0" autocomplete="off" required>
@@ -136,10 +149,10 @@
                                         @if ($student['haveEca'] == 1)
                                             @if ($student['nameEca']['eca_2'] !=  "Not Choice")
                                                 {{ $student['nameEca']['eca_2'] }}
-                                                <input name="eca_2[]" min="0" max="100" type="number" class="form-control required-input" id="eca_2" autocomplete="off" required>
+                                                <input name="eca_2[]" min="0" max="100" type="number" value="{{$score['eca_2']}}" class="form-control required-input" id="eca_2" autocomplete="off" required>
                                             @elseif ($student['nameEca']['eca_2'] ==  "Not Choice")
                                                 {{ $student['nameEca']['eca_2'] }}
-                                                <input name="eca_2[]" min="0" max="100" type="number" class="form-control d-none" id="eca_2" value="0" autocomplete="off" required>    
+                                                <input name="eca_2[]" min="0" max="100" type="number" value="{{$score['eca_2']}}" class="form-control d-none" id="eca_2" value="0" autocomplete="off" required>    
                                             @endif
                                         @elseif ($student['haveEca'] == 0)
                                             {{ $student['nameEca'] }}
@@ -150,18 +163,18 @@
 
                                     <!-- Self-Development -->
                                     <td class="text-center">
-                                        <input name="self_development[]" min="0" max="100" type="number" class="form-control required-input" id="self_development" autocomplete="off" required>
+                                        <input name="self_development[]" min="0" max="100" type="number" value="{{$score['self_development']}}" class="form-control required-input" id="self_development" autocomplete="off" required>
                                     </td>
                                     <td class="text-center">{{ $score['grades_self_development'] ?? '' }}</td>
                                     
                                     <!-- ECA Aver -->
                                     <td class="text-center">
-                                        <input name="eca_aver[]" min="0" max="100" type="number" class="form-control required-input" id="eca_aver" autocomplete="off" required>
+                                        <input name="eca_aver[]" min="0" max="100" type="number" value="{{$score['eca_aver']}}" class="form-control required-input" id="eca_aver" autocomplete="off" required>
                                     </td>
                                     <td class="text-center">{{ $score['grades_eca_aver'] ?? '' }}</td>
 
                                     <td class="text-center">
-                                        <input name="behavior[]" min="0" max="100" type="number" class="form-control required-input" id="behavior" autocomplete="off" required>
+                                        <input name="behavior[]" min="0" max="100" type="number" value="{{$score['behavior']}}" class="form-control required-input" id="behavior" autocomplete="off" required>
                                     </td>
                                     <td class="text-center">{{ $score['grades_behavior'] ?? '' }}</td>
 
@@ -171,7 +184,7 @@
 
                                     <!-- Participation -->
                                     <td class="text-center">
-                                        <input name="participation[]"  min="0" max="100" type="number" class="form-control required-input" id="participation" autocomplete="off" required>
+                                        <input name="participation[]"  min="0" max="100" type="number" value="{{$score['participation']}}" class="form-control required-input" id="participation" autocomplete="off" required>
                                     </td>
                                     <td class="text-center">{{ $score['grades_participation'] }}</td>
                                     
@@ -425,12 +438,12 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Decline Report Card {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} Semester 1</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Decline Report Card {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">Are you sure want to decline report card {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} semester 1?</div>
+                    <div class="modal-body">Are you sure want to decline report card {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}?</div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
@@ -503,9 +516,16 @@
             var id = @json($data['grade']->grade_id);
             var teacherId = @json($data['classTeacher']->teacher_id);
             var semester = @json($data['semester']);
+            var role = @json(session('role'));
 
             var confirmDecline = document.getElementById('confirmDecline');
-            confirmDecline.href = "{{ url('/' . session('role') . '/reports/sooa/decline') }}/" + id + "/" + teacherId + "/" + semester;
+
+            if(role == 'admin' || role == 'superadmin'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/reports/sooa/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            }
+            else if(role == 'teacher'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/dashboard/sooa/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            }
         });
     });
 </script>

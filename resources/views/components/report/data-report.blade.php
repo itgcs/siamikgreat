@@ -19,7 +19,7 @@
       </div>
    </div>
 
-   <div class="form-group row">
+   {{-- <div class="form-group row">
       <div class="col-md-2">
          <select required name="semester" class="form-control" id="semester" onchange="saveSemesterToSession()">
             <option value="">-- Semester -- </option>
@@ -27,12 +27,12 @@
             <option value="2" {{ session('semester') == '2' ? "selected" : "" }}>Semester 2</option>
          </select>
       </div>
-   </div>
+   </div> --}}
 
    <!-- START TABEL -->
    @if (sizeof($data['grade']) != 0)
     <!-- UNDERGRADE -->
-    <div class="card card-dark mt-2">
+    <div class="card card-dark">
                <div class="card-header">
                   <h3 class="card-title">Except Primary dan Secondary</h3>
                   <div class="card-tools">

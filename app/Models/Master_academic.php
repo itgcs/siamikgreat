@@ -16,6 +16,7 @@ class Master_academic extends Model
         'semester2',
         'end_semester2',
         'now_semester',
+        'is_use',
         'created_at',
         'updated_at',
     ];

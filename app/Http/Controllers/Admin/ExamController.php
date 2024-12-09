@@ -58,7 +58,8 @@ class ExamController extends Controller
             ->join('teachers', 'exams.teacher_id', '=', 'teachers.id')
             ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
             ->where('exams.is_active', $status)
-            
+            ->where('exams.semester', session('semester'))
+            ->where('exams.academic_year', session('academic_year'))
             ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
             ->paginate(15);
 
@@ -201,6 +202,7 @@ class ExamController extends Controller
                   'type_exam_id' => $request->type_exam,
                   'student_id' => $getStudentId[$i],
                   'score' => 0,
+                  'semester' => $request->semester,
                   'academic_year' => session('academic_year'),
                   'created_at' => now(),
                ];
@@ -231,6 +233,7 @@ class ExamController extends Controller
                   'type_exam_id' => $request->type_exam,
                   'student_id' => $getStudentId[$i],
                   'score' => 0,
+                  'semester' => $request->semester,
                   'academic_year' => session('academic_year'),
                   'created_at' => now(),
                ];
@@ -261,6 +264,7 @@ class ExamController extends Controller
                   'type_exam_id' => $request->type_exam,
                   'student_id' => $getStudentId[$i],
                   'score' => 0,
+                  'semester' => $request->semester,
                   'academic_year' => session('academic_year'),
                   'created_at' => now(),
                ];
@@ -291,6 +295,7 @@ class ExamController extends Controller
                   'type_exam_id' => $request->type_exam,
                   'student_id' => $getStudentId[$i],
                   'score' => 0,
+                  'semester' => $request->semester,
                   'academic_year' => session('academic_year'),
                   'created_at' => now(),
                ];
@@ -321,6 +326,7 @@ class ExamController extends Controller
                   'type_exam_id' => $request->type_exam,
                   'student_id' => $getStudentId[$i],
                   'score' => 0,
+                  'semester' => $request->semester,
                   'academic_year' => session('academic_year'),
                   'created_at' => now(),
                ];
@@ -351,6 +357,7 @@ class ExamController extends Controller
                   'type_exam_id' => $request->type_exam,
                   'student_id' => $getStudentId[$i],
                   'score' => 0,
+                  'semester' => $request->semester,
                   'academic_year' => session('academic_year'),
                   'created_at' => now(),
                ];
@@ -380,6 +387,7 @@ class ExamController extends Controller
                   'type_exam_id' => $request->type_exam,
                   'student_id' => $chineseLowerStudent[$i],
                   'score' => 0,
+                  'semester' => $request->semester,
                   'academic_year' => session('academic_year'),
                   'created_at' => now(),
                ];
@@ -412,6 +420,7 @@ class ExamController extends Controller
                   'type_exam_id' => $request->type_exam,
                   'student_id' => $chineseHigherStudent[$i],
                   'score' => 0,
+                  'semester' => $request->semester,
                   'academic_year' => session('academic_year'),
                   'created_at' => now(),
                ];
@@ -441,6 +450,7 @@ class ExamController extends Controller
                   'type_exam_id' => $request->type_exam,
                   'student_id' => $getStudentId[$i],
                   'score' => 0,
+                  'semester' => $request->semester,
                   'academic_year' => session('academic_year'),
                   'created_at' => now(),
                ];
@@ -731,12 +741,14 @@ class ExamController extends Controller
 
          $dataSubject = Teacher_subject::join('subjects','subjects.id','=','teacher_subjects.subject_id')
             ->where('teacher_subjects.teacher_id', $getIdTeacher)
+            ->where('academic_year', session('academic_year'))
             ->select('subjects.*')
             ->orderBy('subjects.name_subject', 'asc')
             ->get();
 
          $dataGrade = Teacher_subject::join('grades', 'grades.id', '=', 'teacher_subjects.grade_id')
             ->where('teacher_subjects.teacher_id', $getIdTeacher)
+            ->where('academic_year', session('academic_year'))
             ->select('grades.*')
             ->distinct('grades.name')
             ->orderBy('grades.id', 'asc')

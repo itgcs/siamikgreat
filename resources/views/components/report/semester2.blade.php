@@ -23,10 +23,24 @@
 
     <div class="row">
         <div class="col">
-            <p class="text-xs text-bold">Report Card Semester 2</p>
-            <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
+            <p class="text-bold">Report Card Semester 2</p>
+            {{-- <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
             <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} </p>
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
+            <p class="text-xs">Date  : {{date('d-m-Y')}}</p> --}}
+            <table>
+                <tr>
+                    <td>Class</td>
+                    <td> : {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</td>
+                </tr>
+                <tr>
+                    <td>Class Teacher</td>
+                    <td> : {{ $data['classTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
+                </tr>
+            </table>
         </div>
     </div>
 
@@ -49,8 +63,8 @@
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
                 <div class="input-group-append mx-2">
-                    <a  class="btn btn-success">Already Submit in {{ $data['status']->created_at }}</a>
-                    @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
+                    @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
                     <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Report Card Semester 2</a>
                     @endif
                 </div>
@@ -492,10 +506,18 @@
             var id = @json($data['grade']->grade_id);
             var teacherId = @json($data['classTeacher']->teacher_id);
             var semester = @json($data['semester']);
+            var role = @json(session('role'));
 
+            
             console.log("id=", id, "teacher=", teacherId, "semester=", semester);
+            
             var confirmDecline = document.getElementById('confirmDecline');
-            confirmDecline.href = "{{ url('/' . session('role') . '/reports/reportCard/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            if(role == 'admin' || role == 'superadmin'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/reports/reportCard/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            }
+            else if(role == 'teacher'){
+                confirmDecline.href = "{{ url('/' . session('role') . '/dashboard/reportCard/decline') }}/" + id + "/" + teacherId + "/" + semester;
+            }
         });
     });
 </script>
@@ -506,6 +528,16 @@
             icon: 'success',
             title: 'Successfully',
             text: 'Successfully post report card semester 2 in the database.',
+        });
+    </script>
+@endif
+
+@if(session('after_decline_report_card'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully decline Report.',
         });
     </script>
 @endif

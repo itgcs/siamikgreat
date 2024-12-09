@@ -31,6 +31,7 @@ use App\Http\Controllers\ColorScheduleController;
 use App\Http\Controllers\ChineseHigherController;
 use App\Http\Controllers\ChineseLowerController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\MonthlyActivitiesController;
 
 use App\Http\Controllers\SuperAdmin\{
    SuperAdminController,
@@ -110,6 +111,7 @@ Route::get('/get-all-schedule-filter/{teacher?}/{grade?}/{day?}', function($teac
        ->leftJoin('subjects', 'schedules.subject_id', '=', 'subjects.id')
        ->where('type_schedule_id', $lesson)
        ->where('semester', session('semester'))
+       ->where('academic_year', session('academic_year'))
        ->orderBy('grade_id', 'asc')
        ->orderBy('day', 'asc')
        ->orderBy('start_time', 'asc');
@@ -886,9 +888,9 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::get('/teacher/grade/subject', [AttendanceController::class, 'detailAttendance'])->name('super.attendance.detail');
    });
 
-   Route::prefix('/reportCard')->group(function () {
-      Route::get('/', [Pdf::class, 'index']);
-   });
+   // Route::prefix('/reportCard')->group(function () {
+   //    Route::get('/', [Pdf::class, 'index']);
+   // });
 
    Route::prefix('/chineseHigher')->group(function () {
       Route::get('/', [ChineseHigherController::class, 'index']);
@@ -1055,7 +1057,7 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('sooa/decline/{gradeId}/{teacherId}/{semester}', [ReportController::class, 'sooaPrimaryDecline']);
       Route::get('scoring/decline/{gradeId}/{teacherId}/{subjectId}/{semester}', [ReportController::class, 'scoringDecline']);
       Route::get('reportCard/decline/{gradeId}/{teacherId}/{semester}', [ReportController::class, 'reportCardDecline']);
-      Route::get('tcop/decline/{gradeId}/{teacherId}', [ReportController::class, 'reportCardDecline']);
+      Route::get('tcop/decline/{gradeId}/{teacherId}', [ReportController::class, 'tcopDecline']);
 
       Route::get('midcard/semestersatu/{id}', [ReportController::class, 'cardSemesterMid']);
       Route::get('semestersatu/detail/{id}', [ReportController::class, 'cardSemester1']);
@@ -1321,6 +1323,13 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::post('report/kindergarten', [ScoringController::class, 'actionPostReportCardKindergarten'])->name('actionTeacherPostReportCardKindergarten');
       Route::post('report/midkindergarten', [ScoringController::class, 'actionPostMidReportCardKindergarten'])->name('actionTeacherPostMidReportCardKindergarten');
 
+      Route::get('scoring/decline/{gradeId}/{teacherId}/{subjectId}/{semester}', [ReportController::class, 'scoringDecline']);
+      Route::get('acar/decline/{gradeId}/{teacherId}/{semester}', [ReportController::class, 'acarDecline']); // Sudah termasuk acar primary dan secondary
+      Route::get('sooa/decline/{gradeId}/{teacherId}/{semester}', [ReportController::class, 'sooaPrimaryDecline']);
+      Route::get('reportCard/decline/{gradeId}/{teacherId}/{semester}', [ReportController::class, 'reportCardDecline']);
+      Route::get('midreportCard/decline/{gradeId}/{teacherId}/{semester}', [ReportController::class, 'midreportCardDecline']);
+      Route::get('tcop/decline/{gradeId}/{teacherId}', [ReportController::class, 'tcopDecline']);
+      
       Route::get('schedules/all', [ScheduleController::class, 'allScheduleSchools']);
       Route::get('schedules/grade', [ScheduleController::class, 'scheduleGradeTeacher']);
       Route::get('schedules/gradeOther/{id}', [ScheduleController::class, 'scheduleGradeTeacherOther']);
@@ -1364,4 +1373,19 @@ Route::middleware(['auth.login', 'role:parent'])->prefix('/parent')->group(funct
       Route::get('/schools', [ScheduleController::class, 'scheduleStudentSchools']);
       Route::get('schedules/grade', [ScheduleController::class, 'scheduleStudent']);
    });
+});
+
+Route::middleware(['auth.login', 'role:superadmin,admin'])->group(function () {
+   Route::prefix('/monthlyActivities')->group(function () {
+      Route::get('/', [MonthlyActivitiesController::class, 'index']);
+      Route::get('/create', [MonthlyActivitiesController::class, 'pageCreate']);
+      Route::get('/edit/{id}', [MonthlyActivitiesController::class, 'pageEdit']);
+      Route::get('/pdf/{id}', [MonthlyActivitiesController::class, 'pagePDF']);
+      Route::post('/', [MonthlyActivitiesController::class, 'actionPost'])->name('actionCreateMonthly');
+      Route::put('/{id}', [MonthlyActivitiesController::class, 'actionPut'])->name('actionUpdateMonthly');
+      Route::get('/delete/{id}', [MonthlyActivitiesController::class, 'delete'])->name('deleteMonthly');
+   });
+   
+   Route::put('/changeMasterAcademic/{id}', [MasterAcademicController::class, 'changeMasterAcademic'])->name('actionChangeMasterAcademic');
+
 });
