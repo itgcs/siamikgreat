@@ -69,6 +69,7 @@ Route::get('/counter', Counter::class);
 Route::get('/get-subjects/{gradeId}', function($gradeId) {
    $subjects = Grade_subject::join('subjects', 'grade_subjects.subject_id', '=', 'subjects.id')
    ->where('grade_id', $gradeId)
+   ->where('academic_year', session('academic_year'))
    ->orderBy('subjects.name_subject', 'asc')
    ->get();
    return response()->json($subjects);
@@ -79,6 +80,7 @@ Route::get('/get-teachers/{gradeId}/{subjectId}', function($gradeId, $subjectId)
    $subjects = Teacher_subject::join('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
    ->where('grade_id', $gradeId)
    ->where('subject_id', $subjectId)
+   ->where('academic_year', session('academic_year'))
    ->get();
    return response()->json($subjects);
 });
@@ -88,6 +90,7 @@ Route::get('/get-subjects/{gradeId}/{teacherId}', function($gradeId, $teacherId)
    $teachers = Teacher_subject::join('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
    ->where('grade_id', $gradeId)
    ->where('teacher_id', $teacherId)
+   ->where('academic_year', session('academic_year'))
    ->orderBy('subjects.name_subject', 'asc')
    ->get();
    return response()->json($teachers);
@@ -97,6 +100,7 @@ Route::get('/get-subjects/{gradeId}/{teacherId}', function($gradeId, $teacherId)
 Route::get('/get-grades/{teacherId}', function($teacherId) {
    $grades = Teacher_subject::join('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
    ->where('teacher_id', $teacherId)
+   ->where('academic_year', session('academic_year'))
    ->get();
    return response()->json($grades);
 });
@@ -696,14 +700,19 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::get('/edit/{id}', [GradeController::class, 'pageEdit']);
       Route::get('/manageSubject/{id}', [GradeController::class, 'pageEditSubject']);
       Route::get('/manageSubject/teacher/edit/{id}/{subjectId}/{teacherId}', [GradeController::class, 'pageEditSubjectTeacher']);
-      Route::put('manageSubject/{id}', [GradeController::class, 'actionPutSubjectTeacher'])->name('actionAdminUpdateGradeSubjectTeacher');
+      Route::get('/manageSubject/teacher/multiple/edit/{id}/{subjectId}', [GradeController::class, 'pageEditSubjectTeacherMultiple']);
+      Route::put('manageSubject/{id}', [GradeController::class, 'actionPutSubjectTeacher'])->name('actionSuperUpdateGradeSubjectTeacher');
+      Route::put('manageSubject/multi/{id}', [GradeController::class, 'actionPutSubjectMultiTeacher'])->name('actionSuperUpdateGradeSubjectMultiTeacher');
       Route::post('/', [GradeController::class, 'actionPost'])->name('actionSuperCreateGrade');
       Route::put('/{id}', [GradeController::class, 'actionPut'])->name('actionSuperUpdateGrade');
       Route::get('/delete/{id}', [GradeController::class, 'delete'])->name('delete-grade');
       Route::get('/subject/delete/{gradeId}/{subjectId}/{teacherId}', [GradeController::class, 'deleteSubjectGrade'])->name('delete-subject-grade');
+      Route::get('/subject/multiple/delete/{gradeId}/{subjectId}/{teacherId}', [GradeController::class, 'deleteSubjectMultipleGrade'])->name('delete-subject-multiple-grade');
    
       Route::get('/manageSubject/addSubject/{id}', [GradeController::class, 'pageAddSubjectTeacher']);
+      Route::get('/manageSubject/addSubject/multiple/{id}', [GradeController::class, 'pageAddSubjectTeacherMultiple']);
       Route::post('/manageSubject', [GradeController::class, 'actionPostAddSubjectGrade'])->name('actionSuperAddSubjectGrade');
+      Route::post('/manageSubject/multiple', [GradeController::class, 'actionPostAddSubjectGradeMultiple'])->name('actionSuperAddSubjectGradeMultiple');
       
    });
 
@@ -988,12 +997,18 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/edit/{id}', [GradeController::class, 'pageEdit']);
       Route::get('/manageSubject/{id}', [GradeController::class, 'pageEditSubject']);
       Route::get('/manageSubject/teacher/edit/{id}/{subjectId}/{teacherId}', [GradeController::class, 'pageEditSubjectTeacher']);
+      Route::get('/manageSubject/teacher/multiple/edit/{id}/{subjectId}', [GradeController::class, 'pageEditSubjectTeacherMultiple']);
       
       Route::get('/manageSubject/addSubject/{id}', [GradeController::class, 'pageAddSubjectTeacher']);
+      Route::get('/manageSubject/addSubject/multiple/{id}', [GradeController::class, 'pageAddSubjectTeacherMultiple']);
       Route::post('/manageSubject', [GradeController::class, 'actionPostAddSubjectGrade'])->name('actionAdminAddSubjectGrade');
+      Route::post('/manageSubjectMultiple', [GradeController::class, 'actionPostAddSubjectGradeMultiple'])->name('actionAdminAddSubjectGradeMultiple');
       Route::get('/subject/delete/{gradeId}/{subjectId}/{teacherId}', [GradeController::class, 'deleteSubjectGrade'])->name('delete-subject-grade');
+      Route::get('/subject/multiple/delete/{gradeId}/{subjectId}/{teacherId}', [GradeController::class, 'deleteSubjectMultipleGrade'])->name('delete-subject-multiple-grade');
    
       Route::put('manageSubject/{id}', [GradeController::class, 'actionPutSubjectTeacher'])->name('actionAdminUpdateGradeSubjectTeacher');
+      Route::put('manageSubject/multi/{id}', [GradeController::class, 'actionPutSubjectMultiTeacher'])->name('actionAdminUpdateGradeSubjectMultiTeacher');
+      Route::post('changeTeacherSubject/multi', [GradeController::class, 'actionChangeSubjectMultiTeacher'])->name('actionAdminChangeGradeSubjectMultiTeacher');
       Route::post('/', [GradeController::class, 'actionPost'])->name('actionAdminCreateGrade');
       Route::put('/{id}', [GradeController::class, 'actionPut'])->name('actionAdminUpdateGrade');
    });

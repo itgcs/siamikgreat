@@ -70,7 +70,7 @@
                                     </div>
                                 </div>
 
-                                <! SELECT TEACHER >
+                                {{-- <! SELECT TEACHER > --}}
                                 <div class="form-group row">
                                     <div class="col-md-12">
                                        @php
@@ -108,12 +108,15 @@
                                         <a class="btn btn-primary btn"
                                         href="{{url('/' . session('role') .'/grades/manageSubject') . '/' . $gradeId}}">Manage Subject Teacher</a>
                                     </div>
+                                    <div class="col-12 mt-3">
+                                        <input role="button" type="submit" class="btn btn-success center col-12">
+                                    </div>
                                 </div>
-                                <! END SELECT TEACHER >
+                                {{-- <! END SELECT TEACHER > --}}
 
 
-                                <! SELECT SUBJECT >
-                                <!-- <div class="form-group row">
+                                {{-- <! SELECT SUBJECT > --}}
+                                {{-- <div class="form-group row">
                                     <div class="col-md-12">
                                         <label for="subject_id">Subject Class</label>
                                         <select name="subject_id[]" class="js-select2 form-control" id="subject_id" multiple="multiple">
@@ -143,8 +146,8 @@
                                         <p style="color: red">{{$errors->first('subject_id')}}</p>
                                         @endif
                                     </div>
-                                </div> -->
-                                <! END SUBJECT >
+                                </div> --}}
+                                {{-- <! END SUBJECT > --}}
 
                                 <!-- <table class="table table-striped table-bordered">
                                     <thead>
@@ -187,9 +190,6 @@
                             </div>
 
 
-                            <div class="row d-flex justify-content-center">
-                                <input role="button" type="submit" class="btn btn-success center col-11 m-3">
-                            </div>
                         </div>
                     </form>
                 </div>

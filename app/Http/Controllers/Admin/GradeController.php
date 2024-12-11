@@ -20,6 +20,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use PHPUnit\Framework\Constraint\Constraint;
 
 class GradeController extends Controller
 {
@@ -98,6 +99,32 @@ class GradeController extends Controller
          ];
 
          return view('components.grade.add-subject-grade')->with('data', $data);
+         
+      } catch (Exception $err) {
+         dd($err);
+         return abort(500);
+      }
+   }
+
+   public function pageAddSubjectTeacherMultiple($id)
+   {
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
+
+         $teacher = Teacher::orderBy('name', 'asc')->get();
+         $subject = Subject::orderBy('name_subject', 'asc')->get();
+         $grade   = Grade::where('id', $id)->first();
+
+         $data = [
+            'teacher' => $teacher,
+            'subject' => $subject,
+            'grade' => $grade,
+         ];
+
+         return view('components.grade.add-subject-grade-multiple')->with('data', $data);
          
       } catch (Exception $err) {
          dd($err);
@@ -216,6 +243,72 @@ class GradeController extends Controller
 
             $dataTeacherSubject = Teacher_subject::create($teacher_subject);
             $dataGradeSubject = Grade_subject::create($grade_subject);
+         }
+      
+         session()->flash('after_add_subject_grade');
+         return redirect('/' .session('role'). '/grades/manageSubject/' . $request->grade_id);
+
+      } catch (Exception $err) {
+         DB::rollBack();
+         return dd($err);
+      }
+   }
+
+   public function actionPostAddSubjectGradeMultiple(Request $request)
+   {
+      // dd($request);
+      try {
+         DB::beginTransaction();
+
+         for ($i=0; $i < count($request->teacher_subject_id_member); $i++) { 
+            
+            if(Grade_subject::where('grade_id', $request->grade_id)->where('subject_id', $request->subject_id[$i])->where('academic_year', session('academic_year'))->exists())
+            {
+               DB::rollBack();
+               return redirect('/'. session('role').'/grades/manageSubject/addSubject/multiple/' . $request->grade_id)
+               ->with('sweetalert', [
+                  'title' => 'Error',
+                  'text' => 'Subject Grade has been created',
+                  'icon' => 'error'
+               ]);
+            }
+            
+            $teacher_subject_main = [
+               'teacher_id' => $request->teacher_subject_id_main[$i],
+               'subject_id' => $request->subject_id[$i],
+               'grade_id'   => $request->grade_id,
+               'is_lead'    => true,
+               'is_group'   => null,
+               'academic_year' => session('academic_year'),
+               'created_at' => now(),
+           ];
+           Teacher_subject::create($teacher_subject_main);
+   
+           // Simpan data sebagai Member Teacher
+           foreach ($request->teacher_subject_id_member[$i] as $memberTeacherId) {
+               $teacher_subject_member = [
+                   'teacher_id' => $memberTeacherId,
+                   'subject_id' => $request->subject_id[$i],
+                   'grade_id'   => $request->grade_id,
+                   'is_lead'    => null,
+                   'is_group'  => true,
+                   'academic_year' => session('academic_year'),
+                   'created_at' => now(),
+               ];
+               Teacher_subject::create($teacher_subject_member);
+           }
+
+
+
+            $grade_subject = [
+               'grade_id' => $request->grade_id,
+               'subject_id' => $request->subject_id[$i],
+               'academic_year' => session('academic_year'),
+               'created_at' => now(),
+            ];
+            Grade_subject::create($grade_subject);
+
+            DB::commit();
          }
       
          session()->flash('after_add_subject_grade');
@@ -349,12 +442,28 @@ class GradeController extends Controller
             ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
             ->select(
                'teacher_subjects.grade_id as grade_id',
+               'teacher_subjects.is_lead', 'teacher_subjects.is_group',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
                'teachers.name as teacher_name', 'teachers.id as teacher_id'
             )
-            
          ->where('academic_year', session('academic_year'))
-            ->get();
+         ->get();
+
+         $groupSubject = Teacher_subject::where('grade_id', $id)
+            ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
+            ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
+            ->select(
+               'teacher_subjects.grade_id as grade_id',
+               'teacher_subjects.is_lead', 'teacher_subjects.is_group',
+               'subjects.name_subject as subject_name', 'subjects.id as subject_id',
+               'teachers.name as teacher_name', 'teachers.id as teacher_id'
+            )
+         ->whereNotNull('is_lead')
+         ->where('academic_year', session('academic_year'))
+         ->distinct()
+         ->get();
+
+         // dd($groupSubject);
 
          // dd(count($subjectGrade));
          $teacher = Teacher::orderBy('id', 'asc')->get();
@@ -366,7 +475,8 @@ class GradeController extends Controller
 
 
          // dd($data);
-         return view('components.grade.edit-subject')->with('data', $data)->with('teacher', $teacher)->with('subject', $subject)->with('teacherGrade', $teacherGrade)->with('subjectGrade', $subjectGrade)->with('allTeacher', $allTeacher)->with('gradeId', $gradeId);
+         return view('components.grade.edit-subject')->with('data', $data)->with('teacher', $teacher)->with('subject', $subject)->with('teacherGrade', $teacherGrade)->with('subjectGrade', $subjectGrade)->with('allTeacher', $allTeacher)->with('gradeId', $gradeId)
+         ->with('groupSubject', $groupSubject);
          
       } catch (Exception $err) {
          dd($err);
@@ -391,6 +501,7 @@ class GradeController extends Controller
             ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
             ->select(
                'teacher_subjects.id as teacher_subject_id',
+               'teacher_subjects.is_lead', 'teacher_subjects.is_group',
                'grades.name as grade_name', 'grades.id as grade_id', 'grades.class as grade_class',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
                'teachers.name as teacher_name', 'teachers.id as teacher_id'
@@ -402,6 +513,94 @@ class GradeController extends Controller
          
          // dd($data);
          return view('components.grade.page-edit-subject')->with('data', $data)->with('subject', $subject)->with('teacher', $teacher);
+         
+      } catch (Exception $err) {
+         dd($err);
+         return abort(404);
+      }
+   }
+
+   public function pageEditSubjectTeacherMultiple($id, $subjectId)
+   {
+      try {
+         //code...
+         session()->flash('page',  $page = (object)[
+               'page' => 'database grades',
+               'child' => 'database grades',
+         ]);
+
+         $dataMultiple = Teacher_subject::where('grade_id', $id)
+            ->where('subject_id', $subjectId)
+            ->leftJoin('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
+            ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
+            ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
+            ->select(
+               'teacher_subjects.id as teacher_subject_id',
+               'teacher_subjects.is_lead', 
+               'teacher_subjects.is_group',
+               'grades.name as grade_name', 
+               'grades.id as grade_id', 
+               'grades.class as grade_class',
+               'subjects.name_subject as subject_name', 
+               'subjects.id as subject_id',
+               'teachers.name as teacher_name', 
+               'teachers.id as teacher_id',
+            )
+            ->get();
+
+            $dataMul = [
+               'grade_id' => $dataMultiple[0]->grade_id,
+               'grade_name' => $dataMultiple[0]->grade_name,
+               'grade_class' => $dataMultiple[0]->grade_class,
+               'subject_name' => $dataMultiple[0]->subject_name,
+               'subject_id' => $dataMultiple[0]->subject_id,
+               'is_lead' => [],
+               'is_group' => []
+            ];
+            
+            foreach($dataMultiple as $dm) {
+               if ($dm->is_lead !== null) {
+                  $dataMul['is_lead'][] = [
+                     'id' => $dm->teacher_id,
+                     'name' => $dm->teacher_name
+                  ];
+               } elseif ($dm->is_group !== null) {
+                  $dataMul['is_group'][] = [
+                     'id' => $dm->teacher_id,
+                     'name' => $dm->teacher_name
+                  ];
+               }
+            }
+           
+
+         // Example output for verification:
+
+         
+         $data = Teacher_subject::where('grade_id', $id)
+            ->where('subject_id', $subjectId)
+            ->leftJoin('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
+            ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
+            ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
+            ->select(
+               'teacher_subjects.id as teacher_subject_id',
+               'teacher_subjects.is_lead', 'teacher_subjects.is_group',
+               'grades.name as grade_name', 'grades.id as grade_id', 'grades.class as grade_class',
+               'subjects.name_subject as subject_name', 'subjects.id as subject_id',
+               'teachers.name as teacher_name', 'teachers.id as teacher_id'
+            )
+            ->first();
+         
+         $teacher = Teacher::get();
+         $teachers = Teacher::get();
+         $teacherss = Teacher::get();
+         $subject = Subject::get();
+
+                  // dd($dataMul['is_group']);
+// dd($teacher);
+         
+         // dd($dataMul);
+         return view('components.grade.page-edit-subject-multiple')->with('data', $data)->with('subject', $subject)->with('teacher', $teacher)
+         ->with('dataMultiple', $dataMul)->with('teachers', $teachers)->with('teacherss', $teacherss);
          
       } catch (Exception $err) {
          dd($err);
@@ -529,10 +728,105 @@ class GradeController extends Controller
          return dd($err);
          // return abort(500);
       }
-    }
+   }
+   
+   public function actionPutSubjectMultiTeacher(Request $request, $id)
+   {
+      // dd($request);
+      DB::beginTransaction();
+
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
+
+         $role = session('role');
+         
+         DB::commit();
+      
+         session()->flash('after_update_subject_teacher');
+
+         $data = Teacher_subject::where('grade_id', $request->grade_id)
+            ->where('subject_id', $request->subject)
+            ->where('teacher_id', $request->teacher)
+            ->leftJoin('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
+            ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
+            ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
+            ->select(
+               'teacher_subjects.id as teacher_subject_id',
+               'grades.name as grade_name', 'grades.id as grade_id', 'grades.class as grade_class',
+               'subjects.name_subject as subject_name', 'subjects.id as subject_id',
+               'teachers.name as teacher_name', 'teachers.id as teacher_id'
+            )
+            ->first();
+
+         $teacher = Teacher::get();
+         $subject = Subject::get();
+         
+         // dd($data);
+         return view('components.grade.page-edit-subject')->with('data', $data)->with('subject', $subject)->with('teacher', $teacher);
+         
+
+         // return redirect()->back()->with('role', session('role'))->with('data', $data);
+
+      } catch (Exception $err) {
+         DB::rollBack();
+         return dd($err);
+         // return abort(500);
+      }
+   }
+
+   public function actionChangeSubjectMultiTeacher(Request $request)
+   {
+      // dd($request);
+      DB::beginTransaction();
+
+      try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
+
+         $role = session('role');
+         
+         // DB::commit();
+      
+         // session()->flash('after_update_subject_teacher');
+
+         $data = Teacher_subject::where('grade_id', $request->grade_id)
+            ->where('subject_id', $request->subject)
+            ->where('teacher_id', $request->teacher)
+            ->leftJoin('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
+            ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
+            ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
+            ->select(
+               'teacher_subjects.id as teacher_subject_id',
+               'grades.name as grade_name', 'grades.id as grade_id', 'grades.class as grade_class',
+               'subjects.name_subject as subject_name', 'subjects.id as subject_id',
+               'teachers.name as teacher_name', 'teachers.id as teacher_id'
+            )
+            ->first();
+
+         
+         // dd($data);
+         // return view('components.grade.page-edit-subject')->with('data', $data)->with('subject', $subject)->with('teacher', $teacher);
+         return response()->json([
+            'success' => true
+         ]);
+
+         // return redirect()->back()->with('role', session('role'))->with('data', $data);
+
+      } catch (Exception $err) {
+         DB::rollBack();
+         return dd($err);
+         // return abort(500);
+      }
+   }
 
    
 
+   
    public function teacherGrade()
    {
       try {
@@ -621,6 +915,30 @@ class GradeController extends Controller
       }
    }
 
+   public function deleteSubjectMultipleGrade($gradeId, $subjectId, $teacherId)
+   {
+      try {
+         // Hapus data terkait (Teacher_subject dan Grade_subject)
+         
+         Grade_subject::where('grade_id', $gradeId)
+            ->where('subject_id', $subjectId)
+            ->delete();
+
+         Teacher_subject::where('teacher_id', $teacherId)
+            ->where('grade_id', $gradeId)
+            ->where('subject_id', $subjectId)
+            ->delete();
+
+
+         session()->flash('after_delete_subject_grade');
+
+         return redirect('/'. session('role') .'/grades/manageSubject/' . $gradeId);
+      } catch (Exception $err) {
+         dd($err);
+         return redirect('/'. session('role') .'/grades/manageSubject/' . $gradeId);
+      }
+   }
+
    public function deleteSubjectGrade($gradeId, $subjectId, $teacherId)
    {
       try {
@@ -642,6 +960,29 @@ class GradeController extends Controller
       } catch (Exception $err) {
          dd($err);
          return redirect('/'. session('role') .'/grades/manageSubject/' . $gradeId);
+      }
+   }
+
+   public function deleteSubjectGradeMultiple($gradeId, $subjectId, $teacherId)
+   {
+      try {
+         // Hapus data terkait (Teacher_subject dan Grade_subject)
+         
+         Grade_subject::where('grade_id', $gradeId)
+            ->where('subject_id', $subjectId)
+            ->delete();
+
+         Teacher_subject::where('teacher_id', $teacherId)
+            ->where('grade_id', $gradeId)
+            ->where('subject_id', $subjectId)
+            ->delete();
+
+         session()->flash('after_delete_subject_grade');
+
+         return redirect('/'. session('role') .'/grades/manageSubject/teacher/multiple/edit/' . $gradeId . '/' . $subjectId);
+      } catch (Exception $err) {
+         dd($err);
+         return redirect('/'. session('role') .'/grades/manageSubject/teacher/multiple/edit/' . $gradeId . '/' . $subjectId);
       }
    }
 }

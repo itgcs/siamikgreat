@@ -104,7 +104,7 @@
                     <!-- SUPPLEMENTARY SUBJECTS -->
                     <td class="text-center" colspan="2">PE</td>
                     <td class="text-center" colspan="2">IT</td>
-                    <td class="text-center" colspan="2">GK</td>
+                    <td class="text-center" colspan="2">FL</td>
                     <td class="text-center" colspan="2">A/C</td>
                     <td class="text-center" colspan="2">CB</td>
                     @if ($data['healthEducation'] !== null)
@@ -181,7 +181,7 @@
                                     4 => ['mks' => null, 'grs' => null], // Bhs.Indonesia
                                     18 => ['mks' => null, 'grs' => null], // PE
                                     6 => ['mks' => null, 'grs' => null], // IT
-                                    17 => ['mks' => null, 'grs' => null], // GK
+                                    62 => ['mks' => null, 'grs' => null], // GK
                                     15 => ['mks' => null, 'grs' => null], // A/C
                                     16 => ['mks' => null, 'grs' => null], // CB
                                     19 => ['mks' => null, 'grs' => null], // HE
@@ -212,12 +212,12 @@
                             <td class="text-center">{{ $dt['percent_minorSubjects'] }}</td>
 
                             @if ($data['healthEducation'] !== null)
-                            @foreach ([18, 6, 17, 15, 16, 19] as $subject_id)
+                            @foreach ([18, 6, 62, 15, 16, 19] as $subject_id)
                                 <td class="text-center">{{ $subjects[$subject_id]['mks'] }}</td>
                                 <td class="text-center">{{ $subjects[$subject_id]['grs'] }}</td>
                             @endforeach
                             @else    
-                            @foreach ([18, 6, 17, 15, 16] as $subject_id)
+                            @foreach ([18, 6, 62, 15, 16] as $subject_id)
                                 <td class="text-center">{{ $subjects[$subject_id]['mks'] }}</td>
                                 <td class="text-center">{{ $subjects[$subject_id]['grs'] }}</td>
                             @endforeach

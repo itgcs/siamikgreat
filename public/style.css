@@ -14,6 +14,15 @@
     }
 }
 
+.dynamic-select {
+    display: block;
+    overflow-y: auto;
+    min-height: 38px; /* Sesuai dengan tinggi form-control */
+    max-height: 150px; /* Batas tinggi maksimal */
+    resize: vertical; /* Memungkinkan pengguna menyesuaikan ukuran */
+}
+
+
 .file-upload {
     background-color: #ffffff;
     width: 100%;

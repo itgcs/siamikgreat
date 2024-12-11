@@ -2577,7 +2577,7 @@ class ReportController extends Controller
             $mid = Type_exam::whereIn('name', ['quiz', 'practical exam', 'project', 'exam'])
                 ->pluck('id')
                 ->toArray();
-            $finalExam = Type_exam::whereIn('name', ['written tes', 'big project', 'final assessment'])
+            $finalExam = Type_exam::whereIn('name', ['written tes', 'big project', 'final assessment', 'final exam'])
                 ->pluck('id')
                 ->toArray();
 
@@ -2638,7 +2638,6 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.academic_year', $academic_year)
-                ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
             elseif (strtolower($subject->subject_name) == "religion catholic") {
@@ -2664,7 +2663,6 @@ class ReportController extends Controller
                     ->where('subject_exams.subject_id', $subjectId)
                     ->where('exams.semester', $semester)
                     ->where('exams.academic_year', $academic_year)
-                    ->where('exams.teacher_id', $teacherId)
                     ->get();
             }
             elseif (strtolower($subject->subject_name) == "religion christian") {
@@ -2690,7 +2688,6 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.academic_year', $academic_year)
-                ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
             elseif (strtolower($subject->subject_name) == "religion buddhism") {
@@ -2716,7 +2713,6 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.academic_year', $academic_year)
-                ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
             elseif (strtolower($subject->subject_name) == "religion hinduism") {
@@ -2742,7 +2738,6 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.academic_year', $academic_year)
-                ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
             elseif (strtolower($subject->subject_name) == "religion confucianism") {
@@ -2768,7 +2763,6 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.academic_year', $academic_year)
-                ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
             elseif (strtolower($subject->subject_name) == "chinese lower") {
@@ -2796,7 +2790,6 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.academic_year', $academic_year)
-                ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
             elseif (strtolower($subject->subject_name) == "chinese higher") {
@@ -2824,7 +2817,6 @@ class ReportController extends Controller
                 ->where('subject_exams.subject_id', $subjectId)
                 ->where('exams.semester', $semester)
                 ->where('exams.academic_year', $academic_year)
-                ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
             else{
@@ -2850,7 +2842,6 @@ class ReportController extends Controller
                 ->where('students.is_active', true)
                 ->where('exams.semester', $semester)
                 ->where('exams.academic_year', $academic_year)
-                ->where('exams.teacher_id', $teacherId)
                 ->get();
             }
             
@@ -2904,7 +2895,22 @@ class ReportController extends Controller
                 ->where('teacher_id', $subjectTeacher->teacher_id)
                 ->where('subject_id', $subject->subject_id)
                 ->first();
-            
+
+            $checkPermission = Teacher_subject::where('grade_id', $gradeId)
+                ->where('subject_id', $subjectId)
+                ->where('teacher_id', $teacherId)
+                ->first();
+
+            if($checkPermission->is_lead == null && $checkPermission->is_group == null){
+                $permission = true;
+            }
+            elseif($checkPermission->is_lead !== null && $checkPermission->is_group == null){
+                $permission = true;
+            }
+            elseif($checkPermission->is_lead == null && $checkPermission->is_group !== null){
+                $permission = false;
+            }
+
             $data = [
                 'subjectTeacher' => $subjectTeacher,
                 'classTeacher' => $classTeacher,
@@ -2916,6 +2922,7 @@ class ReportController extends Controller
                 'tasks' => $tasks,
                 'mid'   => $mid,
                 'finalExam' => $finalExam,
+                'permission' => $permission,
             ];
 
             // dd($data);   
@@ -2924,6 +2931,7 @@ class ReportController extends Controller
                 return view('components.report.detail_scoring_subject_secondary')->with('data', $data);
             }
             elseif (session('role') == 'teacher') {
+                // dd($data['grade']->total_tasks);
                 return view('components.teacher.detail_scoring_subject_secondary')->with('data', $data);
             }
             
@@ -4714,7 +4722,7 @@ class ReportController extends Controller
                     'Bahasa Indonesia',
                     'Mathematics',
                     'Science',
-                    'General Knowledge',
+                    'Financial Literacy',
                     'Art and Craft',
                     'PE',
                     'IT',
@@ -5035,7 +5043,7 @@ class ReportController extends Controller
                         'Bahasa Indonesia',
                         'Mathematics',
                         'Science',
-                        'General Knowledge',
+                        'Financial Literacy',
                         'Art and Craft',
                         'PE',
                         'IT',
