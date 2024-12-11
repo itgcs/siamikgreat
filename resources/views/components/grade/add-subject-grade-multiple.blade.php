@@ -11,7 +11,7 @@
                     <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/grades')}}">Grade</a></li>
                     <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/grades/edit/' . $data['grade']['id'])}}">Edit {{ $data['grade']['name'] }} - {{ $data['grade']['class'] }}</a></li>
                     <li class="breadcrumb-item"><a href="{{url('/' .session('role'). '/grades/manageSubject/' . $data['grade']['id'])}}">Manage Subject & Teacher {{ $data['grade']['name'] }} - {{ $data['grade']['class'] }}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Add Subject & Teacher</li>
+                    <li class="breadcrumb-item active" aria-current="page">Add Subject & Teacher Multiple</li>
                 </ol>
             </nav>
             </div>
@@ -20,19 +20,19 @@
         <div class="row d-flex justify-content-center">
             <nav class="col-12 mt-1">
                 <div class="nav nav-tabs mb-4" id="nav-tab" role="tablist">
-                  <a id="btnSingleTeacher" class="nav-item nav-link active text-[8px] md:text-[12px] lg:text-[14px] xl:text-[16px]">Single teacher</a>
-                  <a id="btnMultipleTeacher" class="nav-item nav-link text-[8px] md:text-[12px] lg:text-[14px] xl:text-[16px]" href="{{url('/' .session('role'). '/grades/manageSubject/addSubject/multiple/' . $data['grade']['id'])}}">Multiple teacher</a>
+                  <a id="btnSingleTeacher" class="nav-item nav-link text-[8px] md:text-[12px] lg:text-[14px] xl:text-[16px]" href="{{url('/' .session('role'). '/grades/manageSubject/addSubject/' . $data['grade']['id'])}}">Single teacher</a>
+                  <a id="btnMultipleTeacher" class="nav-item nav-link active text-[8px] md:text-[12px] lg:text-[14px] xl:text-[16px]" href="#">Multiple teacher</a>
                 </div>
             </nav>
 
-            <div class="col-md-12" id="singleTeacher" style="display: block;">
+            <div class="col-md-12" id="multipleTeacher">
                 <!-- general form elements -->
                 <div>
-                @if (session('role') == 'superadmin')
-                    <form method="POST" action={{route('actionSuperAddSubjectGrade')}}>
-                @elseif (session('role') == 'admin')
-                    <form method="POST" action={{route('actionAdminAddSubjectGrade')}}>
-                @endif
+                    @if (session('role') == 'superadmin')
+                        <form method="POST" action={{route('actionSuperAddSubjectGradeMultiple')}}>
+                    @elseif (session('role') == 'admin')
+                        <form method="POST" action={{route('actionAdminAddSubjectGradeMultiple')}}>
+                    @endif
                         @csrf
                         <div class="card card-dark">
                             <div class="card-header">
@@ -53,11 +53,12 @@
                                     <div class="col mt-2">
                                         <table class="table table-striped table-bordered">
                                         <thead>
-                                            <th style="width: 40%;">Subject</th>
-                                            <th style="width: 40%;">Teacher</th>
+                                            <th style="width: 30%;">Subject</th>
+                                            <th style="width: 30%;">Main Teacher</th>
+                                            <th style="width: 30%;">Member</th>
                                             <th>Action</th>
                                         </thead>
-                                        <tbody id="scheduleTableBody">
+                                        <tbody id="scheduleTableBodyMultiple">
                                             <tr>
                                                 <td>
                                                     <select required name="subject_id[]" class="form-control js-select2" id="subject_id">
@@ -71,20 +72,30 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <select name="teacher_subject_id[]" class="form-control js-select2" id="teacher_subject_id">
-                                                        <option value="" selected>  SELECT TEACHER </option>
+                                                    <select name="teacher_subject_id_main[]" class="form-control js-select2" id="teacher_subject_id_main">
+                                                        <option value="" selected>  SELECT MAIN TEACHER </option>
                                                         @foreach($data['teacher'] as $el)
                                                             <option value="{{ $el->id }}">{{ $el->name }}</option>
                                                         @endforeach
                                                     </select>
-                                                    @if($errors->has('teacher_subject_id'))
-                                                    <p style="color: red">{{ $errors->first('teacher_subject_id') }}</p>
+                                                    @if($errors->has('teacher_subject_id_main'))
+                                                    <p style="color: red">{{ $errors->first('teacher_subject_id_main') }}</p>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <select name="teacher_subject_id_member[0][]" class="form-control js-select2" id="teacher_subject_id_member" multiple>
+                                                        @foreach($data['teacher'] as $el)
+                                                            <option value="{{ $el->id }}">{{ $el->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @if($errors->has('teacher_subject_id_member'))
+                                                        <p style="color: red">{{ $errors->first('teacher_subject_id_member') }}</p>
                                                     @endif
                                                 </td>
                                                 
                                                 <td>
-                                                    <button type="button" class="btn btn-success btn-sm btn-tambah mt-1" title="Tambah Data" id="tambah"><i class="fa fa-plus"></i></button>
-                                                    <button type="button" class="btn btn-danger btn-sm btn-hapus mt-1 d-none" title="Hapus Baris" id="hapus"><i class="fa fa-times"></i></button>
+                                                    <button type="button" class="btn btn-success btn-sm btn-tambah mt-1" title="Tambah Data" id="tambahMultiple"><i class="fa fa-plus"></i></button>
+                                                    <button type="button" class="btn btn-danger btn-sm btn-hapus mt-1 d-none" title="Hapus Baris" id="hapusMultiple"><i class="fa fa-times"></i></button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -98,7 +109,8 @@
                         </div>
                     </form>
                 </div>
-            </div>            
+            </div>
+            
         </div>
     </div>
 
@@ -109,7 +121,10 @@
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
 <script>
+// SINGLE TEACHER
 document.addEventListener('DOMContentLoaded', function() {
+
+    // MULTIPLE TEACHER
     let row = 1; // Inisialisasi variabel row di luar fungsi agar bertambah tiap kali
 
     // Function to add a new row
@@ -123,18 +138,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     @endforeach
                 </select>
                 @if($errors->has('subject_id'))
-                <p style="color: red">{{ $errors->first('subject_id') }}</p>
+                    <p style="color: red">{{ $errors->first('subject_id') }}</p>
                 @endif
             </td>
             <td>
-                <select required name="teacher_subject_id[]" class="form-control js-select2" id="teacher_subject_id_${row}">
+                <select required name="teacher_subject_id_main[]" class="form-control js-select2" id="teacher_subject_id_main_${row}">
                     <option value="" selected>  SELECT TEACHER </option>
                     @foreach($data['teacher'] as $el)
                         <option value="{{ $el->id }}">{{ $el->name }}</option>
                     @endforeach
                 </select>
-                @if($errors->has('teacher_subject_id'))
-                <p style="color: red">{{ $errors->first('teacher_subject_id') }}</p>
+                @if($errors->has('teacher_subject_id_main'))
+                <p style="color: red">{{ $errors->first('teacher_subject_id_main') }}</p>
+                @endif
+            </td>
+            <td>
+                <select name="teacher_subject_id_member[${row}][]" class="form-control js-select2" id="teacher_subject_id_member_${row}" multiple>
+                    @foreach($data['teacher'] as $el)
+                        <option value="{{ $el->id }}">{{ $el->name }}</option>
+                    @endforeach
+                </select>
+                @if($errors->has('teacher_subject_id_member'))
+                <p style="color: red">{{ $errors->first('teacher_subject_id_member') }}</p>
                 @endif
             </td>
             <td>
@@ -142,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button type="button" class="btn btn-danger btn-sm btn-hapus mt-1 d-none" title="Hapus Baris"><i class="fa fa-times"></i></button>
             </td>
         </tr>`;
-        $('#scheduleTableBody').append(newRow);
+        $('#scheduleTableBodyMultiple').append(newRow);
         row++;
         
         $('.js-select2').select2({
@@ -160,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to update the visibility of the "Hapus" and "Tambah" buttons
     function updateHapusButtons() {
-        const rows = $('#scheduleTableBody tr');
+        const rows = $('#scheduleTableBodyMultiple tr');
 
         rows.each(function(index, row) {
             var tambahButton = $(row).find('.btn-tambah');
@@ -185,12 +210,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Event listener for the "Tambah" button
-    $('#scheduleTableBody').on('click', '.btn-tambah', function() {
+    $('#scheduleTableBodyMultiple').on('click', '.btn-tambah', function() {
         addRow();
     });
 
     // Event listener for the "Hapus" button
-    $('#scheduleTableBody').on('click', '.btn-hapus', function() {
+    $('#scheduleTableBodyMUltiple').on('click', '.btn-hapus', function() {
         $(this).closest('tr').remove();
         updateHapusButtons();
     });
@@ -211,6 +236,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     </script>
 @endif
+
+
 
 
 

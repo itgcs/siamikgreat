@@ -84,12 +84,14 @@
         @csrf
         
         @if ($data['status'] == null)
-            @if (!empty($data['students']))
-                <div class="row my-2">
-                    <div class="input-group-append mx-2">
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
+            @if ($data['permission'] == true)               
+                @if (!empty($data['students']))
+                    <div class="row my-2">
+                        <div class="input-group-append mx-2">
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
+                        </div>
                     </div>
-                </div>
+                @endif
             @endif
         @elseif ($data['status']->status != null && $data['status']->status == 1)       
             <div class="row my-2">
@@ -108,7 +110,7 @@
                     <th rowspan="2 class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
                     <th colspan="{{ $data['grade']->total_tasks + 2 }}" class="text-center" style="vertical-align : middle;text-align:center;"> Tasks (Homework/Small Project/Presentation)</th>
                     <th colspan="{{ $data['grade']->total_mid + 2 }}" class="text-center" style="vertical-align : middle;text-align:center;">Quiz/Practical Exam/Project</th>
-                    <th colspan="{{ $data['grade']->total_final_exam + 2 }}" class="text-center" style="vertical-align : middle;text-align:center;">Final Exam (Written Tes/Big Project)</th>
+                    <th colspan="{{ $data['grade']->total_final_exam + 2 }}" class="text-center" style="vertical-align : middle;text-align:center;">Final Exam</th>
                     <th class="text-center">Total</th>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Comment</th>
                 </tr>
@@ -188,7 +190,7 @@
                         
 
                         <!-- FINAL SCORE -->
-                        <td>{{ $student['total_score'] }}</td>
+                        <td>{{ $student['total_score'] ?? '&nbsp;' }}</td>
 
                         <!-- COMMENT -->
                         <td class="project-actions text-left">
@@ -198,12 +200,12 @@
                                     <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">  
                                     <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $student['total_score'] }}">  
                                     <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">  <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">  
-                                    <div class="input-group-append">
+                                    {{-- <div class="input-group-append">
                                         <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
                                             <i class="fas fa-pen"></i>
                                             Edit
                                         </a>
-                                    </div>    
+                                    </div>     --}}
                                 </div>
                             @elseif ($data['status'] != null && $data['status']->status == 1)       
                                 {{ $student['comment'] }}

@@ -48,10 +48,10 @@
                         <th style="width: 20%">
                            Grade Subject
                         </th>
-                        <th style="width: 20%">
+                        <th style="width: 30%">
                            Subject Teacher
                         </th>
-                        <th style="width: 60%">
+                        <th style="width: 50%">
                             Action
                         </th>
                     </tr>
@@ -68,22 +68,33 @@
                            </a>
                         </td>
                         <td>
-                           <a>
-                                {{$el->teacher_name}}
-                           </a>
+                            <a>
+                                {{$el->teacher_name}} 
+                                @if($el->is_lead) 
+                                    <span class="badge badge-primary">Main Teacher</span> 
+                                @elseif($el->is_group) 
+                                    <span class="badge badge-warning">Member</span>
+                                @else 
+                                @endif
+                            </a>
+                            
                         </td>
                         
                         <td class="project-actions text-left toastsDefaultSuccess">
-                            <a class="btn btn-info btn"
-                              href="{{url('/' . session('role') .'/grades/manageSubject/teacher') . '/edit/' . $el->grade_id . '/' . $el->subject_id . '/' . $el->teacher_id}}">
-                              <i class="fas fa-pencil-alt">
-                              </i>
-                              Edit
-                            </a>
-                            @if (session('role') == 'superadmin' || session('role') == 'admin')
-                                <a class="btn btn-danger btn" data-toggle="modal" data-target="#modalDeleteTypeSchedule" data-subject-id="{{ $el->subject_id }}" data-teacher-id="{{ $el->teacher_id }}" data-grade-id="{{ $el->grade_id }}">
-                                    <i class="fas fa-trash"></i> Delete
+                            @if($el->is_lead) 
+                            @elseif($el->is_group) 
+                            @else
+                                <a class="btn btn-primary btn"
+                                href="{{url('/' . session('role') .'/grades/manageSubject/teacher') . '/edit/' . $el->grade_id . '/' . $el->subject_id . '/' . $el->teacher_id}}">
+                                <i class="fas fa-pencil-alt">
+                                </i>
+                                Edit
                                 </a>
+                                @if (session('role') == 'superadmin' || session('role') == 'admin')
+                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#modalDeleteTypeSchedule" data-subject-id="{{ $el->subject_id }}" data-teacher-id="{{ $el->teacher_id }}" data-grade-id="{{ $el->grade_id }}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                @endif
                             @endif
                         </td>
                     </tr>
@@ -110,6 +121,76 @@
                     @endforeach
                 </tbody>
             </table>
+            
+            @if (count($groupSubject) !== 0)
+                <table class="table table-striped projects">
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="text-align:center;">For Edit Subject Group</th>
+                        </tr>
+                        <tr>
+                            <th>
+                            #
+                            </th>
+                            <th style="width: 20%">
+                                Grade Subject
+                            </th>
+                            <th style="width: 80%">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($groupSubject as $el)
+                        <tr id={{'index_grade_subject_' . $el->id}}>
+                            <td>
+                                {{ $loop->index + 1 }}
+                            </td>
+                            <td>
+                                <a>
+                                    {{$el->subject_name}}
+                                </a>
+                            </td>
+                            
+                            <td class="project-actions text-left toastsDefaultSuccess">
+                                <a class="btn btn-primary btn"
+                                href="{{url('/' . session('role') .'/grades/manageSubject/teacher/multiple') . '/edit/' . $el->grade_id . '/' . $el->subject_id}}">
+                                <i class="fas fa-pencil-alt">
+                                </i>
+                                Edit
+                                </a>
+                                @if (session('role') == 'superadmin' || session('role') == 'admin')
+                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#modalDeleteTypeSchedule" data-subject-id="{{ $el->subject_id }}" data-teacher-id="{{ $el->teacher_id }}" data-grade-id="{{ $el->grade_id }}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                @endif
+                            </td>
+                        </tr>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modalDeleteTypeSchedule" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Delete subject</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">Are you sure want to delete this subject?</div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <a class="btn btn-danger btn" id="confirmDelete">Yes delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @endforeach
+                    </tbody>
+                </table>
+
+            @endif
         </div>
         <!-- /.card-body -->
     </div>

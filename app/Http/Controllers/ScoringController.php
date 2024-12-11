@@ -532,6 +532,7 @@ class ScoringController extends Controller
 
     public function actionPostSooaPrimary(Request $request){
         try {
+            // dd($request);
             for($i=0; $i < count($request->student_id); $i++){
                 $academic = Sooa_primary::where('sooa_primaries.grade_id', $request->grade_id)
                     ->where('sooa_primaries.class_teacher_id', $request->class_teacher)

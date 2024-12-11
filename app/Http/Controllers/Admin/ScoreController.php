@@ -286,6 +286,8 @@ class ScoreController extends Controller
             ->get();
          }
 
+         // dd($data);
+
          return view('components.exam.data-exam-score')->with('data', $data);
 
       } catch (Exception $err) {
@@ -316,7 +318,7 @@ class ScoreController extends Controller
          $student = $request->student_id;
          $score = $request->score;
 
-         // dd($score);
+         // dd($request->exam_id);
          
          for ($i=0; $i < sizeof($student); $i++) { 
             $post = [
@@ -324,7 +326,9 @@ class ScoreController extends Controller
                'updated_at' => now(),
             ];
 
-            Score::where('student_id', $student[$i])->where('exam_id', $request->exam_id)->update($post);
+            Score::where('student_id', $student[$i])
+            ->where('exam_id', $request->exam_id)
+            ->update($post);
          }
 
          Exam::where('id', $request->exam_id)->update(['is_active' => 0]);

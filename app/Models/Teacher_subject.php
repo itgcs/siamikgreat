@@ -14,6 +14,8 @@ class Teacher_subject extends Model
         'subject_id',
         'grade_id',
         'academic_year',
+        'is_group',
+        'is_lead',
         'created_at',
         'updated_at',
     ];

@@ -136,10 +136,10 @@
 
                         <!-- Choice -->
                         <td class="text-center">
-                            @if($score['choice'])
+                            @if(isset($score['choice']))
                                 {{ $score['choice'] }}
                             @else
-                                -
+                                <input name="choice[]" min="0" max="100" type="number" class="form-control required-input " id="choice" value="{{ $score['choice'] ? : '' }}" autocomplete="off" required>
                             @endif
                         </td>
                         <td class="text-center">{{ $score['grades_choice'] }}</td>
