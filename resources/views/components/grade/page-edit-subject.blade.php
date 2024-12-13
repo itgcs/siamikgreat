@@ -31,7 +31,7 @@
                         @method('PUT')
                         <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Edit Subject Teacher</h3>
+                                <h3 class="card-title">Edit Subject Teacher {{$data->teacher_subject_id}}</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->

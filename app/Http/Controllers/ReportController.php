@@ -2067,7 +2067,7 @@ class ReportController extends Controller
             $participation = Type_exam::where('name', '=', 'participation')->value('id');
             $quiz = Type_exam::where('name', '=', 'quiz')->value('id');
             $finalExam = Type_exam::where('name', '=', 'final exam')->value('id'); 
-            $finalAssessment = Type_exam::whereIn('name', ['project', 'practical', 'final assessment'])
+            $finalAssessment = Type_exam::whereIn('name', ['project', 'practical', 'final assessment', 'final exam'])
                 ->pluck('id')
                 ->toArray();
 
@@ -2445,7 +2445,7 @@ class ReportController extends Controller
                     $exercise = Type_exam::where('name', '=', 'exercise')->value('id');
                     $participation = Type_exam::where('name', '=', 'participation')->value('id');
                     $quiz = Type_exam::where('name', '=', 'quiz')->value('id'); 
-                    $finalAssessment = Type_exam::whereIn('name', ['project', 'practical', 'final exam'])
+                    $finalAssessment = Type_exam::whereIn('name', ['project', 'practical', 'final exam', 'final assessment'])
                         ->pluck('id')
                         ->toArray();
 
@@ -2510,6 +2510,7 @@ class ReportController extends Controller
             $project = Type_exam::where('name', 'project', )->value('id');
             $practical = Type_exam::where('name', 'practical', )->value('id');
             $final_assessment = Type_exam::where('name', 'final assessment', )->value('id');
+            $final_exam = Type_exam::where('name', 'final exam', )->value('id');
 
             $data = [
                 'subjectTeacher' => $subjectTeacher,
@@ -2525,6 +2526,7 @@ class ReportController extends Controller
                 'quiz' => $quiz,
                 'project' => $project,
                 'practical' => $practical,
+                'finalExam' => $final_exam,
                 'finalAssessment' => $final_assessment,
             ];
 

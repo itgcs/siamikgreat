@@ -244,7 +244,15 @@
               <div class="col-sm-8">
                   @if(sizeof($data['teacherSubject']))
                     @foreach ($data['teacherSubject'] as $ts)
-                      <p class="text-muted mb-0">- {{$ts->name_subject}} ( {{ $ts->name }} - {{ $ts->class }} )</p>  
+                      <p class="text-muted mb-0">- {{$ts->name_subject}}
+                        @if($ts->is_lead) 
+                            <span class="badge badge-primary">Main Teacher</span> 
+                        @elseif($ts->is_group) 
+                            <span class="badge badge-warning">Member</span>
+                        @else 
+                        @endif
+                        ( {{ $ts->name }} - {{ $ts->class }} )
+                        </p>  
                     @endforeach
                   @else 
                       <a href="{{url('/admin/list')}}"><p class="text-danger mb-0">Subject teacher not ready yet</p></a> 
