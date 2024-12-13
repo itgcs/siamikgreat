@@ -170,6 +170,8 @@
                                 <td class="text-center">{{ $score['score'] }}</td> 
                             @elseif($score['type_exam'] == $data['finalAssessment'])
                                 <td class="text-center">{{ $score['score'] }}</td> 
+                            @elseif($score['type_exam'] == $data['finalExam'])
+                                <td class="text-center">{{ $score['score'] }}</td> 
                             @endif
                         @endforeach
                         <td class="text-center">{{ $student['percent_fe'] }}</td>

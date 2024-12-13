@@ -236,8 +236,16 @@
                                 @endphp
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $gradeSubject->subject_name }}</td>
-                                    <td>{{ $teacherName }}</td>
+                                    <td>
+                                        {{ $gradeSubject->subject_name }}
+                                            @if($gradeSubject->is_lead) 
+                                                <span class="badge badge-primary">Main Teacher</span> 
+                                            @elseif($gradeSubject->is_group) 
+                                                <span class="badge badge-warning">Member</span>
+                                            @else 
+                                            @endif
+                                    </td>
+                                    <td>{{ $gradeSubject->teacher_name }}</td>
                                 </tr>
                             @endforeach
                         @else

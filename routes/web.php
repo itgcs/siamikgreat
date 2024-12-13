@@ -1003,8 +1003,9 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/manageSubject/addSubject/multiple/{id}', [GradeController::class, 'pageAddSubjectTeacherMultiple']);
       Route::post('/manageSubject', [GradeController::class, 'actionPostAddSubjectGrade'])->name('actionAdminAddSubjectGrade');
       Route::post('/manageSubjectMultiple', [GradeController::class, 'actionPostAddSubjectGradeMultiple'])->name('actionAdminAddSubjectGradeMultiple');
-      Route::get('/subject/delete/{gradeId}/{subjectId}/{teacherId}', [GradeController::class, 'deleteSubjectGrade'])->name('delete-subject-grade');
-      Route::get('/subject/multiple/delete/{gradeId}/{subjectId}/{teacherId}', [GradeController::class, 'deleteSubjectMultipleGrade'])->name('delete-subject-multiple-grade');
+      Route::delete('/manageSubject/delete', [GradeController::class, 'deleteSubjectGrade'])->name('dsg');
+      Route::get('/subjectGroup/delete/{gradeId}/{subjectId}', [GradeController::class, 'deleteGroupSubjectGrade'])->name('deleteGroupSubjectGrade');
+      Route::get('/subject/multiple/delete', [GradeController::class, 'deleteSubjectMultipleGrade'])->name('deleteSubjectMultipleGrade');
    
       Route::put('manageSubject/{id}', [GradeController::class, 'actionPutSubjectTeacher'])->name('actionAdminUpdateGradeSubjectTeacher');
       Route::put('manageSubject/multi/{id}', [GradeController::class, 'actionPutSubjectMultiTeacher'])->name('actionAdminUpdateGradeSubjectMultiTeacher');
