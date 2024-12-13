@@ -77,7 +77,6 @@
                                 @else 
                                 @endif
                             </a>
-                            
                         </td>
                         
                         <td class="project-actions text-left toastsDefaultSuccess">
@@ -91,7 +90,7 @@
                                 Edit
                                 </a>
                                 @if (session('role') == 'superadmin' || session('role') == 'admin')
-                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#modalDeleteTypeSchedule" data-subject-id="{{ $el->subject_id }}" data-teacher-id="{{ $el->teacher_id }}" data-grade-id="{{ $el->grade_id }}">
+                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#modalDeleteSubject-{{$el->id}}" data-subject-id="{{ $el->subject_id }}" data-teacher-id="{{ $el->teacher_id }}" data-grade-id="{{ $el->grade_id }}">
                                         <i class="fas fa-trash"></i> Delete
                                     </a>
                                 @endif
@@ -100,19 +99,20 @@
                     </tr>
 
                     <!-- Modal -->
-                    <div class="modal fade" id="modalDeleteTypeSchedule" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal fade" id="modalDeleteSubject-{{$el->id}}" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLongTitle">Delete subject</h5>
+                                    <input type="hidden" value="{{$el->id}}" name="data_id" id="data-id-{{$el->id}}">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Delete Subject</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <div class="modal-body">Are you sure want to delete this subject?</div>
+                                <div class="modal-body">Are you sure want to delete {{$el->subject_name}} ?</div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <a class="btn btn-danger btn" id="confirmDelete">Yes delete</a>
+                                    <a class="btn btn-danger btn" id="confirmDelete-{{$el->id}}">Yes Delete</a>
                                 </div>
                             </div>
                         </div>
@@ -141,26 +141,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($groupSubject as $el)
-                        <tr id={{'index_grade_subject_' . $el->id}}>
+                        @foreach ($groupSubject as $gs)
+                        <tr id={{'index_grade_subject_' . $gs->id}}>
                             <td>
                                 {{ $loop->index + 1 }}
                             </td>
                             <td>
                                 <a>
-                                    {{$el->subject_name}}
+                                    {{$gs->subject_name}}
                                 </a>
                             </td>
                             
                             <td class="project-actions text-left toastsDefaultSuccess">
                                 <a class="btn btn-primary btn"
-                                href="{{url('/' . session('role') .'/grades/manageSubject/teacher/multiple') . '/edit/' . $el->grade_id . '/' . $el->subject_id}}">
+                                href="{{url('/' . session('role') .'/grades/manageSubject/teacher/multiple') . '/edit/' . $gs->grade_id . '/' . $gs->subject_id}}">
                                 <i class="fas fa-pencil-alt">
                                 </i>
                                 Edit
                                 </a>
                                 @if (session('role') == 'superadmin' || session('role') == 'admin')
-                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#modalDeleteTypeSchedule" data-subject-id="{{ $el->subject_id }}" data-teacher-id="{{ $el->teacher_id }}" data-grade-id="{{ $el->grade_id }}">
+                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#modalDeleteGroupSubject-{{$gs->id}}" data-subject-id="{{ $gs->subject_id }}" data-grade-id="{{ $gs->grade_id }}">
                                         <i class="fas fa-trash"></i> Delete
                                     </a>
                                 @endif
@@ -168,19 +168,20 @@
                         </tr>
 
                         <!-- Modal -->
-                        <div class="modal fade" id="modalDeleteTypeSchedule" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal fade" id="modalDeleteGroupSubject-{{$gs->id}}" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLongTitle">Delete subject</h5>
+                                        <input type="hidden" value="{{$gs->id}}" name="data_id" id="data-group-id-{{$gs->id}}">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Delete Subject</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                    <div class="modal-body">Are you sure want to delete this subject?</div>
+                                    <div class="modal-body">Are you sure want to delete this group {{$gs->subject_name}}?</div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <a class="btn btn-danger btn" id="confirmDelete">Yes delete</a>
+                                        <a class="btn btn-danger btn" id="confirmDeleteGroupSubject-{{$gs->id}}">Yes delete</a>
                                     </div>
                                 </div>
                             </div>
@@ -201,14 +202,126 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        $('#modalDeleteTypeSchedule').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget);
-            var gradeId = button.data('grade-id');
-            var subjectId = button.data('subject-id');
-            var teacherId = button.data('teacher-id');
-            var confirmDelete = document.getElementById('confirmDelete');
-            confirmDelete.href = "{{ url('/' . session('role') . '/grades/subject/delete') }}" + '/' + gradeId + '/' + subjectId + '/' + teacherId;
+        const confirmDeleteButtons = document.querySelectorAll('[id^="confirmDelete-"]');
+        
+        confirmDeleteButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                const id = this.id.split('-')[1];
+                const dataId = document.getElementById(`data-id-${id}`).value; // Get the selected teacher from the corresponding modal
+
+                const form = {
+                    id: parseInt(dataId, 10),
+                    type: "singleSubject",
+                };
+
+                // console.log(form);
+
+                const options = {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Include CSRF token
+                    },
+                    body: JSON.stringify(form)
+                };
+
+
+                // Send the form data using fetch
+                fetch("{{ route('dsg') }}", options)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the server response
+                        if (data.success) {
+                            // console.log(data.tes);
+                            Swal.fire({
+                                icon: 'success',
+                                text: 'Data Berhasil Dihapus',
+                                showConfirmButton: false, // Hide the confirm button
+                                timer: 1500, // Auto close after 1500 milliseconds (1.5 seconds)
+                                timerProgressBar: true // Optional: show a progress bar
+                            }).then(() => {
+                                location.reload(); // Reload the page after the modal closes
+                            });
+
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                text: 'Maaf ada kesalahan',
+                                showConfirmButton: false, // Hide the confirm button
+                                timer: 1500, // Auto close after 1500 milliseconds (1.5 seconds)
+                                timerProgressBar: true // Optional: show a progress bar
+                            }).then(() => {
+                                location.reload(); // Reload the page after the modal closes
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                    });
+
+            });
         });
+
+        const confirmDeleteGroupButtons = document.querySelectorAll('[id^="confirmDeleteGroupSubject-"]');
+        
+        confirmDeleteGroupButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                const id = this.id.split('-')[1];
+                const dataId = document.getElementById(`data-group-id-${id}`).value; // Get the selected teacher from the corresponding modal
+
+                const form = {
+                    id: parseInt(dataId, 10),
+                    type: "multipleSubject",
+                };
+
+                // console.log(form);
+
+                const options = {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Include CSRF token
+                    },
+                    body: JSON.stringify(form)
+                };
+
+
+                // Send the form data using fetch
+                fetch("{{ route('dsg') }}", options)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the server response
+                        if (data.success) {
+                            console.log(data.tes);
+                            Swal.fire({
+                                icon: 'success',
+                                text: 'Data Berhasil Dihapus',
+                                showConfirmButton: false, // Hide the confirm button
+                                timer: 1500, // Auto close after 1500 milliseconds (1.5 seconds)
+                                timerProgressBar: true // Optional: show a progress bar
+                            }).then(() => {
+                                location.reload(); // Reload the page after the modal closes
+                            });
+
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                text: 'Maaf ada kesalahan',
+                                showConfirmButton: false, // Hide the confirm button
+                                timer: 1500, // Auto close after 1500 milliseconds (1.5 seconds)
+                                timerProgressBar: true // Optional: show a progress bar
+                            }).then(() => {
+                                location.reload(); // Reload the page after the modal closes
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                    });
+
+            });
+        });
+
     });
 </script>
 

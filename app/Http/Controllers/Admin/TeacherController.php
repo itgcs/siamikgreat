@@ -105,7 +105,7 @@ class TeacherController extends Controller
                ->join('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
                ->join('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
                ->where('teacher_subjects.teacher_id', $getIdTeacher)
-               ->select('subjects.id', 'subjects.name_subject', 'grades.name', 'grades.class')
+               ->select('teacher_subjects.*','subjects.id', 'subjects.name_subject', 'grades.name', 'grades.class')
                ->get();
    
             $user = DB::table('teachers')

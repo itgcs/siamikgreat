@@ -21,6 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Constraint\Constraint;
+use Illuminate\Support\Facades\Log;
 
 class GradeController extends Controller
 {
@@ -33,7 +34,13 @@ class GradeController extends Controller
             'child' => 'database grades',
          ]);
 
-         $data = Grade::with(['student', 'teacher', 'exam', 'subject'])
+         $data = Grade::with(['student', 'teacher' => function($query){
+               $query->where('teacher_grades.academic_year', session('academic_year'));
+            } , 'exam' => function($query){
+               $query->where('grade_exams.academic_year', session('academic_year'));
+            }, 'subject' => function($query){
+               $query->where('grade_subjects.academic_year', session('academic_year'));
+            }])
             ->withCount([
                'student as active_student_count',
                'teacher as active_teacher_count' => function ($query) {
@@ -284,7 +291,6 @@ class GradeController extends Controller
            ];
            Teacher_subject::create($teacher_subject_main);
    
-           // Simpan data sebagai Member Teacher
            foreach ($request->teacher_subject_id_member[$i] as $memberTeacherId) {
                $teacher_subject_member = [
                    'teacher_id' => $memberTeacherId,
@@ -297,8 +303,6 @@ class GradeController extends Controller
                ];
                Teacher_subject::create($teacher_subject_member);
            }
-
-
 
             $grade_subject = [
                'grade_id' => $request->grade_id,
@@ -322,51 +326,53 @@ class GradeController extends Controller
 
 
    public function detailGrade($id){
-      session()->flash('page',  $page = (object)[
-         'page' => 'grades',
-         'child' => 'database grades',
-      ]);
-
-      $grade = Grade::where('id', $id)
-         ->select('grades.name as grade_name', 'grades.class as grade_class')
-         ->first();
-
-      $gradeTeacher = Teacher_grade::where('grade_id',$id)
-         ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
-         ->where('academic_year', session('academic_year'))
-         ->get();
-
-      $gradeExam = Grade_exam::join('exams', 'exams.id','=', 'grade_exams.exam_id')
-         ->join('type_exams', 'type_exams.id', '=', 'exams.type_exam')
-         ->select('exams.*', 'type_exams.name as type_exam_name')
-         ->where('grade_exams.grade_id', $id)
-         ->where('grade_exams.academic_year', session('academic_year'))
-         ->get();
-
-      $gradeSubject = Teacher_subject::where('grade_id', $id)
-         ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
-         ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
-         ->select(
-            'teacher_subjects.grade_id as grade_id',
-            'subjects.name_subject as subject_name', 'subjects.id as subject_id',
-            'teachers.name as teacher_name', 'teachers.id as teacher_id'
-         )
-         ->where('academic_year', session('academic_year'))
-         ->get();
-
-      // dd($gradeSubject);
-
-      $subjectTeacher = Teacher_subject::where('grade_id', $id)
-         ->join('teachers', 'teachers.id', 'teacher_subjects.teacher_id')
-         ->join('subjects', 'subjects.id', 'teacher_subjects.subject_id')
-         ->select('subjects.id as subject_id','teachers.name as teacher_name')
-         ->get();
-
-      $gradeStudent = Student::where('grade_id', $id)->where('is_active', true)
-      ->orderBy('name', 'ASC')
-      ->get();
       
       try {
+         session()->flash('page',  $page = (object)[
+            'page' => 'grades',
+            'child' => 'database grades',
+         ]);
+   
+         $grade = Grade::where('id', $id)
+            ->select('grades.name as grade_name', 'grades.class as grade_class')
+            ->first();
+   
+         $gradeTeacher = Teacher_grade::where('grade_id',$id)
+            ->join('teachers', 'teachers.id', '=', 'teacher_grades.teacher_id')
+            ->where('academic_year', session('academic_year'))
+            ->get();
+   
+         $gradeExam = Grade_exam::join('exams', 'exams.id','=', 'grade_exams.exam_id')
+            ->join('type_exams', 'type_exams.id', '=', 'exams.type_exam')
+            ->select('exams.*', 'type_exams.name as type_exam_name')
+            ->where('grade_exams.grade_id', $id)
+            ->where('grade_exams.academic_year', session('academic_year'))
+            ->get();
+   
+         $gradeSubject = Teacher_subject::where('grade_id', $id)
+            ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
+            ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
+            ->select(
+               'teacher_subjects.*',
+               'teacher_subjects.grade_id as grade_id',
+               'subjects.name_subject as subject_name', 'subjects.id as subject_id',
+               'teachers.name as teacher_name', 'teachers.id as teacher_id'
+            )
+            ->where('academic_year', session('academic_year'))
+            ->get();
+   
+         // dd($gradeSubject);
+   
+         $subjectTeacher = Teacher_subject::where('grade_id', $id)
+            ->join('teachers', 'teachers.id', 'teacher_subjects.teacher_id')
+            ->join('subjects', 'subjects.id', 'teacher_subjects.subject_id')
+            ->select('subjects.id as subject_id','teachers.name as teacher_name')
+            ->get();
+   
+         $gradeStudent = Student::where('grade_id', $id)->where('is_active', true)
+            ->orderBy('name', 'ASC')
+            ->get();
+
          $data = (object)[
             'grade'        => $grade,
             'gradeTeacher' => $gradeTeacher,
@@ -441,6 +447,7 @@ class GradeController extends Controller
             ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
             ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
             ->select(
+               'teacher_subjects.id as id',
                'teacher_subjects.grade_id as grade_id',
                'teacher_subjects.is_lead', 'teacher_subjects.is_group',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
@@ -453,6 +460,7 @@ class GradeController extends Controller
             ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
             ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
             ->select(
+               'teacher_subjects.id as id',
                'teacher_subjects.grade_id as grade_id',
                'teacher_subjects.is_lead', 'teacher_subjects.is_group',
                'subjects.name_subject as subject_name', 'subjects.id as subject_id',
@@ -463,8 +471,6 @@ class GradeController extends Controller
          ->distinct()
          ->get();
 
-         // dd($groupSubject);
-
          // dd(count($subjectGrade));
          $teacher = Teacher::orderBy('id', 'asc')->get();
          $subject = Subject::orderBy('id', 'asc')->get();         
@@ -474,7 +480,7 @@ class GradeController extends Controller
          $gradeId = $id;
 
 
-         // dd($data);
+         // dd($groupSubject);
          return view('components.grade.edit-subject')->with('data', $data)->with('teacher', $teacher)->with('subject', $subject)->with('teacherGrade', $teacherGrade)->with('subjectGrade', $subjectGrade)->with('allTeacher', $allTeacher)->with('gradeId', $gradeId)
          ->with('groupSubject', $groupSubject);
          
@@ -496,6 +502,7 @@ class GradeController extends Controller
          $data = Teacher_subject::where('grade_id', $id)
             ->where('subject_id', $subjectId)
             ->where('teacher_id', $teacherId)
+            ->where('academic_year', session('academic_year'))
             ->leftJoin('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
             ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
             ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
@@ -557,20 +564,22 @@ class GradeController extends Controller
                'is_lead' => [],
                'is_group' => []
             ];
-            
-            foreach($dataMultiple as $dm) {
-               if ($dm->is_lead !== null) {
-                  $dataMul['is_lead'][] = [
-                     'id' => $dm->teacher_id,
-                     'name' => $dm->teacher_name
-                  ];
-               } elseif ($dm->is_group !== null) {
-                  $dataMul['is_group'][] = [
-                     'id' => $dm->teacher_id,
-                     'name' => $dm->teacher_name
-                  ];
-               }
+         
+         foreach($dataMultiple as $dm) {
+            if ($dm->is_lead !== null) {
+               $dataMul['is_lead'][] = [
+                  'fk' => $dm->teacher_subject_id,
+                  'id' => $dm->teacher_id,
+                  'name' => $dm->teacher_name
+               ];
+            } elseif ($dm->is_group !== null) {
+               $dataMul['is_group'][] = [
+                  'fk' => $dm->teacher_subject_id,
+                  'id' => $dm->teacher_id,
+                  'name' => $dm->teacher_name
+               ];
             }
+         }
            
 
          // Example output for verification:
@@ -595,10 +604,8 @@ class GradeController extends Controller
          $teacherss = Teacher::get();
          $subject = Subject::get();
 
-                  // dd($dataMul['is_group']);
-// dd($teacher);
-         
          // dd($dataMul);
+
          return view('components.grade.page-edit-subject-multiple')->with('data', $data)->with('subject', $subject)->with('teacher', $teacher)
          ->with('dataMultiple', $dataMul)->with('teachers', $teachers)->with('teacherss', $teacherss);
          
@@ -693,16 +700,21 @@ class GradeController extends Controller
          ];
 
          $role = session('role');
-
+         
          Teacher_subject::where('id', $id)->update($rules);
-   
+         
+         
          DB::commit();
-      
+         
+         // $dd = Teacher_subject::where('id', $id)->first();
+         // dd($dd);
+         
          session()->flash('after_update_subject_teacher');
 
          $data = Teacher_subject::where('grade_id', $request->grade_id)
             ->where('subject_id', $request->subject)
             ->where('teacher_id', $request->teacher)
+            ->where('academic_year', session('academic_year'))
             ->leftJoin('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
             ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
             ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
@@ -719,8 +731,7 @@ class GradeController extends Controller
          
          // dd($data);
          return view('components.grade.page-edit-subject')->with('data', $data)->with('subject', $subject)->with('teacher', $teacher);
-         
-
+   
          // return redirect()->back()->with('role', session('role'))->with('data', $data);
 
       } catch (Exception $err) {
@@ -742,14 +753,32 @@ class GradeController extends Controller
          ]);
 
          $role = session('role');
+
+         $checkChangeMainTeacher = Teacher_subject::where('id', $id)->value('id');
+         if($checkChangeMainTeacher !== $request->main_teacher)
+         {
+            Teacher_subject::where('id', $id)
+            ->update(['teacher_id' => $request->main_teacher]);
+         }
+
+         if($request->group_teacher){
+            foreach($request->group_teacher as $gt){
+               Teacher_subject::create([
+                  'grade_id' => $request->grade_id,
+                  'subject_id' => $request->subject_id,
+                  'teacher_id' => $gt,
+                  'is_group' => TRUE,
+                  'is_lead' => NULL,
+                  'academic_year' => session('academic_year'),
+               ]);
+            }
+         }
          
          DB::commit();
       
          session()->flash('after_update_subject_teacher');
 
-         $data = Teacher_subject::where('grade_id', $request->grade_id)
-            ->where('subject_id', $request->subject)
-            ->where('teacher_id', $request->teacher)
+         $data = Teacher_subject::where('teacher_subjects.id', $id)
             ->leftJoin('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
             ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
             ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
@@ -760,15 +789,13 @@ class GradeController extends Controller
                'teachers.name as teacher_name', 'teachers.id as teacher_id'
             )
             ->first();
+         
+         // dd($data);
 
          $teacher = Teacher::get();
          $subject = Subject::get();
          
-         // dd($data);
-         return view('components.grade.page-edit-subject')->with('data', $data)->with('subject', $subject)->with('teacher', $teacher);
-         
-
-         // return redirect()->back()->with('role', session('role'))->with('data', $data);
+         return redirect()->back();
 
       } catch (Exception $err) {
          DB::rollBack();
@@ -788,38 +815,28 @@ class GradeController extends Controller
             'child' => 'database grades',
          ]);
 
-         $role = session('role');
-         
-         // DB::commit();
-      
-         // session()->flash('after_update_subject_teacher');
+         $rules = [
+            'teacher_id' => $request->change_teacher,
+            'updated_at' => now(),
+         ];
 
-         $data = Teacher_subject::where('grade_id', $request->grade_id)
-            ->where('subject_id', $request->subject)
-            ->where('teacher_id', $request->teacher)
-            ->leftJoin('grades', 'teacher_subjects.grade_id', '=', 'grades.id')
-            ->leftJoin('subjects', 'teacher_subjects.subject_id', '=', 'subjects.id')
-            ->leftJoin('teachers', 'teacher_subjects.teacher_id', '=', 'teachers.id')
-            ->select(
-               'teacher_subjects.id as teacher_subject_id',
-               'grades.name as grade_name', 'grades.id as grade_id', 'grades.class as grade_class',
-               'subjects.name_subject as subject_name', 'subjects.id as subject_id',
-               'teachers.name as teacher_name', 'teachers.id as teacher_id'
-            )
-            ->first();
+         Teacher_subject::where('id', $request->id)->update($rules);
 
-         
-         // dd($data);
-         // return view('components.grade.page-edit-subject')->with('data', $data)->with('subject', $subject)->with('teacher', $teacher);
+         DB::commit();
+
+         $get = Teacher_subject::where('id', $request->id)->first();
+
          return response()->json([
-            'success' => true
+            'success' => true,
+            'tes' => $request->id,
          ]);
-
-         // return redirect()->back()->with('role', session('role'))->with('data', $data);
 
       } catch (Exception $err) {
          DB::rollBack();
-         return dd($err);
+         return response()->json([
+            'success' => false
+         ]);
+         // return dd($err);
          // return abort(500);
       }
    }
@@ -885,8 +902,6 @@ class GradeController extends Controller
             'gradeTeacher' => $gradeTeacher,
          ];
 
-         // dd($data);
-
          return view('components.teacher.data-grade-teacher')->with('data', $data);
 
       } catch (Exception $err) {
@@ -903,8 +918,10 @@ class GradeController extends Controller
          $teacher->delete();
 
          // Hapus data terkait (Teacher_grade, Teacher_subject)
-         Teacher_grade::where('teacher_id', $id)->delete();
-         Teacher_subject::where('teacher_id', $id)->delete();
+         Teacher_grade::where('teacher_id', $id)
+            ->where('academic_year', session('academic_year'))->delete();
+         Teacher_subject::where('teacher_id', $id)
+            ->where('academic_year', session('academic_year'))->delete();
 
          session()->flash('after_delete_grade');
 
@@ -915,44 +932,82 @@ class GradeController extends Controller
       }
    }
 
-   public function deleteSubjectMultipleGrade($gradeId, $subjectId, $teacherId)
+   public function deleteSubjectGrade(Request $request)
    {
       try {
-         // Hapus data terkait (Teacher_subject dan Grade_subject)
+         if($request->type == "singleSubject"){
+            $teacherSubject = Teacher_subject::where('id', $request->id)->first();
+            $gradeId = $teacherSubject->grade_id;
+            $subjectId = $teacherSubject->subject_id;
+            
+            Grade_subject::where('grade_id', $gradeId)
+               ->where('subject_id', $subjectId)
+               ->where('academic_year', session('academic_year'))
+               ->delete();
+            
+            Teacher_subject::where('id', $request->id)
+               ->delete();
+
+            session()->flash('after_delete_subject_grade');
+
+            return response()->json([
+               'success' => true,
+            ]);
+            // return redirect('/'. session('role') .'/grades/manageSubject/' . $gradeId);
+         }
+         elseif($request->type == "multipleSubject"){
+            $teacherSubject = Teacher_subject::where('id', $request->id)->first();
+            $gradeId = $teacherSubject->grade_id;
+            $subjectId = $teacherSubject->subject_id;
+            
+            Grade_subject::where('grade_id', $gradeId)
+               ->where('subject_id', $subjectId)
+               ->where('academic_year', session('academic_year'))
+               ->delete();
+            
+            Teacher_subject::where('grade_id', $gradeId)
+               ->where('subject_id', $subjectId)
+               ->where('academic_year', session('academic_year'))
+               ->delete();
+
+            return response()->json([
+               'success' => true,
+               'tes' => $request->id,
+            ]);
+         }
+         elseif($request->type == "member"){
+            Teacher_subject::where('id', $request->id)
+               ->delete();
+
+            return response()->json([
+               'success' => true,
+               'tes' => $request->id,
+            ]);
+         }
          
-         Grade_subject::where('grade_id', $gradeId)
-            ->where('subject_id', $subjectId)
-            ->delete();
-
-         Teacher_subject::where('teacher_id', $teacherId)
-            ->where('grade_id', $gradeId)
-            ->where('subject_id', $subjectId)
-            ->delete();
-
-
-         session()->flash('after_delete_subject_grade');
-
-         return redirect('/'. session('role') .'/grades/manageSubject/' . $gradeId);
       } catch (Exception $err) {
-         dd($err);
-         return redirect('/'. session('role') .'/grades/manageSubject/' . $gradeId);
-      }
+         // Log the error for debugging (optional)
+         Log::error('Error deleting subject grade: ' . $err->getMessage());
+ 
+         return response()->json([
+             'success' => false,
+             'message' => 'An error occurred: ' . $err->getMessage()
+         ], 500); // Internal Server Error
+     }
    }
 
-   public function deleteSubjectGrade($gradeId, $subjectId, $teacherId)
+   public function deleteGroupSubjectGrade($gradeId, $subjectId)
    {
       try {
-         // Hapus data terkait (Teacher_subject dan Grade_subject)
-         
          Grade_subject::where('grade_id', $gradeId)
             ->where('subject_id', $subjectId)
+            ->where('academic_year', session('academic_year'))
             ->delete();
-
-         Teacher_subject::where('teacher_id', $teacherId)
-            ->where('grade_id', $gradeId)
+            
+         Teacher_subject::where('grade_id', $gradeId)
             ->where('subject_id', $subjectId)
+            ->where('academic_year', session('academic_year'))
             ->delete();
-
 
          session()->flash('after_delete_subject_grade');
 
@@ -966,8 +1021,6 @@ class GradeController extends Controller
    public function deleteSubjectGradeMultiple($gradeId, $subjectId, $teacherId)
    {
       try {
-         // Hapus data terkait (Teacher_subject dan Grade_subject)
-         
          Grade_subject::where('grade_id', $gradeId)
             ->where('subject_id', $subjectId)
             ->delete();
