@@ -7,6 +7,7 @@ use App\Models\Master_academic;
 use App\Models\Grade_subject;
 use App\Models\Teacher_grade;
 use App\Models\Teacher_subject;
+use App\Models\Score;
 
 
 use App\Exports\DataSchoolExport;
@@ -30,6 +31,11 @@ class MasterAcademicController extends Controller
             'page' => 'master academic',
             'child' => 'master academic',
             ]);
+
+            // Grade_subject::query()->update(['academic_year' => '2024-2025']);
+            // Teacher_grade::query()->update(['academic_year' => '2024-2025']);
+            // Teacher_subject::query()->update(['academic_year' => '2024-2025']);
+            // Score::query()->update(['semester' => '1']);
 
             // dd(session()->all());
 

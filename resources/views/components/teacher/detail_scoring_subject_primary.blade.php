@@ -316,7 +316,7 @@
         $('#modalDecline').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             var gradeId = @json($data['grade']->id);
-            var teacherId = @json($data['classTeacher']->teacher_id);
+            var teacherId = @json($data['subjectTeacher']->teacher_id);
             var subjectId = @json($data['subject']->subject_id);
             var semester = @json($data['semester']);
 

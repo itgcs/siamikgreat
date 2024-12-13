@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('student_monthly_activities', function(Blueprint $table){
             $table->id();
             $table->unsignedBigInteger('student_id');
+            $table->unsignedBigInteger('grade_id');
             $table->unsignedBigInteger('monthly_activity_id');
-            $table->unsignedBigInteger('grade_id')->after('student_id');
             $table->integer('semester');
             $table->string('academic_year')->nullable();
             $table->unsignedBigInteger('score');
