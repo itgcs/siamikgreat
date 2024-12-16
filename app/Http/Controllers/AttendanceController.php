@@ -465,6 +465,7 @@ class AttendanceController extends Controller
                     'attendances.*',
                 )
                 ->where('grades.id', $gradeId)
+                ->where('students.is_active', true)
                 ->where('attendances.semester', $semester)
                 ->where('attendances.academic_year', $academic_year)
                 ->orderBy('students.name', 'asc')

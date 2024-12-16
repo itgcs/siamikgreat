@@ -58,7 +58,7 @@
                      </td>
                      <td class="project-actions text-left toastsDefaultSuccess">
                            @if (session('role') == 'superadmin' || session('role') == 'admin')
-                              <a class="btn btn-danger btn" data-toggle="modal" data-target="#exampleModalCenter_{{ $da->subject->id }}">
+                              <a class="btn btn-danger btn" data-toggle="modal" data-target="#deleteSupplementarySubject{{ $da->subject->id }}">
                                  <i class="fas fa-trash"></i> Delete
                               </a>
                            @endif
@@ -66,7 +66,7 @@
                   </tr>
 
                   <!-- Modal -->
-                  <div class="modal fade" id="exampleModalCenter_{{ $da->subject->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal fade" id="deleteSupplementarySubject{{ $da->subject->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                      <div class="modal-dialog modal-dialog-centered" role="document">
                            <div class="modal-content">
                               <div class="modal-header">
@@ -80,11 +80,13 @@
                               </div>
                               <div class="modal-footer">
                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                 <a class="btn btn-danger btn" href="{{ url('/' . session('role') . '/subjects/delete/' . $da->subject->id) }}">Yes delete</a>
+                                 <a class="btn btn-danger btn" href="{{ url('/' . session('role') . '/supplementarySubjects/delete/' . $da->subject->id) }}">Yes delete</a>
                               </div>
                            </div>
                      </div>
                   </div>
+
+                 
                @endforeach
 
                </tbody>

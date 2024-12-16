@@ -22,10 +22,10 @@
         <i class="fas fa-calendar-plus"></i>
         Set master academic   
     </a>
-    <a type="button" href="{{url('/' . session('role') .'/masterAcademics') . '/edit'}}" class="btn btn-warning">
+    {{-- <a type="button" href="{{url('/' . session('role') .'/masterAcademics') . '/edit/' . $data['id']}}" class="btn btn-warning">
         <i class="fas fa-solid fa-pencil"></i>
         Edit
-    </a>
+    </a> --}}
 
     <div class="col-12 p-0 mt-1"> 
         <label for="master_academic">Choose Master Academics<span style="color: red"></span></label>
