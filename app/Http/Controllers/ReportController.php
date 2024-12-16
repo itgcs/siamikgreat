@@ -3041,7 +3041,7 @@ class ReportController extends Controller
             $project = Type_exam::where('name', 'project', )->value('id');
             $practical = Type_exam::where('name', 'practical', )->value('id');
             $final_assessment = Type_exam::where('name', 'final assessment', )->value('id');
-            $final_exam = Type_exam::where('name', 'final exam', )->value('id');
+            $final_exam = Type_exam::whereIn('name', ['final exam', 'final assessment'], )->value('id');
             
             // dd($scoresByStudent);
            
@@ -3064,7 +3064,6 @@ class ReportController extends Controller
                 'quiz' => $quiz,
                 'project' => $project,
                 'practical' => $practical,
-                'finalExam' => $final_exam,
                 'finalAssessment' => $final_assessment,
             ];
 
