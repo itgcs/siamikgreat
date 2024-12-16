@@ -17,11 +17,39 @@
    </div>  
 
    <div class="row">
-      <a type="button" href="{{ url('/monthlyActivities/create') }}" class="btn btn-success btn mx-2">   
+      <a type="button" class="btn btn-success btn mx-2" data-toggle="modal" data-target="#addMonthlyActivities">   
          <i class="fa-solid fa-book"></i> 
          Add Monthly Activity
       </a>
+
+      {{-- ADD --}}
+      <div class="modal fade" id="addMonthlyActivities" tabindex="-1" role="dialog" aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" >Add Data Monthly Activities</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body">
+               <div class="col-md-12">
+                  <label for="major_subject">Major Subject<span style="color: red">*</span></label>
+                  <select required name="major_subject[]" class="js-select2 form-control" id="major_subject" multiple="multiple">
+                          <option value="" >--- SELECT MAJOR SUBJECT ---</option>
+                          @foreach($subjects as $subject)
+                              <option value="{{ $subject->id }}">{{ $subject->name_subject }}</option>
+                          @endforeach
+                  </select>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
+               <a class="btn btn-danger btn" id="confirmChange-{{$el->id}}">Change</a>
+            </div>
+         </div>
+      </div>
    </div>
+
 
     <div class="card card-dark mt-2">
         <div class="card-header">
@@ -52,25 +80,17 @@
                      @if (count($data) !== 0)
                         @foreach ($data as $el)
                            <tr id={{'index_grade_' . $el->id}}>
-                                 <td>
-                                    {{ $loop->index + 1 }}
-                                 </td>
-                                 <td>
-                                    <a>
-                                          {{$el->name}}
-                                    </a>
-                                 </td>
+                                 <td>{{ $loop->index + 1 }}</td>
+                                 <td>{{$el->name}}</td>
                                  
                                  <td class="project-actions text-left toastsDefaultSuccess">
-                                    <a class="btn btn-warning btn"
-                                       href="{{url('/' . session('role') .'/subjects') . '/edit/' . $el->id}}">
-                                       {{-- <i class="fa-solid fa-user-graduate"></i> --}}
+                                    <a class="btn btn-warning btn" data-toggle="modal" data-target="#editMonthlyActivities-{{$el->id}}">
                                        <i class="fas fa-pencil-alt">
                                        </i>
                                        Edit
                                     </a>
                                     @if (session('role') == 'superadmin' || session('role') == 'admin')
-                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#exampleModalCenter">
+                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#deleteMonthlyActivities-{{$el->id}}">
                                        <i class="fas fa-trash"></i>
                                        Delete
                                     </a>
@@ -79,24 +99,48 @@
                            </tr>
 
                            <!-- Modal -->
-                           <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                           {{-- EDIT --}}
+                           <div class="modal fade" id="editMonthlyActivities-{{$el->id}}" tabindex="-1" aria-labelledby="exampleModalCenterTitle" role="dialog" aria-hidden="true">
                               <div class="modal-dialog modal-dialog-centered" role="document">
                               <div class="modal-content">
                                  <div class="modal-header">
-                                 <h5 class="modal-title" id="exampleModalLongTitle">Delete subject</h5>
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Change Data Monthly Activities</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                       <span aria-hidden="true">&times;</span>
+                                    </button>
+                                 </div>
+                                 <div class="modal-body">
+                                    Monthly Activities
+                                    <input name="class" type="text" class="form-control" id="change-name-{{$el->id}}" placeholder="" value="{{$el->name}}">
+                                    <input type="hidden" value="{{$el->id}}" name="data_id" id="data-id-{{$el->id}}">
+                                 </div>
+                                 <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
+                                    <a class="btn btn-danger btn" id="confirmChange-{{$el->id}}">Change</a>
+                                 </div>
+                              </div>
+                           </div>
+
+                           {{-- DELETE --}}
+                           <div class="modal fade" id="deleteMonthlyActivities-{{$el->id}}" tabindex="-1" aria-labelledby="exampleModalCenterTitle"  role="dialog" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                 <div class="modal-header">
                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                  </button>
                                  </div>
                                  <div class="modal-body">
-                                    Are you sure want to delete subject?
+                                    Are you sure want to delete {{$el->name}}?
                                  </div>
                                  <div class="modal-footer">
                                  <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
-                                 <a class="btn btn-danger btn"  href="{{url('/' . session('role') .'/subjects') . '/delete/' . $el->id}}">Yes delete</a>
+                                 <a class="btn btn-danger btn"  href="{{url('/' . session('role') .'/monthlyActivities') . '/delete/' . $el->id}}">Yes delete</a>
                                  </div>
                               </div>
                            </div>
+                           
+                           
                         @endforeach
                      @else
                         
@@ -140,4 +184,68 @@
       </script>
   @endif
 
+  {{-- ACTION DELETE & UPDATE --}}
+   <script>
+   const confirmChangeButtons = document.querySelectorAll('[id^="confirmChange-"]');
+
+   confirmChangeButtons.forEach(button => {
+      button.addEventListener('click', function(event) {
+         const id = this.id.split('-')[1]; // Get the ID from the button's ID
+         const changeName = document.getElementById(`change-name-${id}`).value; // Get the selected teacher from the corresponding modal
+         const dataId = document.getElementById(`data-id-${id}`).value; // Get the selected teacher from the corresponding modal
+
+         // console.log(changeName);
+
+         const form = {
+               id: parseInt(dataId, 10),
+               change_name: changeName,
+         };
+
+         // console.log(form);
+         // // Prepare options for the fetch request
+         const options = {
+               method: 'PUT',
+               headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                  'Content-Type': 'application/json' // Set the content type to JSON
+               },
+               body: JSON.stringify(form) // Convert the form object to a JSON string
+         };
+
+         // Send the form data using fetch
+         fetch("{{ route('actionUpdateMonthly') }}", options)
+               .then(response => response.json())
+               .then(data => {
+                  // Handle the server response
+                  if (data.success) {
+                     Swal.fire({
+                           icon: 'success',
+                           text: 'Data Berhasil Diubah',
+                           showConfirmButton: false, // Hide the confirm button
+                           timer: 1500, // Auto close after 2000 milliseconds (2 seconds)
+                           timerProgressBar: true // Optional: show a progress bar
+                     }).then(() => {
+                           // Optionally, you can still perform actions after the modal closes
+                           location.reload();
+                     });
+
+                  } else {
+                     Swal.fire({
+                           icon: 'error',
+                           text: 'Maaf ada kesalahan',
+                           showConfirmButton: false, // Hide the confirm button
+                           timer: 1500, // Auto close after 2000 milliseconds (2 seconds)
+                           timerProgressBar: true // Optional: show a progress bar
+                     }).then(() => {
+                           // Optionally, you can still perform actions after the modal closes
+                           location.reload();
+                     });
+                  }
+               })
+               .catch(error => {
+                  console.error('Fetch error:', error);
+               });
+      });
+   });   
+   </script>
 @endsection

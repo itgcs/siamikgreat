@@ -494,7 +494,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="/monthlyActivities" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database monthly activites' ? 'active' : '') : ''}}">
+              <a href="/monthlyActivities" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database monthly activities' ? 'active' : '') : ''}}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Monthly Activities</p>
               </a>

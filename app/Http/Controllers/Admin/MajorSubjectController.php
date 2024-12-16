@@ -30,8 +30,13 @@ class MajorSubjectController extends Controller
             ]);
 
             $data = Major_subject::with(['subject'])->get();
+            $subjects = subject::get();
             
-            return view('components.majorSubject.data-majorSubject')->with('data', $data);
+            // dd($data);
+            return view('components.majorSubject.data-majorSubject', [
+                'data' => $data,
+                'subjects' => $subjects,
+            ]);
 
         } catch (Exception $err) {
             return dd($err);
@@ -88,28 +93,12 @@ class MajorSubjectController extends Controller
     public function delete($id)
     {
         try {
-
-            session()->flash('after_delete_subject');
-
-            $getIdExam = Subject_exam::where('subject_id',$id)->value('id');
-
-            Subject::where('id', $id)->delete();
-            Teacher_subject::where('subject_id', $id)->delete();
-            Grade_subject::where('subject_id', $id)->delete();
-            Subject_exam::where('subject_id',$id)->delete();
-
-        if($getIdExam != null)
-        {
-            Exam::where('id', $getIdExam)->delete();
-            Grade_exam::where('exam_id', $getIdExam)->delete();
-            Score::where('exam_id', $getIdExam)->delete();
-        }
-
-            return redirect('/superadmin/majorSubjects');
+            Major_subject::where('id', $id)->delete();
+            return redirect('/'.session('role').'/majorSubjects');
         } 
         catch (Exception $err) {
             dd($err);
-            return redirect('/superadmin/majorSubjects')->with('error', 'Terjadi kesalahan saat menghapus data subject.');
+            return redirect('/'.session('role').'/majorSubjects')->with('error', 'Terjadi kesalahan saat menghapus data subject.');
         }
     }
 }

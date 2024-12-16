@@ -1259,6 +1259,7 @@ Route::middleware(['auth.login', 'role:teacher'])->prefix('/teacher')->group(fun
       Route::get('attendance/class/teacher', [AttendanceController::class, 'gradeTeacher']);
       Route::get('attendance/teacher/grade/subject', [AttendanceController::class, 'detailAttendTeacher'])->name('attendance.detail.teacher');
       Route::get('attendance/{id}/{gradeId}/{date}', [AttendanceController::class, 'detail'])->name('attendanceStudent');
+      // Route::get('attendance/decline', [AttendanceController::class, 'detail'])->name('attendanceStudent');
       
       Route::post('/', [AttendanceController::class, 'postAttendance'])->name('actionUpdateAttendanceStudent');
       Route::post('/editAttendance', [AttendanceController::class, 'postEditAttendance'])->name('actionEditAttendanceStudent');
@@ -1398,10 +1399,9 @@ Route::middleware(['auth.login', 'role:superadmin,admin'])->group(function () {
       Route::get('/edit/{id}', [MonthlyActivitiesController::class, 'pageEdit']);
       Route::get('/pdf/{id}', [MonthlyActivitiesController::class, 'pagePDF']);
       Route::post('/', [MonthlyActivitiesController::class, 'actionPost'])->name('actionCreateMonthly');
-      Route::put('/{id}', [MonthlyActivitiesController::class, 'actionPut'])->name('actionUpdateMonthly');
+      Route::put('/actionEdit', [MonthlyActivitiesController::class, 'actionPut'])->name('actionUpdateMonthly');
       Route::get('/delete/{id}', [MonthlyActivitiesController::class, 'delete'])->name('deleteMonthly');
    });
    
    Route::put('/changeMasterAcademic/{id}', [MasterAcademicController::class, 'changeMasterAcademic'])->name('actionChangeMasterAcademic');
-
 });

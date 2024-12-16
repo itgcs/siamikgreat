@@ -45,37 +45,51 @@ class ScoringController extends Controller
             $type = "major_subject_assessment";
 
             // dd($request);
-            for($i=0; $i < count($request->student_id); $i++){
+            for ($i = 0; $i < count($request->student_id); $i++) {
                 $final_score = round($request->final_score[$i]);
-    
+            
+                // Tentukan grade berdasarkan nilai akhir
                 $grade = $this->determineGrade($final_score);
-
-                $scoring = [
+            
+                // Data untuk pencocokan (kriteria kunci utama)
+                $matchingScoring = [
                     'student_id'         => $request->student_id[$i],
                     'grade_id'           => $request->grade_id,
                     'subject_id'         => $request->subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
                     'semester'           => $request->semester,
                     'academic_year'      => session('academic_year'),
-                    'comment'            => $request->comment[$i],
-                    'grades'             => $grade,
-                    'final_score'        => $request->final_score[$i],
                 ];
-
-                $comment = [
+            
+                // Data untuk diupdate atau disimpan
+                $updateScoring = [
+                    'comment'     => $request->comment[$i],
+                    'grades'      => $grade,
+                    'final_score' => $final_score,
+                ];
+            
+                // Gunakan updateOrCreate untuk tabel Acar
+                Acar::updateOrCreate($matchingScoring, $updateScoring);
+            
+                // Data untuk komentar
+                $matchingComment = [
                     'student_id'         => $request->student_id[$i],
                     'grade_id'           => $request->grade_id,
                     'subject_id'         => $request->subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
                     'semester'           => $request->semester,
                     'academic_year'      => session('academic_year'),
-                    'type'               => $type,
-                    'comment'            => $request->comment[$i],
                 ];
-                
-                Acar::create($scoring);
-                Comment::create($comment);
+            
+                $updateComment = [
+                    'type'    => $type,
+                    'comment' => $request->comment[$i],
+                ];
+            
+                // Gunakan updateOrCreate untuk tabel Comment
+                Comment::updateOrCreate($matchingComment, $updateComment);
             }
+            
 
             $status = [
                 'grade_id'      => $request->grade_id,
@@ -116,37 +130,52 @@ class ScoringController extends Controller
                 $subject_id = $request->subject_id;
             }
 
-            for($i=0; $i < count($request->student_id); $i++){
+            for ($i = 0; $i < count($request->student_id); $i++) {
                 $final_score = round($request->final_score[$i]);
-
+            
+                // Tentukan grade berdasarkan nilai akhir
                 $grade = $this->determineGrade($final_score);
-
-                $scoring = [
+            
+                // Data kunci unik (untuk pencarian)
+                $scoringKeys = [
                     'student_id'         => $request->student_id[$i],
                     'grade_id'           => $request->grade_id,
                     'subject_id'         => $subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
                     'semester'           => $request->semester,
                     'academic_year'      => session('academic_year'),
-                    'comment'            => $request->comment[$i],
-                    'grades'             => $grade,
-                    'final_score'        => $request->final_score[$i],
                 ];
-
-                $comment = [
+            
+                // Data untuk update (nilai yang ingin diubah atau ditambahkan)
+                $scoringValues = [
+                    'comment'     => $request->comment[$i],
+                    'grades'      => $grade,
+                    'final_score' => $final_score,
+                ];
+            
+                // Lakukan update atau create untuk tabel Acar
+                Acar::updateOrCreate($scoringKeys, $scoringValues);
+            
+                // Data kunci unik untuk Comment
+                $commentKeys = [
                     'student_id'         => $request->student_id[$i],
                     'grade_id'           => $request->grade_id,
-                    'subject_id'         => $request->subject_id,
+                    'subject_id'         => $subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
                     'semester'           => $request->semester,
                     'academic_year'      => session('academic_year'),
-                    'type'               => $type,
-                    'comment'            => $request->comment[$i],
                 ];
-
-                Acar::create($scoring);
-                Comment::create($comment);
+            
+                // Data untuk update (nilai yang ingin diubah atau ditambahkan)
+                $commentValues = [
+                    'type'    => $type,
+                    'comment' => $request->comment[$i],
+                ];
+            
+                // Lakukan update atau create untuk tabel Comment
+                Comment::updateOrCreate($commentKeys, $commentValues);
             }
+            
 
             $status = [
                 'grade_id'      => $request->grade_id,
@@ -203,39 +232,54 @@ class ScoringController extends Controller
                 }
             }else {
                 $subject_id = $request->subject_id;
-             }
+            }
 
-            for($i=0; $i < count($request->student_id); $i++){
+             for ($i = 0; $i < count($request->student_id); $i++) {
                 $final_score = round($request->final_score[$i]);
-    
+            
+                // Tentukan grade berdasarkan nilai akhir
                 $grade = $this->determineGrade($final_score);
-
-                $scoring = [
+            
+                // Kondisi untuk menentukan apakah data sudah ada
+                $scoringConditions = [
                     'student_id'         => $request->student_id[$i],
                     'grade_id'           => $request->grade_id,
                     'subject_id'         => $subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
                     'semester'           => $request->semester,
                     'academic_year'      => session('academic_year'),
-                    'comment'            => $request->comment[$i],
-                    'grades'             => $grade,
-                    'final_score'        => $request->final_score[$i],
                 ];
-
-                $comment = [
+            
+                // Data yang akan diperbarui atau ditambahkan untuk scoring
+                $scoringData = [
+                    'final_score' => $final_score,
+                    'grades'      => $grade,
+                    'comment'     => $request->comment[$i],
+                ];
+            
+                // Kondisi untuk menentukan apakah data sudah ada untuk komentar
+                $commentConditions = [
                     'student_id'         => $request->student_id[$i],
                     'grade_id'           => $request->grade_id,
                     'subject_id'         => $request->subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
                     'semester'           => $request->semester,
                     'academic_year'      => session('academic_year'),
-                    'type'               => $type,
-                    'comment'            => $request->comment[$i],
                 ];
-                
-                Acar::create($scoring);
-                Comment::create($comment);
+            
+                // Data yang akan diperbarui atau ditambahkan untuk komentar
+                $commentData = [
+                    'type'    => $type,
+                    'comment' => $request->comment[$i],
+                ];
+            
+                // Gunakan updateOrCreate untuk tabel Acar
+                Acar::updateOrCreate($scoringConditions, $scoringData);
+            
+                // Gunakan updateOrCreate untuk tabel Comment
+                Comment::updateOrCreate($commentConditions, $commentData);
             }
+            
 
             $status = [
                 'grade_id'      => $request->grade_id,
@@ -818,15 +862,18 @@ class ScoringController extends Controller
             $getGrade = Grade::where('id', $request->grade_id)->value('name');
 
             for($i=0; $i < count($request->student_id); $i++){
-                $score = [
+                $where = [
                     'grade_id'      => $request->grade_id,
                     'teacher_id'    => $request->class_teacher,
                     'student_id'    => $request->student_id[$i],
-                    'score'         => $request->final_score[$i],
                     'semester'      => $request->semester,
                     'academic_year' => session('academic_year'),
                 ];
                 
+                $score = [
+                    'score' => $request->final_score[$i],
+                ];
+
                 if (strtolower($getGrade) == "primary") {
                     $scoring = [
                         'attendance' => $request->final_score[$i],
@@ -834,8 +881,10 @@ class ScoringController extends Controller
                     ];
 
                     Sooa_primary::updateOrCreate(
-                        ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id,
-                        'semester' => $request->semester, 'class_teacher_id' => $request->class_teacher, 
+                        ['student_id' => $request->student_id[$i], 
+                        'grade_id' => $request->grade_id,
+                        'class_teacher_id' => $request->class_teacher, 
+                        'semester' => $request->semester, 
                         'academic_year' => session('academic_year')], 
                         $scoring
                     );
@@ -854,7 +903,7 @@ class ScoringController extends Controller
                     );
                 }
                 
-                Score_attendance::create($score);
+                Score_attendance::updateOrcreate($where, $score);
             }
 
             $status = [
