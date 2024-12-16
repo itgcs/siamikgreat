@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <div class="row d-flex justify-content-center">
             <!-- general form elements -->
-            <div class="col-md-6">
+            <div class="col-12">
                 <div>
                     @if (session('role') == 'superadmin')
                         <form method="POST" action={{route('actionSuperUpdateExam', $data['dataExam']->id)}}>
@@ -105,12 +105,14 @@
                                             <p style="color: red">{{ $errors->first('materi') }}</p>
                                         @endif
                                     </div>
+
+                                    <div class="col-12 mt-3">
+                                        <input role="button" type="submit" class="btn btn-success center col-12">
+                                    </div>
                                 </div>
+                                
                             </div>
 
-                            <div class="row d-flex justify-content-center">
-                                <input role="button" type="submit" class="btn btn-success center col-11 m-3">
-                            </div>
                         </div>
                     </form>
                 </div>

@@ -1343,6 +1343,8 @@ class ReportController extends Controller
                 ];
             })->values()->all();
 
+            // dd($scoresByStudent);
+
             $status = Acar_status::where('grade_id', $grade->grade_id)
             ->where('semester', $semester)
             ->where('academic_year', $academic_year)
@@ -2342,6 +2344,8 @@ class ReportController extends Controller
                     },
                 ])
                 ->first();
+
+                // dd($totalExam);
             
                 $type = "major_subject_assessment";
 
@@ -2550,7 +2554,7 @@ class ReportController extends Controller
                 'finalAssessment' => $final_assessment,
             ];
 
-            // dd($data); 
+            // dd($scoresByStudent); 
 
             if($isMajorSubject){
                 return view('components.teacher.detail_scoring_major_subject_primary')->with('data', $data);
@@ -3069,7 +3073,7 @@ class ReportController extends Controller
             $project = Type_exam::where('name', 'project', )->value('id');
             $practical = Type_exam::where('name', 'practical', )->value('id');
             $final_assessment = Type_exam::where('name', 'final assessment', )->value('id');
-            $final_exam = Type_exam::where('name', 'final exam', )->value('id');
+            $final_exam = Type_exam::whereIn('name', ['final exam', 'final assessment'], )->value('id');
             
             // dd($scoresByStudent);
            
@@ -3101,7 +3105,6 @@ class ReportController extends Controller
                 return view('components.report.detail_scoring_subject_secondary')->with('data', $data);
             }
             elseif (session('role') == 'teacher') {
-                // dd($data['grade']->total_tasks);
                 return view('components.teacher.detail_scoring_subject_secondary')->with('data', $data);
             }
             
