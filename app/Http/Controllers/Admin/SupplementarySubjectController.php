@@ -90,26 +90,13 @@ class SupplementarySubjectController extends Controller
         try {
 
             session()->flash('after_delete_subject');
+            Supplementary_subject::where('subject_id', $id)->delete();
 
-            $getIdExam = Subject_exam::where('subject_id',$id)->value('id');
-
-            Subject::where('id', $id)->delete();
-            Teacher_subject::where('subject_id', $id)->delete();
-            Grade_subject::where('subject_id', $id)->delete();
-            Subject_exam::where('subject_id',$id)->delete();
-
-        if($getIdExam != null)
-        {
-            Exam::where('id', $getIdExam)->delete();
-            Grade_exam::where('exam_id', $getIdExam)->delete();
-            Score::where('exam_id', $getIdExam)->delete();
-        }
-
-            return redirect('/superadmin/supplementarySubjects');
+            return redirect('/' . session('role') .'/supplementarySubjects');
         } 
         catch (Exception $err) {
             dd($err);
-            return redirect('/superadmin/supplementarySubjects')->with('error', 'Terjadi kesalahan saat menghapus data supplementary subject.');
+            return redirect('/' . session('role') .'/supplementarySubjects')->with('error', 'Terjadi kesalahan saat menghapus data supplementary subject.');
         }
     }
 }

@@ -16,21 +16,21 @@
    </div>  
    
    <div class="row">
-      <a type="button" href="{{ url('/' . session('role') . '/majorSubjects/create') }}" class="btn btn-success btn mx-2">   
+      <a type="button" class="btn btn-success btn mx-2" data-toggle="modal" data-target="#addMajorSubjects">   
          <i class="fa-solid fa-book"></i>
          Add Major subject
       </a>
+
    </div>
    
-
    <div class="card card-dark mt-2">
       <div class="card-header">
          <h3 class="card-title">Subjects</h3>
 
          <div class="card-tools">
-               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                  <i class="fas fa-minus"></i>
-               </button>
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+               <i class="fas fa-minus"></i>
+            </button>
          </div>
       </div>
       <div class="card-body p-0">
@@ -58,7 +58,7 @@
                      </td>
                      <td class="project-actions text-left toastsDefaultSuccess">
                            @if (session('role') == 'superadmin' || session('role') == 'admin')
-                              <a class="btn btn-danger btn" data-toggle="modal" data-target="#exampleModalCenter_{{ $da->subject->id }}">
+                              <a class="btn btn-danger btn" data-toggle="modal" data-target="#deleteMajorSubject{{ $da->subject->id }}">
                                  <i class="fas fa-trash"></i> Delete
                               </a>
                            @endif
@@ -66,7 +66,7 @@
                   </tr>
 
                   <!-- Modal -->
-                  <div class="modal fade" id="exampleModalCenter_{{ $da->subject->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal fade" id="deleteMajorSubject{{ $da->subject->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                      <div class="modal-dialog modal-dialog-centered" role="document">
                            <div class="modal-content">
                               <div class="modal-header">
@@ -76,7 +76,7 @@
                                  </button>
                               </div>
                               <div class="modal-body">
-                                 Are you sure want to delete subject?
+                                 Are you sure want to delete major subject?
                               </div>
                               <div class="modal-footer">
                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -96,6 +96,37 @@
          </table>
       </div>
       <!-- /.card-body -->
+   </div>
+
+   {{-- ADD --}}
+   <div class="modal fade" id="addMajorSubjects" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" >Add Data Major Subjects</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-body">
+            <div class="form-group row">
+               <div class="col-md-12">
+                  <label for="major_subject">Major Subject<span style="color: red">*</span></label>
+                  <select required name="major_subject[]" class="js-select2 form-control" id="major_subject" multiple="multiple">
+                     <option value="" > SELECT MAJOR SUBJECT </option>
+                     @foreach($subjects as $subject)
+                        <option value="{{ $subject->id }}">{{ $subject->name_subject }}</option>
+                     @endforeach
+                  </select>
+               </div>
+            </div>
+            
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
+            <a class="btn btn-danger btn" id="confirmAdd">Change</a>
+         </div>
+      </div>
    </div>
 </div>
 
@@ -131,5 +162,79 @@
       });
    </script>
 @endif
+
+<script>
+   $(document).ready(function() {
+    // Inisialisasi Select2 secara global
+    $('.js-select2').select2();
+
+    // Re-inisialisasi Select2 setiap kali modal ditampilkan
+    $('#addMajorSubjects').on('shown.bs.modal', function() {
+        $('#major_subject').select2({
+            placeholder: "SELECT MAJOR SUBJECT",
+        });
+    });
+
+    const confirmAdd = document.querySelectorAll('[id^="confirmAdd"]');
+
+    confirmAdd.forEach(button => {
+         button.addEventListener('click', function(event) {
+               const majorSubject = document.getElementById("major_subject").value;
+               
+               console.log(majorSubject);
+
+               const form = {
+                  major_subject: parseInt(majorSubject, 10),
+               };
+
+               // Prepare options for the fetch request
+               // const options = {
+               //    method: 'POST',
+               //    headers: {
+               //       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+               //       'Content-Type': 'application/json' // Set the content type to JSON
+               //    },
+               //    body: JSON.stringify(form) // Convert the form object to a JSON string
+               // };
+
+               // // Send the form data using fetch
+               // fetch("{{ route('actionAdminChangeGradeSubjectMultiTeacher') }}", options)
+               //    .then(response => response.json())
+               //    .then(data => {
+               //       // Handle the server response
+               //       if (data.success) {
+               //             console.log(data.tes);
+               //             Swal.fire({
+               //                icon: 'success',
+               //                text: 'Data Berhasil Diubah',
+               //                showConfirmButton: false, // Hide the confirm button
+               //                timer: 1500, // Auto close after 2000 milliseconds (2 seconds)
+               //                timerProgressBar: true // Optional: show a progress bar
+               //             }).then(() => {
+               //                // Optionally, you can still perform actions after the modal closes
+               //                location.reload();
+               //             });
+
+               //       } else {
+               //             Swal.fire({
+               //                icon: 'error',
+               //                text: 'Maaf ada kesalahan',
+               //                showConfirmButton: false, // Hide the confirm button
+               //                timer: 1500, // Auto close after 2000 milliseconds (2 seconds)
+               //                timerProgressBar: true // Optional: show a progress bar
+               //             }).then(() => {
+               //                // Optionally, you can still perform actions after the modal closes
+               //                location.reload();
+               //             });
+               //       }
+               //    })
+               //    .catch(error => {
+               //       console.error('Fetch error:', error);
+               //    });
+         });
+      });
+});
+
+</script>
 
 @endsection

@@ -77,7 +77,7 @@
                                           $selectedTeacher = $teacherGrade;
                                        @endphp
                                         <label for="teacher_id">Teacher class</label>
-                                        <select name="teacher_id" class="form-control" id="teacher_id">
+                                        <select name="teacher_id" class="form-control js-select2" id="teacher_id">
                                             <option value=""> SELECT TEACHER CLASS </option>
                                             @if(count($teacherGrade) == 0)
                                                 @foreach($teacher as $el)

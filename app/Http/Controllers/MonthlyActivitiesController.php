@@ -2,14 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
-use App\Models\Subject;
-use App\Models\Teacher_subject;
-use App\Models\Grade_subject;
-use App\Models\Subject_exam;
-use App\Models\Exam;
-use App\Models\Grade_exam;
 use App\Models\MonthlyActivity;
-use App\Models\Score;
 
 use Illuminate\Http\Request;
 use Exception;
@@ -23,7 +16,7 @@ class MonthlyActivitiesController extends Controller
     {
         try {
             session()->flash('page',  $page = (object)[
-            'page' => 'monthly activities',
+            'page' => 'subjects',
             'child' => 'database monthly activities',
             ]);
 
@@ -41,7 +34,7 @@ class MonthlyActivitiesController extends Controller
         try {
             //code...
             session()->flash('page',  $page = (object)[
-            'page' => 'monthly activities',
+            'page' => 'subjects',
             'child' => 'database monthly activities',
             ]);
             return view('components.monthlyActivities.create-monthly-activities');
@@ -102,7 +95,7 @@ class MonthlyActivitiesController extends Controller
             //code...
             session()->flash('page',  $page = (object)[
                 'page' => 'subjects',
-                'child' => 'database subjects',
+                'child' => 'database monthly activities',
             ]);
             
             $data = MonthlyActivity::where('id', $id)->first();
@@ -116,49 +109,27 @@ class MonthlyActivitiesController extends Controller
     }
 
 
-    public function actionPut(Request $request, $id)
+    public function actionPut(Request $request)
     {
         DB::beginTransaction();
 
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'subjects',
-                'child' => 'database subjects',
+                'child' => 'database monthly activities',
             ]);
-
-            $rules = [
-                'name' => $request->name,
-                'updated_at'   => now(),
-            ];
-
-            $validator = Validator::make($rules, [
-                'name' => 'required|string',
-                ]
-            );
 
             $role = session('role');
 
-            if($validator->fails())
-            {
-                DB::rollBack();
-                return redirect('/'.$role.'/subjects/edit/' . $id)->withErrors($validator->messages())->withInput($rules);
-            }
-            
-            $check = MonthlyActivity::where('name', $request->name)->first();
-
-            if($check && $check->id != $id)
-            {
-                DB::rollBack();
-                return redirect('/'.$role.'/subjects/edit/' . $id)->withErrors(['name' => ["The subject " . $request->name  ." is already created !!!"]])->withInput($rules);
-            }
-
-            MonthlyActivity::where('id', $id)->update($rules);
+            MonthlyActivity::where('id', $request->id)->update([
+                'name' => $request->change_name,
+            ]);
     
             DB::commit();
-
-            session()->flash('after_update_subject');
-
-            return redirect('/'.$role.'/subjects');
+            
+            return response()->json([
+                'success' => true,
+            ]);
 
         } catch (Exception $err) {
             DB::rollBack();
@@ -173,25 +144,13 @@ class MonthlyActivitiesController extends Controller
 
             session()->flash('after_delete_subject');
 
-            $getIdExam = Subject_exam::where('subject_id',$id)->value('id');
-
             MonthlyActivity::where('id', $id)->delete();
-            Teacher_MonthlyActivity::where('subject_id', $id)->delete();
-            Grade_MonthlyActivity::where('subject_id', $id)->delete();
-            Subject_exam::where('subject_id',$id)->delete();
 
-        if($getIdExam != null)
-        {
-            Exam::where('id', $getIdExam)->delete();
-            Grade_exam::where('exam_id', $getIdExam)->delete();
-            Score::where('exam_id', $getIdExam)->delete();
-        }
-
-            return redirect('/' .session('role'). '/subjects');
+            return redirect('/' .session('role'). '/monthlyActivities');
         } 
         catch (Exception $err) {
             dd($err);
-            return redirect('/'.session('role').'/subjects')->with('error', 'Terjadi kesalahan saat menghapus data subject.');
+            return redirect('/'.session('role').'/monthlyActivities')->with('error', 'Terjadi kesalahan saat menghapus data monthly activities.');
         }
     }
 }
