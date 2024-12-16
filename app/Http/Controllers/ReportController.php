@@ -3092,7 +3092,6 @@ class ReportController extends Controller
                 'quiz' => $quiz,
                 'project' => $project,
                 'practical' => $practical,
-                'finalExam' => $final_exam,
                 'finalAssessment' => $final_assessment,
             ];
 
