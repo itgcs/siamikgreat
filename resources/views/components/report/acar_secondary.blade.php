@@ -81,7 +81,7 @@
                     <th rowspan="3" class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
                     <th colspan="9" class="text-center" style="vertical-align : middle;text-align:center;">Major Subjects</th>
                     <th colspan="9" class="text-center" style="vertical-align : middle;text-align:center;">Minor Subjects</th>
-                    <th colspan="9" class="text-center" style="vertical-align : middle;text-align:center;">Supplementary Subjects</th>
+                    <th colspan="11" class="text-center" style="vertical-align : middle;text-align:center;">Supplementary Subjects</th>
                     <th class="text-center">Academic</th>
                     <th rowspan="3" class="text-center" style="width:15%;vertical-align : middle;text-align:center;">Comment</th>
                 </tr>
@@ -107,6 +107,7 @@
                     <td class="text-center" colspan="2">IT</td>
                     <td class="text-center" colspan="2">A/D</td>
                     <td class="text-center" colspan="2">CB</td>
+                    <td class="text-center" colspan="2">FL</td>
                     <td class="text-center">Avg</td>
                     <!-- END SUPPLEMENTARY SUBJECTS -->
 
@@ -147,6 +148,8 @@
                     <td class="text-center">Grs</td>
                     <td class="text-center">Mks</td>
                     <td class="text-center">Grs</td>
+                    <td class="text-center">Mks</td>
+                    <td class="text-center">Grs</td>
                     <td class="text-center">10%</td>
                     <!-- END SUPPLEMENTARY SUBJECTS -->
 
@@ -162,7 +165,7 @@
                             <td>{{ $dt['student_name'] }}</td> <!-- name -->
 
                             @php
-                                $subjects = [3 => 'English', 1 => 'Chinese', 2 => 'Math', 5 => 'Science', 32 => 'IPS', 7 => 'PPKN', 20 => 'Religion', 4 => 'BI', 18 => 'PE', 6 => 'IT', 33 => 'A/D', 16 => 'CB'];
+                                $subjects = [3 => 'English', 1 => 'Chinese', 2 => 'Math', 5 => 'Science', 32 => 'IPS', 7 => 'PPKN', 20 => 'Religion', 4 => 'BI', 18 => 'PE', 6 => 'IT', 33 => 'A/D', 16 => 'CB', 62 => 'FL'];
                                 $subjectScores = array_fill_keys(array_keys($subjects), ['final_score' => '', 'grades' => '']);
                                 
                                 foreach ($dt['scores'] as $score) {
@@ -182,7 +185,7 @@
                             @endforeach
                             <td class="text-center">{{ $dt['percent_minorSubjects'] }}</td>
 
-                            @foreach ([18, 6, 33, 16] as $subjectId)
+                            @foreach ([18, 6, 33, 16, 62] as $subjectId)
                                 <td class="text-center">{{ $subjectScores[$subjectId]['final_score'] }}</td>
                                 <td class="text-center">{{ $subjectScores[$subjectId]['grades'] }}</td>
                             @endforeach
