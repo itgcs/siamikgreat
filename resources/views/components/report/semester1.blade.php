@@ -149,8 +149,9 @@
         
         
                                 <!-- Strengths/weakness/nextstep -->
-                                <td class="text-center">
-                                <textarea name="strength_weakness_nextstep[]" type="text" class="form-control" autocomplete="off" required>{{ $score['strength_weakness_nextstep'] }}</td>
+                                 <td class="text-center">
+                                    <textarea name="strength_weakness_nextstep[]" class="form-control" autocomplete="off" required>{{ $score['strength_weakness_nextstep'] }}</textarea>
+                                </td>
         
                                 <!-- <td class="text-center">
                                 <input name="remarks[]" type="text" class="form-control" value="{{ $score['remarks'] }}" autocomplete="off"></td> -->
