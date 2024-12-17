@@ -22,17 +22,17 @@
         <i class="fas fa-calendar-plus"></i>
         Set master academic   
     </a>
-    {{-- <a type="button" href="{{url('/' . session('role') .'/masterAcademics') . '/edit/' . $data['id']}}" class="btn btn-warning">
+    <a type="button" href="{{url('/' . session('role') .'/masterAcademics') . '/edit'}}" class="btn btn-warning">
         <i class="fas fa-solid fa-pencil"></i>
         Edit
-    </a> --}}
+    </a>
 
     <div class="col-12 p-0 mt-1"> 
         <label for="master_academic">Choose Master Academics<span style="color: red"></span></label>
         <select name="master_academic" id="master_academic" class="form-control" onchange="changeMasterAcademic(this.value)">
             <option value="">-- SELECT MASTER ACADEMIC --</option>
             @foreach ($masterAcademic as $ma)
-                <option value="{{ $ma->id }}" {{ $data[0]['academic_year'] == $ma->academic_year ? 'selected' : '' }}>
+                <option value="{{ $ma->id }}" {{ $data['academic_year'] == $ma->academic_year ? 'selected' : '' }}>
                     Academic Year {{ $ma->academic_year }}
                 </option>
             @endforeach
@@ -47,13 +47,12 @@
             <table class="table table-striped projects">
                 @if(!empty($data))
                 <tbody>
-                        @foreach ($data as $el)
                         <tr>
                             <td>
                                 Academic Year
                             </td>
                             <td>
-                                <a>{{$el->academic_year}}</a>
+                                <a>{{$data['academic_year']}}</a>
                             </td>
                         </tr>
                         <tr>
@@ -61,7 +60,7 @@
                                 Semester 1
                             </td>
                             <td>
-                                <a>{{ \Carbon\Carbon::parse($el->semester1)->format('d F Y') }}  until  {{ \Carbon\Carbon::parse($el->end_semester1)->format('d F Y') }}</a>
+                                <a>{{ \Carbon\Carbon::parse($data['semester1'])->format('d F Y') }}  until  {{ \Carbon\Carbon::parse($data['end_semester1'])->format('d F Y') }}</a>
                             </td>
                         </tr>
                         <tr>
@@ -69,7 +68,7 @@
                                 Semester 2
                             </td>
                             <td>
-                                <a>{{ \Carbon\Carbon::parse($el->semester2)->format('d F Y') }}  until  {{ \Carbon\Carbon::parse($el->end_semester2)->format('d F Y') }}</a>
+                                <a>{{ \Carbon\Carbon::parse($data['semester2'])->format('d F Y') }}  until  {{ \Carbon\Carbon::parse($data['end_semester2'])->format('d F Y') }}</a>
                             </td>
                         </tr>
                         <tr>
@@ -77,31 +76,9 @@
                                 Periode
                             </td>
                             <td>
-                                <a>Semester {{ $el->now_semester }}</a>
+                                <a>Semester {{ $data['now_semester'] }}</a>
                             </td>
                         </tr>
-
-                        <!-- Modal -->
-                        <div class="modal fade" id="modalDeletemasterAcademic" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLongTitle">Delete master schedule</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Are you sure want to delete this master schedule?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <a class="btn btn-danger btn" href="{{url('/' . session('role') .'/masterAcademics') . '/delete/' . $el->id}}">Yes delete</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
                     </tbody>
                 @else
                     <p class="font-md text-bold text-center mt-2">Data kosong</p>

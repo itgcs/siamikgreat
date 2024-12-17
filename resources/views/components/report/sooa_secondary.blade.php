@@ -122,14 +122,14 @@
                     <tbody>
                     @foreach ($data['students'] as $student)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $loop->iteration }} blm acc</td>
                             <td>{{ $student['student_name'] }}</td>
 
                             @if (!empty($student['scores']))
                                 @foreach ($student['scores'] as $index => $score)
 
                                     <!-- ACADEMIC -->
-                                    <td class="text-center">{{ $score['academic'] }}</td>
+                                    <td class="text-center">{{ $score['academic'] }} blm acc</td>
                                     <td class="text-center">{{ $score['grades_academic'] }}</td>
 
                                     <!-- ECA 1 -->
@@ -197,7 +197,7 @@
                                 @foreach ($student['scores'] as $index => $score)
 
                                     <!-- ACADEMIC -->
-                                    <td class="text-center">{{ $score['academic'] }}</td>
+                                    <td class="text-center">{{ $score['academic'] }} decline</td>
                                     <td class="text-center">{{ $score['grades_academic'] }}</td>
 
                                     <!-- ECA 1 -->

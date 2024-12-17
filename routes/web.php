@@ -1019,7 +1019,6 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/create', [ExamController::class, 'pageCreate']);
       Route::get('/{id}', [ExamController::class, 'getById']);
       Route::get('/edit/{id}', [ExamController::class, 'pageEdit']);
-      Route::get('/pdf/{id}', [ExamController::class, 'pagePDF']);
       Route::post('/', [ExamController::class, 'actionPost'])->name('actionAdminCreateExam');
       Route::put('/{id}', [ExamController::class, 'actionPut'])->name('actionAdminUpdateExam');
    });
@@ -1398,10 +1397,15 @@ Route::middleware(['auth.login', 'role:superadmin,admin'])->group(function () {
       Route::get('/create', [MonthlyActivitiesController::class, 'pageCreate']);
       Route::get('/edit/{id}', [MonthlyActivitiesController::class, 'pageEdit']);
       Route::get('/pdf/{id}', [MonthlyActivitiesController::class, 'pagePDF']);
-      Route::post('/', [MonthlyActivitiesController::class, 'actionPost'])->name('actionCreateMonthly');
+      Route::post('/monthlyActivities/gas', [MonthlyActivitiesController::class, 'actionPost'])->name('actionCreateMonthly');
       Route::put('/actionEdit', [MonthlyActivitiesController::class, 'actionPut'])->name('actionUpdateMonthly');
       Route::get('/delete/{id}', [MonthlyActivitiesController::class, 'delete'])->name('deleteMonthly');
    });
    
+   Route::post('/exam/delete', [ExamController::class, 'delete'])->name('delete.exams');
+   Route::post('report/reportCard1', [ScoringController::class, 'actionPostReportCard1'])->name('actionPostReportCard1');
+   Route::get('exams/score/{id}', [ScoreController::class, 'score']);
+   Route::put('/', [ScoreController::class, 'actionUpdateScore'])->name('actionUpdateScoreExam');
    Route::put('/changeMasterAcademic/{id}', [MasterAcademicController::class, 'changeMasterAcademic'])->name('actionChangeMasterAcademic');
+   Route::post('report/midReportCard', [ScoringController::class, 'actionPostMidReportCard'])->name('actionPostMidReportCard');
 });

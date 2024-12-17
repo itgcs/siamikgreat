@@ -23,7 +23,21 @@ $grade_name = $student->grade_name;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Card</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Noto+Sans+TC&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap');
+        
 
+        .noto-serif-sc-chinese {
+            font-family: "Noto Serif SC", serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+        }
+        .noto-serif-sc-simbol {
+            font-family: "Ma Shan Zheng", serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+        }
         body {
             font-family: Arial, sans-serif;
         }
@@ -145,7 +159,7 @@ $grade_name = $student->grade_name;
                     <td style="text-align:center;border: 1px solid black;border-left: solid 1px black;">Scores</td>
                     <td style="text-align:center;border: 1px solid black;">Grade</td>
                     <td style="text-align:center;border: 1px solid black;border-right: solid 1px black;" colspan="6">Achievement of the Curriculum Expectations</td>
-                </tr>
+                </tr>s
                 <tr>
                     <td style="border: 1px solid black;text-align:center;border-left: solid 1px black;">95 – 100</td>
                     <td style="border: 1px solid black;text-align:center;">A<sup>+</sup></td>
@@ -295,7 +309,9 @@ $grade_name = $student->grade_name;
                         <td style="text-align:center;border: 1px solid black;padding:3px;">{{ $scores['final_score'] }}</td>
                         <td style="text-align:center;border: 1px solid black;padding:3px;">{{ $scores['grades'] }}</td>
                         <td style="text-align:left;border: 1px solid black;padding:3px;border-right: solid 1px black;font-style: italic;" colspan="5">
-                            {{ $scores['comment'] }}
+                            <p class="noto-serif-sc-chinese">
+                                {{ $scores['comment'] }}
+                            </p>
                         </td>
                     </tr>
                     <!-- END SUBJECT REPORT -->

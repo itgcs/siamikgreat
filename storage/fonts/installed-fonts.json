@@ -1,6 +1,7 @@
 {
     "noto sans sc": {
-        "200": "noto_sans_sc_200_8233fbf5c39d8318c901e2f8518dee8b"
+        "200": "C:\\xampp\\htdocs\\siamikgreat\\storage\\fonts\/noto_sans_sc_200_8233fbf5c39d8318c901e2f8518dee8b",
+        "normal": "noto_sans_sc_normal_fa8130ed19d81fe718fc84ecaef9893a"
     },
     "ma shan zheng": {
         "normal": "ma_shan_zheng_normal_46e9f69994aebd534af347d3551a0b83"
@@ -31,5 +32,8 @@
     },
     "fontawesome": {
         "normal": "fontawesome_normal_98ba43c5288785d68524e2de74fccc87"
+    },
+    "noto sans tc": {
+        "normal": "noto_sans_tc_normal_3931d8f2ec734beedacf8627aac63492"
     }
 }

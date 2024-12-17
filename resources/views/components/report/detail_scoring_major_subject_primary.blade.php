@@ -21,13 +21,29 @@
 
     <div class="row">
         <div class="col">
-            <p class="text-xs text-bold">Major Subject Assessment</p>
-            <p class="text-xs">Semester : {{ $data['semester']}}</p> 
-            <p class="text-xs">Subject : {{ $data['subject']->subject_name}}</p>    
-            <p class="text-xs">Subject Teacher : {{ $data['subjectTeacher']->teacher_name }}</p>    
-            <p class="text-xs">Class Teacher : {{ $data['classTeacher']->teacher_name }}</p>
-            <p class="text-xs">Class: {{ $data['grade']->name }} - {{ $data['grade']->class }}</p>
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p>
+            <p class="text-bold">Major Subject Assessment</p>
+            <table>
+                <tr>
+                    <td>Subject</td>
+                    <td> : {{ $data['subject']->subject_name }}</td>
+                </tr>
+                <tr>
+                    <td>Subject Teacher</td>
+                    <td> : {{ $data['subjectTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Class</td>
+                    <td> : {{ $data['grade']->name }} - {{ $data['grade']->class }}</td>
+                </tr>
+                <tr>
+                    <td>Class Teacher</td>
+                    <td> : {{ $data['classTeacher']->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
+                </tr>
+            </table>
         </div>
     </div>
 
@@ -190,12 +206,6 @@
                                 <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">  
                                 <input name="final_score[]" type="number" class="form-control d-none" id="final_score" value="{{ $student['total_score'] }}">  
                                 <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">  
-                                <div class="input-group-append">
-                                    <a class="btn btn-danger btn" data-toggle="modal" data-target="#editSingleComment">
-                                        <i class="fas fa-pen"></i>
-                                        Edit
-                                    </a>
-                                </div>
                             @else
                                 {{ $student['comment'] }}
                             @endif

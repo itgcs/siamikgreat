@@ -38,7 +38,7 @@
                                         <select required name="type_exam" class="form-control" id="type_exam">
                                                 <option selected disabled>--- SELECT TYPE EXAM ---</option>
                                                 @foreach($data['typeExam'] as $el)
-                                                <option value="{{ $el->id }}" {{ $el->id == $data['dataExam']->type_exam_id ? 'selected' : '' }}>{{ $el->name }}</option>
+                                                <option value="{{ $el->id }}" {{ $el->id == $data['dataExam']->type_exam_id ? 'selected' : '' }}>{{ ucwords($el->name) }}</option>
                                                 @endforeach
                                         </select>
                                         @if($errors->has('type_exam'))
