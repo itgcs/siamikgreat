@@ -24,6 +24,15 @@ $grade_name = $student->grade_name;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Report Card</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@900&display=swap');
+
+        .noto-serif-sc-chinese {
+            font-family: "Noto Sans SC", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+        }
+
         body {
             font-family: Arial, sans-serif;
         }
@@ -127,9 +136,9 @@ $grade_name = $student->grade_name;
                 </tr>
                 <tr>
                     <td style="text-align:right;border: 1px solid black;padding-right:8px;border-left: solid 1px black;">Times Late:</td>
-                    <td style="border: 1px solid black;padding-left:8px;" colspan="3">{{ $attendance[0]['times_late'] }} minute</td>
+                    <td style="border: 1px solid black;padding-left:8px;" colspan="3">{{ $attendance[0]['total_late'] }}</td>
                     <td style="text-align:right;border: 1px solid black;padding-right:8px;"  colspan="2">Total Times Late:</td>
-                    <td style="border: 1px solid black;padding-left:8px;border-right: solid 1px black;" colspan="2">{{ $attendance[0]['times_late'] }} minute</td>
+                    <td style="border: 1px solid black;padding-left:8px;border-right: solid 1px black;" colspan="2">{{ $attendance[0]['total_late'] }}</td>
                 </tr>
                 <!-- END STUDENT STATUS -->
 
@@ -339,7 +348,11 @@ $grade_name = $student->grade_name;
                             <td style="text-align:left;border: 1px solid black;padding:3px;border-left: solid 1px black;style">{{ $scores['subject_name'] }}</td>
                             <td style="text-align:center;border: 1px solid black;padding:3px;">{{ $scores['final_score'] }}</td>
                             <td style="text-align:center;border: 1px solid black;padding:3px;">{{ $scores['grades'] }}</td>
-                            <td style="text-align:left;border: 1px solid black;padding:3px;border-right: solid 1px black;font-style: italic;" colspan="5">{{ $scores['comment'] }}</td>
+                            <td style="text-align:left;border: 1px solid black;padding:3px;border-right: solid 1px black;font-style: italic;" colspan="5">
+                                <span class="noto-serif-sc-chinese">
+                                    {{ $scores['comment'] }}
+                                </span>
+                            </td>
                         </tr>
                         <!-- END SUBJECT REPORT -->
                     @endforeach

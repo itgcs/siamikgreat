@@ -23,21 +23,15 @@ $grade_name = $student->grade_name;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Card</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Noto+Sans+TC&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@900&display=swap');
 
         .noto-serif-sc-chinese {
-            font-family: "Noto Serif SC", serif;
+            font-family: "Noto Sans SC", sans-serif;
             font-optical-sizing: auto;
+            font-weight: 400;
             font-style: normal;
         }
-        .noto-serif-sc-simbol {
-            font-family: "Ma Shan Zheng", serif;
-            font-optical-sizing: auto;
-            font-style: normal;
-        }
+        
         body {
             font-family: Arial, sans-serif;
         }
@@ -145,9 +139,9 @@ $grade_name = $student->grade_name;
                 </tr>
                 <tr>
                     <td style="text-align:right;border: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Times Late:</td>
-                    <td style="border: 1px solid black;padding-left:4px;" colspan="2">{{ $attendance[0]['times_late'] }} minute</td>
+                    <td style="border: 1px solid black;padding-left:4px;" colspan="2">{{ $attendance[0]['total_late'] }}</td>
                     <td style="text-align:right;border: 1px solid black;padding-right:4px;"  colspan="2">Total Times Late:</td>
-                    <td style="border: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">{{ $attendance[0]['times_late'] }} minute</td>
+                    <td style="border: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">{{ $attendance[0]['total_late'] }}</td>
                 </tr>
                 <!-- END STUDENT STATUS -->
 
@@ -308,10 +302,10 @@ $grade_name = $student->grade_name;
                         <td style="text-align:left;border: 1px solid black;border-left: solid 1px black;padding:3px;">{{ $scores['subject_name'] }}</td>
                         <td style="text-align:center;border: 1px solid black;padding:3px;">{{ $scores['final_score'] }}</td>
                         <td style="text-align:center;border: 1px solid black;padding:3px;">{{ $scores['grades'] }}</td>
-                        <td style="text-align:left;border: 1px solid black;padding:3px;border-right: solid 1px black;font-style: italic;" colspan="5">
-                            <p class="noto-serif-sc-chinese">
+                        <td style="text-align:left;border: 1px solid black;border-right: solid 1px black;padding:3px;" colspan="5">
+                            <span class="noto-serif-sc-chinese">
                                 {{ $scores['comment'] }}
-                            </p>
+                            </span>
                         </td>
                     </tr>
                     <!-- END SUBJECT REPORT -->

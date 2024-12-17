@@ -3448,7 +3448,7 @@ class ReportController extends Controller
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
 
-            // dd($scoresByStudent);
+            // dd($status);
 
             $data = [
                 'grade' => $grade,
@@ -4863,11 +4863,13 @@ class ReportController extends Controller
             $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
                 
                 $totalAlpha = $attendances->where('alpha', 1)->count();
+                $totalPermission = $attendances->where('permission', 1)->count();
+                $totalAbsent = $totalAlpha + $totalPermission;
                 $totalLate = $attendances->where('late', 1)->count();
                 $timesLate = $attendances->whereNotNull('latest')->sum('latest');
                 
                 return [
-                    'days_absent' => $totalAlpha,
+                    'days_absent' => $totalAbsent,
                     'total_late' => $totalLate,
                     'times_late' => $timesLate,
                 ];
@@ -4966,7 +4968,7 @@ class ReportController extends Controller
                 });
             
                 $isRestricted = $sortedScores->contains(function ($score) {
-                    return $score['final_score'] !== null && $score['final_score'] <= 70;
+                    return $score['final_score'] !== null && $score['final_score'] < 70;
                 });
             
                 return [
@@ -5064,7 +5066,7 @@ class ReportController extends Controller
 
             $remarks = Acar_comment::where('student_id', $id)->value('comment');
 
-            // dd($isRestricted);
+            // dd($scoresByStudent);
 
             $data = [
                 'student' => $student,
@@ -5080,7 +5082,7 @@ class ReportController extends Controller
                 'remarks' => $remarks,
             ];
 
-            // dd($data);
+            // dd($data['attendance']);
 
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);
@@ -5088,7 +5090,7 @@ class ReportController extends Controller
             $pdf->loadView('components.report.pdf.semester1-pdf', $data)->setPaper('a5', 'portrait');
             return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
             
-            return view('components.report.pdf.semester1-pdf', $data);
+            // return view('components.report.pdf.semester1-pdf', $data);
         } catch (Exception $err) {
             dd($err);
         }
@@ -5182,13 +5184,15 @@ class ReportController extends Controller
                 ->get();
 
             $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
-                
+            
                 $totalAlpha = $attendances->where('alpha', 1)->count();
+                $totalPermission = $attendances->where('permission', 1)->count();
+                $totalAbsent = $totalAlpha + $totalPermission;
                 $totalLate = $attendances->where('late', 1)->count();
                 $timesLate = $attendances->whereNotNull('latest')->sum('latest');
                 
                 return [
-                    'days_absent' => $totalAlpha,
+                    'days_absent' => $totalAbsent,
                     'total_late' => $totalLate,
                     'times_late' => $timesLate,
                 ];
