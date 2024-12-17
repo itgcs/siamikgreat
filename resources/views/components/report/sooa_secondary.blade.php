@@ -81,7 +81,7 @@
                             <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">ECA 1</th>
                             <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">ECA 2</th>
                             <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Self-Development</th>
-                            <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">ECA Aver</th>
+                            <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">ECA Average</th>
                             <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Behavior</th>
                             <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Attendance</th>
                             <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Participation</th>
@@ -122,31 +122,32 @@
                     <tbody>
                     @foreach ($data['students'] as $student)
                         <tr>
-                            <td>{{ $loop->iteration }} blm acc</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $student['student_name'] }}</td>
 
                             @if (!empty($student['scores']))
                                 @foreach ($student['scores'] as $index => $score)
 
                                     <!-- ACADEMIC -->
-                                    <td class="text-center">{{ $score['academic'] }} blm acc</td>
+                                    <td class="text-center">{{ $score['academic'] }}</td>
                                     <td class="text-center">{{ $score['grades_academic'] }}</td>
 
                                     <!-- ECA 1 -->
                                     <td class="text-center">
-                                        @if ($student['haveEca'] ==  1)
+                                        {{-- @if ($student['haveEca'] ==  1)
                                             {{ $student['nameEca']['eca_1'] }}
                                             <input name="eca_1[]" min="0" max="100" type="number" value="{{$score['eca_1']}}" class="form-control required-input" id="eca_1" autocomplete="off" value required>
-                                        @elseif ($student['haveEca'] == 0)
-                                            {{ $student['nameEca'] }}
-                                            <input name="eca_1[]" min="0" max="100" type="number" class="form-control d-none" id="eca_1" value="0" autocomplete="off" required>
-                                        @endif
+                                        @elseif ($student['haveEca'] == 0) --}}
+                                            {{-- {{ $student['nameEca'] }} --}}
+                                            <input name="eca_1[]" min="0" max="100" type="number" class="form-control" id="eca_1" value="{{ $score['eca_1'] ?: '' }}" autocomplete="off" required>
+                                            {{-- <input name="eca_1[]" min="0" max="100" type="number" class="form-control d-none" id="eca_1" value="0" autocomplete="off" required> --}}
+                                        {{-- @endif --}}
                                     </td>
                                     <td class="text-center">{{ $score['grades_eca_1'] }}</td>
                                     
                                     <!-- ECA 2 -->  
                                     <td class="text-center">
-                                        @if ($student['haveEca'] == 1)
+                                        {{-- @if ($student['haveEca'] == 1)
                                             @if ($student['nameEca']['eca_2'] !=  "Not Choice")
                                                 {{ $student['nameEca']['eca_2'] }}
                                                 <input name="eca_2[]" min="0" max="100" type="number" value="{{$score['eca_2']}}" class="form-control required-input" id="eca_2" autocomplete="off" required>
@@ -155,9 +156,10 @@
                                                 <input name="eca_2[]" min="0" max="100" type="number" value="{{$score['eca_2']}}" class="form-control d-none" id="eca_2" value="0" autocomplete="off" required>    
                                             @endif
                                         @elseif ($student['haveEca'] == 0)
-                                            {{ $student['nameEca'] }}
-                                            <input name="eca_2[]" min="0" max="100" type="number" class="form-control d-none" id="eca_2" value="0" autocomplete="off" required>    
-                                        @endif
+                                            {{ $student['nameEca'] }} --}}
+                                            <input name="eca_2[]" min="0" max="100" type="number" class="form-control" id="eca_2" value="{{ $score['eca_2'] ?: '' }}" autocomplete="off" required>
+                                            {{-- <input name="eca_2[]" min="0" max="100" type="number" class="form-control d-none" id="eca_2" value="0" autocomplete="off" required>     --}}
+                                        {{-- @endif --}}
                                     </td>
                                     <td class="text-center">{{ $score['grades_eca_2'] }}</td>
 
@@ -169,7 +171,7 @@
                                     
                                     <!-- ECA Aver -->
                                     <td class="text-center">
-                                        <input name="eca_aver[]" min="0" max="100" type="number" value="{{$score['eca_aver']}}" class="form-control required-input" id="eca_aver" autocomplete="off" required>
+                                        {{$score['eca_aver']}}
                                     </td>
                                     <td class="text-center">{{ $score['grades_eca_aver'] ?? '' }}</td>
 
@@ -197,7 +199,7 @@
                                 @foreach ($student['scores'] as $index => $score)
 
                                     <!-- ACADEMIC -->
-                                    <td class="text-center">{{ $score['academic'] }} decline</td>
+                                    <td class="text-center">{{ $score['academic'] }}</td>
                                     <td class="text-center">{{ $score['grades_academic'] }}</td>
 
                                     <!-- ECA 1 -->
@@ -341,28 +343,28 @@
 
                             <!-- ECA 1 -->
                             <td class="text-center">
-                                @if ($student['haveEca'] ==  1)
-                                    {{ $student['nameEca']['eca_1'] }}
-                                    ({{ $score['eca_1'] ?? '' }})
-                                @elseif ($student['haveEca'] == 0)
+                                {{-- @if ($student['haveEca'] ==  1)
+                                    {{ $student['nameEca']['eca_1'] }} --}}
+                                    {{ $score['eca_1'] ?? '' }}
+                                {{-- @elseif ($student['haveEca'] == 0)
                                     {{ $student['nameEca'] }}
-                                    <input name="eca_1[]" min="0" max="100" type="number" class="form-control d-none" id="eca_1" value="0" autocomplete="off" required>
-                                @endif
+                                    <input name="eca_1[]" min="0" max="100" type="number" class="form-control d-none" id="eca_1" value="0" autocomplete="off" required> --}}
+                                {{-- @endif --}}
                             </td>
                             <td class="text-center">{{ $score['grades_eca_1'] }}</td>
                             
                             <!-- ECA 2 -->  
                             <td class="text-center">
-                                @if ($student['haveEca'] == 1)
+                                {{-- @if ($student['haveEca'] == 1)
                                     @if ($student['nameEca']['eca_2'] !=  "Not Choice")
-                                        {{ $student['nameEca']['eca_2'] }}
-                                        ({{ $score['eca_2'] ?? '' }})
-                                    @elseif ($student['nameEca']['eca_2'] ==  "Not Choice")
+                                        {{ $student['nameEca']['eca_2'] }} --}}
+                                        {{ $score['eca_2'] ?? '' }}
+                                    {{-- @elseif ($student['nameEca']['eca_2'] ==  "Not Choice")
                                         {{ $student['nameEca']['eca_2'] }}  
                                     @endif
                                 @elseif ($student['haveEca'] == 0)
                                     {{ $student['nameEca'] }} 
-                                @endif
+                                @endif --}}
                             </td>
                             <td class="text-center">{{ $score['grades_eca_2'] }}</td>
 

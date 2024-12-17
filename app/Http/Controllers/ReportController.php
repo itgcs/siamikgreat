@@ -1533,40 +1533,40 @@ class ReportController extends Controller
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
                 $student = $scores->first();
 
-                if (Student_eca::where('student_id', $student->student_id)->exists()) {
-                    $haveEca = 1;
-                    $ecaData = Student_eca::where('student_ecas.student_id', $student->student_id)
-                        ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
-                        ->get(['student_ecas.student_id', 'ecas.name as eca_name']);
+                // if (Student_eca::where('student_id', $student->student_id)->exists()) {
+                //     $haveEca = 1;
+                //     $ecaData = Student_eca::where('student_ecas.student_id', $student->student_id)
+                //         ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
+                //         ->get(['student_ecas.student_id', 'ecas.name as eca_name']);
 
-                    $groupedEcaData = [];
-                    $counter = 1;
+                //     $groupedEcaData = [];
+                //     $counter = 1;
 
-                    // dd(count($ecaData));
+                //     // dd(count($ecaData));
 
-                    if (count($ecaData) == 1) {
-                        $groupedEcaData['student_id'] = $ecaData[0]->student_id;
-                        $groupedEcaData['eca_1'] = $ecaData[0]->eca_name;
-                        $groupedEcaData['eca_2'] = "Not Choice";
-                    }
-                    elseif (count($ecaData) == 2) {
-                        for ($i=0; $i < 2; $i++) { 
-                            $groupedEcaData['student_id'] = $ecaData[$i]->student_id;
-                            $groupedEcaData['eca_' . $i+1] = $ecaData[$i]->eca_name;
-                        }
-                    }
+                //     if (count($ecaData) == 1) {
+                //         $groupedEcaData['student_id'] = $ecaData[0]->student_id;
+                //         $groupedEcaData['eca_1'] = $ecaData[0]->eca_name;
+                //         $groupedEcaData['eca_2'] = "Not Choice";
+                //     }
+                //     elseif (count($ecaData) == 2) {
+                //         for ($i=0; $i < 2; $i++) { 
+                //             $groupedEcaData['student_id'] = $ecaData[$i]->student_id;
+                //             $groupedEcaData['eca_' . $i+1] = $ecaData[$i]->eca_name;
+                //         }
+                //     }
 
-                } else{
-                    $haveEca = 0;
-                    $groupedEcaData = "Not Choice";
-                }
+                // } else{
+                //     $haveEca = 0;
+                //     $groupedEcaData = "Not Choice";
+                // }
 
                 return [
                     'student_id' => $student->student_id,
                     'student_name' => $student->name,
                     'ranking' => $student->ranking,
-                    'haveEca' => $haveEca,
-                    'nameEca' => $groupedEcaData,
+                    // 'haveEca' => $haveEca,
+                    // 'nameEca' => $groupedEcaData,
                     'scores' => $scores->map(function ($score) {
                         return [
                             'academic' => $score->academic,
@@ -2065,6 +2065,7 @@ class ReportController extends Controller
                 'child' => 'report subject teacher',
             ]);
 
+            // dd($subjectId);
             $userId = session('id_user');
             $teacherId = Teacher::where('user_id', $userId)->value('id');
 
@@ -2103,6 +2104,8 @@ class ReportController extends Controller
 
             // dd($subject->subject_name);
 
+        
+
             if (strtolower($subject->subject_name) == "religion islamic") {
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
@@ -2130,6 +2133,8 @@ class ReportController extends Controller
                 ->where('exams.teacher_id', $teacherId)
                 ->orderBy('students.name', 'asc')
                 ->get();
+                
+               
             }
             elseif (strtolower($subject->subject_name) == "religion catholic") {
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -2158,6 +2163,7 @@ class ReportController extends Controller
                     ->where('exams.teacher_id', $teacherId)
                     ->orderBy('students.name', 'asc')
                     ->get();
+                   
             }
             elseif (strtolower($subject->subject_name) == "religion christian") {
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -2186,6 +2192,7 @@ class ReportController extends Controller
                 ->where('exams.teacher_id', $teacherId)
                 ->orderBy('students.name', 'asc')
                 ->get();
+               
             }
             elseif (strtolower($subject->subject_name) == "religion buddhism") {
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -2214,6 +2221,7 @@ class ReportController extends Controller
                 ->where('exams.teacher_id', $teacherId)
                 ->orderBy('students.name', 'asc')
                 ->get();
+               
             }
             elseif (strtolower($subject->subject_name) == "religion hinduism") {
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -2242,6 +2250,7 @@ class ReportController extends Controller
                 ->where('exams.teacher_id', $teacherId)
                 ->orderBy('students.name', 'asc')
                 ->get();
+               
             }
             elseif (strtolower($subject->subject_name) == "religion confucianism") {
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -2270,6 +2279,7 @@ class ReportController extends Controller
                 ->where('exams.teacher_id', $teacherId)
                 ->orderBy('students.name', 'asc')
                 ->get();
+               
             }
             else{
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -2458,6 +2468,8 @@ class ReportController extends Controller
 
                 $type = "minor_subject_assessment";
 
+                // dd($subjectId);
+
                 $comments = Comment::where('grade_id', $gradeId)
                     ->where('subject_id', $subjectId)
                     ->where('subject_teacher_id', $subjectTeacher->teacher_id)
@@ -2542,6 +2554,8 @@ class ReportController extends Controller
             $final_assessment = Type_exam::where('name', 'final assessment', )->value('id');
             $final_exam = Type_exam::where('name', 'final exam', )->value('id');
 
+            // dd($scoresByStudent);
+            
             $data = [
                 'subjectTeacher' => $subjectTeacher,
                 'classTeacher' => $classTeacher,

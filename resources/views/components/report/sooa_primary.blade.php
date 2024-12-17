@@ -80,10 +80,10 @@
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
                     <th rowspan="2" class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
                     <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Academic</th>
-                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Pilihan (Dancing, Singing, Badminton, Football)</th>
-                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Language and Art</th>
+                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">ECA 1</th>
+                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">ECA 2</th>
                     <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Self-Development</th>
-                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">ECA Aver (Non-Academic)</th>
+                    <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">ECA Average</th>
                     <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Behavior</th>
                     <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Attendance</th>
                     <th colspan="2" class="text-center" style="vertical-align : middle;text-align:center;">Participation</th>
@@ -155,7 +155,7 @@
 
                             <!-- ECA Aver -->
                             <td class="text-center">
-                                <input name="eca_aver[]" min="0" max="100" type="number" class="form-control required-input " id="eca_aver" value="{{ $score['eca_aver'] ?: '' }}" autocomplete="off" required>
+                                {{$score['eca_aver']}}
                             </td>
                             <td class="text-center">{{ $score['grades_eca_aver'] ?? '' }}</td>
 
@@ -221,7 +221,7 @@
                                 @if(isset($score['eca_aver']))
                                     {{ $score['eca_aver'] }}
                                 @else
-                                    <input name="eca_aver[]" min="0" max="100" type="number" class="form-control required-input " id="eca_aver" value="{{ $score['eca_aver'] ?: '' }}" autocomplete="off" required>
+                                    {{ $score['eca_aver'] }}    
                                 @endif
                             </td>
                             <td class="text-center">{{ $score['grades_eca_aver'] ?? '' }}</td>

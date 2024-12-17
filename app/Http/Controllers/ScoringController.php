@@ -592,47 +592,14 @@ class ScoringController extends Controller
                     ->where('academic_year', session('academic_year'))
                     ->value('attendance');
 
-                if ($request->choice[$i] == 0) {
-                    $final_score = ($academic  
-                    + $request->language_and_art[$i] 
-                    + $request->self_development[$i] 
-                    + $request->eca_aver[$i] 
-                    + $request->behavior[$i] 
-                    + $attendance 
-                    + $request->participation[$i]) / 7;
+                    $eca_aver = ($request->choice[$i] + $request->language_and_art[$i])/2;
 
-                    $scoring = [
-                        'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
-                        'class_teacher_id' => $request->class_teacher,
-                        'semester' => $request->semester,
-                        'academic_year' => session('academic_year'),
-                        'choice' => 0,
-                        'grades_choice' => "-",
-                        'language_and_art' => $request->language_and_art[$i],
-                        'grades_language_and_art' => $this->determineGrade($request->language_and_art[$i]),
-                        'self_development' => $request->self_development[$i],
-                        'grades_self_development' => $this->determineGrade($request->self_development[$i]),
-                        'eca_aver' => $request->eca_aver[$i],
-                        'grades_eca_aver' => $this->determineGrade($request->eca_aver[$i]),
-                        'behavior' => $request->behavior[$i],
-                        'grades_behavior' => $this->determineGrade($request->behavior[$i]),
-                        'participation' => $request->participation[$i],
-                        'grades_participation' => $this->determineGrade($request->participation[$i]),
-                        'final_score' => round($final_score),
-                        'grades_final_score' => $this->determineGrade(round($final_score)),
-                        'created_at' => now()
-                    ];
-                } 
-                elseif (!empty($request->choice[$i])) {
-                    $final_score = ($academic 
-                    + $request->choice[$i] 
-                    + $request->language_and_art[$i] 
-                    + $request->self_development[$i] 
-                    + $request->eca_aver[$i] 
+                    $final_score = ($academic  
+                    + $request->self_development[$i]
+                    + $eca_aver
                     + $request->behavior[$i] 
                     + $attendance 
-                    + $request->participation[$i]) / 8;
+                    + $request->participation[$i]) / 6;
 
                     $scoring = [
                         'student_id' => $request->student_id[$i],
@@ -646,8 +613,8 @@ class ScoringController extends Controller
                         'grades_language_and_art' => $this->determineGrade($request->language_and_art[$i]),
                         'self_development' => $request->self_development[$i],
                         'grades_self_development' => $this->determineGrade($request->self_development[$i]),
-                        'eca_aver' => $request->eca_aver[$i],
-                        'grades_eca_aver' => $this->determineGrade($request->eca_aver[$i]),
+                        'eca_aver' => $eca_aver,
+                        'grades_eca_aver' => $this->determineGrade($eca_aver),
                         'behavior' => $request->behavior[$i],
                         'grades_behavior' => $this->determineGrade($request->behavior[$i]),
                         'participation' => $request->participation[$i],
@@ -656,7 +623,6 @@ class ScoringController extends Controller
                         'grades_final_score' => $this->determineGrade(round($final_score)),
                         'created_at' => now()
                     ];
-                }
                 
                 Sooa_primary::updateOrCreate(
                     ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year'),],
@@ -715,79 +681,17 @@ class ScoringController extends Controller
                     ->where('academic_year', session('academic_year'))
                     ->value('attendance');
 
+                    // dd($request);
 
-                if ($request->eca_1[$i] == 0 || $request->eca_1[$i] == 0 && $request->eca_2[$i] ==  0) {
+                // if ($request->eca_1[$i] == 0 || $request->eca_1[$i] == 0 && $request->eca_2[$i] ==  0) {
+                    $eca_aver = ($request->eca_1[$i] + $request->eca_2[$i])/2;
+
                     $final_score = ($academic 
                     + $request->self_development[$i]  
-                    + $request->eca_aver[$i] 
+                    + $eca_aver 
                     + $request->behavior[$i] 
                     + $attendance 
                     + $request->participation[$i]) / 6;
-                
-                    $scoring = [
-                        'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
-                        'class_teacher_id' => $request->class_teacher,
-                        'semester' => $request->semester,
-                        'academic_year' => session('academic_year'),
-                        'eca_1' => 0,
-                        'grades_eca_1' => "-",
-                        'eca_2' => 0,
-                        'grades_eca_2' => "-",
-                        'self_development' => $request->self_development[$i],
-                        'grades_self_development' => $this->determineGrade($request->self_development[$i]),
-                        'eca_aver' => $request->eca_aver[$i],
-                        'grades_eca_aver' => $this->determineGrade($request->eca_aver[$i]),
-                        'behavior' => $request->behavior[$i],
-                        'grades_behavior' => $this->determineGrade($request->behavior[$i]),
-                        'participation' => $request->participation[$i],
-                        'grades_participation' => $this->determineGrade($request->participation[$i]),
-                        'final_score' => round($final_score),
-                        'grades_final_score' => $this->determineGrade($final_score),
-                        'created_at' => now(),
-                    ];    
-                }
-                elseif ($request->eca_1[$i] != 0 && $request->eca_2[$i] == 0) {
-                    $final_score = ($academic 
-                    + $request->eca_1[$i]
-                    + $request->self_development[$i]  
-                    + $request->eca_aver[$i] 
-                    + $request->behavior[$i] 
-                    + $attendance 
-                    + $request->participation[$i]) / 7;
-                
-                    $scoring = [
-                        'student_id' => $request->student_id[$i],
-                        'grade_id' => $request->grade_id,
-                        'class_teacher_id' => $request->class_teacher,
-                        'semester' => $request->semester,
-                        'academic_year' => session('academic_year'),
-                        'eca_1' => $request->eca_1[$i],
-                        'grades_eca_1' => $this->determineGrade($request->eca_1[$i]),
-                        'eca_2' => 0,
-                        'grades_eca_2' => "-",
-                        'self_development' => $request->self_development[$i],
-                        'grades_self_development' => $this->determineGrade($request->self_development[$i]),
-                        'eca_aver' => $request->eca_aver[$i],
-                        'grades_eca_aver' => $this->determineGrade($request->eca_aver[$i]),
-                        'behavior' => $request->behavior[$i],
-                        'grades_behavior' => $this->determineGrade($request->behavior[$i]),
-                        'participation' => $request->participation[$i],
-                        'grades_participation' => $this->determineGrade($request->participation[$i]),
-                        'final_score' => round($final_score),
-                        'grades_final_score' => $this->determineGrade($final_score),
-                        'created_at' => now()
-                    ];
-                }
-                else {
-                    $final_score = ($academic 
-                    + $request->eca_1[$i]
-                    + $request->eca_2[$i]
-                    + $request->self_development[$i]  
-                    + $request->eca_aver[$i] 
-                    + $request->behavior[$i] 
-                    + $attendance 
-                    + $request->participation[$i]) / 8;
                 
                     $scoring = [
                         'student_id' => $request->student_id[$i],
@@ -801,17 +705,82 @@ class ScoringController extends Controller
                         'grades_eca_2' => $this->determineGrade($request->eca_2[$i]),
                         'self_development' => $request->self_development[$i],
                         'grades_self_development' => $this->determineGrade($request->self_development[$i]),
-                        'eca_aver' => $request->eca_aver[$i],
-                        'grades_eca_aver' => $this->determineGrade($request->eca_aver[$i]),
+                        'eca_aver' => $eca_aver,
+                        'grades_eca_aver' => $this->determineGrade($eca_aver),
                         'behavior' => $request->behavior[$i],
                         'grades_behavior' => $this->determineGrade($request->behavior[$i]),
                         'participation' => $request->participation[$i],
                         'grades_participation' => $this->determineGrade($request->participation[$i]),
                         'final_score' => round($final_score),
                         'grades_final_score' => $this->determineGrade($final_score),
-                        'created_at' => now()
-                    ];
-                }
+                        'created_at' => now(),
+                    ];    
+                // }
+                // elseif ($request->eca_1[$i] != 0 && $request->eca_2[$i] == 0) {
+                //     $final_score = ($academic 
+                //     + $request->eca_1[$i]
+                //     + $request->self_development[$i]  
+                //     + $request->eca_aver[$i] 
+                //     + $request->behavior[$i] 
+                //     + $attendance 
+                //     + $request->participation[$i]) / 7;
+                
+                //     $scoring = [
+                //         'student_id' => $request->student_id[$i],
+                //         'grade_id' => $request->grade_id,
+                //         'class_teacher_id' => $request->class_teacher,
+                //         'semester' => $request->semester,
+                //         'academic_year' => session('academic_year'),
+                //         'eca_1' => $request->eca_1[$i],
+                //         'grades_eca_1' => $this->determineGrade($request->eca_1[$i]),
+                //         'eca_2' => 0,
+                //         'grades_eca_2' => "-",
+                //         'self_development' => $request->self_development[$i],
+                //         'grades_self_development' => $this->determineGrade($request->self_development[$i]),
+                //         'eca_aver' => $request->eca_aver[$i],
+                //         'grades_eca_aver' => $this->determineGrade($request->eca_aver[$i]),
+                //         'behavior' => $request->behavior[$i],
+                //         'grades_behavior' => $this->determineGrade($request->behavior[$i]),
+                //         'participation' => $request->participation[$i],
+                //         'grades_participation' => $this->determineGrade($request->participation[$i]),
+                //         'final_score' => round($final_score),
+                //         'grades_final_score' => $this->determineGrade($final_score),
+                //         'created_at' => now()
+                //     ];
+                // }
+                // else {
+                //     $final_score = ($academic 
+                //     + $request->eca_1[$i]
+                //     + $request->eca_2[$i]
+                //     + $request->self_development[$i]  
+                //     + $request->eca_aver[$i] 
+                //     + $request->behavior[$i] 
+                //     + $attendance 
+                //     + $request->participation[$i]) / 8;
+                
+                //     $scoring = [
+                //         'student_id' => $request->student_id[$i],
+                //         'grade_id' => $request->grade_id,
+                //         'class_teacher_id' => $request->class_teacher,
+                //         'semester' => $request->semester,
+                //         'academic_year' => session('academic_year'),
+                //         'eca_1' => $request->eca_1[$i],
+                //         'grades_eca_1' => $this->determineGrade($request->eca_1[$i]),
+                //         'eca_2' => $request->eca_2[$i],
+                //         'grades_eca_2' => $this->determineGrade($request->eca_2[$i]),
+                //         'self_development' => $request->self_development[$i],
+                //         'grades_self_development' => $this->determineGrade($request->self_development[$i]),
+                //         'eca_aver' => $request->eca_aver[$i],
+                //         'grades_eca_aver' => $this->determineGrade($request->eca_aver[$i]),
+                //         'behavior' => $request->behavior[$i],
+                //         'grades_behavior' => $this->determineGrade($request->behavior[$i]),
+                //         'participation' => $request->participation[$i],
+                //         'grades_participation' => $this->determineGrade($request->participation[$i]),
+                //         'final_score' => round($final_score),
+                //         'grades_final_score' => $this->determineGrade($final_score),
+                //         'created_at' => now()
+                //     ];
+                // }
                 
                 Sooa_secondary::updateOrCreate(
                     ['student_id' => $request->student_id[$i], 'grade_id' => $request->grade_id, 'semester' => $request->semester, 'academic_year' => session('academic_year')],
