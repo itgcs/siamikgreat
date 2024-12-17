@@ -160,7 +160,7 @@ class ScoringController extends Controller
                 $commentKeys = [
                     'student_id'         => $request->student_id[$i],
                     'grade_id'           => $request->grade_id,
-                    'subject_id'         => $subject_id,
+                    'subject_id'         => $request->subject_id,
                     'subject_teacher_id' => $request->subject_teacher,
                     'semester'           => $request->semester,
                     'academic_year'      => session('academic_year'),
