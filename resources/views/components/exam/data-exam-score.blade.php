@@ -10,7 +10,10 @@
                 <nav aria-label="breadcrumb" class="bg-white rounded-3 p-3 mb-3">
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item">Home</li>
+                        @if(session('role') == 'admin' || session('role') == 'superadmin')
+                        @else
                         <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/exam/teacher')}}">Scoring</a></li>
+                        @endif
                         <li class="breadcrumb-item active" aria-current="page">Scoring {{ $data[0]['exam_name'] }} {{ $data[0]['subject_name'] }} ({{ $data[0]['grade_name'] }} - {{ $data[0]['grade_class'] }})</li>
                     </ol>
                 </nav>
@@ -28,7 +31,11 @@
                 </div>
             </div>
             <div class="card-body p-0">
-                <form method="POST" action="{{ route('actionUpdateScoreExamTeacher') }}">
+                @if (session('role') == 'superadmin' || session('role') == 'admin')
+                    <form method="POST" action="{{ route('actionUpdateScoreExam') }}">
+                @else
+                    <form method="POST" action="{{ route('actionUpdateScoreExamTeacher') }}">
+                @endif
                     @csrf
                     @method('PUT')
                     <table class="table table-striped projects">

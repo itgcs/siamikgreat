@@ -48,8 +48,8 @@
                               <th>#</th>
                               <th style="width:15%;">Class</th>
                               <th>Class Teacher</th>
-                              <th>Total Student</th>
-                              <th>Total Subject</th>
+                              <th>Student</th>
+                              <th>Subject</th>
                               <th style="width:50%;">Action</th>
                            </tr>
                      </thead>
@@ -116,8 +116,8 @@
                               <th>#</th>
                               <th style="width:10%;">Class</th>
                               <th>Class Teacher</th>
-                              <th>Total Student</th>
-                              <th>Total Subject</th>
+                              <th>Student</th>
+                              <th>Subject</th>
                               <th style="width:60%;"> Action</th>
                            </tr>
                      </thead>
@@ -153,7 +153,7 @@
                                           </a>
                                           <a class="btn btn-danger btn"
                                              href="{{url(session('role') . '/reports') . '/semestersatu/detail/' . $pr->id}}">
-                                             REPORT CARD
+                                             Report Card
                                           </a>
                                        @elseif (session('semester') == 2)
                                           <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/midcard/semestersatu' . '/' . $pr->id }}">
@@ -161,7 +161,7 @@
                                           </a>
                                           <a class="btn btn-danger btn"
                                              href="{{url(session('role') . '/reports') . '/semesterdua/detail/' . $pr->id}}">
-                                             REPORT CARD
+                                             Report Card
                                           </a>
                                        @endif
                                     </td>
@@ -191,8 +191,8 @@
                               <th>#</th>
                               <th style="width:10%;">Class</th>
                               <th>Class Teacher</th>
-                              <th>Total Student</th>
-                              <th>Total Subject</th>
+                              <th>Student</th>
+                              <th>Subject</th>
                               <th style="width:60%;">Action</th>
                            </tr>
                      </thead>
@@ -228,12 +228,12 @@
                                        @if (session('semester') == 1)
                                        <a class="btn btn-danger btn"
                                           href="{{url(session('role') . '/reports') . '/semestersatu/detailSec/' . $pr->id}}">
-                                          REPORT CARD
+                                          Report Card
                                        </a>
                                        @elseif (session('semester') == 2)
                                        <a class="btn btn-danger btn"
                                           href="{{url(session('role') . '/reports') . '/semesterdua/detailSec/' . $pr->id}}">
-                                          REPORT CARD
+                                          Report Card
                                        </a>
                                        @endif
                                     </td>

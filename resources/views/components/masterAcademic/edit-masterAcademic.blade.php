@@ -93,12 +93,13 @@
                                             <p style="color: red">{{ $errors->first('now_semester') }}</p>
                                         @endif
                                     </div>
+
+                                    <div class="col-12 mt-3">
+                                        <input role="button" type="submit" class="btn btn-success col-12">
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="row d-flex justify-content-center">
-                                <input role="button" type="submit" class="btn btn-success center col-11 m-3">
-                            </div>
                         </div>
                     </form>
                 </div>

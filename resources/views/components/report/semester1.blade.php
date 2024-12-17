@@ -46,9 +46,9 @@
 
     <div style="overflow-x: auto;">
         @if (session('role') == 'superadmin')
-            <form id="confirmForm"  method="POST">
+            <form id="confirmForm"  method="POST" action={{route('actionPostReportCard1')}}>
         @elseif (session('role') == 'admin')
-            <form id="confirmForm" method="POST">
+            <form id="confirmForm" method="POST" action={{route('actionPostReportCard1')}}>
         @elseif (session('role') == 'teacher')
             <form id="confirmForm" method="POST" action={{route('actionTeacherPostReportCard1')}}>
         @endif
@@ -57,7 +57,7 @@
         @if ($data['status'] == null)
             <div class="row my-2">
                 <div class="input-group-append mx-2">
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc REPORT CARD</button>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Report Card</button>
                 </div>
             </div>
         @elseif ($data['status']->status != null && $data['status']->status == 1)       

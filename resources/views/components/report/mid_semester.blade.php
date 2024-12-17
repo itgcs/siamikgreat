@@ -46,9 +46,9 @@
 
     <div style="overflow-x: auto;">
         @if (session('role') == 'superadmin')
-            <form id="confirmForm"  method="POST">
+            <form id="confirmForm"  method="POST" action={{route('actionPostMidReportCard')}}>
         @elseif (session('role') == 'admin')
-            <form id="confirmForm" method="POST">
+            <form id="confirmForm" method="POST" action={{route('actionPostMidReportCard')}}>
         @elseif (session('role') == 'teacher')
             <form id="confirmForm" method="POST" action={{route('actionTeacherPostMidReportCard')}}>
         @endif

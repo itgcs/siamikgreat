@@ -100,7 +100,14 @@
         @endif
 
         {{-- KHUSUS SUBJECT FINANCIAL LITERACY --}}
-        @if (strtolower($data['subject']->subject_name) === "financial literacy")
+        @if (
+                strtolower($data['subject']->subject_name) !== 'science' &&
+                strtolower($data['subject']->subject_name) !== 'english' &&
+                strtolower($data['subject']->subject_name) !== 'mathematics' &&
+                strtolower($data['subject']->subject_name) !== 'chinese higher' &&
+                strtolower($data['subject']->subject_name) !== 'chinese lower'
+            )
+
             <table class="table table-striped table-bordered bg-white border-black" style=" width: 2000px;">
                 <thead>
                     <tr>

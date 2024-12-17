@@ -24,27 +24,40 @@
 
       {{-- ADD --}}
       <div class="modal fade" id="addMonthlyActivities" tabindex="-1" role="dialog" aria-hidden="true">
-         <div class="modal-dialog modal-dialog-centered" role="document">
-         <div class="modal-content">
-            <div class="modal-header">
-               <h5 class="modal-title" >Add Data Monthly Activities</h5>
-               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-               </button>
-            </div>
-            <div class="modal-body">
-               <div class="col-md-12">
-                  <label for="major_subject">Major Subject<span style="color: red">*</span></label>
-                  <select required name="major_subject[]" class="js-select2 form-control" id="major_subject" multiple="multiple">
-                          <option value="" >--- SELECT MAJOR SUBJECT ---</option>
-                          @foreach($subjects as $subject)
-                              <option value="{{ $subject->id }}">{{ $subject->name_subject }}</option>
-                          @endforeach
-                  </select>
-            </div>
-            <div class="modal-footer">
-               <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
-               <a class="btn btn-danger btn" id="confirmChange-{{$el->id}}">Change</a>
+         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" >Add Data Monthly Activities</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                  </button>
+               </div>
+               <div class="modal-body">
+                  <div class="col-md-12">
+                     <form method="POST" action={{route('actionCreateMonthly')}}>
+                        @csrf
+                        <table class="table table-striped table-bordered">
+                           <thead>
+                              <th>Name Activities</th>
+                              <th>Action</th>
+                           </thead>
+                           <tbody id="scheduleTableBody">
+                              <tr>
+                                 <td>
+                                    <input name="monthly_activities[]" class="form-control" id="monthlyActivities"></input>
+                                 </td>
+                                 
+                                 <td>
+                                    <button type="button" class="btn btn-success btn-sm btn-tambah mt-1" title="Tambah Baris" id="tambah"><i class="fa fa-plus"></i></button>
+                                    <button type="button" class="btn btn-danger btn-sm btn-hapus mt-1 d-none" title="Hapus Baris"><i class="fa fa-times"></i></button>
+                                 </td>
+                              </tr>
+                           </tbody>
+                        </table>
+                        <input role="button" type="submit" class="btn btn-success">
+                     </form>
+                  </div>
+               </div>   
             </div>
          </div>
       </div>
@@ -154,6 +167,7 @@
 
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+
    @if(session('after_create_subject')) 
       <script>
          Swal.fire({
@@ -186,66 +200,126 @@
 
   {{-- ACTION DELETE & UPDATE --}}
    <script>
-   const confirmChangeButtons = document.querySelectorAll('[id^="confirmChange-"]');
+      const confirmChangeButtons = document.querySelectorAll('[id^="confirmChange-"]');
 
-   confirmChangeButtons.forEach(button => {
-      button.addEventListener('click', function(event) {
-         const id = this.id.split('-')[1]; // Get the ID from the button's ID
-         const changeName = document.getElementById(`change-name-${id}`).value; // Get the selected teacher from the corresponding modal
-         const dataId = document.getElementById(`data-id-${id}`).value; // Get the selected teacher from the corresponding modal
+      confirmChangeButtons.forEach(button => {
+         button.addEventListener('click', function(event) {
+            const id = this.id.split('-')[1]; // Get the ID from the button's ID
+            const changeName = document.getElementById(`change-name-${id}`).value; // Get the selected teacher from the corresponding modal
+            const dataId = document.getElementById(`data-id-${id}`).value; // Get the selected teacher from the corresponding modal
 
-         // console.log(changeName);
+            // console.log(changeName);
 
-         const form = {
-               id: parseInt(dataId, 10),
-               change_name: changeName,
-         };
+            const form = {
+                  id: parseInt(dataId, 10),
+                  change_name: changeName,
+            };
 
-         // console.log(form);
-         // // Prepare options for the fetch request
-         const options = {
-               method: 'PUT',
-               headers: {
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                  'Content-Type': 'application/json' // Set the content type to JSON
-               },
-               body: JSON.stringify(form) // Convert the form object to a JSON string
-         };
+            // console.log(form);
+            // // Prepare options for the fetch request
+            const options = {
+                  method: 'PUT',
+                  headers: {
+                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                     'Content-Type': 'application/json' // Set the content type to JSON
+                  },
+                  body: JSON.stringify(form) // Convert the form object to a JSON string
+            };
 
-         // Send the form data using fetch
-         fetch("{{ route('actionUpdateMonthly') }}", options)
-               .then(response => response.json())
-               .then(data => {
-                  // Handle the server response
-                  if (data.success) {
-                     Swal.fire({
-                           icon: 'success',
-                           text: 'Data Berhasil Diubah',
-                           showConfirmButton: false, // Hide the confirm button
-                           timer: 1500, // Auto close after 2000 milliseconds (2 seconds)
-                           timerProgressBar: true // Optional: show a progress bar
-                     }).then(() => {
-                           // Optionally, you can still perform actions after the modal closes
-                           location.reload();
-                     });
+            // Send the form data using fetch
+            fetch("{{ route('actionUpdateMonthly') }}", options)
+                  .then(response => response.json())
+                  .then(data => {
+                     // Handle the server response
+                     if (data.success) {
+                        Swal.fire({
+                              icon: 'success',
+                              text: 'Data Berhasil Diubah',
+                              showConfirmButton: false, // Hide the confirm button
+                              timer: 1500, // Auto close after 2000 milliseconds (2 seconds)
+                              timerProgressBar: true // Optional: show a progress bar
+                        }).then(() => {
+                              // Optionally, you can still perform actions after the modal closes
+                              location.reload();
+                        });
 
+                     } else {
+                        Swal.fire({
+                              icon: 'error',
+                              text: 'Maaf ada kesalahan',
+                              showConfirmButton: false, // Hide the confirm button
+                              timer: 1500, // Auto close after 2000 milliseconds (2 seconds)
+                              timerProgressBar: true // Optional: show a progress bar
+                        }).then(() => {
+                              // Optionally, you can still perform actions after the modal closes
+                              location.reload();
+                        });
+                     }
+                  })
+                  .catch(error => {
+                     console.error('Fetch error:', error);
+                  });
+         });
+      });   
+
+      document.addEventListener('DOMContentLoaded', function() {
+         let row = 1;
+
+         function addRow() {
+            var newRow = `<tr>
+                   <td>
+                     <input name="monthly_activities[]" class="form-control" id="monthlyActivities"_${row}></input>
+                  </td>
+                  <td>
+                     <button type="button" class="btn btn-success btn-sm btn-tambah mt-1" title="Tambah Baris" id="tambah"><i class="fa fa-plus"></i></button>
+                     <button type="button" class="btn btn-danger btn-sm btn-hapus mt-1 d-none" title="Hapus Baris"><i class="fa fa-times"></i></button>
+                  </td>
+            </tr>`;
+            $('#scheduleTableBody').append(newRow);
+            row++;
+         
+
+            updateHapusButtons();
+         }
+
+         function updateHapusButtons() {
+            const rows = $('#scheduleTableBody tr');
+
+            rows.each(function(index, row) {
+                  var tambahButton = $(row).find('.btn-tambah');
+                  var hapusButton = $(row).find('.btn-hapus');
+
+                  if (rows.length === 1) {
+                     // Jika hanya ada satu baris, hanya tampilkan tombol "Tambah"
+                     tambahButton.removeClass('d-none');
+                     hapusButton.addClass('d-none');
                   } else {
-                     Swal.fire({
-                           icon: 'error',
-                           text: 'Maaf ada kesalahan',
-                           showConfirmButton: false, // Hide the confirm button
-                           timer: 1500, // Auto close after 2000 milliseconds (2 seconds)
-                           timerProgressBar: true // Optional: show a progress bar
-                     }).then(() => {
-                           // Optionally, you can still perform actions after the modal closes
-                           location.reload();
-                     });
+                     // Baris terakhir tampilkan tombol "Tambah" dan "Hapus"
+                     if (index === rows.length - 1) {
+                        tambahButton.removeClass('d-none');
+                        hapusButton.removeClass('d-none');
+                     } else {
+                        // Baris lainnya hanya tampilkan tombol "Hapus"
+                        tambahButton.addClass('d-none');
+                        hapusButton.removeClass('d-none');
+                     }
                   }
-               })
-               .catch(error => {
-                  console.error('Fetch error:', error);
-               });
-      });
-   });   
+            });
+         }
+
+         $('#scheduleTableBody').on('click', '.btn-tambah', function() {
+            addRow();
+         });
+
+         $('#scheduleTableBody').on('click', '.btn-hapus', function() {
+            $(this).closest('tr').remove();
+            updateHapusButtons();
+         });
+
+         // Initial call to update the visibility of the "Hapus" and "Tambah" buttons
+         updateHapusButtons();
+
+      })
+      
    </script>
 @endsection

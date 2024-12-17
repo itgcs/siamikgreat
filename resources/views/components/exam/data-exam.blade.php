@@ -9,7 +9,7 @@
             <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-2">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item">Home</li>
-                    <li class="breadcrumb-item active" aria-current="page">Exam</li>
+                    <li class="breadcrumb-item active" aria-current="page">Scorings</li>
                 </ol>
             </nav>
         </div>
@@ -110,7 +110,7 @@
         <a type="button" href="{{url('/' . session('role') . '/exams/create')}}" class="btn btn-success btn mx-2">
             <i class="fa-solid fa-user-plus"></i>
             </i>   
-            Add Exam
+            Add Scorings
         </a>
     </div>
    
@@ -189,25 +189,25 @@
                             <span class="badge badge-danger"> Done </span>
                             @endif
                         </td>
-                        <td class="col project-actions text-left toastsDefaultSuccess">
-                            <a class="btn btn-primary btn-sm"
-                            href="{{url('/' . session('role') . '/exams') . '/' . $el->id}}">
-                            <i class="fas fa-eye">
-                            </i>
-                            View
+                        <td class="col">
+                            <a class="btn btn-success btn text-sm w-100 mb-1" href="{{url('/exams') . '/score/' . $el->id}}">
+                                <i class="fas fa-book"></i>
+                                Score
                             </a>
-                            <a class="btn btn-warning btn-sm"
-                            href="{{url('/' . session('role') . '/exams') . '/edit/' . $el->id}}">
-                            <i class="fas fa-pencil-alt">
-                            </i>
-                            Edit
+                            <a class="btn btn-primary btn text-sm w-100 mb-1" href="{{url('/' . session('role') . '/exams') . '/' . $el->id}}">
+                                <i class="fas fa-eye"></i>
+                                View
                             </a>
-                            <!-- <a class="btn btn-success btn-sm"
-                            href="{{url('/' . session('role') . '/exams') . '/done/' . $el->id}}">
-                            <i class="fas fa-check">
-                            </i>
-                            Done
-                            </a> -->
+                            <a class="btn btn-warning btn text-sm w-100 mb-1" href="{{url('/' . session('role') . '/exams') . '/edit/' . $el->id}}">
+                                <i class="fas fa-pencil-alt"></i>
+                                Edit
+                            </a>
+                            <a class="btn btn-danger btn text-sm w-100"
+                                id="deleteExam" data-id="{{ $el->id }}">
+                                <i class="fas fa-trash">
+                                </i>
+                                Delete
+                            </a>
                         </td>
                     </tr>
 
@@ -330,34 +330,74 @@
 <link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 <script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 
-   @if(session('after_create_exam')) 
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Successfully',
-                text: 'Successfully created new exam in the database.',
-            });
-        </script>
-  @endif
+<script>
+      $(document).on('click', '#deleteExam', function() {
+        var id = $(this).data('id');
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to delete this scoring!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ route('delete.exams') }}",
+                    type: 'POST',
+                    data: {
+                        exam_id: id,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            title: "Delete Successfull",
+                            text: "Scoring already delete",
+                            icon: "success"
+                        }).then(function() {
+                            location.reload();
+                        });
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                        alert("Error occurred!");
+                    }
+                });
+            }
+        });
+    })
+</script>
 
-   @if(session('after_update_exam')) 
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Successfully',
-                text: 'Successfully updated the exam in the database.',
-            });
-        </script>
-   @endif
 
-   @if(session('after_done_exam')) 
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Successfully',
-                text: 'Successfully done exam in the database.',
-            });
-        </script>
-   @endif
+@if(session('after_create_exam')) 
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully created new exam in the database.',
+        });
+    </script>
+@endif
+
+@if(session('after_update_exam')) 
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully updated the exam in the database.',
+        });
+    </script>
+@endif
+
+@if(session('after_done_exam')) 
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully',
+            text: 'Successfully done exam in the database.',
+        });
+    </script>
+@endif
 
 @endsection

@@ -33,7 +33,7 @@ class MasterAcademicController extends Controller
 
             // dd(session()->all());
 
-            $data = Master_academic::where('is_use', TRUE)->get();
+            $data = Master_academic::where('is_use', TRUE)->first();
             $masterAcademic = Master_academic::get();
 
             // dd($data);
@@ -134,7 +134,7 @@ class MasterAcademicController extends Controller
                 'child' => 'master academic',
             ]);
             
-            $data = Master_academic::first();
+            $data = Master_academic::where('is_use', TRUE)->first();
             
             return view('components.masterAcademic.edit-masterAcademic')->with('data', $data);
             
@@ -170,8 +170,8 @@ class MasterAcademicController extends Controller
     
             DB::commit();
 
-            $semester = Master_academic::first()->value('now_semester');
-            $academic_year = Master_academic::first()->value('academic_year');
+            $semester = Master_academic::where('is_use', TRUE)->value('now_semester');
+            $academic_year = Master_academic::where('is_use', TRUE)->value('academic_year');
 
             session()->put([
                 'semester' => $semester,

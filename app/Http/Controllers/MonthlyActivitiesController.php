@@ -22,6 +22,7 @@ class MonthlyActivitiesController extends Controller
 
             $data = MonthlyActivity::get();
 
+            // dd($data);
             return view('components.monthlyActivities.data-monthly-activities')->with('data', $data);
 
         } catch (Exception $err) {
@@ -47,38 +48,16 @@ class MonthlyActivitiesController extends Controller
     public function actionPost(Request $request)
     {
 
+        // dd($request);
         DB::beginTransaction();
 
         try {
 
-            $rules = [
-                'name' => $request->name,
-            ];
-
-            $validator = Validator::make($rules, [
-                'name' => 'required|string',
-                ],
-            );
-
-            $role = session('role');
-
-            if(MonthlyActivity::where('name', $request->name)->first())
-            {
-                DB::rollBack();
-                return redirect('/monthlyActivities/create')->withErrors([
-                    'name' =>  $request->name .  ' is has been created ',
-                ])->withInput($rules);
+            foreach($request->monthly_activities as $ma){
+                MonthlyActivity::create(['name' => $ma]);
             }
-                
-            $post = [
-                'name' => $request->name,
-                'created_at'   => now(),
-            ];
-
+            
             session()->flash('after_create_subject');
-
-            MonthlyActivity::create($post);
-
             DB::commit();
             
             return redirect('/monthlyActivities');

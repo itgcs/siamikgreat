@@ -316,7 +316,7 @@ class AttendanceController extends Controller
                 'child' => 'database attendance',
             ]);
 
-            $gradeStudent = Student::where('grade_id', $id)->where('is_active', true)->get();
+            $gradeStudent = Student::where('grade_id', $gradeId)->where('is_active', true)->get();
 
         } catch (Exception $err) {
             dd($err);

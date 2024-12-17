@@ -579,6 +579,7 @@ class ReportController extends Controller
                     )
                     ->where('grades.id', $gradeId)
                     ->where('subject_exams.subject_id', $subjectId)
+                    ->where('students.is_active', true)
                     ->where('exams.semester', $semester)
                     ->where('exams.academic_year', $academic_year)
                     ->where('exams.teacher_id', $subjectTeacher->teacher_id)
@@ -724,7 +725,7 @@ class ReportController extends Controller
             ];
 
             // dd($data);   
-
+            
             if($isMajorSubject){
                 return view('components.report.detail_scoring_major_subject_primary')->with('data', $data);
             }
@@ -1284,6 +1285,7 @@ class ReportController extends Controller
                 ->where('acars.grade_id', $gradeId)
                 ->where('acars.semester', $semester)
                 ->where('acars.academic_year', $academic_year)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $comments = Acar_comment::where('grade_id', $gradeId)
@@ -1410,6 +1412,7 @@ class ReportController extends Controller
     
             $results = Sooa_primary::leftJoin('students', 'students.id', '=', 'sooa_primaries.student_id')
                 ->where('sooa_primaries.grade_id', $gradeId)
+                ->where('students.is_active', true)
                 ->where('sooa_primaries.semester', $semester)
                 ->where('sooa_primaries.academic_year', $academic_year)
                 ->get();
@@ -1506,6 +1509,7 @@ class ReportController extends Controller
                 ->where('sooa_secondaries.grade_id', $gradeId)
                 ->where('sooa_secondaries.semester', $semester)
                 ->where('sooa_secondaries.academic_year', $academic_year)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) {
@@ -1653,6 +1657,7 @@ class ReportController extends Controller
             $results = Sooa_primary::join('students', 'students.id', '=', 'sooa_primaries.student_id')
                 ->where('sooa_primaries.grade_id', $gradeId)
                 ->where('sooa_primaries.academic_year', $academic_year)
+                ->where('students.is_active', true)
                 ->get();
 
             $semester = session('semester');
@@ -1734,6 +1739,7 @@ class ReportController extends Controller
             $results = Sooa_secondary::join('students', 'students.id', '=', 'sooa_secondaries.student_id')
                 ->where('sooa_secondaries.grade_id', $gradeId)
                 ->where('sooa_secondaries.academic_year', $academic_year)
+                ->orderBy('students.name', 'asc')
                 ->get();
 
             $semester = session('semester');
@@ -2587,7 +2593,11 @@ class ReportController extends Controller
                 ->pluck('id')
                 ->toArray();
 
-            if(strtolower($subject->subject_name) == 'financial literacy'){
+            if(strtolower($subject->subject_name) !== 'science' &&
+            strtolower($subject->subject_name) !== 'english' &&
+            strtolower($subject->subject_name) !== 'mathematics' &&
+            strtolower($subject->subject_name) !== 'chinese higher' &&
+            strtolower($subject->subject_name) !== 'chinese lower'){
                 $homework = Type_exam::where('name', '=', 'homework')->value('id');
                 $exercise = Type_exam::where('name', '=', 'exercise')->value('id');
                 $participation = Type_exam::where('name', '=', 'participation')->value('id');
@@ -2681,7 +2691,7 @@ class ReportController extends Controller
                     },
                 ])
                 ->first();
-            }
+            }  
 
 
             if (strtolower($subject->subject_name) == "religion islamic") {
@@ -2927,7 +2937,12 @@ class ReportController extends Controller
                 ->keyBy('student_id');
 
 
-            if(strtolower($subject->subject_name) == 'financial literacy'){
+            if(strtolower($subject->subject_name) !== 'science' &&
+                strtolower($subject->subject_name) !== 'english' &&
+                strtolower($subject->subject_name) !== 'mathematics' &&
+                strtolower($subject->subject_name) !== 'chinese higher' &&
+                strtolower($subject->subject_name) !== 'chinese lower')
+            {
                 $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use($comments) {
                     
                     $homework = Type_exam::where('name', '=', 'homework')->value('id');
@@ -2972,8 +2987,8 @@ class ReportController extends Controller
                         
                         'percent_homework' => round($homeworkScores->avg() * 0.2),
                         'percent_exercise' => round($exerciseScores->avg() * 0.35),
-                        'percent_participation' => round($participationScore->avg() * 0.1, 2),
-                        'percent_fe' => round($finalExamScores->avg() * 0.35, 2),
+                        'percent_participation' => round($participationScore->avg() * 0.1),
+                        'percent_fe' => round($finalExamScores->avg() * 0.35),
                         
                         'total_score' => round(($homeworkScores->avg() * 0.2) + ($exerciseScores->avg() * 0.35) + ($participationScore->avg() * 0.10)) + round($finalExamScores->avg() * 0.35),
 
@@ -5057,9 +5072,9 @@ class ReportController extends Controller
             $pdf->set_option('isRemoteEnabled', true);
             $pdf->set_option('isHtml5ParserEnabled', true);
             $pdf->loadView('components.report.pdf.semester1-pdf', $data)->setPaper('a5', 'portrait');
-            // return view('components.report.pdf.semester1-pdf', $data);
             return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
-
+            
+            return view('components.report.pdf.semester1-pdf', $data);
         } catch (Exception $err) {
             dd($err);
         }
