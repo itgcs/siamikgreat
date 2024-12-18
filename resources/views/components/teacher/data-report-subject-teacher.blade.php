@@ -52,11 +52,11 @@
                   <table class="table table-striped projects">
                      <thead>
                         <tr>
-                              <th style="width: 5%">#</th>
-                              <th style="width: 10%">Grade</th>
-                              <th style="width: 15%">Subject</th>
-                              <th style="width: 10%">Action</th>
-                              <th>Status</th>
+                              <th>#</th>
+                              <th>Grade</th>
+                              <th>Subject</th>
+                              <th>Action</th>
+                              <th style="width: 70%">Status</th>
                         </tr>
                      </thead>
                      <tbody>
@@ -94,11 +94,11 @@
                   <table class="table table-striped projects">
                      <thead>
                         <tr>
-                              <th style="width: 5%">#</th>
-                              <th style="width: 10%">Grade</th>
-                              <th style="width: 15%">Subject</th>
-                              <th style="width: 10%">Action</th>
-                              <th>Status</th>
+                              <th>#</th>
+                              <th >Grade</th>
+                              <th >Subject</th>
+                              <th >Action</th>
+                              <th style="width: 70%">Status</th>
                         </tr>
                      </thead>
                      <tbody>
@@ -136,11 +136,11 @@
                   <table class="table table-striped projects">
                      <thead>
                         <tr>
-                              <th style="width: 5%">#</th>
-                              <th style="width: 10%">Grade</th>
-                              <th style="width: 15%">Subject</th>
-                              <th style="width: 10%">Action</th>
-                              <th>Status</th>
+                              <th>#</th>
+                              <th>Grade</th>
+                              <th>Subject</th>
+                              <th>Action</th>
+                              <th style="width:70%">Status</th>
                         </tr>
                      </thead>
                      <tbody>

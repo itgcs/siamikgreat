@@ -171,13 +171,15 @@ class ReportController extends Controller
                 ->select('subjects.id as subject_id', 'grades.id as grade_id', 'scoring_statuses.status')
                 ->get();
 
-            // dd($status);
-
+                
             foreach ($subject as $item) {
-                $item->status = $status->firstWhere('subject_id', $item->subject_id)
-                ->status ?? 'Not Submitted';
+                $item->status = Scoring_status::where('subject_id', $item->subject_id)
+                ->where('semester', session('semester'))
+                ->where('academic_year', session('academic_year'))
+                ->first() ? 'Submitted' : 'Not Submitted';
             }
-            
+                
+            // dd($subject);
             // dd($subject);
 
             $grade = grade::where('id', $id)->get();
@@ -1181,8 +1183,8 @@ class ReportController extends Controller
     public function acarPrimary($gradeId){
         try {
             session()->flash('page',  $page = (object)[
-                'page' => 'reports',
-                'child' => 'report class teacher',
+                'page' => 'database reports',
+                'child' => 'academic assessment report',
             ]);
 
             $semester = session('semester');
@@ -3193,6 +3195,8 @@ class ReportController extends Controller
                ->where('academic_year', session('academic_year'))
                ->get();
 
+
+
             $data = [
                'classTeacher' => $classTeacher,
             ];
@@ -3398,7 +3402,7 @@ class ReportController extends Controller
         // dd($id);
         try {
             session()->flash('page',  $page = (object)[
-                'page' => 'reports',
+                'page' => 'database reports',
                 'child' => 'report class teacher',
             ]);
             
@@ -3478,7 +3482,7 @@ class ReportController extends Controller
                 ->where('class_teacher_id', $classTeacher->teacher_id)
                 ->first();
 
-            // dd($scoresByStudent);
+            // dd($status);
 
             $data = [
                 'grade' => $grade,
@@ -4864,24 +4868,70 @@ class ReportController extends Controller
                 ->first();
 
             $gradeId = Student::where('id', $id)->value('grade_id');
+            $gradeSerial = Grade::where('id', $gradeId)->value('class');
+            
+            if (session('semester') == 1) {
+                $getSerial = (2 * $gradeSerial) - 1; // Semester 1
+            } elseif (session('semester') == 2) {
+                $getSerial = 2 * $gradeSerial; // Semester 2
+            } else {
+                $getSerial = '-'; // Default jika semester tidak valid
+            }
 
-            $serial = Grade::join('students', 'students.grade_id', '=', 'grades.id')
-                ->where('grades.id', $gradeId)
-                ->orderBy('students.name', 'asc')
-                ->select('students.id', 'students.name', 'grades.id as grade_id')
-                ->get();
+            switch ($gradeId) {
+                case "5":
+                case "11":
+                    $date_of_registration = "June 22, 2024";
+                    break;
+            
+                case "6":
+                case "12":
+                    $date_of_registration = "July 24, 2023";
+                    break;
+            
+                case "7":
+                case "13":
+                    $date_of_registration = "July 10, 2022";
+                    break;
+            
+                case "8":
+                    $date_of_registration = "July 12, 2021";
+                    break;
+            
+                case "9":
+                    $date_of_registration = "July 10, 2020";
+                    break;
+            
+                case "10":
+                    $date_of_registration = "July 18, 2019";
+                    break;
+            
+                default:
+                    $date_of_registration = "Unknown date"; // Nilai default jika $gradeId tidak sesuai
+                    break;
+            }
+        
+            $date = Master_academic::where('is_use', TRUE)->value('report_card1');
+
+            // $serial = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+            //     ->where('grades.id', $gradeId)
+            //     ->orderBy('students.name', 'asc')
+            //     ->select('students.id', 'students.name', 'grades.id as grade_id')
+            //     ->get();
 
             // Tambahkan nomor urut ke setiap siswa
-            $serial->each(function($serial, $index) {
-                $serial->serial_number = $index + 1; // Nomor urut mulai dari 1
-            });
+            // $serial->each(function($serial, $index) {
+            //     $serial->serial_number = $index + 1; // Nomor urut mulai dari 1
+            // });
 
-            foreach ($serial as $student) {
-                if ($student->id == $id) {
-                    $getSerial = $student->serial_number;
-                    break;
-                }
-            }
+            // foreach ($serial as $student) {
+            //     if ($student->id == $id) {
+            //         $getSerial = $student->serial_number;
+            //         break;
+            //     }
+            // }
+            // Hitung serial berdasarkan primary dan semester
+            
 
             $student = Student::where('students.id', $id)
                 ->join('grades', 'grades.id', '=', 'students.grade_id')
@@ -4917,19 +4967,19 @@ class ReportController extends Controller
             $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
                 
                 $totalAlpha = $attendances->where('alpha', 1)->count();
+                $totalPermission = $attendances->where('permission', 1)->count();
+                $totalAbsent = $totalAlpha + $totalPermission;
                 $totalLate = $attendances->where('late', 1)->count();
                 $timesLate = $attendances->whereNotNull('latest')->sum('latest');
                 
                 return [
-                    'days_absent' => $totalAlpha,
+                    'days_absent' => $totalAbsent,
                     'total_late' => $totalLate,
                     'times_late' => $timesLate,
                 ];
             })->values()->all();
 
-            $comments = comment::where('student_id', $id)
-                ->get()
-                ->keyBy('student_id');
+            
 
             $resultsScore = Acar::join('students', 'students.id', '=', 'acars.student_id')
                 ->leftJoin('subjects', function ($join) {
@@ -5001,6 +5051,10 @@ class ReportController extends Controller
                 }
             }
 
+            $comments = comment::where('student_id', $id)
+                ->get()
+                ->keyBy('student_id');
+
             $scoresByStudent = $resultsScore->groupBy('student_id')->map(function ($scores) use ($comments, $order) {
                 $student = $scores->first();
             
@@ -5016,11 +5070,12 @@ class ReportController extends Controller
                         'final_score' => $score ? $score->final_score : null,
                         'grades' => $score ? $score->grades : null,
                         'comment' => $score ? $score->comment : null,
+                        'isChinese' => $this->containsChinese($score ? $score->comment : null),
                     ];
                 });
             
                 $isRestricted = $sortedScores->contains(function ($score) {
-                    return $score['final_score'] !== null && $score['final_score'] <= 70;
+                    return $score['final_score'] !== null && $score['final_score'] < 70;
                 });
             
                 return [
@@ -5118,7 +5173,7 @@ class ReportController extends Controller
 
             $remarks = Acar_comment::where('student_id', $id)->value('comment');
 
-            // dd($isRestricted);
+            // dd($scoresByStudent);
 
             $data = [
                 'student' => $student,
@@ -5132,9 +5187,11 @@ class ReportController extends Controller
                 'academicYear' => $academicYear,
                 'eca' => $groupedEcaData,
                 'remarks' => $remarks,
+                'date' => $date,
+                'date_of_registration' => $date_of_registration,
             ];
 
-            // dd($data);
+            // dd($data['subjectReports']);
 
             $pdf = app('dompdf.wrapper');
             $pdf->set_option('isRemoteEnabled', true);
@@ -5142,7 +5199,7 @@ class ReportController extends Controller
             $pdf->loadView('components.report.pdf.semester1-pdf', $data)->setPaper('a5', 'portrait');
             return $pdf->stream($student->student_name . '_semester' . $semester . '.pdf');
             
-            return view('components.report.pdf.semester1-pdf', $data);
+            // return view('components.report.pdf.semester1-pdf', $data);
         } catch (Exception $err) {
             dd($err);
         }
@@ -5158,7 +5215,18 @@ class ReportController extends Controller
                 ->where('semester', $semester)
                 ->first();
     
+            $date = Master_academic::where('is_use', TRUE)->value('report_card2');
+
             $gradeId = Student::where('id', $id)->value('grade_id');
+            $gradeSerial = Grade::where('id', $gradeId)->value('class');
+            
+            if (session('semester') == 1) {
+                $getSerial = (2 * $gradeSerial) - 1; // Semester 1
+            } elseif (session('semester') == 2) {
+                $getSerial = 2 * $gradeSerial; // Semester 2
+            } else {
+                $getSerial = '-'; // Default jika semester tidak valid
+            }
             
             if ($learningSkills->promotion_status === 1 || $learningSkills->promotion_status === 2) {
                 $nextGrade = Grade::where('id', $gradeId+1)
@@ -5173,23 +5241,57 @@ class ReportController extends Controller
                 $grade = $nextGrade->grade_name . ' - ' . $nextGrade->grade_class;
             }
 
-            $serial = Grade::join('students', 'students.grade_id', '=', 'grades.id')
-                ->where('grades.id', $gradeId)
-                ->orderBy('students.name', 'asc')
-                ->select('students.id', 'students.name', 'grades.id as grade_id')
-                ->get();
+            switch ($gradeId) {
+                case "5":
+                case "11":
+                    $date_of_registration = "June 22, 2024";
+                    break;
+            
+                case "6":
+                case "12":
+                    $date_of_registration = "July 24, 2023";
+                    break;
+            
+                case "7":
+                case "13":
+                    $date_of_registration = "July 10, 2022";
+                    break;
+            
+                case "8":
+                    $date_of_registration = "July 12, 2021";
+                    break;
+            
+                case "9":
+                    $date_of_registration = "July 10, 2020";
+                    break;
+            
+                case "10":
+                    $date_of_registration = "July 18, 2019";
+                    break;
+            
+                default:
+                    $date_of_registration = "Unknown date"; // Nilai default jika $gradeId tidak sesuai
+                    break;
+            }
+            
+
+            // $serial = Grade::join('students', 'students.grade_id', '=', 'grades.id')
+            //     ->where('grades.id', $gradeId)
+            //     ->orderBy('students.name', 'asc')
+            //     ->select('students.id', 'students.name', 'grades.id as grade_id')
+            //     ->get();
 
             // Tambahkan nomor urut ke setiap siswa
-            $serial->each(function($serial, $index) {
-                $serial->serial_number = $index + 1; // Nomor urut mulai dari 1
-            });
+            // $serial->each(function($serial, $index) {
+            //     $serial->serial_number = $index + 1; // Nomor urut mulai dari 1
+            // });
 
-            foreach ($serial as $student) {
-                if ($student->id == $id) {
-                    $getSerial = $student->serial_number;
-                    break;
-                }
-            }
+            // foreach ($serial as $student) {
+            //     if ($student->id == $id) {
+            //         $getSerial = $student->serial_number;
+            //         break;
+            //     }
+            // }
 
             $ecaData = Student_eca::where('student_ecas.student_id', $id)
                 ->leftJoin('ecas', 'ecas.id', '=', 'student_ecas.eca_id')
@@ -5236,13 +5338,15 @@ class ReportController extends Controller
                 ->get();
 
             $attendancesByStudent = $resultsAttendance->groupBy('student_id')->map(function($attendances) {
-                
+            
                 $totalAlpha = $attendances->where('alpha', 1)->count();
+                $totalPermission = $attendances->where('permission', 1)->count();
+                $totalAbsent = $totalAlpha + $totalPermission;
                 $totalLate = $attendances->where('late', 1)->count();
                 $timesLate = $attendances->whereNotNull('latest')->sum('latest');
                 
                 return [
-                    'days_absent' => $totalAlpha,
+                    'days_absent' => $totalAbsent,
                     'total_late' => $totalLate,
                     'times_late' => $timesLate,
                 ];
@@ -5296,7 +5400,7 @@ class ReportController extends Controller
                     ];
 
                 }
-                
+
                 $scoresByStudent = $resultsScore->groupBy('student_id')->map(function ($scores) use ($comments, $order) {
                     $student = $scores->first();
                 
@@ -5312,6 +5416,7 @@ class ReportController extends Controller
                             'final_score' => $score ? $score->final_score : null,
                             'grades' => $score ? $score->grades : null,
                             'comment' => $score ? $score->comment : null,
+                            'isChinese' => $this->containsChinese($score ? $score->comment : null),
                         ];
                     });
                 
@@ -5435,7 +5540,9 @@ class ReportController extends Controller
                 'promotionGrade' => $grade,
                 'academicYear' => $academicYear,
                 'eca' => $groupedEcaData,
-                'tcop' => $tcop
+                'tcop' => $tcop,
+                'date' => $date,
+                'date_of_registration' => $date_of_registration,
             ];
 
             // dd($scoresByStudent);
@@ -6210,6 +6317,10 @@ class ReportController extends Controller
         } catch (Exception $err) {
             dd($err);
         }
+    }
+
+    private function containsChinese($string) {
+        return preg_match('/[\x{4E00}-\x{9FFF}]/u', $string);
     }
 }
 

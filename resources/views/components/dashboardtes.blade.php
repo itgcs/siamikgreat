@@ -199,11 +199,13 @@
                              <!-- Emphasis label -->
 
                              <span>
-                                @if ($el->date_exam == now())
-                                  $currentDate = now(); // Tanggal saat ini
-                                  $dateExam = $el->date_exam; // Tanggal exam dari data
-                                  $diff = strtotime($dateExam) - strtotime($currentDate);
-                                  $days = floor($diff / (60 * 60 * 24));
+                                @if ($el->is_active == true)
+                                  @php
+                                    $currentDate = now(); // Tanggal saat ini
+                                    $dateExam = $el->date_exam; // Tanggal exam dari data
+                                    $diff = strtotime($dateExam) - strtotime($currentDate);
+                                    $days = floor($diff / (60 * 60 * 24));
+                                  @endphp
                                   
                                   <span class="badge badge-warning">{{$days}} days again</span>
                                 @else
@@ -213,7 +215,7 @@
                               
                              
                              <div class="tools">
-                               <a href="/admin/exams/detail/{{$el->id}}" target="_blank">
+                               <a href="/admin/exams/{{$el->id}}" target="_blank">
                                  <i class="fas fa-search"></i>
                                </a>
                              </div>
