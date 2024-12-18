@@ -16,6 +16,7 @@ $cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($dataca
 $grade_name = $student->grade_name;
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +24,7 @@ $grade_name = $student->grade_name;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Card</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Noto+Sans+TC&display=swap');
 
         .noto-serif-sc-chinese {
             font-family: "Noto Sans SC", sans-serif;
@@ -117,7 +118,7 @@ $grade_name = $student->grade_name;
                     <td style="text-align:right;border: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Name:</td>
                     <td style="border: 1px solid black;padding-left:4px;" colspan="2">{{ ucwords(strtolower($student->student_name)) }}</td>
                     <td style="text-align:right;border: 1px solid black;padding-right:4px;"  colspan="2">Date:</td>
-                    <td style="border: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">{{ \Carbon\Carbon::now()->format('F d, Y') }}</td>
+                    <td style="border: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">{{ \Carbon\Carbon::parse($date)->format('F d, Y') }}</td>
                 </tr>
                 <tr>
                     <td style="text-align:right;border: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Class:</td>
@@ -129,7 +130,7 @@ $grade_name = $student->grade_name;
                     <td style="text-align:right;border: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Serial:</td>
                     <td style="border: 1px solid black;padding-left:4px;" colspan="2">{{ $serial }}</td>
                     <td style="text-align:right;border: 1px solid black;padding-right:4px;"  colspan="2">Date of Registration</td>
-                    <td style="border: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">{{ $student->date_of_registration->format('F d, Y') }}</td>
+                    <td style="border: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">{{ $date_of_registration }}</td>
                 </tr>
                 <tr>
                     <td style="text-align:right;border: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Days Absent:</td>
@@ -239,7 +240,11 @@ $grade_name = $student->grade_name;
                             {{ $classTeacher->teacher_name }}
                         @endif
                     </td>
-                    <td style="text-align:center;text-decoration:underline;" colspan="2">Yuliana Harijanto, B.Eng (Hons)</td>
+                    @if(strtolower($student->grade_name) == "primary")
+                        <td style="text-align:center;text-decoration:underline;" colspan="2">Yuliana Harijanto, B.Eng (Hons)</td>
+                    @elseif (strtolower($student->grade_name) == "secondary")
+                        <td style="text-align:center;text-decoration:underline;" colspan="2">Donny Prasetya, S.Kom.</td>
+                    @endif
                     <td style="text-align:center;text-decoration:underline;" colspan="3">
                         {{-- @if ($relation == null) 
                         @else
@@ -264,7 +269,7 @@ $grade_name = $student->grade_name;
             <table class="table">
                 <tbody>
                     <tr>
-                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
+                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::parse($date)->format('m/d/Y') }}</td>
                         {{-- <td  style="text-align:center;padding-top: 4px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td> --}}
                         <td  style="vertical-align : top;text-align:right;width:15%;">Page 1 of 2</td>
                     </tr>
@@ -297,13 +302,20 @@ $grade_name = $student->grade_name;
                 <tbody>
 
                 @foreach ($subjectReports[0]['scores'] as $scores)
+
                     <!-- SUBJECT REPORT -->
                     <tr>
-                        <td style="text-align:left;border: 1px solid black;border-left: solid 1px black;padding:3px;">{{ $scores['subject_name'] }}</td>
-                        <td style="text-align:center;border: 1px solid black;padding:3px;">{{ $scores['final_score'] }}</td>
-                        <td style="text-align:center;border: 1px solid black;padding:3px;">{{ $scores['grades'] }}</td>
-                        <td style="text-align:left;border: 1px solid black;border-right: solid 1px black;padding:3px;" colspan="5">
-                            <span class="noto-serif-sc-chinese">
+                        <td style="text-align:left;border: 1px solid black;padding-left:3px;padding-right:3px;border-left: solid 1px black;">{{ $scores['subject_name'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;;">{{ $scores['final_score'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;">{{ $scores['grades'] }}</td>
+                        <td style="text-align:justify;border: 1px solid black;border-right: solid 1px black;padding-left:3px;padding-right:3px;" colspan="5">
+                            <span 
+                                @if ($scores['isChinese'] === 1) 
+                                    class="noto-serif-sc-chinese" 
+                                @else 
+                                    style="font-style: italic;" 
+                                @endif
+                            >
                                 {{ $scores['comment'] }}
                             </span>
                         </td>
@@ -403,7 +415,10 @@ $grade_name = $student->grade_name;
                         <td style="text-align:center;border: 1px solid black;padding-right:4px;">{{  $sooa[0]['scores'][0]['participation'] }}</td>
                         <td style="text-align:center;border: 1px solid black;padding-left:4px;">{{ $sooa[0]['scores'][0]['final_score'] }}</td>
                         <td style="text-align:center;border: 1px solid black;padding-right:4px;">{{ $sooa[0]['scores'][0]['grades_final_score'] }}</td>
-                        <td style="text-align:center;border: 1px solid black;padding-left:4px;border-right: solid 1px black;">{{  $sooa[0]['ranking'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;padding-left:4px;border-right: solid 1px black;">
+                            -
+                            {{-- {{  $sooa[0]['ranking'] }} --}}
+                        </td>
                     </tr>
                 <!-- END OVERALL MARK -->
 
@@ -430,7 +445,11 @@ $grade_name = $student->grade_name;
                                 {{ $classTeacher->teacher_name }}
                             @endif
                         </td>
-                        <td style="text-align:center;text-decoration:underline;" colspan="2">Yuliana Harijanto, B.Eng (Hons)</td>
+                        @if(strtolower($student->grade_name) == "primary")
+                            <td style="text-align:center;text-decoration:underline;" colspan="2">Yuliana Harijanto, B.Eng (Hons)</td>
+                        @elseif (strtolower($student->grade_name) == "secondary")
+                            <td style="text-align:center;text-decoration:underline;" colspan="2">Donny Prasetya, S.Kom.</td>
+                        @endif
                         <td style="text-align:center;text-decoration:underline;" colspan="3">
                             {{-- @if ($relation == null)
                             
@@ -458,7 +477,7 @@ $grade_name = $student->grade_name;
             <table class="table">
                 <tbody>
                     <tr>
-                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
+                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::parse($date)->format('m/d/Y') }}</td>
                         {{-- <td  style="text-align:center;padding-top: 4px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td> --}}
                         <td  style="vertical-align : top;text-align:right;width:15%;">Page 2 of 2</td>
                     </tr>

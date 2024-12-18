@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\Admin\{
    AdminController,
-    DashboardController,
+   DashboardController,
    GradeController,
-    RegisterController,
+   RegisterController,
    StudentController,
    TeacherController,
    RelationController,
@@ -17,7 +17,6 @@ use App\Http\Controllers\Admin\{
    MinorSubjectController,
    SupplementarySubjectController,
    MasterScheduleController,
-   MasterAcademicController,
 };
 
 use App\Http\Controllers\Excel\Import;
@@ -32,6 +31,7 @@ use App\Http\Controllers\ChineseHigherController;
 use App\Http\Controllers\ChineseLowerController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\MonthlyActivitiesController;
+use App\Http\Controllers\MasterAcademicsController;
 
 use App\Http\Controllers\SuperAdmin\{
    SuperAdminController,
@@ -880,12 +880,12 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
    });
 
    Route::prefix('/masterAcademics')->group(function () {
-      Route::get('/', [MasterAcademicController::class, 'index']);
-      Route::get('/create', [MasterAcademicController::class, 'pageCreate']);
-      Route::get('/edit', [MasterAcademicController::class, 'pageEdit']);
-      Route::post('/', [MasterAcademicController::class, 'actionPost'])->name('actionSuperCreateMasterAcademic');
-      Route::put('/{id}', [MasterAcademicController::class, 'actionPut'])->name('actionSuperUpdateMasterAcademic');
-      Route::get('/delete/{id}', [MasterAcademicController::class, 'delete']);
+      Route::get('/', [MasterAcademicsController::class, 'index']);
+      Route::get('/create', [MasterAcademicsController::class, 'pageCreate']);
+      Route::get('/edit', [MasterAcademicsController::class, 'pageEdit']);
+      Route::post('/', [MasterAcademicsController::class, 'actionPost'])->name('actionSuperCreateMasterAcademic');
+      Route::put('/{id}', [MasterAcademicsController::class, 'actionPut'])->name('actionSuperUpdateMasterAcademic');
+      Route::get('/delete/{id}', [MasterAcademicsController::class, 'delete']);
    });
 
    Route::prefix('/attendances')->group(function () {
@@ -1176,12 +1176,12 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
    });
 
    Route::prefix('/masterAcademics')->group(function () {
-      Route::get('/', [MasterAcademicController::class, 'index']);
-      Route::get('/create', [MasterAcademicController::class, 'pageCreate']);
-      Route::get('/edit', [MasterAcademicController::class, 'pageEdit']);
-      Route::post('/', [MasterAcademicController::class, 'actionPost'])->name('actionAdminCreateMasterAcademic');
-      Route::put('/{id}', [MasterAcademicController::class, 'actionPut'])->name('actionAdminUpdateMasterAcademic');
-      Route::get('/delete/{id}', [MasterAcademicController::class, 'delete']);
+      Route::get('/', [MasterAcademicsController::class, 'index']);
+      Route::get('/create', [MasterAcademicsController::class, 'pageCreate']);
+      Route::get('/edit', [MasterAcademicsController::class, 'pageEdit']);
+      Route::post('/', [MasterAcademicsController::class, 'actionPost'])->name('actionAdminCreateMasterAcademic');
+      Route::put('/{id}', [MasterAcademicsController::class, 'actionPut'])->name('actionAdminUpdateMasterAcademic');
+      Route::get('/delete/{id}', [MasterAcademicsController::class, 'delete']);
    });
 
    Route::prefix('/attendances')->group(function () {
@@ -1406,6 +1406,6 @@ Route::middleware(['auth.login', 'role:superadmin,admin'])->group(function () {
    Route::post('report/reportCard1', [ScoringController::class, 'actionPostReportCard1'])->name('actionPostReportCard1');
    Route::get('exams/score/{id}', [ScoreController::class, 'score']);
    Route::put('/', [ScoreController::class, 'actionUpdateScore'])->name('actionUpdateScoreExam');
-   Route::put('/changeMasterAcademic/{id}', [MasterAcademicController::class, 'changeMasterAcademic'])->name('actionChangeMasterAcademic');
+   Route::put('/changeMasterAcademic/{id}', [MasterAcademicsController::class, 'changeMasterAcademic'])->name('actionChangeMasterAcademic');
    Route::post('report/midReportCard', [ScoringController::class, 'actionPostMidReportCard'])->name('actionPostMidReportCard');
 });

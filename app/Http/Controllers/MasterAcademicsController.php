@@ -1,26 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Master_academic;
-use App\Models\Grade_subject;
-use App\Models\Teacher_grade;
-use App\Models\Teacher_subject;
-
 
 use App\Exports\DataSchoolExport;
 use App\Exports\GradeExport;
 
 use Illuminate\Support\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-
-use Maatwebsite\Excel\Facades\Excel;
 use Exception;
 
-class MasterAcademicController extends Controller
+class MasterAcademicsController extends Controller
 {
     Public function index()
     {
@@ -64,7 +57,7 @@ class MasterAcademicController extends Controller
    
     public function actionPost(Request $request)
     {
-
+        // dd($request);
         DB::beginTransaction();
 
         try {              
@@ -78,6 +71,10 @@ class MasterAcademicController extends Controller
                     'semester2' => $request->semester2,
                     'end_semester2' => $request->end_semester2,
                     'now_semester' => $request->now_semester,
+                    'mid_report_card1' => $request->mid_report_card1,
+                    'report_card1' => $request->report_card1,
+                    'mid_report_card2' => $request->mid_report_card2,
+                    'report_card2' => $request->report_card2,
                     'is_use' => TRUE,
                     'created_at' => now(),
                 ];
@@ -95,6 +92,10 @@ class MasterAcademicController extends Controller
                     'semester2' => $request->semester2,
                     'end_semester2' => $request->end_semester2,
                     'now_semester' => $request->now_semester,
+                    'mid_report_card1' => $request->mid_report_card1,
+                    'report_card1' => $request->report_card1,
+                    'mid_report_card2' => $request->mid_report_card2,
+                    'report_card2' => $request->report_card2,
                     'is_use' => TRUE,
                     'created_at' => now(),
                 ];
@@ -161,6 +162,10 @@ class MasterAcademicController extends Controller
                 'semester2' => $request->semester2,
                 'end_semester2' => $request->end_semester2,
                 'now_semester' => $request->now_semester,
+                'mid_report_card1' => $request->mid_report_card1,
+                'report_card1' => $request->report_card1,
+                'mid_report_card2' => $request->mid_report_card2,
+                'report_card2' => $request->report_card2,    
                 'updated_at' => now(),
             ];
 
@@ -200,9 +205,9 @@ class MasterAcademicController extends Controller
 
     public function excel()
     {
-        $grades = ['1', '2', '3','4', '5', '6', '7', '8', '9', '10', '11', '12', '13']; 
+        // $grades = ['1', '2', '3','4', '5', '6', '7', '8', '9', '10', '11', '12', '13']; 
 
-        return Excel::download(new GradeExport($grades), 'grades.xlsx');
+        // return Excel::download(new GradeExport($grades), 'grades.xlsx');
     }
 
     public function changeMasterAcademic($id)
@@ -238,5 +243,5 @@ class MasterAcademicController extends Controller
         } catch (Exception $err) {
             return response()->json(['success' => false, 'message' => $err->getMessage()], 500);
         }
-    }    
+    }   
 }

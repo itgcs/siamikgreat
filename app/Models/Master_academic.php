@@ -17,6 +17,10 @@ class Master_academic extends Model
         'end_semester2',
         'now_semester',
         'is_use',
+        'mid_report_card1',
+        'report_card1',
+        'mid_report_card2',
+        'report_card2',
         'created_at',
         'updated_at',
     ];

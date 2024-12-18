@@ -48,36 +48,36 @@
                 @if(!empty($data))
                 <tbody>
                         <tr>
-                            <td>
-                                Academic Year
-                            </td>
-                            <td>
-                                <a>{{$data['academic_year']}}</a>
-                            </td>
+                            <td style="width:20%">Academic Year</td>
+                            <td style="width:80%"><a>: {{$data['academic_year']}}</a></td>
                         </tr>
                         <tr>
-                            <td>
-                                Semester 1
-                            </td>
-                            <td>
-                                <a>{{ \Carbon\Carbon::parse($data['semester1'])->format('d F Y') }}  until  {{ \Carbon\Carbon::parse($data['end_semester1'])->format('d F Y') }}</a>
-                            </td>
+                            <td>Semester 1</td>
+                            <td><a>: {{ \Carbon\Carbon::parse($data['semester1'])->format('d F Y') }}  until  {{ \Carbon\Carbon::parse($data['end_semester1'])->format('d F Y') }}</a></td>
                         </tr>
                         <tr>
-                            <td>
-                                Semester 2
-                            </td>
-                            <td>
-                                <a>{{ \Carbon\Carbon::parse($data['semester2'])->format('d F Y') }}  until  {{ \Carbon\Carbon::parse($data['end_semester2'])->format('d F Y') }}</a>
-                            </td>
+                            <td> Semester 2</td>
+                            <td><a>: {{ \Carbon\Carbon::parse($data['semester2'])->format('d F Y') }}  until  {{ \Carbon\Carbon::parse($data['end_semester2'])->format('d F Y') }}</a></td>
                         </tr>
                         <tr>
-                            <td>
-                                Periode
-                            </td>
-                            <td>
-                                <a>Semester {{ $data['now_semester'] }}</a>
-                            </td>
+                            <td>Date Mid Report Card Semester 1</td>
+                            <td><a>: {{ $data['mid_report_card1'] !== null ? \Carbon\Carbon::parse($data['mid_report_card1'])->format('d F Y') : "-" }} </a></td>
+                        </tr>
+                        <tr>
+                            <td>Date Report Card Semester 1</td>
+                            <td><a>: {{ $data['report_card1'] !== null ? \Carbon\Carbon::parse($data['report_card1'])->format('d F Y') : "-" }}</a></td>
+                        </tr>
+                        <tr>
+                            <td>Date Mid Report Card Semester 2</td>
+                            <td><a>: {{ $data['mid_report_card2'] !== null ? \Carbon\Carbon::parse($data['mid_report_card2'])->format('d F Y') : "-" }}</a></td>
+                        </tr>
+                        <tr>
+                            <td>Date Report Card Semester 2</td>
+                            <td><a>: {{ $data['report_card2'] !== null ? \Carbon\Carbon::parse($data['report_card2'])->format('d F Y') : "-" }}</a></td>
+                        </tr>
+                        <tr>
+                            <td>Periode</td>
+                            <td><a>: Semester {{ $data['now_semester'] }}</a></td>
                         </tr>
                     </tbody>
                 @else
@@ -87,7 +87,7 @@
         </div>
     </div>
     
-    <h5>Export Data :</h5>
+    {{-- <h5>Export Data :</h5>
     <a type="button" href="{{ url('/' . session('role') . '/export/excel') }}" class="btn btn-success mr-2">
         <i class="fa-regular fa-file-excel"></i>
         Excel
@@ -95,7 +95,7 @@
     <a type="button" href="{{ url('/' . session('role') . '/export/pdf') }}" class="btn btn-success mr-2">
         <i class="fa-regular fa-file-pdf"></i>
         PDF
-    </a>
+    </a> --}}
     
 
 </div>

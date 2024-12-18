@@ -27,416 +27,397 @@
       with font-awesome or any other icon font library -->
 
       <!-- DASHBOARD -->
-      @if (session('role') == 'superadmin')
+        @if (session('role') == 'superadmin')
+            <li class="ml-1 nav-item">
+                <a href="{{ url('/superadmin/dashboard') }}" class="nav-link {{ session('page') && session('page')->page == 'dashboard' ? 'active' : '' }}">
+                    <i class="mr-2 fa-regular fa-folder-open"></i>
+                    <p>Dashboard</p>
+                </a>
+            </li>
+        @elseif (session('role') == 'admin')
+            <li class="ml-1 nav-item">
+                <a href="{{ url('/admin/dashboard') }}" class="nav-link {{ session('page') && session('page')->page == 'dashboard' ? 'active' : '' }}">
+                    <i class="mr-2 fa-regular fa-folder-open"></i>
+                    <p>Dashboard</p>
+                </a>
+            </li>
+        @elseif (session('role') == 'teacher')
+            <li class="ml-1 nav-item">
+                <a href="{{ url('/teacher/dashboard') }}" class="nav-link {{ session('page') && session('page')->page == 'dashboard' ? 'active' : '' }}">
+                    <i class="mr-2 fa-regular fa-folder-open"></i>
+                    <p>Dashboard</p>
+                </a>
+            </li>
+        @elseif (session('role') == 'student' || session('role') == 'parent')
           <li class="ml-1 nav-item">
-              <a href="{{ url('/superadmin/dashboard') }}" class="nav-link {{ session('page') && session('page')->page == 'dashboard' ? 'active' : '' }}">
-                  <i class="mr-2 fa-regular fa-folder-open"></i>
-                  <p>Dashboard</p>
-              </a>
+            <a href="{{ url('/' . session('role') . '/dashboard') }}" class="nav-link {{ session('page') && session('page')->page == 'dashboard' ? 'active' : '' }}">
+              <i class="mr-2 fa-regular fa-folder-open"></i>
+              <p>Dashboard</p>
+            </a>
           </li>
-      @elseif (session('role') == 'admin')
-          <li class="ml-1 nav-item">
-              <a href="{{ url('/admin/dashboard') }}" class="nav-link {{ session('page') && session('page')->page == 'dashboard' ? 'active' : '' }}">
-                  <i class="mr-2 fa-regular fa-folder-open"></i>
-                  <p>Dashboard</p>
-              </a>
-          </li>
-      @elseif (session('role') == 'teacher')
-          <li class="ml-1 nav-item">
-              <a href="{{ url('/teacher/dashboard') }}" class="nav-link {{ session('page') && session('page')->page == 'dashboard' ? 'active' : '' }}">
-                  <i class="mr-2 fa-regular fa-folder-open"></i>
-                  <p>Dashboard</p>
-              </a>
-          </li>
-      @elseif (session('role') == 'student' || session('role') == 'parent')
-        <li class="ml-1 nav-item">
-          <a href="{{ url('/' . session('role') . '/dashboard') }}" class="nav-link {{ session('page') && session('page')->page == 'dashboard' ? 'active' : '' }}">
-            <i class="mr-2 fa-regular fa-folder-open"></i>
-            <p>Dashboard</p>
-          </a>
-        </li>
-      @endif
+        @endif
       <!-- END DASHBOARD -->
 
       <!-- MASTER ACADEMICS -->
-      @if (session('role') == 'superadmin')
-          <li class="ml-1 nav-item">
-              <a href="{{ url('/superadmin/masterAcademics') }}" class="nav-link {{ session('page') && session('page')->page == 'master academic' ? 'active' : '' }}">
-                  <i class="mr-2 fa-solid fa-user-graduate"></i>
-                  <p>Master Academic</p>
-              </a>
-          </li>
-      @elseif (session('role') == 'admin')
-          <li class="ml-1 nav-item">
-              <a href="{{ url('/admin/masterAcademics') }}" class="nav-link {{ session('page') && session('page')->page == 'master academic' ? 'active' : '' }}">
-                  <i class="mr-2  fa-solid fa-user-graduate"></i>
-                  <p>Master Academic</p>
-              </a>
-          </li>
-      @endif
+        @if (session('role') == 'superadmin')
+            <li class="ml-1 nav-item">
+                <a href="{{ url('/superadmin/masterAcademics') }}" class="nav-link {{ session('page') && session('page')->page == 'master academic' ? 'active' : '' }}">
+                    <i class="mr-2 fa-solid fa-user-graduate"></i>
+                    <p>Master Academic</p>
+                </a>
+            </li>
+        @elseif (session('role') == 'admin')
+            <li class="ml-1 nav-item">
+                <a href="{{ url('/admin/masterAcademics') }}" class="nav-link {{ session('page') && session('page')->page == 'master academic' ? 'active' : '' }}">
+                    <i class="mr-2  fa-solid fa-user-graduate"></i>
+                    <p>Master Academic</p>
+                </a>
+            </li>
+        @endif
       <!-- END MASTER ACADEMIC -->
 
-      <!-- SCHEDULE -->
-      @if (session('role') == 'admin' || session('role') == 'superadmin')
-      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'menu-open' : '') : ''}}">
-        <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'active' : '') : ''}}">
-        <i class="nav-icon fa-solid fa-calendar-day"></i>
-          <p>
-            Schedules
-            <i class="right fas fa-angle-left"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview">
+      <!-- ATTENDENCE STUDENT -->
+        @if (session('role') == 'superadmin' || session('role') == 'admin')
           <li class="nav-item">
-           <a href="/{{session('role')}}/schedules/all" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'all schedules' ? 'active' : '') : ''}}">
-             <i class="far fa-circle nav-icon"></i>
-             <p>All Schedules</p>
-           </a>
-          </li>
-          <li class="nav-item">
-           <a href="/{{session('role')}}/schedules/schools" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules academic' ? 'active' : '') : ''}}">
-             <i class="far fa-circle nav-icon"></i>
-             <p>School</p>
-           </a>
-          </li>
-          <li class="nav-item">
-            <a href="/{{session('role')}}/schedules/grades" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules grade' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Grade</p>
+            <a href="/{{ session('role') }}/attendances/" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database attendance' ? 'active' : '') : ''}}">
+              <i class="nav-icon fa-solid fa-paper-plane"></i>
+              <p>Attendances</p>
             </a>
           </li>
+          @elseif (session('role') == 'teacher')
           <li class="nav-item">
-            <a href="/{{session('role')}}/schedules/midexams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules mid exam' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Mid Exams</p>
+            <a href="/{{ session('role') }}/dashboard/attendance/class/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'attendance class teacher' ? 'active' : '') : ''}}">
+              <i class="nav-icon fa-solid fa-paper-plane"></i>
+              <p>Attendances</p>
             </a>
           </li>
+        @endif
+      <!-- END ATTENDENCE -->
+
+      <!-- GRADE -->
+        @if (session('role') == 'admin' || session('role') == 'superadmin')
           <li class="nav-item">
-            <a href="/{{session('role')}}/schedules/finalexams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules final exam' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Final Exams</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/{{session('role')}}/typeSchedules" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database type schedules' ? 'active' : '') : ''}}">
-            <i class="far fa-circle nav-icon"></i>  
+            <a href="/{{ session('role') }}/grades" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database grades' ? 'active' : '') : ''}}">
+              <i class="nav-icon fa-solid fa-house-flag"></i>
               <p>
-                Type Schedules
+                Grades
               </p>
             </a>
           </li>
-        </ul>
-      </li>
-      @elseif (session('role') == 'teacher')
-      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'menu-open' : '') : ''}}">
-        <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'active' : '') : ''}}">
-        <i class="nav-icon fa-solid fa-calendar-day"></i>
-          <p>
-            Schedules
-            <i class="right fas fa-angle-left"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview">
+        @elseif (session('role') == 'teacher')
           <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/schedules/all" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'all schedules' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>All Schedules</p>
+            <a href="/teacher/dashboard/grade" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database teacher grades' ? 'active' : '') : ''}}">
+              <i class="nav-icon fa-solid fa-house-flag"></i>
+              <p>
+                Grades
+              </p>
             </a>
           </li>
-          <li class="nav-item">
-           <a href="/{{session('role')}}/dashboard/schools" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules academic' ? 'active' : '') : ''}}">
-             <i class="far fa-circle nav-icon"></i>
-             <p>School</p>
-           </a>
-          </li>
-          <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/schedules/grade" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules grade' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Class Teacher</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/schedules/subject" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules subject' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Subject</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/schedules/invigilater" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules invigilater' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Invigilater</p>
-            </a>
-          </li>
-          <!-- <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/schedules/companion/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules assisstant' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Assisstant</p>
-            </a>
-          </li> -->
-        </ul>
-      </li>
-      @elseif (session('role') == 'student' || session('role') == 'parent')
-      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'menu-open' : '') : ''}}">
-        <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'active' : '') : ''}}">
-        <i class="nav-icon fa-solid fa-calendar-day"></i>
-          <p>
-            Schedules
-            <i class="right fas fa-angle-left"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-           <a href="/{{session('role')}}/dashboard/schools" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules academic' ? 'active' : '') : ''}}">
-             <i class="far fa-circle nav-icon"></i>
-             <p>School</p>
-           </a>
-          </li>
-          <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/schedules/grade" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules grade' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Grade</p>
-            </a>
-          </li>
-        </ul>
-      </li>
-      @endif
-      <!-- END SCHEDULE -->
+        @endif
+      <!-- END GRADE -->
 
-
-      <!-- REPORT SCORE -->
-      @if (session('role') == 'admin' || session('role') == 'superadmin')
-        <li class="nav-item">
-          <a href="/{{ session('role') }}/reports/" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database reports' ? 'active' : '') : ''}}">
-            <i class="nav-icon fa-solid fa-file"></i>
-            <p>Reports</p>
-          </a>
-        </li>
-      @elseif (session('role') == 'teacher')
-      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'reports' ? 'menu-open' : '') : ''}}">
-        <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'reports' ? 'active' : '') : ''}}">
-        <i class="nav-icon fa-solid fa-file"></i>
-          <p>
-            Reports
-            <i class="right fas fa-angle-left"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview">
+      <!-- TEACHERS -->
+        @if (session('role') == 'admin' || session('role') == 'superadmin')
           <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/report/class/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report class teacher' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Class Teacher</p>
+            <a href="/{{ session('role') }}/teachers" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database teachers' ? 'active' : '') : ''}}">
+              <i class="nav-icon fa-solid fa-person-chalkboard"></i>
+              <p>
+                Teachers
+              </p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="/{{session('role')}}/dashboard/report/subject/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report subject teacher' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Subject Teacher</p>
+        @elseif (session('role') == 'teacher')
+          <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'teachers' ? 'menu-open' : '') : ''}}">
+            <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'teachers' ? 'active' : '') : ''}}">
+              <i class="nav-icon fa-solid fa-person-chalkboard"></i>
+              {{-- <i class="nav-icon fa-solid fa-chalkboard-user"></i> --}}
+              <p>
+                Teachers
+                <i class="fas fa-angle-left right"></i>
+              </p>
             </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/teacher/dashboard/edit/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'spesifik teachers' ? 'active' : '') : ''}}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Edit</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/teacher/dashboard/detail/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'detail teachers' ? 'active' : '') : ''}}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Detail</p>
+                </a>
+              </li>
+            </ul>
           </li>
-        </ul>
-      </li>
-      @endif
-      <!-- END SUBJECT -->
-
-      <!-- ATTENDENCE STUDENT -->
-      @if (session('role') == 'superadmin' || session('role') == 'admin')
-        <li class="nav-item">
-          <a href="/{{ session('role') }}/attendances/" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database attendance' ? 'active' : '') : ''}}">
-            <i class="nav-icon fa-solid fa-paper-plane"></i>
-            <p>Attendances</p>
-          </a>
-        </li>
-      @elseif (session('role') == 'teacher')
-        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'attendance' ? 'menu-open' : '') : ''}}">
-          <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'attendance' ? 'active' : '') : ''}}">
-            <i class="nav-icon fa-solid fa-paper-plane"></i>
+        @endif
+      <!-- END TEACHERS -->
+      
+      <!-- SCHEDULE -->
+        @if (session('role') == 'admin' || session('role') == 'superadmin')
+        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'menu-open' : '') : ''}}">
+          <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'active' : '') : ''}}">
+          <i class="nav-icon fa-solid fa-calendar-day"></i>
             <p>
-              Attendances
+              Schedules
               <i class="right fas fa-angle-left"></i>
             </p>
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="/{{ session('role') }}/dashboard/attendance/class/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'attendance class teacher' ? 'active' : '') : ''}}">
+            <a href="/{{session('role')}}/schedules/all" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'all schedules' ? 'active' : '') : ''}}">
+              <i class="far fa-circle nav-icon"></i>
+              <p>All Schedules</p>
+            </a>
+            </li>
+            <li class="nav-item">
+            <a href="/{{session('role')}}/schedules/schools" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules academic' ? 'active' : '') : ''}}">
+              <i class="far fa-circle nav-icon"></i>
+              <p>School</p>
+            </a>
+            </li>
+            <li class="nav-item">
+              <a href="/{{session('role')}}/schedules/grades" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules grade' ? 'active' : '') : ''}}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Class Teacher</p>
+                <p>Grade</p>
               </a>
             </li>
-            <!-- <li class="nav-item">
-              <a href="/{{session('role')}}/dashboard/attendance/subjectTeacher/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'attendance subject teacher' ? 'active' : '') : ''}}">
+            <li class="nav-item">
+              <a href="/{{session('role')}}/schedules/midexams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules mid exam' ? 'active' : '') : ''}}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Subject Teacher</p>
+                <p>Mid Exams</p>
               </a>
-            </li> -->
+            </li>
+            <li class="nav-item">
+              <a href="/{{session('role')}}/schedules/finalexams" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules final exam' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Final Exams</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/{{session('role')}}/typeSchedules" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database type schedules' ? 'active' : '') : ''}}">
+              <i class="far fa-circle nav-icon"></i>  
+                <p>
+                  Type Schedules
+                </p>
+              </a>
+            </li>
           </ul>
         </li>
-      @endif
-      <!-- END ATTENDENCE -->
-
-      <!-- STUDENTS -->
-      @if (session('role') == 'admin')
-      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'students' ? 'menu-open' : '') : ''}}">
-        <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'students' ? 'active' : '') : ''}}">
-          {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
-          {{-- <i class="nav-icon fa-solid fa-house"></i>
-           --}}
-           <i class=" nav-icon fas fa-solid fa-users"></i>
-          <p>
-            Students
-            <i class="right fas fa-angle-left"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview">
-          {{-- <li class="nav-item">
-            <a href="/admin/dashboard" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'dashboard' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Dashboard</p>
-            </a>
-          </li> --}}
-          <li class="nav-item">
-            <a href="/admin/list" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database students' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>  
-              {{-- <i class="fa-regular fa-database"></i> --}}
-              <p>Data</p>
-            </a>
-          </li>
-        </ul>
-      </li>
-      @elseif (session('role') == 'superadmin')
-      <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'students' ? 'menu-open' : '') : ''}}">
-        <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'students' ? 'active' : '') : ''}}">
-          {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
-          {{-- <i class="nav-icon fa-solid fa-house"></i>
-           --}}
-           <i class=" nav-icon fas fa-solid fa-users"></i>
-          <p>
-            Students
-            <i class="right fas fa-angle-left"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview">
-        <li class="nav-item">
-           <a href="/superadmin/register" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'register students' ? 'active' : '') : ''}}">
-             <i class="far fa-circle nav-icon"></i>
-             <p>Register</p>
-           </a>
-         </li>
-          <li class="nav-item">
-            <a href="/superadmin/register/imports" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'imports' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Import</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/superadmin/list" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database students' ? 'active' : '') : ''}}">
-              <i class="far fa-circle nav-icon"></i>  
-              {{-- <i class="fa-regular fa-database"></i> --}}
-              <p>Data</p>
-            </a>
-          </li>
-        </ul>
-      </li>
-      @elseif (session('role') == 'parent')
-      <!-- <li class="nav-item {{ session('page') && session('page')->page && session('page')->page == 'students' ? 'menu-open' : '' }}">
-          <a href="/parent/dashboard/student/{{ session('id_user') }}" class="nav-link {{ session('page') && session('page')->child && session('page')->child == 'database students' ? 'active' : '' }}">
-              <i class="nav-icon fas fa-solid fa-person"></i>
-              <p>
-                  Relationships
-              </p>
-          </a>
-      </li> -->
-      @endif
-      <!-- END STUDENTS -->
-
-      <!-- TEACHERS -->
-      @if (session('role') == 'admin' || session('role') == 'superadmin')
-        <li class="nav-item">
-          <a href="/{{ session('role') }}/teachers" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database teachers' ? 'active' : '') : ''}}">
-            <i class="nav-icon fa-solid fa-person-chalkboard"></i>
+        @elseif (session('role') == 'teacher')
+        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'menu-open' : '') : ''}}">
+          <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'active' : '') : ''}}">
+          <i class="nav-icon fa-solid fa-calendar-day"></i>
             <p>
-              Teachers
-            </p>
-          </a>
-        </li>
-      @elseif (session('role') == 'teacher')
-        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'teachers' ? 'menu-open' : '') : ''}}">
-          <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'teachers' ? 'active' : '') : ''}}">
-            <i class="nav-icon fa-solid fa-person-chalkboard"></i>
-            {{-- <i class="nav-icon fa-solid fa-chalkboard-user"></i> --}}
-            <p>
-              Teachers
-              <i class="fas fa-angle-left right"></i>
+              Schedules
+              <i class="right fas fa-angle-left"></i>
             </p>
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="/teacher/dashboard/edit/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'spesifik teachers' ? 'active' : '') : ''}}">
+              <a href="/{{session('role')}}/dashboard/schedules/all" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'all schedules' ? 'active' : '') : ''}}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Edit</p>
+                <p>All Schedules</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/teacher/dashboard/detail/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'detail teachers' ? 'active' : '') : ''}}">
+            <a href="/{{session('role')}}/dashboard/schools" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules academic' ? 'active' : '') : ''}}">
+              <i class="far fa-circle nav-icon"></i>
+              <p>School</p>
+            </a>
+            </li>
+            <li class="nav-item">
+              <a href="/{{session('role')}}/dashboard/schedules/grade" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules grade' ? 'active' : '') : ''}}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Detail</p>
+                <p>Class Teacher</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/{{session('role')}}/dashboard/schedules/subject" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules subject' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Subject</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/{{session('role')}}/dashboard/schedules/invigilater" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules invigilater' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Invigilater</p>
+              </a>
+            </li>
+            <!-- <li class="nav-item">
+              <a href="/{{session('role')}}/dashboard/schedules/companion/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules assisstant' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Assisstant</p>
+              </a>
+            </li> -->
+          </ul>
+        </li>
+        @elseif (session('role') == 'student' || session('role') == 'parent')
+        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'menu-open' : '') : ''}}">
+          <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'active' : '') : ''}}">
+          <i class="nav-icon fa-solid fa-calendar-day"></i>
+            <p>
+              Schedules
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+            <a href="/{{session('role')}}/dashboard/schools" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules academic' ? 'active' : '') : ''}}">
+              <i class="far fa-circle nav-icon"></i>
+              <p>School</p>
+            </a>
+            </li>
+            <li class="nav-item">
+              <a href="/{{session('role')}}/dashboard/schedules/grade" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'schedules grade' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Grade</p>
               </a>
             </li>
           </ul>
         </li>
-      @endif
-      <!-- END TEACHERS -->
+        @endif
+      <!-- END SCHEDULE -->
+
+      <!-- REPORT SCORE -->
+        @if (session('role') == 'admin' || session('role') == 'superadmin')
+          <li class="nav-item">
+            <a href="/{{ session('role') }}/reports/" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'database reports' ? 'active' : '') : ''}}">
+              <i class="nav-icon fa-solid fa-file"></i>
+              <p>Reports</p>
+            </a>
+          </li>
+        @elseif (session('role') == 'teacher')
+        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'reports' ? 'menu-open' : '') : ''}}">
+          <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'reports' ? 'active' : '') : ''}}">
+          <i class="nav-icon fa-solid fa-file"></i>
+            <p>
+              Reports
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/{{session('role')}}/dashboard/report/class/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report class teacher' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Class Teacher</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/{{session('role')}}/dashboard/report/subject/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report subject teacher' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Subject Teacher</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        @endif
+      <!-- END SUBJECT -->
+
       
 
-
+      <!-- STUDENTS -->
+        @if (session('role') == 'admin')
+        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'students' ? 'menu-open' : '') : ''}}">
+          <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'students' ? 'active' : '') : ''}}">
+            {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
+            {{-- <i class="nav-icon fa-solid fa-house"></i>
+            --}}
+            <i class=" nav-icon fas fa-solid fa-users"></i>
+            <p>
+              Students
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            {{-- <li class="nav-item">
+              <a href="/admin/dashboard" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'dashboard' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Dashboard</p>
+              </a>
+            </li> --}}
+            <li class="nav-item">
+              <a href="/admin/list" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database students' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>  
+                {{-- <i class="fa-regular fa-database"></i> --}}
+                <p>Data</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        @elseif (session('role') == 'superadmin')
+        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'students' ? 'menu-open' : '') : ''}}">
+          <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'students' ? 'active' : '') : ''}}">
+            {{-- <i class="nav-icon fas fa-tachometer-alt"></i> --}}
+            {{-- <i class="nav-icon fa-solid fa-house"></i>
+            --}}
+            <i class=" nav-icon fas fa-solid fa-users"></i>
+            <p>
+              Students
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="/superadmin/register" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'register students' ? 'active' : '') : ''}}">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Register</p>
+            </a>
+          </li>
+            <li class="nav-item">
+              <a href="/superadmin/register/imports" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'imports' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Import</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/superadmin/list" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database students' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>  
+                {{-- <i class="fa-regular fa-database"></i> --}}
+                <p>Data</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        @elseif (session('role') == 'parent')
+        <!-- <li class="nav-item {{ session('page') && session('page')->page && session('page')->page == 'students' ? 'menu-open' : '' }}">
+            <a href="/parent/dashboard/student/{{ session('id_user') }}" class="nav-link {{ session('page') && session('page')->child && session('page')->child == 'database students' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-solid fa-person"></i>
+                <p>
+                    Relationships
+                </p>
+            </a>
+        </li> -->
+        @endif
+      <!-- END STUDENTS -->
+      
       <!-- RELATIONS -->
-      <!-- @if (session('role') == 'admin' || session('role') == 'superadmin')
-        <li class="nav-item">
-          <a href="/{{ session('role') }}/relations" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database relations' ? 'active' : '') : ''}}">
-            <i class="nav-icon fa-solid fa-person"></i>
-            {{-- <i class="nav-icon fa-solid fa-chalkboard-user"></i> --}}
-            <p>
-              Relations
-              <i class="fas fa-angle-left right"></i>
-            </p>
-          </a>
-        </li>
-      @elseif (session('role') == 'student')
-        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'relations' ? 'menu-open' : '') : ''}}">
-          <a href="/student/dashboard/relation/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database relations' ? 'active' : '') : ''}}">
-            <i class="nav-icon fa-solid fa-person"></i>
-            {{-- <i class="nav-icon fa-solid fa-chalkboard-user"></i> --}}
-            <p>
-              Relations
-              <i class="fas fa-angle-left right"></i>
-            </p>
-          </a>
-        </li>
-      @endif -->
+        <!-- @if (session('role') == 'admin' || session('role') == 'superadmin')
+          <li class="nav-item">
+            <a href="/{{ session('role') }}/relations" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database relations' ? 'active' : '') : ''}}">
+              <i class="nav-icon fa-solid fa-person"></i>
+              {{-- <i class="nav-icon fa-solid fa-chalkboard-user"></i> --}}
+              <p>
+                Relations
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+          </li>
+        @elseif (session('role') == 'student')
+          <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'relations' ? 'menu-open' : '') : ''}}">
+            <a href="/student/dashboard/relation/{{ session('id_user') }}" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database relations' ? 'active' : '') : ''}}">
+              <i class="nav-icon fa-solid fa-person"></i>
+              {{-- <i class="nav-icon fa-solid fa-chalkboard-user"></i> --}}
+              <p>
+                Relations
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+          </li>
+        @endif -->
       <!-- END RELATIONS -->
       
-
-
-      <!-- GRADE -->
-      @if (session('role') == 'admin' || session('role') == 'superadmin')
-        <li class="nav-item">
-          <a href="/{{ session('role') }}/grades" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database grades' ? 'active' : '') : ''}}">
-            <i class="nav-icon fa-solid fa-house-flag"></i>
-            <p>
-              Grades
-            </p>
-          </a>
-        </li>
-      @elseif (session('role') == 'teacher')
-        <li class="nav-item">
-          <a href="/teacher/dashboard/grade" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database teacher grades' ? 'active' : '') : ''}}">
-            <i class="nav-icon fa-solid fa-house-flag"></i>
-            <p>
-              Grades
-            </p>
-          </a>
-        </li>
-      @endif
-      <!-- END GRADE -->
 
 
       <!-- SUBJECT -->

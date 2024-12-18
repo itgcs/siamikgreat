@@ -1,10 +1,10 @@
 {
     "noto sans sc": {
         "200": "C:\\xampp\\htdocs\\siamikgreat\\storage\\fonts\/noto_sans_sc_200_8233fbf5c39d8318c901e2f8518dee8b",
-        "normal": "C:\\xampp\\htdocs\\siamik_gcs\\storage\\fonts\/noto_sans_sc_normal_fa8130ed19d81fe718fc84ecaef9893a",
+        "normal": "noto_sans_sc_normal_fa8130ed19d81fe718fc84ecaef9893a",
         "500": "C:\\xampp\\htdocs\\siamik_gcs\\storage\\fonts\/noto_sans_sc_500_80e78e680e6290c4e93fb02cabd9fa74",
         "bold": "C:\\xampp\\htdocs\\siamik_gcs\\storage\\fonts\/noto_sans_sc_bold_1b8553df3171c589bf020d8694480f0f",
-        "900": "noto_sans_sc_900_450df6eefd612ea2fcaecdb7b55a1f67"
+        "900": "C:\\xampp\\htdocs\\siamikgreat\\storage\\fonts\/noto_sans_sc_900_450df6eefd612ea2fcaecdb7b55a1f67"
     },
     "ma shan zheng": {
         "normal": "ma_shan_zheng_normal_46e9f69994aebd534af347d3551a0b83"

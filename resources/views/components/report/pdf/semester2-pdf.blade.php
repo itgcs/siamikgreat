@@ -114,7 +114,7 @@ $grade_name = $student->grade_name;
                     <td style="text-align:right;border: 1px solid black;padding-right:8px;border-left: solid 1px black;">Name:</td>
                     <td style="border: 1px solid black;padding-left:8px;" colspan="3">{{ ucwords(strtolower($student->student_name)) }}</td>
                     <td style="text-align:right;border: 1px solid black;padding-right:8px;"  colspan="2">Date:</td>
-                    <td style="border: 1px solid black;padding-left:8px;border-right: solid 1px black;" colspan="2">{{ \Carbon\Carbon::now()->format('F d, Y') }}</td>
+                    <td style="border: 1px solid black;padding-left:8px;border-right: solid 1px black;" colspan="2">{{ \Carbon\Carbon::parse($date)->format('F d, Y') }}</td>
                 </tr>
                 <tr>
                     <td style="text-align:right;border: 1px solid black;padding-right:8px;border-left: solid 1px black;">Class:</td>
@@ -278,10 +278,10 @@ $grade_name = $student->grade_name;
                         @endif
                     </td>
                     @if(strtolower($student->grade_name) == "primary")
-                            <td style="text-align:center;text-decoration:underline;" colspan="2">Yuliana Harijanto, B.Eng (Hons)</td>
-                        @elseif (strtolower($student->grade_name) == "secondary")
-                            <td style="text-align:center;text-decoration:underline;" colspan="2">Donny Prasetya, S.Kom.</td>
-                        @endif
+                        <td style="text-align:center;text-decoration:underline;" colspan="2">Yuliana Harijanto, B.Eng (Hons)</td>
+                    @elseif (strtolower($student->grade_name) == "secondary")
+                        <td style="text-align:center;text-decoration:underline;" colspan="2">Donny Prasetya, S.Kom.</td>
+                    @endif
                     <td style="text-align:center;text-decoration:underline;" colspan="3">
                         {{-- @if ($relation == null)
                         -
@@ -307,7 +307,7 @@ $grade_name = $student->grade_name;
             <table class="table">
                 <tbody>
                     <tr>
-                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
+                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::parse($date)->format('m/d/Y') }}</td>
                         <td  style="text-align:center;padding-top: 4px;"> 
                             {{-- <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"> --}}
                         </td>
@@ -348,8 +348,14 @@ $grade_name = $student->grade_name;
                             <td style="text-align:left;border: 1px solid black;padding:3px;border-left: solid 1px black;style">{{ $scores['subject_name'] }}</td>
                             <td style="text-align:center;border: 1px solid black;padding:3px;">{{ $scores['final_score'] }}</td>
                             <td style="text-align:center;border: 1px solid black;padding:3px;">{{ $scores['grades'] }}</td>
-                            <td style="text-align:left;border: 1px solid black;padding:3px;border-right: solid 1px black;font-style: italic;" colspan="5">
-                                <span class="noto-serif-sc-chinese">
+                            <td style="text-align:justify;border: 1px solid black;border-right: solid 1px black;padding-left:3px;padding-right:3px;" colspan="5">
+                                <span 
+                                @if ($scores['isChinese'] === 1) 
+                                    class="noto-serif-sc-chinese" 
+                                @else 
+                                    style="font-style: italic;" 
+                                @endif
+                                >
                                     {{ $scores['comment'] }}
                                 </span>
                             </td>
@@ -466,7 +472,10 @@ $grade_name = $student->grade_name;
                         <td style="text-align:center;border: 1px solid black;padding-right:8px;">{{  $sooa[0]['scores'][0]['participation'] }}</td>
                         <td style="text-align:center;border: 1px solid black;padding-left:8px;">{{ $sooa[0]['scores'][0]['final_score'] }}</td>
                         <td style="text-align:center;border: 1px solid black;padding-right:8px;">{{ $sooa[0]['scores'][0]['grades_final_score'] }}</td>
-                        <td style="text-align:center;border: 1px solid black;padding-left:8px;border-right: solid 1px black;">{{  $sooa[0]['ranking'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;padding-left:8px;border-right: solid 1px black;">
+                            -
+                            {{-- {{  $sooa[0]['ranking'] }} --}}
+                        </td>
                         @else
                         @endif
                     </tr>
@@ -534,7 +543,7 @@ $grade_name = $student->grade_name;
             <table class="table">
                 <tbody>
                     <tr>
-                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::now()->format('m/d/Y') }}</td>
+                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::parse($date)->format('m/d/Y') }}</td>
                         <td  style="text-align:center;padding-top: 4px;"> 
                             {{-- <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"> --}}
                         </td>

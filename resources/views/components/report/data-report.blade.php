@@ -46,11 +46,11 @@
                      <thead>
                            <tr>
                               <th>#</th>
-                              <th style="width:15%;">Class</th>
+                              <th style="width:10%;">Class</th>
                               <th>Class Teacher</th>
                               <th>Student</th>
                               <th>Subject</th>
-                              <th style="width:50%;">Action</th>
+                              <th style="width:60%;">Action</th>
                            </tr>
                      </thead>
                      <tbody>
