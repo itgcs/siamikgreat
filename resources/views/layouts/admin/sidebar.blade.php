@@ -116,46 +116,43 @@
         @endif
       <!-- END GRADE -->
 
-      <!-- TEACHERS -->
+       <!-- REPORT SCORE -->
         @if (session('role') == 'admin' || session('role') == 'superadmin')
           <li class="nav-item">
-            <a href="/{{ session('role') }}/teachers" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database teachers' ? 'active' : '') : ''}}">
-              <i class="nav-icon fa-solid fa-person-chalkboard"></i>
-              <p>
-                Teachers
-              </p>
+            <a href="/{{ session('role') }}/reports/" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'database reports' ? 'active' : '') : ''}}">
+              <i class="nav-icon fa-solid fa-file"></i>
+              <p>Reports</p>
             </a>
           </li>
         @elseif (session('role') == 'teacher')
-          <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'teachers' ? 'menu-open' : '') : ''}}">
-            <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'teachers' ? 'active' : '') : ''}}">
-              <i class="nav-icon fa-solid fa-person-chalkboard"></i>
-              {{-- <i class="nav-icon fa-solid fa-chalkboard-user"></i> --}}
-              <p>
-                Teachers
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/teacher/dashboard/edit/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'spesifik teachers' ? 'active' : '') : ''}}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Edit</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/teacher/dashboard/detail/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'detail teachers' ? 'active' : '') : ''}}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Detail</p>
-                </a>
-              </li>
-            </ul>
-          </li>
+        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'reports' ? 'menu-open' : '') : ''}}">
+          <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'reports' ? 'active' : '') : ''}}">
+          <i class="nav-icon fa-solid fa-file"></i>
+            <p>
+              Reports
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/{{session('role')}}/dashboard/report/class/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report class teacher' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Class Teacher</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/{{session('role')}}/dashboard/report/subject/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report subject teacher' ? 'active' : '') : ''}}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Subject Teacher</p>
+              </a>
+            </li>
+          </ul>
+        </li>
         @endif
-      <!-- END TEACHERS -->
-      
-      <!-- SCHEDULE -->
-        @if (session('role') == 'admin' || session('role') == 'superadmin')
+        <!-- END rEPORST -->
+
+        <!-- SCHEDULE -->
+       @if (session('role') == 'admin' || session('role') == 'superadmin')
         <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'menu-open' : '') : ''}}">
           <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'schedules' ? 'active' : '') : ''}}">
           <i class="nav-icon fa-solid fa-calendar-day"></i>
@@ -280,40 +277,78 @@
         @endif
       <!-- END SCHEDULE -->
 
-      <!-- REPORT SCORE -->
+      <!-- SCORINGS -->
+        @if (session('role') == 'admin' || session('role') == 'superadmin')
+        <li class="nav-item">
+          <a href="/{{ session('role') }}/exams" class="nav-link {{ session('page') && session('page')->page == 'database exam' ? 'active' : '' }}">
+            <i class="nav-icon fa-solid fa-pencil"></i>
+            <p>
+              Scorings
+            </p>
+          </a>
+        </li>
+        @elseif (session('role') == 'teacher') 
+        <li class="nav-item">
+          <a href="/{{ session('role') }}/dashboard/exam/teacher" class="nav-link {{ session('page') && session('page')->page == 'database teacher exams' ? 'active' : '' }}">
+            <i class="nav-icon fa-solid fa-pencil"></i>
+            <p>
+              Scorings
+            </p>
+          </a>
+        </li>
+        @elseif (session('role') == 'student' || session('role') == 'parent')  
+        <li class="nav-item">
+          <a href="/{{ session('role') }}/dashboard/exam" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'exams' ? 'active' : '') : ''}}">
+            <i class="nav-icon fa-solid fa-pencil"></i>
+            <p>
+              Scorings
+            </p>
+          </a>
+        </li>
+        @endif
+      <!-- END SCORINGS -->
+      
+      <!-- TEACHERS -->
         @if (session('role') == 'admin' || session('role') == 'superadmin')
           <li class="nav-item">
-            <a href="/{{ session('role') }}/reports/" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'database reports' ? 'active' : '') : ''}}">
-              <i class="nav-icon fa-solid fa-file"></i>
-              <p>Reports</p>
+            <a href="/{{ session('role') }}/teachers" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'database teachers' ? 'active' : '') : ''}}">
+              <i class="nav-icon fa-solid fa-person-chalkboard"></i>
+              <p>
+                Teachers
+              </p>
             </a>
           </li>
         @elseif (session('role') == 'teacher')
-        <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'reports' ? 'menu-open' : '') : ''}}">
-          <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'reports' ? 'active' : '') : ''}}">
-          <i class="nav-icon fa-solid fa-file"></i>
-            <p>
-              Reports
-              <i class="right fas fa-angle-left"></i>
-            </p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="/{{session('role')}}/dashboard/report/class/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report class teacher' ? 'active' : '') : ''}}">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Class Teacher</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="/{{session('role')}}/dashboard/report/subject/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'report subject teacher' ? 'active' : '') : ''}}">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Subject Teacher</p>
-              </a>
-            </li>
-          </ul>
-        </li>
+          <li class="nav-item {{session('page') && session('page')->page? (session('page')->page == 'teachers' ? 'menu-open' : '') : ''}}">
+            <a href="#" class="nav-link {{session('page') && session('page')->page? (session('page')->page == 'teachers' ? 'active' : '') : ''}}">
+              <i class="nav-icon fa-solid fa-person-chalkboard"></i>
+              {{-- <i class="nav-icon fa-solid fa-chalkboard-user"></i> --}}
+              <p>
+                Teachers
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/teacher/dashboard/edit/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'spesifik teachers' ? 'active' : '') : ''}}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Edit</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/teacher/dashboard/detail/teacher" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'detail teachers' ? 'active' : '') : ''}}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Detail</p>
+                </a>
+              </li>
+            </ul>
+          </li>
         @endif
-      <!-- END SUBJECT -->
+      <!-- END TEACHERS -->
+      
+     
+
+     
 
       
 
@@ -418,7 +453,7 @@
         @endif -->
       <!-- END RELATIONS -->
       
-
+      
 
       <!-- SUBJECT -->
       @if (session('role') == 'admin' || session('role') == 'superadmin')
@@ -497,36 +532,7 @@
       @endif
 
 
-      <!-- EXAM -->
-      @if (session('role') == 'admin' || session('role') == 'superadmin')
-        <li class="nav-item">
-          <a href="/{{ session('role') }}/exams" class="nav-link {{ session('page') && session('page')->page == 'database exam' ? 'active' : '' }}">
-            <i class="nav-icon fa-solid fa-pencil"></i>
-            <p>
-              Scorings
-            </p>
-          </a>
-        </li>
-      @elseif (session('role') == 'teacher') 
-        <li class="nav-item">
-          <a href="/{{ session('role') }}/dashboard/exam/teacher" class="nav-link {{ session('page') && session('page')->page == 'database teacher exams' ? 'active' : '' }}">
-            <i class="nav-icon fa-solid fa-pencil"></i>
-            <p>
-              Scorings
-            </p>
-          </a>
-        </li>
-      @elseif (session('role') == 'student' || session('role') == 'parent')  
-        <li class="nav-item">
-          <a href="/{{ session('role') }}/dashboard/exam" class="nav-link {{session('page') && session('page')->child? (session('page')->child == 'exams' ? 'active' : '') : ''}}">
-            <i class="nav-icon fa-solid fa-pencil"></i>
-            <p>
-              Scorings
-            </p>
-          </a>
-        </li>
-      @endif
-      <!-- END EXAM -->
+      
 
       <!-- SCORE IN PARENT -->
       @if (session('role') == 'parent')  
