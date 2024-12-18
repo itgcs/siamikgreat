@@ -149,15 +149,15 @@
         
         
                                 <!-- Strengths/weakness/nextstep -->
-                                 <td class="text-center">
+                                <td class="text-center">
                                     <textarea name="strength_weakness_nextstep[]" class="form-control" autocomplete="off" required>{{ $score['strength_weakness_nextstep'] }}</textarea>
                                 </td>
+
         
                                 <!-- <td class="text-center">
                                 <input name="remarks[]" type="text" class="form-control" value="{{ $score['remarks'] }}" autocomplete="off"></td> -->
-                            @endforeach
-                        
-                                <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">
+                            @endforeach                   
+                            <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">
                         </tr>
                         @endforeach
                     </tbody>
@@ -257,7 +257,6 @@
                         <th class="text-center" style="vertical-align : middle;text-align:center;">Action</th>
                     </tr>
                 </thead>
-
                 <tbody>
                 @if(!empty($data['result']))
                     @foreach ($data['result'] as $student)
@@ -321,6 +320,7 @@
                                     @endif
                                 @endif
                             @endforeach
+                        </tr>
                     @endforeach
                 @endif        
                 </tbody>
