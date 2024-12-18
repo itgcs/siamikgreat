@@ -1,444 +1,491 @@
-@extends('layouts.admin.master')
-@section('content')
+<?php
+// Set the maximum execution time to 300 seconds
+set_time_limit(300);
 
-<!-- Content Wrapper. Contains page content -->
-<div class="container-fluid">
-    <div class="row">
-      <div class="col">
-        <nav aria-label="breadcrumb" class="bg-light rounded-3 mb-4">
-          <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item">Home</li>
-            @if (session('role') == 'superadmin')
-              <li class="breadcrumb-item"><a href="{{url('/superadmin/reports')}}">Report Card</a></li>
-            @elseif (session('role') == 'admin')
-            <li class="breadcrumb-item"><a href="{{url('/admin/reports')}}">Report Card</a></li>
-            @elseif (session('role') == 'teacher')
-            <li class="breadcrumb-item"><a href="{{url('/teacher/dashboard/report/class/teacher')}}">Reports </a></li>    
-            @endif
-            <li class="breadcrumb-item active" aria-current="page">Detail Report Card</li>
-          </ol>
-        </nav>
-      </div>
-    </div>
+// Your script logic here
+$pathlogo = public_path('images/logo-school.png');
+$typelogo = pathinfo($pathlogo, PATHINFO_EXTENSION);
+$datalogo = file_get_contents($pathlogo);
+$logo = 'data:image/' . $typelogo . ';base64,' . base64_encode($datalogo);
 
-    <div class="row">
-        <div class="col">
-            <p class="text-bold">Report Card Semester 1</p>
-            <table>
+$pathcambridge = public_path('images/lcn.png');
+$typecambridge = pathinfo($pathcambridge, PATHINFO_EXTENSION);
+$datacambridge = file_get_contents($pathcambridge);
+$cambridge = 'data:image/' . $typecambridge . ';base64,' . base64_encode($datacambridge);
+
+$grade_name = $student->grade_name;
+?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Card</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Noto+Sans+TC&display=swap');
+
+        .noto-serif-sc-chinese {
+            font-family: "Noto Sans SC", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            margin-top: 100px;
+            text-align: center;
+        }
+        .header h1, .header h2 ,.header h5, .header h4, .header h5 {
+            margin: 0;
+        }
+
+        .footer {
+            margin: 0;
+        }
+
+
+        .mid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table td {
+            font-size:10px;
+        }
+        .table th {
+            font-size:12px;
+        }
+        .signature {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+        .watermark {
+            position: absolute;
+            top: 40%; /* Posisi vertikal tengah */
+            left: 50%; /* Posisi horizontal tengah */
+            transform: translate(-50%, -50%) rotate(-45deg); /* Pusatkan dan rotasi */
+            font-size: 80px; /* Ukuran font */
+            color: rgba(128, 128, 128, 0.5); /* Warna abu-abu dengan transparansi */
+            white-space: nowrap; /* Tidak memecah teks */
+            z-index: -1; /* Pastikan di belakang konten */
+            width: 200%; /* Lebar teks */
+            text-align: center; /* Penataan teks */
+            user-select: none; /* Teks tidak bisa disorot */
+            pointer-events: none; /* Tidak mengganggu interaksi pengguna */
+        }
+
+
+        
+        @page {
+            margin: 5mm 5mm 0mm 5mm;
+        }
+    </style>
+</head>
+<body>
+<div class="container"> 
+    <!-- PAGE 1 -->
+        @if ($subjectReports[0]['isRestricted'] === TRUE)
+        <p class="watermark">Internal Use Only</p>  
+        @endif
+        
+        <div class="header">
+            {{-- <div style="padding-left:50px;padding-right:50px;margin-bottom:5px;">
+                <img src="<?= $logo ?>" style="width:90%;height:8%;" alt="Sample image">
+            </div> --}}
+            <h5>Report Card</h5>
+            <h5>Semester I School Year {{ $academicYear }}</h5>
+        </div>
+
+        <div>
+            <table class="table">
+                <!-- STUDENT STATUS -->
                 <tr>
-                    <td>Class</td>
-                    <td> : {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</td>
+                    <th colspan="8" style="text-align:center;border-top: 3px solid black;border-bottom: 3px solid black;border-right: 1px solid black;border-left: 1px solid black;"><b>Student Status</b></th>
                 </tr>
                 <tr>
-                    <td>Class Teacher</td>
-                    <td> : {{ $data['classTeacher']->teacher_name }}</td>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Name:</td>
+                    <td style="border: 1px solid black;padding-left:4px;" colspan="2">{{ ucwords(strtolower($student->student_name)) }}</td>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;"  colspan="2">Date:</td>
+                    <td style="border: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">{{ \Carbon\Carbon::parse($date)->format('F d, Y') }}</td>
                 </tr>
                 <tr>
-                    <td>Date</td>
-                    <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Class:</td>
+                    <td style="border: 1px solid black;padding-left:4px;" colspan="2">{{ $student->grade_name}} - {{ $student->grade_class }}</td>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;"  colspan="2">Class Teacher</td>
+                    <td style="border: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">{{ $classTeacher->teacher_name }}</td>
+                </tr>
+                <tr>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Serial:</td>
+                    <td style="border: 1px solid black;padding-left:4px;" colspan="2">{{ $serial }}</td>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;"  colspan="2">Date of Registration</td>
+                    <td style="border: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">{{ $date_of_registration }}</td>
+                </tr>
+                <tr>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Days Absent:</td>
+                    <td style="border: 1px solid black;padding-left:4px;" colspan="2">{{ $attendance[0]['days_absent'] }} day</td>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;" colspan="2">Total Days Absent:</td>
+                    <td style="border: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">{{ $attendance[0]['days_absent'] }}  days</td>
+                </tr>
+                <tr>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Times Late:</td>
+                    <td style="border: 1px solid black;padding-left:4px;" colspan="2">{{ $attendance[0]['total_late'] }}</td>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;"  colspan="2">Total Times Late:</td>
+                    <td style="border: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">{{ $attendance[0]['total_late'] }}</td>
+                </tr>
+                <!-- END STUDENT STATUS -->
+
+                <!-- DESCRIPTION OF GRADES -->
+                <tr>
+                    <th colspan="8" style="text-align:center;border-top: 3px solid black;border-bottom: 3px solid black;border-right: 1px solid black;border-left: 1px solid black;"><b>Description of Grades</b></th>
+                </tr>
+                <tr>
+                    <td style="text-align:center;border: 1px solid black;border-left: solid 1px black;">Scores</td>
+                    <td style="text-align:center;border: 1px solid black;">Grade</td>
+                    <td style="text-align:center;border: 1px solid black;border-right: solid 1px black;" colspan="6">Achievement of the Curriculum Expectations</td>
+                </tr>s
+                <tr>
+                    <td style="border: 1px solid black;text-align:center;border-left: solid 1px black;">95 – 100</td>
+                    <td style="border: 1px solid black;text-align:center;">A<sup>+</sup></td>
+                    <td style="border: 1px solid black;border-right: solid 1px black;padding-left:10px;" colspan="6">The student has demonstrated excellent knowledge and skills, <br> Achievement far exceeds the standard.</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black;text-align:center;border-left: solid 1px black;">85 – 94</td>
+                    <td style="border: 1px solid black;text-align:center;">A</td>
+                    <td style="border: 1px solid black;border-right: solid 1px black;padding-left:10px;" colspan="6">The student has demonstrated the required knowledge and skills <br> Achievement exceeds the standard.</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black;text-align:center;border-left: solid 1px black;">75 – 84</td>
+                    <td style="border: 1px solid black;text-align:center;">B</td>
+                    <td style="border: 1px solid black;border-right: solid 1px black;padding-left:10px;" colspan="6">The student has demonstrated most of the required knowledge and skills <br> Achievement meets the standard.</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black;text-align:center;border-left: solid 1px black;">65 – 74</td>
+                    <td style="border: 1px solid black;text-align:center;">C</td>
+                    <td style="border: 1px solid black;border-right: solid 1px black;padding-left:10px;" colspan="6">The student has demonstrated some of the required knowledge and skills <br> Achievement approaches the standard.</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black;text-align:center;border-left: solid 1px black;">45 – 64</td>
+                    <td style="border: 1px solid black;text-align:center;">D</td>
+                    <td style="border: 1px solid black;border-right: solid 1px black;padding-left:10px;" colspan="6">The student has demonstrated some of the required knowledge and skills in limited ways. Achievement falls much below the standard.</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black;text-align:center;border-left: solid 1px black;">&lt; 44</td>
+                    <td style="border: 1px solid black;text-align:center;">R</td>
+                    <td style="border: 1px solid black;border-right: solid 1px black;padding-left:10px;" colspan="6">The student has failed to demonstrate the required knowledge and skills. <br> Extensive remediation is required.</td>
+                </tr>
+                <!-- END DESCRIPTION OF GRADES -->
+
+                <!-- LEARNING SKILLS -->
+                <tr>
+                    <th  colspan="8" style="text-align:center;border-top: 3px solid black;border-bottom: 3px solid black;border-right: 1px solid black;border-left: 1px solid black;"><b>Learning Skills</b></th>
+                </tr>
+                <tr>
+                    <td style="text-align:center;border: 1px solid black;border-left: solid 1px black;"><b>Legend:</b></td>
+                    <td colspan="7" style="text-align:center;border: 1px solid black;border-right: solid 1px black;"><b>E – Excellent   G – Good   S – Satisfactory   N – Needs Improvement</b></td>
+                </tr>
+                <tr>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Independent Work</td>
+                    <td style="border: 1px solid black;text-align:center;"> {{ strtoUpper($learningSkills->independent_work) }} </td>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;">Use of information</td>
+                    <td style="border: 1px solid black;text-align:center;"> {{ strtoUpper($learningSkills->use_of_information) }} </td>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;" colspan="2">Class participation</td>
+                    <td style="border: 1px solid black;text-align:center;border-right: solid 1px black;"> {{ strtoUpper($learningSkills->class_participation) }} </td>
+                </tr>
+                <tr>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Initiative</td>
+                    <td style="border: 1px solid black;text-align:center;"> {{ strtoUpper($learningSkills->initiative) }} </td>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;" >Cooperation with others</td>
+                    <td style="border: 1px solid black;text-align:center;"> {{ strtoUpper($learningSkills->cooperation_with_other) }} </td>
+                    <td style="text-align:right;border: 1px solid black;padding-right:4px;" colspan="2">Problem solving</td>
+                    <td style="border: 1px solid black;text-align:center;border-right: solid 1px black;"> {{ strtoUpper($learningSkills->problem_solving) }} </td>
+                </tr>
+                <tr>
+                    <td style="text-align:right;border: 1px solid black;border-bottom: 1.5px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">Homework completion</td>
+                    <td style="border: 1px solid black;border-bottom: 1.5px solid black;text-align:center;"> {{ strtoUpper($learningSkills->homework_completion) }} </td>
+                    <td style="text-align:right;border: 1px solid black;border-bottom: 1.5px solid black;padding-right:4px;">Conflict resolution</td>
+                    <td style="border: 1px solid black;border-bottom: 1.5px solid black;text-align:center;"> {{ strtoUpper($learningSkills->conflict_resolution) }} </td>
+                    <td style="text-align:right;border: 1px solid black;border-bottom: 1.5px solid black;padding-right:4px;" colspan="2">Goal setting to improve work</td>
+                    <td style="border: 1px solid black;border-bottom: 1.5px solid black;text-align:center;border-right: solid 1px black;"> {{ strtoUpper($learningSkills->goal_setting_to_improve_work) }} </td>
+                </tr>
+                <tr>
+                    <td colspan="8" style="border-top: 1px solid black;padding-left: 5px;border-left: solid 1px black;border-right: solid 1px black;">Strengths/Weaknesses/Next Steps</td>
+                </tr>
+                <tr>
+                    <td colspan="8" style="font-style: italic;border-bottom: 1px solid black;text-align:left;padding-left: 5px;border-left: solid 1px black;border-right: solid 1px black;">{{ $learningSkills->strength_weakness_nextstep }}</td>
+                </tr>
+                <!-- END LEARNING SKILLS -->
+
+                <!-- SIGNATURE -->
+                <tr style="border-right: 1px solid black;border-left: 1px solid black;">
+                    <td style="text-align:left;height:80px;text-decoration:underline;" colspan="3"></td>
+                    <td style="text-align:center;height:80px;" colspan="2"></td>
+                    <td style="text-align:right;height:80px;padding-right:20px" colspan="3"></td>
+                </tr>
+                
+                <tr style="border-right: 1px solid black;border-left: 1px solid black;">
+                    <td style="text-align:center;text-decoration:underline;" colspan="3">
+                        @if ($subjectReports[0]['isRestricted'] === FALSE)
+                            {{ $classTeacher->teacher_name }}
+                        @endif
+                    </td>
+                    @if(strtolower($student->grade_name) == "primary")
+                        <td style="text-align:center;text-decoration:underline;" colspan="2">Yuliana Harijanto, B.Eng (Hons)</td>
+                    @elseif (strtolower($student->grade_name) == "secondary")
+                        <td style="text-align:center;text-decoration:underline;" colspan="2">Donny Prasetya, S.Kom.</td>
+                    @endif
+                    <td style="text-align:center;text-decoration:underline;" colspan="3">
+                        {{-- @if ($relation == null) 
+                        @else
+                        {{ ucwords(strtolower($relation['relationship_name'])) }}
+                        @endif --}}
+                    </td>
+                </tr>
+                <tr style="border-right: 1px solid black;border-left: 1px solid black;">
+                    <td style="text-align:center;border-bottom: 3px solid black;" colspan="3">
+                        @if ($subjectReports[0]['isRestricted'] === FALSE)
+                        <b>Class Teacher's Signature</b>
+                        @endif
+                    </td>
+                    <td style="text-align:center;border-bottom: 3px solid black;" colspan="2"><b>Principal's Signature</b></td>
+                    <td style="text-align:center;border-bottom: 3px solid black;" colspan="3">
+                        @if ($subjectReports[0]['isRestricted'] === FALSE)
+                        <b>Parent's Signature</b>
+                        @endif
+                    </td>
                 </tr>
             </table>
-            {{-- <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
-            <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} </p>
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p> --}}
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::parse($date)->format('m/d/Y') }}</td>
+                        {{-- <td  style="text-align:center;padding-top: 4px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td> --}}
+                        <td  style="vertical-align : top;text-align:right;width:15%;">Page 1 of 2</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-    </div>
+    <!-- END PAGE 1 -->
+    
 
-    <div style="overflow-x: auto;">
-        @if (session('role') == 'superadmin')
-            <form id="confirmForm"  method="POST" action={{route('actionPostReportCard1')}}>
-        @elseif (session('role') == 'admin')
-            <form id="confirmForm" method="POST" action={{route('actionPostReportCard1')}}>
-        @elseif (session('role') == 'teacher')
-            <form id="confirmForm" method="POST" action={{route('actionTeacherPostReportCard1')}}>
-        @endif
-        @csrf
-        
-        @if ($data['status'] == null)
-            <div class="row my-2">
-                <div class="input-group-append mx-2">
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Report Card</button>
-                </div>
-            </div>
-        @elseif ($data['status']->status != null && $data['status']->status == 1)       
-            <div class="row my-2">
-                <div class="input-group-append mx-2">
-                    <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
-                    @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
-                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Report Card Semester 1</a>
-                    @endif
-                </div>
-            </div>  
-        @endif
+    <div class="page-break"></div>
 
-        @if (!empty($data['students']))
-        
-        <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
-            @if ($data['status'] == null)
-                <!-- JIKA DATA BELUM DI SUBMIT OLEH TEACHER  -->
+
+    <!-- PAGE 2 -->
+        @if ($subjectReports[0]['isRestricted'] === TRUE)
+        <p class="watermark">Internal Use Only</p>  
+        @endif
+        <div>
+            <table class="table">
                 <thead>
                     <tr>
-                        <th colspan="2" style="vertical-align : middle;text-align:center;">Legend</th>
-                        <th colspan="10" style="vertical-align : middle;text-align:left;">E – Excellent   G – Good   S – Satisfactory   N – Needs Improvement</th>
+                        <th colspan="8" style="text-align:center;border-top: 3px solid black;border-bottom: 3px solid black;border-right: 1px solid black;border-left: 1px solid black;">Subjects Report</th>
                     </tr>
-                    <tr>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Independent work</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Initiative</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Homework Completion</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Use of Information</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Cooperation with Others</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Conflict Resolution</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Class Participation</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Problem Solving</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Goal setting to improve work</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center; width:20%;">Strengths/Weeakness/Next Steps</th>
-                        <!-- <th class="text-center" style="vertical-align : middle;text-align:center;">Remarks</th> -->
-                    </tr>
-                </thead>
-
-                <!-- JIKA TEACHER MEMINTA EDIT SETELAH SUBMIT -->
-                @if(!empty($data['result']))
-                    <tbody>
-                        @foreach ($data['result'] as $student)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $student['student_name'] }}</td>
-                            @foreach ($student['scores'] as $index => $score)
-                                <!-- Independent_work -->
-                                <td class="text-center">
-                                    <input name="independent_work[]" type="text" class="form-control" id="iw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1"  value="{{ $score['independent_work'] }}" onkeyup="validateInput(this)"></td>
-        
-                                <!-- Initiative -->
-                                <td class="text-center">
-                                    <input name="initiative[]" type="text" class="form-control" id="in" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['initiative'] }}" onkeyup="validateInput(this)"></td>
-        
-                                <!-- Homework_completion -->
-                                <td class="text-center">
-                                <input name="homework_completion[]" type="text" class="form-control" id="hc" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['homework_completion'] }}" onkeyup="validateInput(this)"></td>
-        
-        
-                                <!-- Use_of_information -->
-                                <td class="text-center">
-                                <input name="use_of_information[]" type="text" class="form-control" id="uoi" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['use_of_information'] }}" onkeyup="validateInput(this)"></td>
-        
-        
-                                <!-- Cooperation_with_other -->
-                                <td class="text-center">
-                                <input name="cooperation_with_other[]" type="text" class="form-control" id="cwo" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['cooperation_with_other'] }}" onkeyup="validateInput(this)"></td>
-        
-        
-                                <!-- Conflict_resolution -->
-                                <td class="text-center">
-                                <input name="conflict_resolution[]" type="text" class="form-control" id="cr" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['conflict_resolution'] }}" onkeyup="validateInput(this)"></td>
-        
-        
-                                <!-- Class_participation -->
-                                <td class="text-center">
-                                <input name="class_participation[]" type="text" class="form-control" id="cp" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['class_participation'] }}" onkeyup="validateInput(this)"></td>
-        
-                                <!-- Problem_solving -->
-                                <td class="text-center">
-                                <input name="problem_solving[]" type="text" class="form-control" id="ps" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['problem_solving'] }}" onkeyup="validateInput(this)"></td>
-        
-        
-                                <!-- Goal_setting_to_improve_work -->
-                                <td class="text-center">
-                                <input name="goal_setting_to_improve_work[]" type="text" class="form-control" id="gstiw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" value="{{ $score['goal_setting_to_improve_work'] }}" onkeyup="validateInput(this)"></td>
-        
-        
-                                <!-- Strengths/weakness/nextstep -->
-                                <td class="text-center">
-                                    <textarea name="strength_weakness_nextstep[]" class="form-control" autocomplete="off" required>{{ $score['strength_weakness_nextstep'] }}</textarea>
-                                </td>
-
-        
-                                <!-- <td class="text-center">
-                                <input name="remarks[]" type="text" class="form-control" value="{{ $score['remarks'] }}" autocomplete="off"></td> -->
-                            @endforeach                   
-                            <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['student_id'] }}">
-                        </tr>
-                        @endforeach
-                    </tbody>
-                    <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
-                    <input name="teacher_id" type="number" class="form-control d-none" id="class_teacher_id" value="{{ $data['classTeacher']->teacher_id }}">    
-                    <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">
-                
-                <!-- JIKA TEACHER BELUM INPUT NILAI -->
-                @else 
-                    <tbody>
-                        @foreach ($data['students'] as $student)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $student['name'] }}</td>
-        
-                                <!-- Independent_work -->
-                                <td class="text-center">
-                                    <input name="independent_work[]" type="text" class="form-control" id="iw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-        
-                                <!-- Initiative -->
-                                <td class="text-center">
-                                    <input name="initiative[]" type="text" class="form-control" id="in" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-        
-                                <!-- Homework_completion -->
-                                <td class="text-center">
-                                <input name="homework_completion[]" type="text" class="form-control" id="hc" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-        
-        
-                                <!-- Use_of_information -->
-                                <td class="text-center">
-                                <input name="use_of_information[]" type="text" class="form-control" id="uoi" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-        
-        
-                                <!-- Cooperation_with_other -->
-                                <td class="text-center">
-                                <input name="cooperation_with_other[]" type="text" class="form-control" id="cwo" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-        
-        
-                                <!-- Conflict_resolution -->
-                                <td class="text-center">
-                                <input name="conflict_resolution[]" type="text" class="form-control" id="cr" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-        
-        
-                                <!-- Class_participation -->
-                                <td class="text-center">
-                                <input name="class_participation[]" type="text" class="form-control" id="cp" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-        
-                                <!-- Problem_solving -->
-                                <td class="text-center">
-                                <input name="problem_solving[]" type="text" class="form-control" id="ps" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-        
-        
-                                <!-- Goal_setting_to_improve_work -->
-                                <td class="text-center">
-                                <input name="goal_setting_to_improve_work[]" type="text" class="form-control" id="gstiw" autocomplete="off" required placeholder="E, G, S, or N." maxlength="1" onkeyup="validateInput(this)"></td>
-        
-        
-                                <!-- Strengths/weakness/nextstep -->
-                                <td class="text-center">
-                                    <textarea name="strength_weakness_nextstep[]" type="text" class="form-control"  autocomplete="off" required></textarea>
-                                </td>
-        
-                                <!-- <td class="text-center">
-                                <input name="remarks[]" type="text" class="form-control"  autocomplete="off"></td> -->
-                        
-                                <input name="student_id[]" type="number" class="form-control d-none" id="student_id" value="{{ $student['id'] }}">
-                        </tr>
-                        @endforeach
-                    </tbody>
-                    <input name="grade_id" type="number" class="form-control d-none" id="grade_id" value="{{ $data['grade']->grade_id }}">    
-                    <input name="teacher_id" type="number" class="form-control d-none" id="class_teacher_id" value="{{ $data['classTeacher']->teacher_id }}">    
-                    <input name="semester" type="number" class="form-control d-none" id="semester" value="{{ $data['semester'] }}">
-                @endif
-
-
-            <!-- JIKA DATA SUDAH DI SUBMiT OLEH TEACHER -->
-            @elseif ($data['status']->status != null && $data['status']->status == 1)
-                <thead>
-                    <tr>
-                        <th colspan="2" style="vertical-align : middle;text-align:center;">Legend</th>
-                        <th colspan="12" style="vertical-align : middle;text-align:left;">E – Excellent   G – Good   S – Satisfactory   N – Needs Improvement</th>
-                    </tr>
-                    <tr>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">S/N</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">First Name</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Independent work</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Initiative</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Homework Completion</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Use of Information</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Cooperation with Others</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Conflict Resolution</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Class Participation</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Problem Solving</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Goal setting to improve work</th>
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Strengths/Weeakness/Next Steps</th>
-                        <!-- <th class="text-center" style="vertical-align : middle;text-align:center;">Remarks</th> -->
-                        <th class="text-center" style="vertical-align : middle;text-align:center;">Action</th>
+                    <tr style="text-align:center;border-bottom: 1px solid black;">
+                        <th style="text-align:center;border: 1px solid black;border-left:solid 1px black;width:10%">Subjects</th>
+                        <th style="text-align:center;border: 1px solid black;width:10%">Marks</th>
+                        <th style="text-align:center;border: 1px solid black;width:10%">Grades</th>
+                        <th style="text-align:center;border: 1px solid black;border-right:solid 1px black;width:70%" colspan="5">Strengths/Weakness/Next Steps</th>
                     </tr>
                 </thead>
                 <tbody>
-                @if(!empty($data['result']))
-                    @foreach ($data['result'] as $student)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $student['student_name'] }}</td>
-                            @foreach ($student['scores'] as $index => $score)
-                                <!-- Independent Work -->
-                                <td class="text-center">{{ $score['independent_work'] }}</td>
 
-                                <!-- Initiative -->
-                                <td class="text-center">{{ $score['initiative'] }}</td>
+                @foreach ($subjectReports[0]['scores'] as $scores)
 
-                                <!-- Homework_completion -->
-                                <td class="text-center">{{ $score['homework_completion'] }}</td>
-            
-
-                                <!-- Use_of_information -->
-                                <td class="text-center">{{ $score['use_of_information'] }}</td>
-            
-
-                                <!-- Cooperation_with_other -->
-                                <td class="text-center">{{ $score['cooperation_with_other'] }}</td>
-            
-
-                                <!-- Conflict_resolution -->
-                                <td class="text-center">{{ $score['conflict_resolution'] }}</td>
-            
-
-                                <!-- Class_participation -->
-                                <td class="text-center">{{ $score['class_participation'] }}</td>
-
-                                <!-- Problem_solving -->
-                                <td class="text-center">{{ $score['problem_solving'] }}</td>
-            
-
-                                <!-- Goal_setting_to_improve_work -->
-                                <td class="text-center">{{ $score['goal_setting_to_improve_work'] }}</td>
-            
-
-                                <!-- Strengths/weakness/nextstep -->
-                                <td class="text-left">{{ $score['strength_weakness_nextstep'] }}</td>
-
-                                <!-- <td class="text-center">{{ $score['remarks'] }}</td> -->
-
-                                @if ($data['status'] !== null)
-                                    @if (session('role') == "superadmin" || session('role') == "admin")
-                                        <td>
-                                            <a class="btn btn-primary btn"
-                                                href="{{url(session('role') . '/reports/semester1/print') . '/' . $student['student_id']}}">
-                                                Print
-                                            </a>
-                                        </td>
-                                    @elseif (session('role') == "teacher")
-                                        <td>
-                                            <a class="btn btn-primary btn"
-                                                href="{{url('teacher/dashboard/report/semester1/print') . '/' . $student['student_id']}}">
-                                                Print
-                                            </a>
-                                        </td>
-                                    @endif
+                    <!-- SUBJECT REPORT -->
+                    <tr>
+                        <td style="text-align:left;border: 1px solid black;padding-left:3px;padding-right:3px;border-left: solid 1px black;">{{ $scores['subject_name'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;;">{{ $scores['final_score'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;">{{ $scores['grades'] }}</td>
+                        <td style="text-align:justify;border: 1px solid black;border-right: solid 1px black;padding-left:3px;padding-right:3px;" colspan="5">
+                            <span 
+                                @if ($scores['isChinese'] === 1) 
+                                    class="noto-serif-sc-chinese" 
+                                @else 
+                                    style="font-style: italic;" 
                                 @endif
-                            @endforeach
+                            >
+                                {{ $scores['comment'] }}
+                            </span>
+                        </td>
+                    </tr>
+                    <!-- END SUBJECT REPORT -->
+                @endforeach
+                    
+                <!-- ECA -->
+                    <tr>
+                        <th colspan="8" style="text-align:center;border-top: 3px solid black;border-bottom: 3px solid black;border-right: 1px solid black;border-left: 1px solid black;">Non-Academic Activities</th>
+                    </tr>
+
+                    @if (strtolower($grade_name) == "primary")
+                        <tr>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">ECA (1)</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-left:4px;">Grade</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;">
+                                ECA (2)
+                                {{-- @if (empty($eca))
+                                @else
+                                    ({{ $eca['eca_1'] }})
+                                @endif --}}
+                            </td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-left:4px;border-right: solid 1px black;">Grade</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">Self-Development</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-left:4px;border-right: solid 1px black;">Grade</td>
                         </tr>
-                    @endforeach
-                @endif        
+                    @elseif (strtolower($grade_name) == "secondary")
+                        <tr>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">
+                                ECA (1)
+                                {{-- @if (empty($eca))
+                                @else
+                                    ({{ $eca['eca_1'] }})
+                                @endif --}}
+                            </td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-left:4px;">Grade</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;">
+                                ECA (2)
+                                {{-- @if (empty($eca) || count($eca) == 2)
+                                @else
+                                ({{ $eca['eca_2'] }})
+                                @endif --}}
+                            </td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-left:4px;border-right: solid 1px black;">Grade</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-left:4px;border-right: solid 1px black;" colspan="2">Self-Development</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-left:4px;border-right: solid 1px black;">Grade</td>
+                        </tr>
+                    @endif
+
+                    <tr>
+                        @if (strtolower($grade_name) == "primary")
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">{{ $sooa[0]['scores'][0]['language_and_art'] }}</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: dotted 1px black;">{{  $sooa[0]['scores'][0]['grades_language_and_art'] }}</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: dotted 1px black;">
+                                @if ($sooa[0]['scores'][0]['choice'] == 0)
+                                    -
+                                @else
+                                    {{  $sooa[0]['scores'][0]['choice'] }}
+                                @endif
+                            </td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: dottted 1px black;border-right: 1px solid black;">{{  $sooa[0]['scores'][0]['grades_choice'] }}</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: dottted 1px black;border-right: 1px solid black;" colspan="2">{{  $sooa[0]['scores'][0]['self_development'] }}</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: dottted 1px black;border-right: 1px solid black;">{{  $sooa[0]['scores'][0]['grades_self_development'] }}</td>
+                        @elseif (strtolower($grade_name) == "secondary")
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: solid 1px black;" colspan="2">{{ $sooa[0]['scores'][0]['eca_1'] }}</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: dotted 1px black;">{{  $sooa[0]['scores'][0]['grades_eca_1'] }}</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: dotted 1px black;">{{  $sooa[0]['scores'][0]['eca_2'] }}</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: dotted 1px black;border-right: 1px solid black;">{{  $sooa[0]['scores'][0]['grades_eca_2'] }}</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: dottted 1px black;border-right: 1px solid black;" colspan="2">{{  $sooa[0]['scores'][0]['self_development'] }}</td>
+                            <td style="text-align:center;border: 1px solid black;border-bottom: 1px solid black;padding-right:4px;border-left: dottted 1px black;border-right: 1px solid black;">{{  $sooa[0]['scores'][0]['grades_self_development'] }}</td>
+                        @endif
+                    </tr>
+
+
+                <!-- END ECA -->
+
+                <!-- OVERALL MARK -->
+                    <tr>
+                        <th colspan="8" style="text-align:center;border-top: 3px solid black;border-bottom: 3px solid black;border-right: 1px solid black;border-left: 1px solid black;">Overall Mark</th>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center;border: 1px solid black;border-left: solid 1px black;width:9.5%;border-bottom: 1px solid black;">Academic</td>
+                        <td style="text-align:center;border: 1px solid black;width:11.5%;border-bottom: 1px solid black;">Non-Academic</td>
+                        <td style="text-align:center;border: 1px solid black;width:10.5%;border-bottom: 1px solid black;">Behaviour</td>
+                        <td style="text-align:center;border: 1px solid black;width:15.5%;border-bottom: 1px solid black;">Attendance</td>
+                        <td style="text-align:center;border: 1px solid black;width:15.5%;border-bottom: 1px solid black;">Participation</td>
+                        <td style="text-align:center;border: 1px solid black;width:12.5%;border-bottom: 1px solid black;">Marks</td>
+                        <td style="text-align:center;border: 1px solid black;width:12.5%;border-bottom: 1px solid black;">Grade</td>
+                        <td style="text-align:center;border: 1px solid black;border-right: solid 1px black;width:12.5%;border-bottom: 1px solid black;">Rank</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center;border: 1px solid black;padding-right:4px;border-left: solid 1px black;">{{  $sooa[0]['scores'][0]['academic'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;padding-left:4px;">{{ $sooa[0]['scores'][0]['eca_aver'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;padding-right:4px;">{{  $sooa[0]['scores'][0]['behavior'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;padding-left:4px;">{{  $sooa[0]['scores'][0]['attendance'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;padding-right:4px;">{{  $sooa[0]['scores'][0]['participation'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;padding-left:4px;">{{ $sooa[0]['scores'][0]['final_score'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;padding-right:4px;">{{ $sooa[0]['scores'][0]['grades_final_score'] }}</td>
+                        <td style="text-align:center;border: 1px solid black;padding-left:4px;border-right: solid 1px black;">
+                            -
+                            {{-- {{  $sooa[0]['ranking'] }} --}}
+                        </td>
+                    </tr>
+                <!-- END OVERALL MARK -->
+
+                <!-- REMARKS -->
+                    <tr style="border-top: 3px solid black;border-right: 1px solid black;border-left: 1px solid black;">
+                        <td colspan="8" style="padding-left:5px;"><b>Remarks :</td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="border-bottom: 1px solid black;text-align:left;padding-left: 5px;border-left: solid 1px black;border-right: solid 1px black;font-style:italic;">
+                        {{ $remarks }}
+                        </td>
+                    </tr>
+                <!-- END RAMARKS -->
+
+                <!-- SIGNATURE -->
+                    <tr style="border-right: 1px solid black;border-left: 1px solid black;">
+                        <td style="height:50px;" colspan="3"></td>
+                        <td style="height:50px;" colspan="2"></td>
+                        <td style="height:50px;" colspan="3"></td>
+                    </tr>
+                    <tr style="border-right: 1px solid black;border-left: 1px solid black;">
+                        <td style="text-align:center;text-decoration:underline;" colspan="3">
+                            @if ($subjectReports[0]['isRestricted'] === FALSE)
+                                {{ $classTeacher->teacher_name }}
+                            @endif
+                        </td>
+                        @if(strtolower($student->grade_name) == "primary")
+                            <td style="text-align:center;text-decoration:underline;" colspan="2">Yuliana Harijanto, B.Eng (Hons)</td>
+                        @elseif (strtolower($student->grade_name) == "secondary")
+                            <td style="text-align:center;text-decoration:underline;" colspan="2">Donny Prasetya, S.Kom.</td>
+                        @endif
+                        <td style="text-align:center;text-decoration:underline;" colspan="3">
+                            {{-- @if ($relation == null)
+                            
+                            @else
+                            {{ ucwords(strtolower($relation['relationship_name'])) }}
+                            @endif --}}
+                        </td>
+                    </tr>
+                    <tr style="border-right: 1px solid black;border-left: 1px solid black;">
+                        <td style="text-align:center;border-bottom: 3px solid black;" colspan="3">
+                            @if ($subjectReports[0]['isRestricted'] === FALSE)
+                            <b>Class Teacher's Signature</b>
+                            @endif
+                        </td>
+                        <td style="text-align:center;border-bottom: 3px solid black;" colspan="2"><b>Principal's Signature</b></td>
+                        <td style="text-align:center;border-bottom: 3px solid black;" colspan="3">
+                            @if ($subjectReports[0]['isRestricted'] === FALSE)
+                            <b>Parent's Signature</b>
+                            @endif
+                        </td>
+                    </tr>
+                <!-- END SIGNATURE -->
                 </tbody>
-            @endif
-
-        </table>
-        @else
-            <p>Empty Data Student !!!</p>
-        @endif
-        
-        <!-- Confirmation Modal -->
-        <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Confirm Submit Report Card</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure you want to submit report card?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="confirmAccScoring">Yes, Acc</button>
-                    </div>
-                </div>
-            </div>
+            </table>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td  style="vertical-align : top;text-align:left;width:15%;">{{ \Carbon\Carbon::parse($date)->format('m/d/Y') }}</td>
+                        {{-- <td  style="text-align:center;padding-top: 4px;"> <img src="<?= $cambridge ?>" style="width:40%;" alt="Sample image"></td> --}}
+                        <td  style="vertical-align : top;text-align:right;width:15%;">Page 2 of 2</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-
-        <!-- Decline -->
-        <div class="modal fade" id="modalDecline" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Decline Report Card {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} Semester 1</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">Are you sure want to decline report card {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} semester 1?</div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
+    <!-- END PAGE 2 -->
 </div>
 
-<link rel="stylesheet" href="{{asset('template')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-<script src="{{asset('template')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
-
-<script>
-    document.getElementById('confirmAccScoring').addEventListener('click', function() {
-        document.getElementById('confirmForm').submit();
-    });
-</script>
-
-
-<script>
-    function validateInput(input) {
-        var validChars = ['E', 'G', 'S', 'N'];
-        var value = input.value.toUpperCase();
-        if (!validChars.includes(value) && value !== '') {
-            input.value = '';
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please enter only "E", "G", "S", or "N".'
-            });
-        }
-    }
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        $('#modalDecline').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget);
-            var id = @json($data['grade']->grade_id);
-            var teacherId = @json($data['classTeacher']->teacher_id);
-            var semester = @json($data['semester']);
-            var role = @json(session('role'));
-
-            console.log("id=", id, "teacher=", teacherId, "semester=", semester);
-            var confirmDecline = document.getElementById('confirmDecline');
-            if(role == 'admin' || role == 'superadmin'){
-                confirmDecline.href = "{{ url('/' . session('role') . '/reports/reportCard/decline') }}/" + id + "/" + teacherId + "/" + semester;
-            }
-            else if(role == 'teacher'){
-                confirmDecline.href = "{{ url('/' . session('role') . '/dashboard/reportCard/decline') }}/" + id + "/" + teacherId + "/" + semester;
-            }
-        });
-    });
-</script>
-
-@if(session('after_post_report_card1'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Successfully',
-            text: 'Successfully post report card semester 1 in the database.',
-        });
-    </script>
-@endif
-
-@if(session('after_decline_report_card'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Successfully',
-            text: 'Successfully decline report card semester 1.',
-        });
-    </script>
-@endif
-
-
-@endsection
+</body>
+</html>
