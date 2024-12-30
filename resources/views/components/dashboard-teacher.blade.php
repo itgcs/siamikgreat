@@ -149,7 +149,7 @@
                                     $days = floor($diff / (60 * 60 * 24));  
                                   @endphp
                                   
-                                  <span class="badge badge-warning">{{$days}} days again</span>
+                                  <span class="badge badge-warning">not yet</span>
                                 @else
                                  <span class="badge badge-success">Done</span>
                                 @endif

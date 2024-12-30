@@ -162,7 +162,7 @@
                     @foreach ($data['students'] as $dt)
                         <tr>
                             <td>{{ $loop->iteration }}</td>  <!-- nomer -->
-                            <td>{{ $dt['student_name'] }}</td> <!-- name -->
+                            <td>{{ ucwords(strtolower($dt['student_name'])) }}</td> <!-- name -->
 
                             @php
                                 $subjects = [3 => 'English', 1 => 'Chinese', 2 => 'Math', 5 => 'Science', 32 => 'IPS', 7 => 'PPKN', 20 => 'Religion', 4 => 'BI', 18 => 'PE', 6 => 'IT', 33 => 'A/D', 16 => 'CB', 62 => 'FL'];

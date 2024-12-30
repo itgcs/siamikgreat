@@ -29,7 +29,7 @@ class SubjectController extends Controller
             'child' => 'database subjects',
             ]);
 
-            $data = Subject::get();
+            $data = Subject::orderBy('name_subject', 'ASC')->get();
 
             // dd($data);
             return view('components.subject.data-subject')->with('data', $data);

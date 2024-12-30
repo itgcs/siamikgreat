@@ -16,7 +16,6 @@
         </div>
 
         <div class="row d-flex justify-content-center">
-            <! left column >
             <div class="col-md-12">
                 <! general form elements >
                 <div>
@@ -34,7 +33,7 @@
                             <! /.card-header >
                             <! form start >
                             <div class="card-body">
-                                <div class="form-group row">
+                                <div class="form-group row d-none">
                                     <div class="col-md-6" style="display:none">
                                         <label for="class">ID<span style="color: red">*</span></label>
                                         <input name="gradeId" type="text" class="form-control" id="gradeId" value="{{ $data->id }}" >
@@ -76,7 +75,7 @@
                                        @php
                                           $selectedTeacher = $teacherGrade;
                                        @endphp
-                                        <label for="teacher_id">Teacher class</label>
+                                        <label for="teacher_id">Class Teacher</label>
                                         <select name="teacher_id" class="form-control js-select2" id="teacher_id">
                                             <option value=""> SELECT TEACHER CLASS </option>
                                             @if(count($teacherGrade) == 0)

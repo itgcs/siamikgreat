@@ -39,10 +39,10 @@
                         <th>
                            #
                         </th>
-                        <th style="width: 15%">
+                        <th style="width: 25%">
                            Type Exams
                         </th>
-                        <th style="width: 80%">
+                        <th style="width: 75%">
                             Action
                         </th>
                     </tr>
@@ -55,7 +55,7 @@
                         </td>
                         <td>
                            <a>
-                                {{$el->name}}
+                                {{ucwords($el->name)}}
                            </a>
                         </td>
                         

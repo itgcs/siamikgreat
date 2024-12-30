@@ -14,6 +14,6 @@ class Student_relationship extends Model
 
    protected $fillable = [
       'student_id',
-      'relationship_id'
+      'relation_id'
    ];
 }

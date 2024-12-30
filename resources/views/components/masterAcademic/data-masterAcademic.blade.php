@@ -48,8 +48,8 @@
                 @if(!empty($data))
                 <tbody>
                         <tr>
-                            <td style="width:20%">Academic Year</td>
-                            <td style="width:80%"><a>: {{$data['academic_year']}}</a></td>
+                            <td style="width:25%">Academic Year</td>
+                            <td style="width:75%"><a>: {{$data['academic_year']}}</a></td>
                         </tr>
                         <tr>
                             <td>Semester 1</td>

@@ -49,11 +49,12 @@ class DashboardController extends Controller
             ->get()->count('id');
             
             $studentData   = Student::where('is_active', true)
-            ->join('grades', 'grades.id', '=', 'students.grade_id')
-            ->select('students.*', 'grades.name as grade_name', 'grades.class as grade_class')
-            ->get();
+               ->join('grades', 'grades.id', '=', 'students.grade_id')
+               ->select('students.*', 'grades.name as grade_name', 'grades.class as grade_class')
+               ->orderByRaw('grades.id ASC, students.name ASC')
+               ->get();
             
-            $teacherData   = Teacher::where('is_active', true)->get();
+            $teacherData   = Teacher::where('is_active', true)->orderBy('name', 'asc')->get();
             
             $examData  = Grade_exam::join('grades', 'grades.id', '=', 'grade_exams.grade_id')
                ->join('exams', 'exams.id', '=', 'grade_exams.exam_id')
@@ -70,7 +71,7 @@ class DashboardController extends Controller
                ->value('name_subject');
             };
 
-            $gradeData     = Grade::all();
+            $gradeData     = Grade::with(['gradeTeacher'])->get();
             $subjectData   = Subject::all();
 
             $data = [
@@ -105,14 +106,22 @@ class DashboardController extends Controller
                   DB::raw("CONCAT(grades.name, '-', grades.class) as grade_name"))
                ->get();
 
-            $dataExam  = Grade_exam::join('grades', 'grades.id', '=', 'grade_exams.grade_id')
+            $dataExam = Grade_exam::join('grades', 'grades.id', '=', 'grade_exams.grade_id')
                ->join('exams', 'exams.id', '=', 'grade_exams.exam_id')
                ->join('type_exams', 'type_exams.id', '=', 'exams.type_exam')
-               ->select('exams.*', 'type_exams.name as type_exam_name', 'grades.name as grade_name', 'grades.class as grade_class')
+               ->select(
+                   'exams.*',
+                   'type_exams.name as type_exam_name',
+                   'grades.name as grade_name',
+                   'grades.class as grade_class'
+               )
                ->where('exams.teacher_id', $id)
                ->where('exams.semester', session('semester'))
                ->where('exams.academic_year', session('academic_year'))
+               // Prioritaskan is_active = 0 terlebih dahulu, lalu urutkan berdasarkan date_exam terbaru
+               ->orderByRaw('is_active = 0 ASC, date_exam DESC')
                ->get();
+           
 
             foreach ($dataExam as $ed ) {
                $ed->subject = Subject_exam::join('subjects', 'subjects.id', '=', 'subject_exams.subject_id')
@@ -212,7 +221,7 @@ class DashboardController extends Controller
          {
             $id              = Relationship::where('user_id', session('id_user'))->value('id');
             $setStudentFirst = session('studentId');
-            $getIdStudent    = Student_relationship::where('relationship_id', $id)->pluck('student_id')->toArray();
+            $getIdStudent    = Student_relationship::where('relation_id', $id)->pluck('student_id')->toArray();
 
             $getDataStudent = Student::whereIn('students.id', $getIdStudent)
                ->leftJoin('grades', 'grades.id', '=', 'students.grade_id')

@@ -137,7 +137,7 @@ class UserController extends Controller
          }
          if($checkRole == 'parent') {  
             $id           = Relationship::where('user_id', session('id_user'))->value('id');
-            $getIdStudent = Student_relationship::where('relationship_id', $id)->value('student_id');
+            $getIdStudent = Student_relationship::where('relation_id', $id)->value('student_id');
 
             session()->put([
                'studentId' => $getIdStudent,

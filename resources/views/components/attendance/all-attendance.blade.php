@@ -29,11 +29,11 @@
             <table class="table table-striped projects">
                 <thead>
                     <tr>
-                        <th > # </th>
-                        <th style="width: 15%"> Grades </th>
-                        <th style="width: 20%"> Teacher Class </th>
-                        <th style="width: 10%;text-align:center;"> Total Student </th>
-                        <th style="width: 55%">Action</th>
+                        <th style=""># </th>
+                        <th style="width:15%;"> Grades </th>
+                        <th style="width:25%;"> Teacher Class </th>
+                        <th style="width:15%;"> Total Student </th>
+                        <th style="width:45%;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,7 +52,7 @@
                                 {{$el->teacher_class}}
                             </a>
                         </td>
-                        <td style="text-align:center;">
+                        <td>
                             <a>
                                 {{$el->active_student_count}}
                             </a>

@@ -9,15 +9,66 @@
         <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
             <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item">Home</li>
-            <li class="breadcrumb-item active" aria-current="page">Exams</li>
+            <li class="breadcrumb-item active" aria-current="page">Scorings</li>
             </ol>
         </nav>
         </div>
     </div>
+
+    <form class="row col-12" action="{{ route('student.dashboard.exam') }}" method="GET">
+        <div class="col-2">
+            <div class="form-group">
+                @php
+                    $selectedOrder = $form->sort;
+                @endphp
+    
+                <label>Sort by:</label>
+                <select name="order" class="form-control" id="subject-select" onchange="this.form.submit()">
+                    <option value="all" {{ $selectedOrder === 'all' ? 'selected' : '' }}>All Subject</option>
+                    @foreach ($subjects->subject as $subject)
+                        <option value="{{ $subject['id'] }}" {{ $selectedOrder == $subject['id'] ? 'selected' : '' }}>
+                            {{ ucwords($subject['name_subject']) }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </form>
+    
+        {{-- <div class="col-2">
+            <div class="form-group">
+                <label>Status: <span style="color: red"></span></label>
+
+                @php
+                    
+                    $selectedStatus = $form->status ? $form->status : 'true';
+                    $option = $selectedStatus === 'false' ? 'true' : 'false';
+
+                @endphp
+
+                <select name="status" class="form-control">
+                    <option  selected value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Inactive'}}</option>
+                    <option  value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
+                </select>                              
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="form-group">
+                <label>Search :</label>
+                <div class="form-control">
+                    <input name="search" value="{{$form->search}}" type="search" placeholder="Type your keywords here">
+                    {{-- <div class="input-group-append">
+                        <button type="submit" class="btn btn-lg btn-default">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div> --}}
+                {{-- </div>
+            </div>
+        </div> --}}
     
     <div class="card card-dark">
         <div class="card-header">
-            <h3 class="card-title">Exams</h3>
+            <h3 class="card-title">Scorings</h3>
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">

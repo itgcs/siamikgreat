@@ -146,7 +146,7 @@
        <!-- Main row -->
        <div class="row">
          <!-- Left col -->
-         <section class="col-lg-8 connectedSortable">
+         <section class="col-lg-7 connectedSortable">
            
           <!-- Custom tabs (Charts with tabs) List Exam-->
           <div class="card bg-danger">
@@ -300,7 +300,7 @@
          </section>
          <!-- /.Left col -->
          <!-- right col (We are only adding the ID to make the widgets sortable)-->
-         <section class="col-lg-4 connectedSortable">        
+         <section class="col-lg-5 connectedSortable">        
           <!-- Grade List -->
           <div class=" card bg-warning">
             <div class="card-header border-0">
@@ -322,7 +322,7 @@
                  <tr>
                    <th scope="col">#</th>
                    <th scope="col">Name</th>
-                   <th scope="col">Class</th>
+                   <th scope="col">Class Teacher</th>
                  </tr>
                </thead>
                <tbody>
@@ -330,8 +330,10 @@
                @foreach ($data['grade'] as $el)
                  <tr>
                    <td scope="row">{{$loop->index+1}}</td>
-                   <td>{{$el->name}}</td>
-                   <td>{{$el->class}}</td>
+                   <td>{{$el->name}} - {{$el->class}}</td>
+                   @foreach ($el->gradeTeacher as $teacher)
+                   <td>{{$teacher->name}}</td>
+                   @endforeach
                  </tr>
                @endforeach  
                  

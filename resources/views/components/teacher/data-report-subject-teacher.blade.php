@@ -56,7 +56,7 @@
                               <th>Grade</th>
                               <th>Subject</th>
                               <th>Action</th>
-                              <th style="width: 70%">Status</th>
+                              <th style="width: 60%">Status</th>
                         </tr>
                      </thead>
                      <tbody>
@@ -98,7 +98,7 @@
                               <th >Grade</th>
                               <th >Subject</th>
                               <th >Action</th>
-                              <th style="width: 70%">Status</th>
+                              <th style="width: 60%">Status</th>
                         </tr>
                      </thead>
                      <tbody>
@@ -140,7 +140,7 @@
                               <th>Grade</th>
                               <th>Subject</th>
                               <th>Action</th>
-                              <th style="width:70%">Status</th>
+                              <th style="width:60%">Status</th>
                         </tr>
                      </thead>
                      <tbody>

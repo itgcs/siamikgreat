@@ -3,103 +3,6 @@
 
    <!-- Content Wrapper. Contains page content -->
 <div class="container-fluid">
-        
-    <h2 class="text-center">Teacher Search</h2>
-    @if (session('role') == 'superadmin')
-    <form class="mt-5" action="/superadmin/teachers">
-    @elseif (session('role') == 'admin')
-    <form class="mt-5" action="/admin/teachers">
-    @endif
-        <div class="row">
-            <div class="col-md-10 offset-md-1">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label>Result Type:</label>
-                            @php
-                                
-                                $selectedType = $form && $form->type ? $form->type : '';
-
-                            @endphp
-                            <select name="type" class="form-control" required>
-                                <option value="" selected>--Select Result Type--</option>
-                                <option {{$selectedType === 'name' ? 'selected' : ''}} value="name">Name</option>
-                                <option {{$selectedType === 'place_birth' ? 'selected' : ''}} value="place_birth">Place Birth</option>
-                                <option {{$selectedType === 'nationality' ? 'selected' : ''}} value="nationality">Nationality</option>
-                            </select>
-                            
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="form-group">
-
-                            @php
-                                
-                                $selectedSort = $form->sort ? $form->sort : '';
-
-                            @endphp
-
-                        <label>Sort order: <span style="color: red"></span></label>
-                        <select name="sort" class="form-control">
-                            <option value="" selected>--Select Sort Order--</option>
-                            <option value="desc" {{$selectedSort === 'desc' ? 'selected' : ''}}>Descending</option>
-                            <option value="asc" {{$selectedSort === 'asc' ? 'selected' : ''}}>Ascending</option>
-                        </select>                              
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="form-group">
-
-                        @php
-
-                            $selectedOrder = $form->order? $form->order : '';
-
-                        @endphp
-
-                            <label>Sort by:</label>
-                            <select name="order" class="form-control">
-                                    <option value="" selected>--Select Sort By--</option>
-                                    <option {{$selectedOrder === 'created_at'? 'selected' : ''}} value="created_at">Register</option>
-                                    <option {{$selectedOrder === 'name'? 'selected' : ''}} value="name">Name</option>
-                                    <option {{$selectedOrder === 'gender'? 'selected' : ''}} value="gender">Gender</option>
-                                    <option {{$selectedOrder === 'place_birth'? 'selected' : ''}} value="place_birth">Place Birth</option>
-                                    <option {{$selectedOrder === 'status'? 'selected' : ''}} value="status">Status</option>
-                            </select>
-                            
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="form-group">
-                        <label>Status: <span style="color: red"></span></label>
-
-                        @php
-                              
-                            $selectedStatus = $form->status ? $form->status : 'true';
-                            $option = $selectedStatus === 'false' ? 'true' : 'false';
-
-                        @endphp
-
-                        <select name="status" class="form-control">
-                            <option value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Active'}}</option>
-                            <option value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
-                        </select>                              
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group input-group-lg">
-                        <input name="search" value="{{$form->search}}" type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-lg btn-default">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form >
-
     @if (sizeof($data) == 0 && ($form->type || $form->sort || $form->order || $form->status || $form->search))
          
     <div class="row h-100 my-5">
@@ -268,7 +171,7 @@
                 
                 @php
                 $role = session('role');
-                $link= '/'.$role.'/teachers?type='.$selectedType.'&sort='.$selectedSort.'&order='.$selectedOrder.'&status='.$selectedStatus.'&search='.$form->search;
+                $link= '/'.$role.'/teachers?';
                 $previousLink = $link . '&page='.$data->currentPage()-1;
                 $nextLink = $link . '&page='.$data->currentPage()+1;
                 $firstLink = $link . '&page=1';

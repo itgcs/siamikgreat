@@ -15,96 +15,190 @@
         </div>
    </div>  
 
-    <h2 class="text-center">Exam Search</h2>
-        @if (session('role') == 'superadmin')
-        <form class="mt-5" action="/superadmin/exams">
-        @elseif (session('role') == 'admin')
-        <form class="mt-5" action="/admin/exams">
-        @endif
-            <div class="row">
-                <div class="col-md-10 offset-md-1">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label>Result Type:</label>
-                                @php
-                                    
-                                    $selectedType = $form && $form->type ? $form->type : 'name';
+   {{-- <div class="col-12">
+       @if (session('role') == 'superadmin')
+       <form class="mt-5" action="/superadmin/exams">
+       @elseif (session('role') == 'admin')
+       <form class="mt-5" action="/admin/exams">
+       @endif
+           <div class="row">
+               <div class="col-md-10 offset-md-1">
+                   <div class="row">
+                       <div class="col-6">
+                           <div class="form-group">
+                               <label>Result Type:</label>
+                               @php
+                                   
+                                   $selectedType = $form && $form->type ? $form->type : 'name';
+   
+                               @endphp
+                               <select name="type" class="form-control" required>
+                                   <option {{$selectedType === 'name' ? 'selected' : ''}} value="name">Name</option>
+                               </select>
+                               
+                           </div>
+                       </div>
+                       <div class="col-2">
+                           <div class="form-group">
+   
+                               @php
+                                   
+                                   $selectedSort = $form->sort ? $form->sort : 'desc';
+   
+                               @endphp
+   
+                           <label>Sort order: <span style="color: red"></span></label>
+                           <select name="sort" class="form-control">
+                               <option value="asc" {{$selectedSort === 'asc' ? 'selected' : ''}}>Ascending</option>
+                               <option value="desc" {{$selectedSort === 'desc' ? 'selected' : ''}}>Descending</option>
+                           </select>                              
+                           </div>
+                       </div>
+                       <div class="col-2">
+                           <div class="form-group">
+   
+                           @php
+   
+                               $selectedOrder = $form->order? $form->order : 'created_at';
+   
+                           @endphp
+   
+                               <label>Sort by:</label>
+                               <select name="order" class="form-control">
+                                       <option {{$selectedOrder === 'created_at'? 'selected' : ''}} value="date">Date</option>
+                                       <option {{$selectedOrder === 'name'? 'selected' : ''}} value="grade">Grade</option>
+                                       <option {{$selectedOrder === 'gender'? 'selected' : ''}} value="subject">Subject</option>
+                                       <option {{$selectedOrder === 'place_birth'? 'selected' : ''}} value="teacher">Teacher</option>
+                                       <option {{$selectedOrder === 'status'? 'selected' : ''}} value="status">Status</option>
+                               </select>
+                               
+                           </div>
+                       </div>
+                       <div class="col-2">
+                           <div class="form-group">
+                           <label>Status: <span style="color: red"></span></label>
+   
+                           @php
+                               
+                               $selectedStatus = $form->status ? $form->status : 'true';
+                               $option = $selectedStatus === 'false' ? 'true' : 'false';
+   
+                           @endphp
+   
+                           <select name="status" class="form-control">
+                               <option  selected value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Inactive'}}</option>
+                               <option  value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
+                           </select>                              
+                           </div>
+                       </div>
+                   </div>
+                   <div class="form-group">
+                       <div class="input-group input-group-lg">
+                           <input name="search" value="{{$form->search}}" type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
+                           <div class="input-group-append">
+                               <button type="submit" class="btn btn-lg btn-default">
+                                   <i class="fa fa-search"></i>
+                               </button>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </form >
+   </div> --}}
 
-                                @endphp
-                                <select name="type" class="form-control" required>
-                                    <option {{$selectedType === 'name' ? 'selected' : ''}} value="name">Name</option>
-                                </select>
-                                
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="form-group">
+    @if (session('role') == 'superadmin')
+    <form class="row col-12" action="/superadmin/exams">
+    @elseif (session('role') == 'admin')
+    <form class="row col-12" action="/admin/exams">
+    @endif
+    {{-- GRADES --}}
+        <div class="col-md-3">
+            <div class="form-group">
+                @php
+                    $selectGrades = $form->grades;
+                @endphp
 
-                                @php
-                                    
-                                    $selectedSort = $form->sort ? $form->sort : 'desc';
+                <label>Grade:</label>
+                <select name="grade" class="form-control" id="grade-select" onchange="this.form.submit()">
+                    <option value="all" {{ $selectGrades === 'all' ? 'selected' : '' }}>All Grades</option>
+                    @foreach ($grades as $grade)
+                        <option value="{{ $grade['id'] }}" {{ $selectGrades == $grade['id'] ? 'selected' : '' }}>
+                            {{ ucwords($grade['name']) }} - {{$grade['class']}}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    {{-- SUBJECTS --}}
+        <div class="col-md-3">
+            <div class="form-group">
+                @php
+                    $selectSubjects = $form->subjects;
+                @endphp
 
-                                @endphp
+                <label>Subject:</label>
+                <select name="subject" class="form-control" id="subject-select" onchange="this.form.submit()">
+                    <option value="all" {{ $selectSubjects === 'all' ? 'selected' : '' }}>All Subject</option>
+                    @foreach ($subjects as $subject)
+                        <option value="{{ $subject['id'] }}" {{ $selectSubjects == $subject['id'] ? 'selected' : '' }}>
+                            {{ ucwords($subject['name_subject']) }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    {{-- TEACHERS --}}
+        <div class="col-md-3">
+            <div class="form-group">
+                @php
+                    $selectTeachers = $form->teachers;
+                @endphp
 
-                            <label>Sort order: <span style="color: red"></span></label>
-                            <select name="sort" class="form-control">
-                                <option value="asc" {{$selectedSort === 'asc' ? 'selected' : ''}}>Ascending</option>
-                                <option value="desc" {{$selectedSort === 'desc' ? 'selected' : ''}}>Descending</option>
-                            </select>                              
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="form-group">
+                <label>Teacher:</label>
+                <select name="teacher" class="form-control" id="teacher-select" onchange="this.form.submit()">
+                    <option value="all" {{ $selectSubjects === 'all' ? 'selected' : '' }}>All Teacher</option>
+                    @foreach ($teachers as $teacher)
+                        <option value="{{ $teacher['id'] }}" {{ $selectTeachers == $teacher['id'] ? 'selected' : '' }}>
+                            {{ ucwords($teacher['name']) }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    {{-- TYPE --}}
+        <div class="col-md-3">
+            <div class="form-group">
+                @php
+                    $selectType = $form->type;
+                @endphp
 
-                            @php
+                <label>Type:</label>
+                <select name="type" class="form-control" id="type-select" onchange="this.form.submit()">
+                    <option value="all" {{ $selectType === 'all' ? 'selected' : '' }}>All Type</option>
+                    @foreach ($type as $type)
+                        <option value="{{ $type['id'] }}" {{ $selectType == $type['id'] ? 'selected' : '' }}>
+                            {{ ucwords($type['name']) }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
 
-                                $selectedOrder = $form->order? $form->order : 'created_at';
-
-                            @endphp
-
-                                <label>Sort by:</label>
-                                <select name="order" class="form-control">
-                                        <option {{$selectedOrder === 'created_at'? 'selected' : ''}} value="date">Date</option>
-                                        <option {{$selectedOrder === 'name'? 'selected' : ''}} value="grade">Grade</option>
-                                        <option {{$selectedOrder === 'gender'? 'selected' : ''}} value="subject">Subject</option>
-                                        <option {{$selectedOrder === 'place_birth'? 'selected' : ''}} value="teacher">Teacher</option>
-                                        <option {{$selectedOrder === 'status'? 'selected' : ''}} value="status">Status</option>
-                                </select>
-                                
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="form-group">
-                            <label>Status: <span style="color: red"></span></label>
-
-                            @php
-                                
-                                $selectedStatus = $form->status ? $form->status : 'true';
-                                $option = $selectedStatus === 'false' ? 'true' : 'false';
-
-                            @endphp
-
-                            <select name="status" class="form-control">
-                                <option  selected value="{{$selectedStatus}}">{{$selectedStatus === 'true' ? 'Active' : 'Inactive'}}</option>
-                                <option  value="{{$option}}">{{$option === 'true' ? 'Active' : 'Inactive'}}</option>
-                            </select>                              
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="input-group input-group-lg">
-                            <input name="search" value="{{$form->search}}" type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-lg btn-default">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+    {{-- SEARCH --}}
+    <div class="col-md-12">
+        <div class="form-group">
+            <div class="input-group input-group-lg">
+                <input name="search" value="{{$form->search}}" type="search" class="form-control form-control-lg" placeholder="Type your keywords here">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-lg btn-default">
+                        <i class="fa fa-search"></i>
+                    </button>
                 </div>
             </div>
-        </form >
+        </div>
+    </div>
+    </form>
 
     <div class="row">
         <a type="button" href="{{url('/' . session('role') . '/exams/create')}}" class="btn btn-success btn mx-2">
@@ -129,14 +223,14 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th style="width: 15%">Name</th>
-                        <th style="width: 10%">Type Exam</th>
-                        <th style="width: 10%">Date</th>
                         <th style="width: 15%">Grade</th>
+                        <th style="width: 10%">Type Exam</th>
                         <th style="width: 15%">Subject</th>
                         <th style="width: 15%">Teacher</th>
+                        <th style="width: 10%">Date</th>
+                        <th style="width: 20%">Name</th>
                         <th>Status</th>
-                        <th style="width: 20%">Action</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -146,41 +240,40 @@
                             {{ $loop->index + 1 }}
                         </td>
                         <td>
-                            <a>
-                            {{$el->name_exam}}
-                            </a>
-                        </td>
-                        <td>
-                            <a>
-                            {{$el->type_exam}}
-                            </a>
-                        </td>
-                        <td>
-                            <a>
-                            {{$el->date_exam}}
-                            </a>
-                            <br>
-                            @php
-                            $currentDate = now(); // Tanggal saat ini
-                            $dateExam = $el->date_exam; // Tanggal exam dari data
-
-                            // Hitung selisih antara tanggal exam dengan tanggal saat ini
-                            $diff = strtotime($dateExam) - strtotime($currentDate);
-                            $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
-                            @endphp
-                            @if($el->is_active)
-                            <small class="text-muted mb-0"><span class="badge badge-danger">{{$days}} days again</span></small>
-                            @else
-                            @endif
-                        </td>
-                        <td>
                             {{$el->grade_name}} - {{ $el->grade_class }}
+                        </td>
+                        <td>
+                            <a>
+                                {{$el->type_exam}}
+                            </a>
                         </td>
                         <td>
                             {{$el->subject_name}}
                         </td>
                         <td>
                             {{$el->teacher_name}}
+                        </td>
+                        <td>
+                            <a>
+                                {{$el->date_exam}}
+                            </a>
+                            <br>
+                            @php
+                            $currentDate = now(); // Tanggal saat ini
+                            $dateExam = $el->date_exam; // Tanggal exam dari data
+                
+                            // Hitung selisih antara tanggal exam dengan tanggal saat ini
+                            $diff = strtotime($dateExam) - strtotime($currentDate);
+                            $days = floor($diff / (60 * 60 * 24)); // Konversi detik ke hari
+                            @endphp
+                            @if($el->is_active)
+                            <small class="text-muted mb-0"><span class="badge badge-danger">{{$days}} days again</span></small>
+                            @endif
+                        </td>
+                        <td>
+                            <a>
+                                {{$el->name_exam}}
+                            </a>
                         </td>
                         <td>
                             @if($el->is_active)
@@ -210,7 +303,6 @@
                             </a>
                         </td>
                     </tr>
-
                     @endforeach
                 </tbody>
             </table>
@@ -221,14 +313,14 @@
 
 {{-- pagination --}}
 
-<div class="d-flex justify-content-end my-5">
+<div class="d-flex justify-cfontent-end my-5">
 
     <nav aria-label="...">
         <ul class="pagination" max-size="2">
             
             @php
             $role = session('role');
-            $link = "/{$role}/exams?status={$selectedStatus}&search={$form->search}";
+            $link = "/{$role}/exams?search={$form->search}";
             $previousLink = $link . '&page=' . ($data->currentPage() - 1);
             $nextLink = $link . '&page=' . ($data->currentPage() + 1);
             $firstLink = $link . '&page=1';

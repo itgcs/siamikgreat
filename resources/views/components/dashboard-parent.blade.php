@@ -230,7 +230,7 @@
             </div>
             <!-- /.card-header -->
             
-            <div class="card-body">
+            <div class="card-body" style="position: relative; height: 500px; overflow-y: auto;">
              <table class="table table-borderless">      
               @if(sizeof($data['dataStudent']->subject) != 0)
                 <thead>
