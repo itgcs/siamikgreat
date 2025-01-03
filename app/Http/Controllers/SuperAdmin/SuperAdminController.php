@@ -50,9 +50,45 @@ class SuperAdminController extends Controller
          //code...
          $user = Auth::user();
 
-         $data = User::where('id', '!=', '1')->where('id', '!=', $user->id)->get();
+         // $st = Student::where('is_active', true)->get();
+         // foreach($st as $student){
+         //    User::create([
+         //       'username' => strtolower(explode(' ', trim($student->name))[0]),
+         //       'password' => $student->unique_id,
+         //       'role_id' => 4,
+         //    ]);
+         // }
 
-         return view('components.super.data-user')->with('data', $data);
+         // $pr = Relationship::leftJoin('student_relations', 'student_relations.relation_id', '=', 'relationships.id')
+         //    ->leftJoin('students', 'students.id', '=', 'student_relations.student_id')
+         //    ->where('students.is_active', true)
+         //    ->select('relationships.*', 'students.unique_id as unique_id', 'students.name as student_name')
+         //    ->distinct()
+         //    ->get();
+
+         // dd($pr);
+
+         // foreach($pr as $parent){
+         //    $name = strtolower(explode(' ', trim($parent->student_name))[0]);
+         //    $userParent = User::create([
+         //       'username' => "parent{$name}",
+         //       'password' => 12345,
+         //       'role_id' => 5,
+         //    ]);
+         //    Relationship::where('id', $parent->id)->update(['user_id' => $userParent->id]);
+         // }
+
+         // User::where('role_id', 5)->delete();
+
+         $data = User::whereNotIn('role_id', [4, 5])->get();
+         $students = User::where('role_id', 4)->get();
+         $parents = User::where('role_id', 5)->get();
+
+         return view('components.super.data-user', [
+            "data" => $data,
+            "students" => $students,
+            "parents" => $parents,
+         ]);
       
       } catch (Exception $err) {
          
@@ -140,10 +176,22 @@ class SuperAdminController extends Controller
             'child' => 'database user',
          ]);
 
-         $dataRole = DB::table('roles')->select('id', 'name')->get()->toArray();
-         $dataTeacher = DB::table('teachers')->select('id', 'name', 'user_id')->get()->toArray();
-         $dataStudent = Student::orderBy('name', 'asc')->get();
+         $dataRole = Roles::select('id', 'name')->get()->toArray();
+         $dataTeacher = Teacher::select('id', 'name', 'user_id')->get()->toArray();
+         $dataStudent = Student::leftJoin('grades', 'grades.id', '=', 'students.grade_id')
+         ->select('students.*',
+            DB::raw("CONCAT(grades.name, '-', grades.class) as grade_name"))
+            ->where('is_active', true)->get()->sortBy('grade_id');
          $dataParent = Relationship::get();
+
+
+         // $dataParent = Relationship::leftJoin('student_relations', 'student_relations.relation_id', '=', 'relationships.id')
+         // ->leftJoin('students', 'students.id', '=', 'student_relations.student_id')
+         // ->where('students.is_active', true)
+         // ->select('relationships.*')
+         // ->first();
+
+         // dd($dataStudent);
 
          $data = [
             'dataRole' => $dataRole,

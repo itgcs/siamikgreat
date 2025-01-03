@@ -10,34 +10,29 @@ class Relationship extends Model
    use HasFactory;
 
    protected $fillable = [
-   'id',
-   'user_id',
-   'name',
-   'relation',
-   'place_birth',
-   'religion',
-   'date_birth',
-   'occupation',
-   'company_name',
-   'company_address',
-   'home_address',
-   'telephone',
-   'mobilephone',
-   'id_or_passport',
-   'nationality',
-   'phone',
-   'email',
-   'created_at',
-   'updated_at',
+      'id',
+      'user_id',
+      'name',
+      'relation',
+      'place_birth',
+      'religion',
+      'date_birth',
+      'occupation',
+      'company_name',
+      'company_address',
+      'home_address',
+      'telephone',
+      'mobilephone',
+      'id_or_passport',
+      'nationality',
+      'phone',
+      'email',
+      'created_at',
+      'updated_at',
    ];
-
-   public function user()
-   {
-       return $this->belongsTo(User::class, 'user_id');
-   }
 
    public function student()
    {
-      return $this->belongsToMany(Student::class, 'student_relationships');
+      return $this->belongsToMany(Student::class, 'student_relations');
    }
 }

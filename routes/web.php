@@ -778,8 +778,8 @@ Route::middleware(['auth.login', 'role:superadmin'])->prefix('/superadmin')->gro
       Route::get('/', [ReportController::class, 'index']);
       Route::get('detail/{id}', [ReportController::class, 'detailSubjectClass']);
       Route::get('detailSec/{id}', [ReportController::class, 'detailSubjectClassSec']);
-      Route::get('detailSubject/student/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudent']);
-      Route::get('detailSubjectSec/student/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudentSec']);
+      Route::get('detailSubject/student/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudentTeacher']);
+      Route::get('detailSubjectSec/student/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudentSecTeacher']);
 
       Route::post('/scoringMajorPrimary', [ScoringController::class, 'actionPostMajorPrimary'])->name('actionPostScoringMajorPrimary');
       Route::post('/scoringMinorPrimary', [ScoringController::class, 'actionPostMinorPrimary'])->name('actionPostScoringMinorPrimary');
@@ -1044,8 +1044,8 @@ Route::middleware(['auth.login', 'role:admin'])->prefix('/admin')->group(functio
       Route::get('/', [ReportController::class, 'index']);
       Route::get('detail/{id}', [ReportController::class, 'detailSubjectClass']);
       Route::get('detailSec/{id}', [ReportController::class, 'detailSubjectClassSec']);
-      Route::get('detailSubject/student/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudent']);
-      Route::get('detailSubjectSec/student/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudentSec']);
+      Route::get('detailSubject/student/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudentTeacher']);
+      Route::get('detailSubjectSec/student/{gradeId}/{subjectId}', [ReportController::class, 'detailSubjectClassStudentSecTeacher']);
 
       Route::post('scoringMajorPrimary', [ScoringController::class, 'actionPostMajorPrimary'])->name('actionAdminPostScoringMajorPrimary');
       Route::post('scoringMinorPrimary', [ScoringController::class, 'actionPostMinorPrimary'])->name('actionAdminPostScoringMinorPrimary');

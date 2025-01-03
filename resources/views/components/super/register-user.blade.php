@@ -3,9 +3,9 @@
 @section('content')
 
 <div class="row d-flex justify-content-center">
-    <div class="register-box m-5">
+    <div class="register-box col-12">
         <div class="register-logo">
-            <a><b>Admin</b> Access</a>
+            <a><b>Superadmin</b> Access</a>
         </div>
 
         <div class="card">
@@ -19,43 +19,6 @@
                 @endif
                     @csrf
                     @method('post')
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Username" name="username" value="{{old('username')}}">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-user"></span>
-                            </div>
-                        </div>
-                    </div>
-                    @if($errors->any())
-                        <p style="color: red">{{$errors->first('username')}}</p>
-                    @endif   
-
-                    <div class="input-group mb-3">
-                        <input type="password" class="form-control" placeholder="Password" name="password" value="{{old('password')}}">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    @if($errors->any())
-                        <p style="color: red">{{$errors->first('password')}}</p>
-                    @endif
-
-                    <div class="input-group mb-3">
-                        <input value="{{old('reinputPassword')}}" type="password" class="form-control" placeholder="Retype password" name="reinputPassword">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    @if($errors->any())
-                        <p style="color: red">{{$errors->first('reinputPassword')}}</p>
-                    @endif
 
                     @php
                         $allRole = $data['dataRole'];
@@ -68,8 +31,8 @@
                         <select id="role" name="role" class="form-control form-control">
                             <option value="" disabled {{ old('role') ? '' : 'selected' }}>--- SELECT ROLE ---</option>
                             @foreach ($allRole as $role)
-                                <option value="{{ $role->id }}" {{ old('role') == $role->id ? 'selected' : '' }}>
-                                    {{ $role->name == 'superadmin' ? 'Super Admin' : ucwords($role->name) }}
+                                <option value="{{ $role['id'] }}" {{ old('role') == $role['id'] ? 'selected' : '' }}>
+                                    {{ $role['name'] == 'superadmin' ? 'Super Admin' : ucwords($role['name']) }}
                                 </option>
                             @endforeach
                         </select>
@@ -87,9 +50,9 @@
                         <select id="teacher" name="teacher" class="form-control form-control">
                             <option value="" disabled {{ old('teacher') ? '' : 'selected' }}>--- SELECT TEACHER ---</option>
                             @foreach ($dataTeacher as $teacher)
-                                @if ($teacher->user_id == null)
-                                    <option value="{{ $teacher->id }}" {{ old('teacher') == $teacher->id ? 'selected' : '' }}>
-                                        {{ ucwords($teacher->name) }}
+                                @if ($teacher['user_id'] == null)
+                                    <option value="{{ $teacher['id'] }}" {{ old('teacher') == $teacher['id'] ? 'selected' : '' }}>
+                                        {{ ucwords($teacher['name']) }}
                                     </option>        
                                 @endif
                             @endforeach
@@ -104,29 +67,8 @@
                         </div>
                     </div>
 
-                    <div id="studentDropdown" class="input-group mb-3" style="display:none">
-                        <select id="student" name="student" class="form-control form-control">
-                            <option value="" disabled {{ old('student') ? '' : 'selected' }}>--- SELECT STUDENT ---</option>
-                            @foreach ($dataStudent as $student)
-                                @if ($student->user_id == null)
-                                    <option value="{{ $student->id }}" {{ old('student') == $student->id ? 'selected' : '' }}>
-                                        {{ ucwords($student->name) }}
-                                    </option>
-                                @endif
-                            @endforeach
-                        </select>
-                        @if($errors->any())
-                            <p style="color: red">{{$errors->first('student')}}</p>
-                        @endif
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fa-regular fa-address-card"></span>
-                            </div>
-                        </div>
-                    </div>
-
                     <div id="parentDropdown" class="input-group mb-3" style="display:none">
-                        <select id="parent" name="parent" class="form-control form-control">
+                        <select id="parent" name="parent" class="form-control js-select2">
                             <option value="" disabled {{ old('parent') ? '' : 'selected' }}>--- SELECT PARENT ---</option>
                             @foreach ($dataParent as $parent)
                                 @if ($parent->user_id == null)
@@ -145,6 +87,69 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="studentDropdown" class="input-group mb-3" style="display:none">
+                        <select id="student" name="student" class="form-control">
+                            <option value="" disabled {{ old('student') ? '' : 'selected' }}>--- SELECT STUDENT ---</option>
+                            @foreach ($dataStudent as $student)
+                                @if ($student->user_id == null)
+                                    <option 
+                                        value="{{ $student->id }}" 
+                                        data-username="{{ strtolower(explode(' ', trim($student->name))[0]) }}" 
+                                        data-password="{{ $student->unique_id }}"
+                                        {{ old('student') == $student->id ? 'selected' : '' }}>
+                                        {{ ucwords(strtolower($student->name)) }} ({{ ucwords($student->grade_name) }})
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
+                        @if($errors->any())
+                            <p style="color: red">{{ $errors->first('student') }}</p>
+                        @endif
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fa-regular fa-address-card"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Username" name="username" id="username" value="{{ old('username') }}">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+                    @if($errors->any())
+                        <p style="color: red">{{ $errors->first('username') }}</p>
+                    @endif   
+                    
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control" placeholder="Password" name="password" id="password" value="{{ old('password') }}">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    @if($errors->any())
+                        <p style="color: red">{{ $errors->first('password') }}</p>
+                    @endif
+                    
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control" placeholder="Retype password" name="reinputPassword" id="reinputPassword" value="{{ old('reinputPassword') }}">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    @if($errors->any())
+                        <p style="color: red">{{ $errors->first('reinputPassword') }}</p>
+                    @endif
+
+                    
 
                     <div class="row">
                         <div class="col-12">
@@ -166,6 +171,25 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const studentDropdown = document.getElementById('student');
+        const usernameField = document.getElementById('username');
+        const passwordField = document.getElementById('password');
+        const reinputPasswordField = document.getElementById('reinputPassword');
+
+        studentDropdown.addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+            const username = selectedOption.getAttribute('data-username');
+            const password = selectedOption.getAttribute('data-password');
+
+            if (username && password) {
+                usernameField.value = username;
+                passwordField.value = password;
+                reinputPasswordField.value = password;
+            }
+        });
+    });
+
     document.getElementById('role').addEventListener('change', function() {
        role = this.value;
        console.log(role);

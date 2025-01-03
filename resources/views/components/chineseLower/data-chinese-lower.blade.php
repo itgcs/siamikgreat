@@ -39,13 +39,13 @@
                   <th>
                      No
                   </th>
-                  <th style="width: 20%">
+                  <th style="width: 25%">
                      Student
                   </th>
-                  <th style="width: 10%">
+                  <th style="width: 15%">
                      Class
                   </th>
-                  <th style="width: 70%">
+                  <th style="width: 60%">
                      Action
                   </th>
                </tr>
@@ -59,7 +59,7 @@
                   </td>
                   <td>
                      <a>
-                        {{$el->student_name}}
+                        {{ucwords(strtolower($el->student_name))}}
                      </a>
                   </td>
                   <td>

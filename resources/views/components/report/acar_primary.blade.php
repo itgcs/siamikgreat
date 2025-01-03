@@ -91,14 +91,14 @@
                     <td class="text-center" colspan="2">Chinese</td>
                     <td class="text-center" colspan="2">Math</td>
                     <td class="text-center" colspan="2">Science</td>
-                    <td class="text-center">Avg</td>
+                    <td style="background-color:beige;" class="text-center">Avg</td>
                     <!-- END MAJOR SUBJECTS -->
                     
                     <!-- MINOR SUBJECTS -->
                     <td class="text-center" colspan="2">PPKN</td>
                     <td class="text-center" colspan="2">Religion</td>
                     <td class="text-center" colspan="2">BI</td>
-                    <td class="text-center">Avg</td>
+                    <td style="background-color:beige;" class="text-center">Avg</td>
                     <!-- END MINOR SUBJECTS -->
                     
                     <!-- SUPPLEMENTARY SUBJECTS -->
@@ -111,10 +111,10 @@
                     <td class="text-center" colspan="2">HE</td>
                     @else
                     @endif
-                    <td class="text-center">Avg</td>
+                    <td style="background-color:beige;" class="text-center">Avg</td>
                     <!-- END SUPPLEMENTARY SUBJECTS -->
 
-                    <td class="text-center">Total</td>
+                    <td style="background-color:beige;" class="text-center">Total</td>
                 </tr>
 
                 <tr>
@@ -127,7 +127,7 @@
                     <td class="text-center">Grs</td>
                     <td class="text-center">Mks</td>
                     <td class="text-center">Grs</td>
-                    <td class="text-center">70%</td>
+                    <td style="background-color:beige;" class="text-center">70%</td>
                     <!-- END MAJOR SUBJECTS -->
                     
                     <!-- MINOR SUBJECTS -->
@@ -137,7 +137,7 @@
                     <td class="text-center">Grs</td>
                     <td class="text-center">Mks</td>
                     <td class="text-center">Grs</td>
-                    <td class="text-center">20%</td>
+                    <td style="background-color:beige;" class="text-center">20%</td>
                     <!-- END MINOR SUBJECTS -->
                     
                     <!-- SUPPLEMENTARY SUBJECTS -->
@@ -156,10 +156,10 @@
                     <td class="text-center">Grs</td>
                     @else
                     @endif
-                    <td class="text-center">10%</td>
+                    <td style="background-color:beige;" class="text-center">10%</td>
                     <!-- END SUPPLEMENTARY SUBJECTS -->
 
-                    <td class="text-center">100%</td>
+                    <td style="background-color:beige;" class="text-center">100%</td>
                 </tr>
             </thead>
 
@@ -168,7 +168,7 @@
                     @foreach ($data['students'] as $dt)
                         <tr>
                             <td>{{ $loop->iteration }}</td>  <!-- nomer -->
-                            <td>{{ $dt['student_name'] }}</td> <!-- name -->
+                            <td>{{ ucwords(strtolower($dt['student_name'])) }}</td> <!-- name -->
 
                             @php
                                 $subjects = [
@@ -202,14 +202,14 @@
                                 <td class="text-center">{{ $subjects[$subject_id]['grs'] }}</td>
                             @endforeach
 
-                            <td class="text-center">{{ $dt['percent_majorSubjects'] }}</td>
+                            <td style="background-color:beige;" class="text-center">{{ $dt['percent_majorSubjects'] }}</td>
 
                             @foreach ([7, 20, 4] as $subject_id)
                                 <td class="text-center">{{ $subjects[$subject_id]['mks'] }}</td>
                                 <td class="text-center">{{ $subjects[$subject_id]['grs'] }}</td>
                             @endforeach
 
-                            <td class="text-center">{{ $dt['percent_minorSubjects'] }}</td>
+                            <td style="background-color:beige;" class="text-center">{{ $dt['percent_minorSubjects'] }}</td>
 
                             @if ($data['healthEducation'] !== null)
                             @foreach ([18, 6, 62, 15, 16, 19] as $subject_id)
@@ -223,8 +223,8 @@
                             @endforeach
                             @endif
 
-                            <td class="text-center">{{ $dt['percent_supplementarySubjects'] }}</td>
-                            <td class="text-center">{{ $dt['total_score'] }}</td>
+                            <td style="background-color:beige;" class="text-center">{{ $dt['percent_supplementarySubjects'] }}</td>
+                            <td style="background-color:beige;" class="text-center text-bold">{{ $dt['total_score'] }}</td>
                             <td class="project-actions text-left">
                                 <div class="input-group">
                                     @if ($data['status'] == null)
@@ -261,17 +261,17 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="confirmModalLabel">Confirm Acc ACAR</h5>
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Comment ACAR</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Are you sure you want to acc ACAR?
+                Are you sure you want to submit comment ACAR?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="confirmAcarScoring">Yes, Acc ACAR</button>
+                <button type="button" class="btn btn-primary" id="confirmAcarScoring">Yes</button>
             </div>
         </div>
     </div>
@@ -358,7 +358,7 @@
         Swal.fire({
             icon: 'success',
             title: 'Successfully',
-            text: 'Successfully post score academic assessment report primary in the database.',
+            text: 'Successfully post comment academic assessment report primary in the database.',
         });
     </script>
 @endif

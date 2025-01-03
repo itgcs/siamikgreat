@@ -83,7 +83,7 @@
                             @if($el->is_lead) 
                             @elseif($el->is_group) 
                             @else
-                                <a class="btn btn-primary btn"
+                                <a class="btn btn-warning btn"
                                 href="{{url('/' . session('role') .'/grades/manageSubject/teacher') . '/edit/' . $el->grade_id . '/' . $el->subject_id . '/' . $el->teacher_id}}">
                                 <i class="fas fa-pencil-alt">
                                 </i>
@@ -91,7 +91,7 @@
                                 </a>
                                 @if (session('role') == 'superadmin' || session('role') == 'admin')
                                     <a class="btn btn-danger btn" data-toggle="modal" data-target="#modalDeleteSubject-{{$el->id}}" data-subject-id="{{ $el->subject_id }}" data-teacher-id="{{ $el->teacher_id }}" data-grade-id="{{ $el->grade_id }}">
-                                        <i class="fas fa-trash"></i> Delete
+                                        <i class="fas fa-trash"></i>
                                     </a>
                                 @endif
                             @endif

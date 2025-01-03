@@ -173,10 +173,8 @@ class ReportController extends Controller
 
                 
             foreach ($subject as $item) {
-                $item->status = Scoring_status::where('subject_id', $item->subject_id)
-                ->where('semester', session('semester'))
-                ->where('academic_year', session('academic_year'))
-                ->first() ? 'Submitted' : 'Not Submitted';
+                $item->status = $status->firstWhere('subject_id', $item->subject_id)
+                ->status ?? 'Not Submitted';
             }
                 
             // dd($subject);
@@ -249,7 +247,7 @@ class ReportController extends Controller
                 'subject' => $subject,
             ];
 
-            // dd($data);   
+            // dd($subject);   
             if(session('role') == 'superadmin' || session('role') == 'admin'){
                 return view('components.report.subject-teacher-sec')->with('data', $data);
             }
@@ -633,14 +631,14 @@ class ReportController extends Controller
                                 'score' => $score->score,
                             ];
                         })->all(),
-                        'avg_homework'      => round($homeworkScores->avg()),
-                        'avg_exercise'      => round($exerciseScores->avg()),
-                        'avg_participation' => round($participationScore->avg()),
-                        'avg_quiz'          => round($quizScores->avg()),
+                        'avg_homework'      => round($homeworkScores->avg(), 1),
+                        'avg_exercise'      => round($exerciseScores->avg(), 1),
+                        'avg_participation' => round($participationScore->avg(), 1),
+                        'avg_quiz'          => round($quizScores->avg(), 1),
 
-                        'percent_homework'      => round($homeworkScores->avg() * 0.1),
-                        'percent_exercise'      => round($exerciseScores->avg() * 0.15),
-                        'percent_participation' => round($participationScore->avg() * 0.05),
+                        'percent_homework'      => round($homeworkScores->avg() * 0.1, 1),
+                        'percent_exercise'      => round($exerciseScores->avg() * 0.15, 1),
+                        'percent_participation' => round($participationScore->avg() * 0.05, 1),
                         'h+e+p'                 => (round($homeworkScores->avg() * 0.1)) + round(($exerciseScores->avg() * 0.15)) + round(($participationScore->avg() * 0.05)),
                        
                         'percent_quiz' => round($quizScores->avg() * 0.3),
@@ -807,9 +805,7 @@ class ReportController extends Controller
             $subject = Subject::where('id', $subjectId)
                 ->select('subjects.name_subject as subject_name', 'subjects.id as subject_id')
                 ->first();
-
-            
-                $tasks = Type_exam::whereIn('name', ['homework', 'small project', 'presentation'])
+            $tasks = Type_exam::whereIn('name', ['homework', 'small project', 'presentation'])
                 ->pluck('id')
                 ->toArray();
             $mid = Type_exam::whereIn('name', ['quiz', 'practical', 'exam', 'project'])
@@ -1120,8 +1116,6 @@ class ReportController extends Controller
                 $tasks              = $scores->whereIn('type_exam', $tasks)->pluck('score');
                 $mid                = $scores->whereIn('type_exam', $mid)->pluck('score');
                 $finalExamScores    = $scores->whereIn('type_exam', $finalExam)->pluck('score');
-
-                // dd($quizScores);
                 
                 return [
                     'student_id' => $student->student_id,
@@ -1146,14 +1140,27 @@ class ReportController extends Controller
                 ];
             })->values()->all();
 
-            // dd($scoresByStudent);
+            $checkPermission = Teacher_subject::where('grade_id', $gradeId)
+                ->where('subject_id', $subjectId)
+                ->where('teacher_id', $teacherId)
+                ->first();
+
+            if($checkPermission->is_lead == null && $checkPermission->is_group == null){
+                $permission = true;
+            }
+            elseif($checkPermission->is_lead !== null && $checkPermission->is_group == null){
+                $permission = true;
+            }
+            elseif($checkPermission->is_lead == null && $checkPermission->is_group !== null){
+                $permission = false;
+            }
+
             $status = Scoring_status::where('grade_id', $gradeId)
                 ->where('semester', $semester)
                 ->where('academic_year', $academic_year)
                 ->where('teacher_id', $subjectTeacher->teacher_id)
                 ->where('subject_id', $subject->subject_id)
                 ->first();
-
             
             $data = [
                 'subjectTeacher' => $subjectTeacher,
@@ -1163,9 +1170,8 @@ class ReportController extends Controller
                 'students' => $scoresByStudent,
                 'semester' => $semester,
                 'status' => $status,
+                'permission' => $permission,
             ];
-
-            // dd($data);   
 
             if(session('role') == 'superadmin' || session('role') == 'admin'){
                 return view('components.report.detail_scoring_subject_secondary')->with('data', $data);
@@ -1183,7 +1189,7 @@ class ReportController extends Controller
     public function acarPrimary($gradeId){
         try {
             session()->flash('page',  $page = (object)[
-                'page' => 'database reports',
+                'page' => 'reports',
                 'child' => 'academic assessment report',
             ]);
 
@@ -1270,8 +1276,6 @@ class ReportController extends Controller
                 'status' => $status,
                 'healthEducation' => $checkHE,
             ];
-
-            // dd($data);
             
             return view('components.report.acar_primary')->with('data', $data);
             
@@ -1284,7 +1288,7 @@ class ReportController extends Controller
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
-                'child' => 'report class teacher',
+                'child' => 'academic assessment report',
             ]);
 
             $semester = session('semester');
@@ -1413,7 +1417,7 @@ class ReportController extends Controller
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
-                'child' => 'report class teacher',
+                'child' => 'summary of academic assessment',
             ]);
 
             $semester = session('semester');
@@ -1508,7 +1512,7 @@ class ReportController extends Controller
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
-                'child' => 'report class teacher',
+                'child' => 'summary of academic assessment',
             ]);
             
             $semester = session('semester');
@@ -1656,7 +1660,7 @@ class ReportController extends Controller
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
-                'child' => 'database reports',
+                'child' => 'the certificate of promotion',
             ]);
 
             $academic_year = session('academic_year');
@@ -1687,7 +1691,6 @@ class ReportController extends Controller
 
                 // dd($majorSubjectsScores);
                 $scoresBySemester = $scores->groupBy('semester')->map(function ($semesterScores) {
-                    
                     return $semesterScores->map(function ($score) {
                         return [
                             'final_score' => $score->final_score,
@@ -2069,7 +2072,18 @@ class ReportController extends Controller
 
             // dd($subjectId);
             $userId = session('id_user');
-            $teacherId = Teacher::where('user_id', $userId)->value('id');
+
+            if(session('role') == 'teacher'){
+                $teacherId = Teacher::where('user_id', $userId)->value('id');
+            }
+            else{
+                $teacherId = Teacher_subject::where('grade_id', $gradeId)
+                ->where('subject_id', $subjectId)
+                ->where('academic_year', session('academic_year'))
+                ->join('teachers', 'teachers.id', '=', 'teacher_subjects.teacher_id')
+                ->select('teachers.id as teacher_id', 'teachers.name as teacher_name')
+                ->value('teacher_id');
+            }
 
             $subjectTeacher = Teacher_subject::where('grade_id', $gradeId)
                 ->where('subject_id', $subjectId)
@@ -2105,8 +2119,6 @@ class ReportController extends Controller
             $academic_year  = session('academic_year');
 
             // dd($subject->subject_name);
-
-        
 
             if (strtolower($subject->subject_name) == "religion islamic") {
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
@@ -2405,18 +2417,39 @@ class ReportController extends Controller
                         'avg_participation' => round($participationScore->avg()),
                         'avg_quiz'          => round($quizScores->avg()),
 
-                        'percent_homework'      => round($homeworkScores->avg() * 0.1),
-                        'percent_exercise'      => round($exerciseScores->avg() * 0.15),
-                        'percent_participation' => round($participationScore->avg() * 0.05),
-                        'h+e+p'                 => (round($homeworkScores->avg() * 0.1)) + round(($exerciseScores->avg() * 0.15)) + round(($participationScore->avg() * 0.05)),
+                        'percent_homework'      => round($homeworkScores->avg() * 0.1, 2),
+                        'percent_exercise'      => round($exerciseScores->avg() * 0.15, 2),
+                        'percent_participation' => round($participationScore->avg() * 0.05, 2),
+                        'h+e+p'                 => ($homeworkScores->avg() * 0.1) + ($exerciseScores->avg() * 0.15) + ($participationScore->avg() * 0.05),
                        
-                        'percent_quiz' => round($quizScores->avg() * 0.3),
-                        'percent_fe'   => round($finalExamScores->avg() * 0.4),
-                        'total_score'  => (round(($homeworkScores->avg() * 0.1)) + round(($exerciseScores->avg() * 0.15)) + round(($participationScore->avg() * 0.05))) + round(($quizScores->avg() * 0.3)) + round(($finalExamScores->avg() * 0.4)),
+                        'percent_quiz' => $quizScores->avg() * 0.3,
+                        'percent_fe'   => $finalExamScores->avg() * 0.4,
+                        'total_score'  => round((($homeworkScores->avg() * 0.1) + ($exerciseScores->avg() * 0.15) + ($participationScore->avg() * 0.05)) + ($quizScores->avg() * 0.3) + ($finalExamScores->avg() * 0.4)),
                         
                         'comment' => $comments->get($student->student_id)?->comment ?? '',
                     ];
                 })->values()->all();
+
+                foreach($scoresByStudent as $student){
+                    $matchingScoring = [
+                        'student_id'         => $student['student_id'],
+                        'grade_id'           => $gradeId,
+                        'subject_id'         => $subjectId,
+                        'subject_teacher_id' => $subjectTeacher->teacher_id,
+                        'semester'           => session('semester'),
+                        'academic_year'      => session('academic_year'),
+                    ];
+                
+                    // Data untuk diupdate atau disimpan
+                    $updateScoring = [
+                        'grades'      => $this->determineGrade($student['total_score']),
+                        'final_score' => $student['total_score'],
+                    ];
+                
+                    // Gunakan updateOrCreate untuk tabel Acar
+                    Acar::updateOrCreate($matchingScoring, $updateScoring);
+                }
+
             } else {
                 $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalAssessment, $semester) {
                     $query->whereHas('subject', function ($subQuery) use ($subjectId) {
@@ -2470,8 +2503,6 @@ class ReportController extends Controller
 
                 $type = "minor_subject_assessment";
 
-                // dd($subjectId);
-
                 $comments = Comment::where('grade_id', $gradeId)
                     ->where('subject_id', $subjectId)
                     ->where('subject_teacher_id', $subjectTeacher->teacher_id)
@@ -2480,8 +2511,6 @@ class ReportController extends Controller
                     ->where('type', $type)
                     ->get()
                     ->keyBy('student_id');
-
-                    // dd($finalAssessment);
 
                 $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use($comments) {
                     
@@ -2525,8 +2554,8 @@ class ReportController extends Controller
                         'avg_participation' => round($participationScore->avg()),
                         'avg_fe' => round($finalExamScores->avg()),
                         
-                        'percent_homework' => round($homeworkScores->avg() * 0.2),
-                        'percent_exercise' => round($exerciseScores->avg() * 0.35),
+                        'percent_homework' => round($homeworkScores->avg() * 0.2, 2),
+                        'percent_exercise' => round($exerciseScores->avg() * 0.35, 2),
                         'percent_participation' => round($participationScore->avg() * 0.1, 2),
                         'percent_fe' => round($finalExamScores->avg() * 0.35, 2),
                         
@@ -2537,8 +2566,6 @@ class ReportController extends Controller
                     ];
                 })->values()->all();
             }
-
-            // dd($scoresByStudent);
 
             $status = Scoring_status::where('grade_id', $gradeId)
                 ->where('subject_id', $subjectId)
@@ -2556,8 +2583,6 @@ class ReportController extends Controller
             $final_assessment = Type_exam::where('name', 'final assessment', )->value('id');
             $final_exam = Type_exam::where('name', 'final exam', )->value('id');
 
-            // dd($scoresByStudent);
-            
             $data = [
                 'subjectTeacher' => $subjectTeacher,
                 'classTeacher' => $classTeacher,
@@ -2594,7 +2619,7 @@ class ReportController extends Controller
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
-                'child' => 'database reports',
+                'child' => 'report subject teacher',
             ]);
 
             $userId = session('id_user');
@@ -3087,13 +3112,18 @@ class ReportController extends Controller
                 ->where('teacher_id', $teacherId)
                 ->first();
 
-            if($checkPermission->is_lead == null && $checkPermission->is_group == null){
-                $permission = true;
+            if($checkPermission !== null){
+                if($checkPermission->is_lead == null && $checkPermission->is_group == null){
+                    $permission = true;
+                }
+                elseif($checkPermission->is_lead !== null && $checkPermission->is_group == null){
+                    $permission = true;
+                }
+                elseif($checkPermission->is_lead == null && $checkPermission->is_group !== null){
+                    $permission = false;
+                }
             }
-            elseif($checkPermission->is_lead !== null && $checkPermission->is_group == null){
-                $permission = true;
-            }
-            elseif($checkPermission->is_lead == null && $checkPermission->is_group !== null){
+            else{
                 $permission = false;
             }
 
@@ -3107,7 +3137,6 @@ class ReportController extends Controller
             $final_exam = Type_exam::whereIn('name', ['final exam', 'final assessment'], )->value('id');
             
             // dd($scoresByStudent);
-           
 
             $data = [
                 'subjectTeacher' => $subjectTeacher,
@@ -5034,7 +5063,8 @@ class ReportController extends Controller
                     'PE',
                     'IT',
                     'English',
-                    'Chinese'
+                    'Chinese',
+                    'Financial Literacy'
                 ];
 
                 $ecaData = Student_eca::where('student_ecas.student_id', $id)
@@ -5382,7 +5412,6 @@ class ReportController extends Controller
                         'English',
                         'Chinese'
                     ];
-
                 } elseif (strtolower($student->grade_name) === "secondary") {
                     $order = [
                         'Religion',
@@ -5396,9 +5425,9 @@ class ReportController extends Controller
                         'PE',
                         'IT',
                         'English',
-                        'Chinese'
+                        'Chinese',
+                        'Financial Literacy',
                     ];
-
                 }
 
                 $scoresByStudent = $resultsScore->groupBy('student_id')->map(function ($scores) use ($comments, $order) {

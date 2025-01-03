@@ -36,8 +36,8 @@
                         <thead>
                             <tr>
                                 <th style="width: 5%">#</th>
-                                <th style="width: 10%">Subject</th>
-                                <th style="width: 15%">Teacher Subject</th>
+                                <th style="width: 15%">Subject</th>
+                                <th style="width: 20%">Teacher Subject</th>
                                 <th style="width: 10%">Action</th>
                                 <th >Status</th>
                             </tr>
@@ -67,6 +67,7 @@
                                             View
                                         </a>
                                     </td>
+                                    @endif
                                     <td>
                                         @if ($pr->status == 1)
                                             Already Submitted
@@ -74,7 +75,6 @@
                                             {{ $pr->status }}
                                         @endif
                                     </td>
-                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

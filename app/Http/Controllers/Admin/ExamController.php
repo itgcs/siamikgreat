@@ -36,20 +36,22 @@ class ExamController extends Controller
    {
       try {
          session()->flash('page',  $page = (object)[
-            'page' => 'database exam',
-            'child' => 'database exam',
+            'page' => 'database scorings',
+            'child' => 'database scorings',
          ]);
 
-         $form = (object) [
-            'sort' => $request->sort? $request->sort : null,
-            'order' => $request->order? $request->order : null,
-            'status' => $request->status? $request->status : null,
-            'search' => $request->search? $request->search : null,
-            'type' => $request->type? $request->type:  null,
-         ];
+         $subjects = Subject::orderBy('name_subject', 'asc')->get();
+         $grades = Grade::all();
+         $teachers = Teacher::orderBy('name')->get();
+         $type = Type_exam::orderBy('name')->get();
 
-         $sort = $request->sort ? $request->sort : 'asc';
-         $status = $request->status? ($request->status == 'true' ? true : false) : true;
+         $form = (object) [
+            'subjects' => $request->subject ?? 'all',
+            'grades' => $request->grade ?? 'all',
+            'teachers' => $request->teacher ?? 'all',
+            'type' => $request->type ?? 'all',
+            'search' => $request->search ?? null,
+         ];
 
          $data = Exam::join('grade_exams', 'exams.id', '=', 'grade_exams.exam_id')
             ->join('grades', 'grade_exams.grade_id', '=', 'grades.id')
@@ -59,11 +61,49 @@ class ExamController extends Controller
             ->join('type_exams', 'exams.type_exam', '=', 'type_exams.id')
             ->where('exams.semester', session('semester'))
             ->where('exams.academic_year', session('academic_year'))
-            ->orderBy('exams.created_at', 'desc')
-            ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class', 'subjects.name_subject as subject_name', 'teachers.name as teacher_name', 'type_exams.name as type_exam')
+            ->orderByRaw('exams.is_active = 0 ASC');
+
+         // Jika search diisi, abaikan filter lainnya
+         if (!is_null($form->search)) {
+            $data->where('exams.name_exam', 'like', '%' . $form->search . '%');
+         } else {
+            // Jika search tidak diisi, gunakan filter lainnya
+            if ($form->subjects !== 'all') {
+               $data->where('subjects.id', $form->subjects);
+            }
+            if ($form->grades !== 'all') {
+               $data->where('grades.id', $form->grades);
+            }
+            if ($form->teachers !== 'all') {
+               $data->where('teachers.id', $form->teachers);
+            }
+            if ($form->type !== 'all') {
+               $data->where('type_exams.id', $form->type);
+            }
+         }
+
+         // Akhir dari query
+         $data = $data->orderBy('grades.id', 'asc')
+            ->select(
+               'exams.*',
+               'grades.name as grade_name',
+               'grades.class as grade_class',
+               'subjects.name_subject as subject_name',
+               'teachers.name as teacher_name',
+               'type_exams.name as type_exam'
+            )
             ->paginate(15);
 
-         return view('components.exam.data-exam')->with('data', $data)->with('form', $form);
+
+
+         return view('components.exam.data-exam', [
+            'data' => $data,
+            'form' => $form,
+            'grades' => $grades,
+            'subjects' => $subjects,
+            'teachers' => $teachers,
+            'type' => $type,
+         ]);
 
       } catch (Exception $err) {
          return dd($err);
@@ -481,8 +521,8 @@ class ExamController extends Controller
    public function getById($id)
    {
       session()->flash('page',  $page = (object)[
-         'page' => 'database teacher exams',
-         'child' => 'database teacher exams',
+         'page' => 'database scorings',
+         'child' => 'database Scorings',
       ]);
 
       try {
@@ -513,8 +553,8 @@ class ExamController extends Controller
    public function getByIdSession()
    {
       session()->flash('page',  $page = (object)[
-         'page' => 'database exam',
-         'child' => 'exams',
+         'page' => 'scoring',
+         'child' => 'scorings',
       ]);
 
       $id = session('exam_id');
@@ -546,8 +586,8 @@ class ExamController extends Controller
       try {
          //code...
          session()->flash('page',  $page = (object)[
-            'page' => 'database teacher exams',
-            'child' => 'database teacher exams',
+            'page' => 'database scorings',
+            'child' => 'database scorings',
          ]);
 
          $dataExam = Exam::select('exams.*', 'grades.name as grade_name', 'subjects.name_subject')
@@ -666,8 +706,8 @@ class ExamController extends Controller
    {
       try {
          session()->flash('page',  $page = (object)[
-            'page' => 'database teacher exams',
-            'child' => 'database teacher exams',
+            'page' => 'database scorings',
+            'child' => 'database scorings',
          ]);
 
          $getIdTeacher = Teacher::where('user_id', session('id_user'))->value('id');
@@ -729,8 +769,8 @@ class ExamController extends Controller
       try {
          //code...
          session()->flash('page',  $page = (object)[
-            'page' => 'database teacher exams',
-            'child' => 'database teacher exams',
+            'page' => 'database scorings',
+            'child' => 'database scorings',
          ]);
 
          $id = session('id_user');
@@ -773,13 +813,26 @@ class ExamController extends Controller
       }
    }
 
-   public function gradeExam()
+   public function gradeExam(Request $request)
    {
       try {
          session()->flash('page',  $page = (object)[
-            'page' => 'database exam',
-            'child' => 'exams',
-        ]);
+               'page' => 'database scoring',
+               'child' => 'scorings',
+         ]);
+
+         $setStudentFirst = session('studentId');
+         $gradeIdStudent  = Student::where('students.id', $setStudentFirst)->value('grade_id');
+         $subjects     = Grade::with(['subject' => function($query){
+            $query->orderBy('name_subject', 'asc');
+         }])
+         ->where('grades.id', $gradeIdStudent)
+         ->first();
+
+         $form = (object) [
+            'sort' => $request->order ?? 'all',
+         ];
+         $sort = $request->order ?? 'all';
 
          if(session('role') == 'parent')
          {
@@ -832,12 +885,16 @@ class ExamController extends Controller
                ->join('type_exams', 'scores.type_exam_id', '=', 'type_exams.id')
                ->join('students', 'scores.student_id', '=', 'students.id')
                ->where('scores.student_id', $getIdStudent)
+               ->when($sort !== 'all', function ($query) use ($sort) {
+                  return $query->where('scores.subject_id', $sort);
+              })
                ->select('exams.*', 'grades.name as grade_name', 'grades.class as grade_class',
                   'subjects.name_subject as subject_name', 'teachers.name as teacher_name',
                   'type_exams.name as type_exam' , 'scores.score as score', 'students.name as student_name')
                ->orderBy('created_at', 'asc')
                ->paginate(15);
          } 
+
          elseif (session('role') == 'student') 
          {
             $getIdUser     = session('id_user');
@@ -861,9 +918,13 @@ class ExamController extends Controller
                ->paginate(15);
          }
 
-         // dd($data);
+         // dd($form);
 
-         return view('components.student.data-exam-student')->with('data', $data);
+         return view('components.student.data-exam-student', [
+            "data" => $data,
+            "form" => $form,
+            "subjects" => $subjects,
+         ]);
 
       } catch (Exception $err) {
          return dd($err);

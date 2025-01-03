@@ -35,25 +35,25 @@
          <table class="table table-striped projects">
                <thead>
                   <tr>
-                     <th style="width: 10%">
+                     <th>
                         #
                      </th>
                      <th style="width: 20%">
                         Grades
                      </th>
-                     <th>
-                        Total student
+                     <th style="width: 10%">
+                        Student
                      </th>
-                     <th>
-                        Teacher Class
+                     <th style="width: 15%">
+                        Class Teacher
                      </th>
-                     <th>
-                        Total subject
+                     <th style="width: 10%">
+                        Subject
                      </th>
-                     <th>
-                        Total exam
+                     <th style="width: 10%">
+                        Scoring
                      </th>
-                     <th style="width: 30%">
+                     <th style="width: 35%">
                         Action
                      </th>
                   </tr>
@@ -61,32 +61,16 @@
                <tbody>
                   @foreach ($data as $el)
                   <tr id={{'index_grade_' . $el->id}}>
+                     <td>{{ $loop->index + 1 }}</td>
+                     <td>{{$el->name . ' - ' . $el->class}}</td>
+                     <td>{{$el->active_student_count}}</td>
                      <td>
-                           {{ $loop->index + 1 }}
+                        @foreach ($el->teacher as $ct)
+                           {{$ct->name}}
+                        @endforeach
                      </td>
-                     <td>
-                        <a>
-                              {{$el->name . ' - ' . $el->class}}
-                        </a>
-                     </td>
-                     <td>
-                        <a>
-                              {{$el->active_student_count}}
-                        </a>
-                     </td>
-                     <td>
-                        <a>
-                              {{$el->active_teacher_count}}
-                        </a>
-                     </td>
-                     <td>
-                        <a>
-                              {{$el->active_subject_count}}
-                        </a>
-                     </td>
-                     <td>
-                        {{$el->active_exam_count}}
-                     </td>
+                     <td>{{$el->active_subject_count}}</td>
+                     <td>{{$el->active_exam_count}}</td>
                      
                      <td class="project-actions text-left toastsDefaultSuccess">
                         <a class="btn btn-primary btn"
@@ -100,15 +84,15 @@
                            {{-- <i class="fa-solid fa-user-graduate"></i> --}}
                            <i class="fas fa-pencil-alt">
                            </i>
-                           Manage
+                           Edit
                         </a>
                         @if (session('role') == 'superadmin')
-                        <a class="btn btn-danger btn"
+                        {{-- <a class="btn btn-danger btn"
                            href="{{url('/' . session('role') .'/grades') . '/delete/' . $el->id}}">
                            <i class="fas fa-trash">
                            </i>
                            Hapus
-                        </a>
+                        </a> --}}
                         @endif
                      </td>
                   </tr>

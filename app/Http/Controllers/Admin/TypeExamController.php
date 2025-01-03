@@ -23,7 +23,7 @@ class TypeExamController extends Controller
             'child' => 'database type exams',
             ]);
 
-            $data = Type_exam::get();
+            $data = Type_exam::orderBy('name')->get();
 
             // dd($data);
             return view('components.typeExam.data-typeExam')->with('data', $data);

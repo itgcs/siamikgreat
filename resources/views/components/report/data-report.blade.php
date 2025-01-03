@@ -31,71 +31,71 @@
 
    <!-- START TABEL -->
    @if (sizeof($data['grade']) != 0)
-    <!-- UNDERGRADE -->
-    <div class="card card-dark">
-               <div class="card-header">
-                  <h3 class="card-title">Except Primary dan Secondary</h3>
-                  <div class="card-tools">
-                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                           <i class="fas fa-minus"></i>
-                     </button>
-                  </div>
+         <!-- UNDERGRADE -->
+         <div class="card card-dark">
+            <div class="card-header">
+               <h3 class="card-title">Except Primary dan Secondary</h3>
+               <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                  </button>
                </div>
-               <div class="card-body p-0">
-                  <table class="table table-striped projects">
-                     <thead>
-                           <tr>
-                              <th>#</th>
-                              <th style="width:10%;">Class</th>
-                              <th>Class Teacher</th>
-                              <th>Student</th>
-                              <th>Subject</th>
-                              <th style="width:60%;">Action</th>
-                           </tr>
-                     </thead>
-                     <tbody>
-                           @foreach ($data['other'] as $pr)
-                              <tr id="{{ 'index_grade_' . $pr->id }}">
-                                    <td>{{ $loop->index + 1 }}</td>
-                                    <td><a>  {{ $pr->grade_name }} - {{ $pr->grade_class }}</a></td>
-                                    <td><a>  {{ $pr->teacher_class }}</a></td>
-                                    <td><a>  {{ $pr->active_student_count }}</a></td>
-                                    <td><a>  {{ $pr->active_subject_count }}</a></td>
-                                    @if (session('role') == 'superadmin' || session('role') == 'admin')
-                                    <td class="project-actions text-left toastsDefaultSuccess">
-                                       @if (strtolower($pr->grade_name) === "toddler")
-                                          <a class="btn btn-secondary btn" href="{{ url(session('role'). '/reports') . '/mid/cardToddler' . '/' . $pr->id }}">
-                                             Mid Report Card
-                                          </a>
-                                          <a class="btn btn-primary btn" href="{{ url(session('role') . '/reports') . '/cardToddler' . '/' . $pr->id }}">
-                                             Report Card
-                                          </a>
-                                       @elseif (strtolower($pr->grade_name) === "nursery")
-                                          <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/mid/cardNursery' . '/' . $pr->id }}">
-                                             Mid Report Card 
-                                          </a>
-                                          <a class="btn btn-primary btn" href="{{url(session('role') . '/reports') . '/cardNursery' . '/' . $pr->id }}">
-                                             Report Card
-                                          </a>
-                                       @elseif (strtolower($pr->grade_name) === "kindergarten")
-                                          <a class="btn btn-primary btn"
-                                             href="{{url(session('role'). '/reports') . '/detail/' . $pr->id}}">
-                                             Scoring
-                                          </a>
-                                          <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/mid/cardKindergarten' . '/' . $pr->id }}">
-                                             Mid Report Card 
-                                          </a>
-                                          <a class="btn btn-primary btn" href="{{ url(session('role') . '/reports') . '/cardKindergarten' . '/' . $pr->id }}">
-                                             Report Card 
-                                          </a>
-                                       @endif
-                                    </td>
+            </div>
+            <div class="card-body p-0">
+               <table class="table table-striped projects">
+                  <thead>
+                        <tr>
+                           <th>#</th>
+                           <th style="width:15%;">Class</th>
+                           <th>Class Teacher</th>
+                           <th>Student</th>
+                           <th>Subject</th>
+                           <th style="width:55%;">Action</th>
+                        </tr>
+                  </thead>
+                  <tbody>
+                        @foreach ($data['other'] as $pr)
+                           <tr id="{{ 'index_grade_' . $pr->id }}">
+                                 <td>{{ $loop->index + 1 }}</td>
+                                 <td><a>  {{ $pr->grade_name }} - {{ $pr->grade_class }}</a></td>
+                                 <td><a>  {{ $pr->teacher_class }}</a></td>
+                                 <td><a>  {{ $pr->active_student_count }}</a></td>
+                                 <td><a>  {{ $pr->active_subject_count }}</a></td>
+                                 @if (session('role') == 'superadmin' || session('role') == 'admin')
+                                 <td class="project-actions text-left toastsDefaultSuccess">
+                                    @if (strtolower($pr->grade_name) === "toddler")
+                                       <a class="btn btn-secondary btn" href="{{ url(session('role'). '/reports') . '/mid/cardToddler' . '/' . $pr->id }}">
+                                          Mid Report Card
+                                       </a>
+                                       <a class="btn btn-primary btn" href="{{ url(session('role') . '/reports') . '/cardToddler' . '/' . $pr->id }}">
+                                          Report Card
+                                       </a>
+                                    @elseif (strtolower($pr->grade_name) === "nursery")
+                                       <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/mid/cardNursery' . '/' . $pr->id }}">
+                                          Mid Report Card 
+                                       </a>
+                                       <a class="btn btn-primary btn" href="{{url(session('role') . '/reports') . '/cardNursery' . '/' . $pr->id }}">
+                                          Report Card
+                                       </a>
+                                    @elseif (strtolower($pr->grade_name) === "kindergarten")
+                                       <a class="btn btn-primary btn"
+                                          href="{{url(session('role'). '/reports') . '/detail/' . $pr->id}}">
+                                          Scoring
+                                       </a>
+                                       <a class="btn btn-secondary btn" href="{{ url(session('role') . '/reports') . '/mid/cardKindergarten' . '/' . $pr->id }}">
+                                          Mid Report Card 
+                                       </a>
+                                       <a class="btn btn-primary btn" href="{{ url(session('role') . '/reports') . '/cardKindergarten' . '/' . $pr->id }}">
+                                          Report Card 
+                                       </a>
                                     @endif
-                              </tr>
-                           @endforeach
-                     </tbody>
-                  </table>
-               </div>
+                                 </td>
+                                 @endif
+                           </tr>
+                        @endforeach
+                  </tbody>
+               </table>
+            </div>
          </div>
          <!-- END UNDERGRADE -->
 
@@ -114,11 +114,11 @@
                      <thead>
                            <tr>
                               <th>#</th>
-                              <th style="width:10%;">Class</th>
+                              <th style="width:15%;">Class</th>
                               <th>Class Teacher</th>
                               <th>Student</th>
                               <th>Subject</th>
-                              <th style="width:60%;"> Action</th>
+                              <th style="width:55%;"> Action</th>
                            </tr>
                      </thead>
                      <tbody>
@@ -189,11 +189,11 @@
                      <thead>
                            <tr>
                               <th>#</th>
-                              <th style="width:10%;">Class</th>
+                              <th style="width:15;">Class</th>
                               <th>Class Teacher</th>
                               <th>Student</th>
                               <th>Subject</th>
-                              <th style="width:60%;">Action</th>
+                              <th style="width:55%;">Action</th>
                            </tr>
                      </thead>
                      <tbody>
