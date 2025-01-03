@@ -706,8 +706,8 @@ class ExamController extends Controller
    {
       try {
          session()->flash('page',  $page = (object)[
-            'page' => 'database teacher exams',
-            'child' => 'database teacher exams',
+            'page' => 'database scorings',
+            'child' => 'database scorings',
          ]);
 
          $getIdTeacher = Teacher::where('user_id', session('id_user'))->value('id');
@@ -769,8 +769,8 @@ class ExamController extends Controller
       try {
          //code...
          session()->flash('page',  $page = (object)[
-            'page' => 'database teacher exams',
-            'child' => 'database teacher exams',
+            'page' => 'database scorings',
+            'child' => 'database scorings',
          ]);
 
          $id = session('id_user');

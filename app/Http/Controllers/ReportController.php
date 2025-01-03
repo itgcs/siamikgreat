@@ -622,14 +622,14 @@ class ReportController extends Controller
                                 'score' => $score->score,
                             ];
                         })->all(),
-                        'avg_homework'      => round($homeworkScores->avg()),
-                        'avg_exercise'      => round($exerciseScores->avg()),
-                        'avg_participation' => round($participationScore->avg()),
-                        'avg_quiz'          => round($quizScores->avg()),
+                        'avg_homework'      => round($homeworkScores->avg(), 1),
+                        'avg_exercise'      => round($exerciseScores->avg(), 1),
+                        'avg_participation' => round($participationScore->avg(), 1),
+                        'avg_quiz'          => round($quizScores->avg(), 1),
 
-                        'percent_homework'      => round($homeworkScores->avg() * 0.1),
-                        'percent_exercise'      => round($exerciseScores->avg() * 0.15),
-                        'percent_participation' => round($participationScore->avg() * 0.05),
+                        'percent_homework'      => round($homeworkScores->avg() * 0.1, 1),
+                        'percent_exercise'      => round($exerciseScores->avg() * 0.15, 1),
+                        'percent_participation' => round($participationScore->avg() * 0.05, 1),
                         'h+e+p'                 => (round($homeworkScores->avg() * 0.1)) + round(($exerciseScores->avg() * 0.15)) + round(($participationScore->avg() * 0.05)),
                        
                         'percent_quiz' => round($quizScores->avg() * 0.3),
@@ -1098,8 +1098,6 @@ class ReportController extends Controller
                 $tasks              = $scores->whereIn('type_exam', $tasks)->pluck('score');
                 $mid                = $scores->whereIn('type_exam', $mid)->pluck('score');
                 $finalExamScores    = $scores->whereIn('type_exam', $finalExam)->pluck('score');
-
-                // dd($quizScores);
                 
                 return [
                     'student_id' => $student->student_id,
@@ -1139,14 +1137,12 @@ class ReportController extends Controller
                 $permission = false;
             }
 
-            // dd($scoresByStudent);
             $status = Scoring_status::where('grade_id', $gradeId)
                 ->where('semester', $semester)
                 ->where('academic_year', $academic_year)
                 ->where('teacher_id', $subjectTeacher->teacher_id)
                 ->where('subject_id', $subject->subject_id)
                 ->first();
-
             
             $data = [
                 'subjectTeacher' => $subjectTeacher,
@@ -1158,8 +1154,6 @@ class ReportController extends Controller
                 'status' => $status,
                 'permission' => $permission,
             ];
-
-            // dd($data);   
 
             if(session('role') == 'superadmin' || session('role') == 'admin'){
                 return view('components.report.detail_scoring_subject_secondary')->with('data', $data);
@@ -1264,8 +1258,6 @@ class ReportController extends Controller
                 'status' => $status,
                 'healthEducation' => $checkHE,
             ];
-
-            // dd($data);
             
             return view('components.report.acar_primary')->with('data', $data);
             
@@ -1681,7 +1673,6 @@ class ReportController extends Controller
 
                 // dd($majorSubjectsScores);
                 $scoresBySemester = $scores->groupBy('semester')->map(function ($semesterScores) {
-                    
                     return $semesterScores->map(function ($score) {
                         return [
                             'final_score' => $score->final_score,
@@ -2110,8 +2101,6 @@ class ReportController extends Controller
 
             // dd($subject->subject_name);
 
-        
-
             if (strtolower($subject->subject_name) == "religion islamic") {
                 $results = Grade::join('students', 'students.grade_id', '=', 'grades.id')
                 ->join('grade_exams', 'grade_exams.grade_id', '=', 'grades.id')
@@ -2315,8 +2304,6 @@ class ReportController extends Controller
                 ->get();
             }
 
-            // dd($results);
-
             if ($isMajorSubject) {
                 $totalExam = Grade::with(['student', 'exam' => function ($query) use ($subjectId, $homework, $exercise, $participation, $quiz, $finalExam) {
                     $query->whereHas('subject', function ($subQuery) use ($subjectId) {
@@ -2410,14 +2397,14 @@ class ReportController extends Controller
                         'avg_participation' => round($participationScore->avg()),
                         'avg_quiz'          => round($quizScores->avg()),
 
-                        'percent_homework'      => round($homeworkScores->avg() * 0.1),
-                        'percent_exercise'      => round($exerciseScores->avg() * 0.15),
-                        'percent_participation' => round($participationScore->avg() * 0.05),
-                        'h+e+p'                 => (round($homeworkScores->avg() * 0.1)) + round(($exerciseScores->avg() * 0.15)) + round(($participationScore->avg() * 0.05)),
+                        'percent_homework'      => round($homeworkScores->avg() * 0.1, 2),
+                        'percent_exercise'      => round($exerciseScores->avg() * 0.15, 2),
+                        'percent_participation' => round($participationScore->avg() * 0.05, 2),
+                        'h+e+p'                 => ($homeworkScores->avg() * 0.1) + ($exerciseScores->avg() * 0.15) + ($participationScore->avg() * 0.05),
                        
-                        'percent_quiz' => round($quizScores->avg() * 0.3),
-                        'percent_fe'   => round($finalExamScores->avg() * 0.4),
-                        'total_score'  => (round(($homeworkScores->avg() * 0.1)) + round(($exerciseScores->avg() * 0.15)) + round(($participationScore->avg() * 0.05))) + round(($quizScores->avg() * 0.3)) + round(($finalExamScores->avg() * 0.4)),
+                        'percent_quiz' => $quizScores->avg() * 0.3,
+                        'percent_fe'   => $finalExamScores->avg() * 0.4,
+                        'total_score'  => round((($homeworkScores->avg() * 0.1) + ($exerciseScores->avg() * 0.15) + ($participationScore->avg() * 0.05)) + ($quizScores->avg() * 0.3) + ($finalExamScores->avg() * 0.4)),
                         
                         'comment' => $comments->get($student->student_id)?->comment ?? '',
                     ];
@@ -2496,8 +2483,6 @@ class ReportController extends Controller
 
                 $type = "minor_subject_assessment";
 
-                // dd($subjectId);
-
                 $comments = Comment::where('grade_id', $gradeId)
                     ->where('subject_id', $subjectId)
                     ->where('subject_teacher_id', $subjectTeacher->teacher_id)
@@ -2506,8 +2491,6 @@ class ReportController extends Controller
                     ->where('type', $type)
                     ->get()
                     ->keyBy('student_id');
-
-                    // dd($finalAssessment);
 
                 $scoresByStudent = $results->groupBy('student_id')->map(function ($scores) use($comments) {
                     
@@ -2551,8 +2534,8 @@ class ReportController extends Controller
                         'avg_participation' => round($participationScore->avg()),
                         'avg_fe' => round($finalExamScores->avg()),
                         
-                        'percent_homework' => round($homeworkScores->avg() * 0.2),
-                        'percent_exercise' => round($exerciseScores->avg() * 0.35),
+                        'percent_homework' => round($homeworkScores->avg() * 0.2, 2),
+                        'percent_exercise' => round($exerciseScores->avg() * 0.35, 2),
                         'percent_participation' => round($participationScore->avg() * 0.1, 2),
                         'percent_fe' => round($finalExamScores->avg() * 0.35, 2),
                         
@@ -2563,8 +2546,6 @@ class ReportController extends Controller
                     ];
                 })->values()->all();
             }
-
-            // dd($scoresByStudent);
 
             $status = Scoring_status::where('grade_id', $gradeId)
                 ->where('subject_id', $subjectId)
@@ -2618,7 +2599,7 @@ class ReportController extends Controller
         try {
             session()->flash('page',  $page = (object)[
                 'page' => 'reports',
-                'child' => 'database reports',
+                'child' => 'report subject teacher',
             ]);
 
             $userId = session('id_user');

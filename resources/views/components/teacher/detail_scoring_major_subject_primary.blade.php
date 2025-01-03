@@ -54,7 +54,7 @@
             @if (!empty($data['students']))
                 <div class="row my-2">
                     <div class="input-group-append mx-2">
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit Comment</button>
                     </div>
                 </div>
             @endif
@@ -63,7 +63,7 @@
             <div class="input-group-append mx-2">
                 <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
                 @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
-                <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
+                <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Comment</a>
                 @endif
             </div>
         </div>  
@@ -75,12 +75,12 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Decline Scoring {{ $data['grade']->name }} - {{ $data['grade']->class }}</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">Decline Comment {{ $data['grade']->name }} - {{ $data['grade']->class }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">Are you sure want to decline Scoring {{ $data['grade']->name }} - {{ $data['grade']->class }} ?</div>
+                <div class="modal-body">Are you sure want to decline comment {{ $data['grade']->name }} - {{ $data['grade']->class }} ?</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
@@ -120,26 +120,26 @@
                         <td class="text-center">{{ $i }}</td>
                     @endfor
                     <td class="text-center">Avg</td>
-                    <td class="text-center">10%</td>
+                    <td style="background-color:beige;" class="text-center">10%</td>
                     @for ($j=1; $j <= $data['grade']->total_exercise; $j++)
                         <td class="text-center">{{ $j }}</td>
                     @endfor
                     <td class="text-center">Avg</td>
-                    <td class="text-center">15%</td>
+                    <td style="background-color:beige;" class="text-center">15%</td>
                     @for ($k=1; $k <= $data['grade']->total_participation; $k++)
                         <td class="text-center">{{ $k }}</td>
                     @endfor
                     <td class="text-center">Avg</td>
-                    <td class="text-center">5%</td>
-                    <td class="text-center">H+E+P</td>
+                    <td style="background-color:beige;" class="text-center">5%</td>
+                    <td style="background-color:beige;" class="text-center">H+E+P</td>
                     @for ($l=1; $l <= $data['grade']->total_quiz; $l++)
                         <td class="text-center">{{ $l }}</td>
                     @endfor
                     <td class="text-center">Avg</td>
-                    <td class="text-center">Quiz</td>
+                    <td style="background-color:beige;" class="text-center">Quiz</td>
                     <td class="text-center">Exam</td>
-                    <td class="text-center">F.E</td>
-                    <td class="text-center">100%</td>
+                    <td style="background-color:beige;" class="text-center">F.E</td>
+                    <td style="background-color:beige;" class="text-center">100%</td>
                 </tr>
             </thead>
 
@@ -160,7 +160,7 @@
                             @endif
                         @endforeach
                         <td>{{ $student['avg_homework'] }} </td>
-                        <td>{{ $student['percent_homework'] }} </td>
+                        <td style="background-color:beige;">{{ $student['percent_homework'] }} </td>
                         <!-- END HOMEWORK -->
 
 
@@ -172,7 +172,7 @@
                         @endforeach
 
                         <td class="text-center">{{ $student['avg_exercise'] }}</td> <!-- nilai rata-rata exercise -->
-                        <td class="text-center">{{ $student['percent_exercise'] }}</td> <!-- 15% dari nilai rata-rata exercise -->
+                        <td style="background-color:beige;" class="text-center">{{ $student['percent_exercise'] }}</td> <!-- 15% dari nilai rata-rata exercise -->
                         <!-- END COUNT EXERCISE -->
 
 
@@ -184,12 +184,12 @@
                         @endforeach
 
                         <td class="text-center">{{ $student['avg_participation'] }}</td> <!-- nilai rata-rata exercise -->
-                        <td class="text-center">{{ $student['percent_participation'] }}</td> <!-- 15% dari nilai rata-rata exercise -->
+                        <td style="background-color:beige;" class="text-center">{{ $student['percent_participation'] }}</td> <!-- 15% dari nilai rata-rata exercise -->
                         
                         <!-- END COUNT PARTICIPATION -->
 
                         <!-- H+E+P -->
-                        <td>{{$student['h+e+p'] }}</td>
+                        <td style="background-color:beige;">{{$student['h+e+p'] }}</td>
                         <!-- END H+E+P -->
 
 
@@ -200,7 +200,7 @@
                             @endif
                         @endforeach
                         <td>{{ $student['avg_quiz'] }}</td>
-                        <td>{{ $student['percent_quiz'] }}</td>
+                        <td style="background-color:beige;">{{ $student['percent_quiz'] }}</td>
                         <!-- END COUNT QUIZ -->
 
                         <!-- COUNT F.EXAM -->
@@ -214,12 +214,12 @@
                         @if(!$foundFinalExam)
                             <td>&nbsp;</td>
                         @endif
-                        <td>{{ $student['percent_fe'] ?? '&nbsp;' }}</td>
+                        <td style="background-color:beige;">{{ $student['percent_fe'] ?? '&nbsp;' }}</td>
                         <!-- END COUNT F.EXAM -->
                         
 
                         <!-- FINAL SCORE -->
-                        <td>{{ $student['total_score'] }}</td>
+                        <td class="text-bold text-center" style="background-color:beige;">{{ $student['total_score'] }}</td>
 
                         <!-- COMMENT -->
                         <td class="project-actions text-left">
@@ -263,17 +263,17 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Confirm Acc Scoring</h5>
+                        <h5 class="modal-title" id="confirmModalLabel">Confirm Submit Comment</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to acc scoring?
+                        Are you sure you want to submit comment?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="confirmAccScoring">Yes, Acc Scoring</button>
+                        <button type="button" class="btn btn-primary" id="confirmAccScoring">Yes, Submit Comment</button>
                     </div>
                 </div>
             </div>

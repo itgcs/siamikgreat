@@ -54,12 +54,12 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Decline Scoring {{ $data['grade']->name }} - {{ $data['grade']->class }}</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">Decline Comment {{ $data['grade']->name }} - {{ $data['grade']->class }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">Are you sure want to decline Scoring {{ $data['grade']->name }} - {{ $data['grade']->class }} ?</div>
+                <div class="modal-body">Are you sure want to decline comment {{ $data['grade']->name }} - {{ $data['grade']->class }} ?</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
@@ -83,7 +83,7 @@
                 @if (!empty($data['students']))
                     <div class="row my-2">
                         <div class="input-group-append mx-2">
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Submit Comment</button>
                         </div>
                     </div>
                 @endif
@@ -93,13 +93,13 @@
                 <div class="input-group-append mx-2">
                     <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
                     @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
-                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Comment</a>
                     @endif
                 </div>
             </div>  
         @endif
 
-        {{-- KHUSUS SUBJECT FINANCIAL LITERACY --}}
+        {{-- MINOR SUBJECT --}}
         @if (
                 strtolower($data['subject']->subject_name) !== 'science' &&
                 strtolower($data['subject']->subject_name) !== 'english' &&
@@ -118,28 +118,28 @@
                         <th colspan="{{ $data['grade']->total_participation + 1 }} class="text-center" style="vertical-align : middle;text-align:center;">Attendance / Participation (10%)</th>
                         <th colspan="{{ $data['grade']->total_final_exam + 1 }}" class="text-center" style="vertical-align : middle;text-align:center;">Project/Practical/Final Assessment (35%)</th>
                         <th class="text-center">Total</th>
-                        <th class="text-center">Marks</th>
+                        {{-- <th class="text-center">Marks</th> --}}
                         <th rowspan="2" class="text-center" style="width: 25%;vertical-align : middle;text-align:center;">Comment</th>
                     </tr>
                     <tr>
                         @for ($i=1; $i <= $data['grade']->total_homework; $i++)
                             <td class="text-center">{{ $i }}</td>
                         @endfor
-                        <td class="text-center">Avg</td>
+                        <td style="background-color:beige;" class="text-center">Avg</td>
                         @for ($j=1; $j <= $data['grade']->total_exercise; $j++)
                             <td class="text-center">{{ $j }}</td>
                         @endfor
-                        <td class="text-center">Avg</td>
+                        <td style="background-color:beige;" class="text-center">Avg</td>
                         @for ($k=1; $k <= $data['grade']->total_participation; $k++)
                             <td class="text-center">{{ $k }}</td>
                         @endfor
-                        <td class="text-center">Avg</td>
+                        <td style="background-color:beige;" class="text-center">Avg</td>
                         @for ($l=1; $l <= $data['grade']->total_final_exam; $l++)
                             <td class="text-center">{{ $l }}</td>
                         @endfor
-                        <td class="text-center">Avg</td>
-                        <td class="text-center">100%</td>
-                        <td>&nbsp;</td>
+                        <td style="background-color:beige;" class="text-center">Avg</td>
+                        <td style="background-color:beige;" class="text-center">100%</td>
+                        {{-- <td>&nbsp;</td> --}}
                     </tr>
                 </thead>
 
@@ -159,7 +159,7 @@
                                     <td class="text-center">{{ $score['score'] }}</td>
                                 @endif
                             @endforeach
-                            <td class="text-center">{{ $student['percent_homework'] }} </td>
+                            <td style="background-color:beige;" class="text-center">{{ $student['percent_homework'] }} </td>
                             <!-- END HOMEWORK -->
 
 
@@ -170,7 +170,7 @@
                                 @endif
                             @endforeach
 
-                            <td class="text-center">{{ $student['percent_exercise'] }}</td> <!-- nilai rata-rata exercise -->
+                            <td style="background-color:beige;" class="text-center">{{ $student['percent_exercise'] }}</td> <!-- nilai rata-rata exercise -->
                             <!-- END COUNT EXERCISE -->
 
 
@@ -181,7 +181,7 @@
                                 @endif
                             @endforeach
 
-                            <td class="text-center">{{ $student['percent_participation'] }}</td> <!-- nilai rata-rata participation -->
+                            <td style="background-color:beige;" class="text-center">{{ $student['percent_participation'] }}</td> <!-- nilai rata-rata participation -->
                             
                             <!-- END COUNT PARTICIPATION -->
 
@@ -197,15 +197,15 @@
                                     <td class="text-center">{{ $score['score'] }}</td> 
                                 @endif
                             @endforeach
-                            <td class="text-center">{{ $student['percent_fe'] }}</td>
+                            <td style="background-color:beige;" class="text-center">{{ $student['percent_fe'] }}</td>
                             <!-- END COUNT PROJECT / PRACTICAL / FINAL ASESSMENT -->
                             
 
                             <!-- FINAL SCORE -->
-                            <td class="text-center">{{ $student['total_score'] }}</td>
+                            <td style="background-color:beige;" class="text-center text-bold">{{ $student['total_score'] }}</td>
 
                             <!-- MARKS -->
-                            <td class="text-center">{{ $student['grades'] }}</td>
+                            {{-- <td class="text-center">{{ $student['grades'] }}</td> --}}
 
                             <!-- COMMENT -->
                             <td class="project-actions text-left">
@@ -244,7 +244,7 @@
                 </tbody>
             </table>
         @else
-        {{-- MINOR SUBJECT LAINNYA --}}
+        {{-- MAJOR SUBJECT --}}
             <table class="table table-striped table-bordered bg-white" style=" width: 2000px;">
                 <thead>
                     <tr>
@@ -262,7 +262,7 @@
                             <td class="text-center">{{ $i }}</td>
                         @endfor
                         <td class="text-center">Avg</td>
-                        <td class="text-center">25%</td>
+                        <td style="background-color:beige;" class="text-center">25%</td>
                         <!-- END TASKS -->
 
                         <!-- QUIZ -->
@@ -270,7 +270,7 @@
                             <td class="text-center">{{ $j }}</td>
                         @endfor
                         <td class="text-center">Avg</td>
-                        <td class="text-center">35%</td>
+                        <td style="background-color:beige;" class="text-center">35%</td>
                         <!-- END QUIZ -->
 
                         <!-- FINAL EXAM -->
@@ -278,10 +278,10 @@
                             <td class="text-center">{{ $j }}</td>
                         @endfor
                         <td class="text-center">Avg</td>
-                        <td class="text-center">40%</td>
+                        <td style="background-color:beige;" class="text-center">40%</td>
                         <!-- END FINAL EXAM -->
 
-                        <td class="text-center">100%</td>
+                        <td style="background-color:beige;" class="text-center">100%</td>
                     </tr>
                 </thead>
 
@@ -302,7 +302,7 @@
                             @endforeach
 
                             <td>{{ $student['avg_tasks'] }} </td>
-                            <td>{{ $student['percent_tasks'] }} </td>
+                            <td style="background-color:beige;">{{ $student['percent_tasks'] }} </td>
                             <!-- END TASKS -->
 
 
@@ -314,7 +314,7 @@
                             @endforeach
 
                             <td class="text-center">{{ $student['avg_mid'] }}</td> <!-- nilai rata-rata exercise -->
-                            <td class="text-center">{{ $student['percent_mid'] }}</td> <!-- 15% dari nilai rata-rata exercise -->
+                            <td style="background-color:beige;" class="text-center">{{ $student['percent_mid'] }}</td> <!-- 15% dari nilai rata-rata exercise -->
                             <!-- END COUNT QUIZ -->
 
 
@@ -327,12 +327,12 @@
                                 @endif
                             @endforeach
                             <td>{{ $student['avg_fe'] ?? '&nbsp;' }}</td>
-                            <td>{{ $student['percent_fe'] ?? '&nbsp;' }}</td>
+                            <td style="background-color:beige;">{{ $student['percent_fe'] ?? '&nbsp;' }}</td>
                             <!-- END COUNT F.EXAM -->
                             
 
                             <!-- FINAL SCORE -->
-                            <td>{{ $student['total_score'] ?? '&nbsp;' }}</td>
+                            <td style="background-color:beige;" class="text-bold">{{ $student['total_score'] ?? '&nbsp;' }}</td>
 
                             <!-- COMMENT -->
                             <td class="project-actions text-left">
@@ -378,17 +378,17 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Confirm Acc Scoring</h5>
+                        <h5 class="modal-title" id="confirmModalLabel">Confirm Submit Comment</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to acc scoring?
+                        Are you sure you want to submit comment?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="confirmAccScoring">Yes, Acc Scoring</button>
+                        <button type="button" class="btn btn-primary" id="confirmAccScoring">Yes</button>
                     </div>
                 </div>
             </div>

@@ -24,10 +24,6 @@
     <div class="row">
         <div class="col">
             <p class="font-bold">Academic Assessment Report</p>
-            {{-- <p class="text-xs">Semester : {{ session('semester') }}</p>     
-            <p class="text-xs">Class Teacher : {{ $data['grade']->teacher_name }}</p>
-            <p class="text-xs">Class: {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }}</p>
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p> --}}
             <table>
                 <tr>
                     <td>Class</td>
@@ -91,7 +87,7 @@
                     <td class="text-center" colspan="2">Chinese</td>
                     <td class="text-center" colspan="2">Math</td>
                     <td class="text-center" colspan="2">Science</td>
-                    <td class="text-center">Avg</td>
+                    <td style="background-color:beige;" class="text-center">Avg</td>
                     <!-- END MAJOR SUBJECTS -->
                     
                     <!-- MINOR SUBJECTS -->
@@ -99,7 +95,7 @@
                     <td class="text-center" colspan="2">PPKN</td>
                     <td class="text-center" colspan="2">Religion</td>
                     <td class="text-center" colspan="2">BI</td>
-                    <td class="text-center">Avg</td>
+                    <td style="background-color:beige;" class="text-center">Avg</td>
                     <!-- END MINOR SUBJECTS -->
                     
                     <!-- SUPPLEMENTARY SUBJECTS -->
@@ -108,10 +104,10 @@
                     <td class="text-center" colspan="2">A/D</td>
                     <td class="text-center" colspan="2">CB</td>
                     <td class="text-center" colspan="2">FL</td>
-                    <td class="text-center">Avg</td>
+                    <td style="background-color:beige;" class="text-center">Avg</td>
                     <!-- END SUPPLEMENTARY SUBJECTS -->
 
-                    <td class="text-center">Total</td>
+                    <td style="background-color:beige;" class="text-center">Total</td>
                 </tr>
 
                 <tr>
@@ -124,7 +120,7 @@
                     <td class="text-center">Grs</td>
                     <td class="text-center">Mks</td>
                     <td class="text-center">Grs</td>
-                    <td class="text-center">70%</td>
+                    <td style="background-color:beige;" class="text-center">70%</td>
                     <!-- END MAJOR SUBJECTS -->
                     
                     <!-- MINOR SUBJECTS -->
@@ -136,7 +132,7 @@
                     <td class="text-center">Grs</td>
                     <td class="text-center">Mks</td>
                     <td class="text-center">Grs</td>
-                    <td class="text-center">20%</td>
+                    <td style="background-color:beige;" class="text-center">20%</td>
                     <!-- END MINOR SUBJECTS -->
                     
                     <!-- SUPPLEMENTARY SUBJECTS -->
@@ -150,10 +146,10 @@
                     <td class="text-center">Grs</td>
                     <td class="text-center">Mks</td>
                     <td class="text-center">Grs</td>
-                    <td class="text-center">10%</td>
+                    <td style="background-color:beige;" class="text-center">10%</td>
                     <!-- END SUPPLEMENTARY SUBJECTS -->
 
-                    <td class="text-center">100%</td>
+                    <td style="background-color:beige;" class="text-center">100%</td>
                 </tr>
             </thead>
 
@@ -177,20 +173,20 @@
                                 <td class="text-center">{{ $subjectScores[$subjectId]['final_score'] }}</td>
                                 <td class="text-center">{{ $subjectScores[$subjectId]['grades'] }}</td>
                             @endforeach
-                            <td class="text-center">{{ $dt['percent_majorSubjects'] }}</td>
+                            <td style="background-color:beige;" class="text-center">{{ $dt['percent_majorSubjects'] }}</td>
 
                             @foreach ([32, 7, 20, 4] as $subjectId)
                                 <td class="text-center">{{ $subjectScores[$subjectId]['final_score'] }}</td>
                                 <td class="text-center">{{ $subjectScores[$subjectId]['grades'] }}</td>
                             @endforeach
-                            <td class="text-center">{{ $dt['percent_minorSubjects'] }}</td>
+                            <td style="background-color:beige;" class="text-center">{{ $dt['percent_minorSubjects'] }}</td>
 
                             @foreach ([18, 6, 33, 16, 62] as $subjectId)
                                 <td class="text-center">{{ $subjectScores[$subjectId]['final_score'] }}</td>
                                 <td class="text-center">{{ $subjectScores[$subjectId]['grades'] }}</td>
                             @endforeach
-                            <td class="text-center">{{ $dt['percent_supplementarySubjects'] }}</td>
-                            <td class="text-center">{{ $dt['total_score'] }}</td>
+                            <td style="background-color:beige;" class="text-center">{{ $dt['percent_supplementarySubjects'] }}</td>
+                            <td style="background-color:beige;" class="text-center text-bold">{{ $dt['total_score'] }}</td>
 
                             <!-- COMMENT -->
                             <td class="project-actions text-left">
@@ -231,7 +227,7 @@
         </form>
 
         <!-- Modal -->
-        <div class="modal fade" id="editSingleComment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        {{-- <div class="modal fade" id="editSingleComment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -247,7 +243,7 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 </div>
 
@@ -262,11 +258,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                Are you sure you want to acc ACAR?
+                Are you sure you want to submit comment ACAR?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="confirmAcarScoring">Yes, Acc ACAR</button>
+                <button type="button" class="btn btn-primary" id="confirmAcarScoring">Yes</button>
             </div>
         </div>
     </div>
@@ -282,7 +278,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">Are you sure want to decline ACAR {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} ?</div>
+            <div class="modal-body">Are you sure want to decline comment ACAR {{ $data['grade']->grade_name }} - {{ $data['grade']->grade_class }} ?</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
@@ -354,7 +350,7 @@
         Swal.fire({
             icon: 'success',
             title: 'Successfully',
-            text: 'Successfully post score academic assessment secondary in the database.',
+            text: 'Successfully post comment academic assessment secondary in the database.',
         });
     </script>
 @endif

@@ -46,12 +46,6 @@
                     <td> : {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</td>
                 </tr>
             </table>
-            {{-- <p class="text-xs">Semester : {{ $data['semester']}}</p>    
-            <p class="text-xs">Class: {{ $data['grade']->name }} - {{ $data['grade']->class }}</p>
-            <p class="text-xs">Class Teacher : {{ $data['classTeacher']->teacher_name }}</p>
-            <p class="text-xs">Subject : {{ $data['subject']->subject_name}}</p>    
-            <p class="text-xs">Subject Teacher : {{ $data['subjectTeacher']->teacher_name }}</p>    
-            <p class="text-xs">Date  : {{date('d-m-Y')}}</p> --}}
         </div>
     </div>
 
@@ -70,7 +64,7 @@
             @if (!empty($data['students']))
                 <div class="row my-2">
                     <div class="input-group-append mx-2">
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Scoring</button>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmModal">Acc Comment</button>
                     </div>
                 </div>
             @endif
@@ -79,7 +73,7 @@
                 <div class="input-group-append mx-2">
                     <a  class="btn btn-success">Already Submit in {{ \Carbon\Carbon::parse($data['status']->created_at)->format('l, d F Y') }}</a>
                     @if (session('role') == 'superadmin' || session('role') == 'admin' || session('role') == 'teacher')
-                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Scoring</a>
+                    <a  class="btn btn-warning mx-2" data-toggle="modal" data-target="#modalDecline">Decline Comment</a>
                     @endif
                 </div>
             </div>  
@@ -95,28 +89,28 @@
                     <th colspan="{{ $data['grade']->total_participation + 1 }} class="text-center" style="vertical-align : middle;text-align:center;">Attendance / Participation (10%)</th>
                     <th colspan="{{ $data['grade']->total_final_exam + 1 }}" class="text-center" style="vertical-align : middle;text-align:center;">Project/Practical/Final Assessment (35%)</th>
                     <th class="text-center">Total</th>
-                    <th class="text-center">Marks</th>
+                    {{-- <th class="text-center">Marks</th> --}}
                     <th rowspan="2" class="text-center" style="width: 25%;vertical-align : middle;text-align:center;">Comment</th>
                 </tr>
                 <tr>
                     @for ($i=1; $i <= $data['grade']->total_homework; $i++)
                         <td class="text-center">{{ $i }}</td>
                     @endfor
-                    <td class="text-center">Avg</td>
+                    <td style="background-color:beige;" class="text-center">Avg</td>
                     @for ($j=1; $j <= $data['grade']->total_exercise; $j++)
                         <td class="text-center">{{ $j }}</td>
                     @endfor
-                    <td class="text-center">Avg</td>
+                    <td style="background-color:beige;" class="text-center">Avg</td>
                     @for ($k=1; $k <= $data['grade']->total_participation; $k++)
                         <td class="text-center">{{ $k }}</td>
                     @endfor
-                    <td class="text-center">Avg</td>
+                    <td style="background-color:beige;" class="text-center">Avg</td>
                     @for ($l=1; $l <= $data['grade']->total_final_exam; $l++)
                         <td class="text-center">{{ $l }}</td>
                     @endfor
-                    <td class="text-center">Avg</td>
-                    <td class="text-center">100%</td>
-                    <td>&nbsp;</td>
+                    <td style="background-color:beige;" class="text-center">Avg</td>
+                    <td style="background-color:beige;" class="text-center">100%</td>
+                    {{-- <td>&nbsp;</td> --}}
                 </tr>
             </thead>
 
@@ -136,7 +130,7 @@
                                 <td class="text-center">{{ $score['score'] }}</td>
                             @endif
                         @endforeach
-                        <td class="text-center">{{ $student['percent_homework'] }} </td>
+                        <td style="background-color:beige;" class="text-center">{{ $student['percent_homework'] }} </td>
                         <!-- END HOMEWORK -->
 
 
@@ -147,7 +141,7 @@
                             @endif
                         @endforeach
 
-                        <td class="text-center">{{ $student['percent_exercise'] }}</td> <!-- nilai rata-rata exercise -->
+                        <td style="background-color:beige;" class="text-center">{{ $student['percent_exercise'] }}</td> <!-- nilai rata-rata exercise -->
                         <!-- END COUNT EXERCISE -->
 
 
@@ -158,7 +152,7 @@
                             @endif
                         @endforeach
 
-                        <td class="text-center">{{ $student['percent_participation'] }}</td> <!-- nilai rata-rata participation -->
+                        <td style="background-color:beige;" class="text-center">{{ $student['percent_participation'] }}</td> <!-- nilai rata-rata participation -->
                         
                         <!-- END COUNT PARTICIPATION -->
 
@@ -174,15 +168,15 @@
                                 <td class="text-center">{{ $score['score'] }}</td> 
                             @endif
                         @endforeach
-                        <td class="text-center">{{ $student['percent_fe'] }}</td>
+                        <td style="background-color:beige;" class="text-center">{{ $student['percent_fe'] }}</td>
                         <!-- END COUNT PROJECT / PRACTICAL / FINAL ASESSMENT -->
                         
 
                         <!-- FINAL SCORE -->
-                        <td class="text-center">{{ $student['total_score'] }}</td>
+                        <td style="background-color:beige;" class="text-center text-bold">{{ $student['total_score'] }}</td>
 
                         <!-- MARKS -->
-                        <td class="text-center">{{ $student['grades'] }}</td>
+                        {{-- <td class="text-center">{{ $student['grades'] }}</td> --}}
 
                         <!-- COMMENT -->
                         <td class="project-actions text-left">
@@ -226,17 +220,17 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Confirm Acc Scoring</h5>
+                        <h5 class="modal-title" id="confirmModalLabel">Confirm Acc Comment</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to acc scoring?
+                        Are you sure you want to acc comment?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="confirmAccScoring">Yes, Acc Scoring</button>
+                        <button type="button" class="btn btn-primary" id="confirmAccScoring">Yes, Acc Comment</button>
                     </div>
                 </div>
             </div>
@@ -299,12 +293,12 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Decline Acar {{ $data['grade']->name }} - {{ $data['grade']->class }}</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Decline Comment {{ $data['grade']->name }} - {{ $data['grade']->class }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">Are you sure want to decline ACAR {{ $data['grade']->name }} - {{ $data['grade']->class }} ?</div>
+            <div class="modal-body">Are you sure want to decline comment {{ $data['grade']->name }} - {{ $data['grade']->class }} ?</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <a class="btn btn-danger btn" id="confirmDecline">Yes decline</a>
@@ -339,7 +333,7 @@
         Swal.fire({
             icon: 'success',
             title: 'Successfully',
-            text: 'Successfully post final score subject in the database.',
+            text: 'Successfully post comment subject in the database.',
         });
     </script>
 @endif
